@@ -74,7 +74,7 @@ struct EquipmentDescription {
 
 struct TableEquipments {
   EquipmentItem head  [while (std::mem::read_signed($, 2) != -1)]  @ header.ptrs.headArmor  [[name("Heads")]];
-  EquipmentItem body  [while (std::mem::read_signed($, 2) != -1)]  @ header.ptrs.bodyArmor  [[name("Bodys")]];
+  EquipmentItem body  [while (std::mem::read_signed($, 2) != -1)]  @ header.ptrs.bodyArmor  [[name("Chests")]];
   EquipmentItem arm   [while (std::mem::read_signed($, 2) != -1)]  @ header.ptrs.armArmor   [[name("Arms")]];
   EquipmentItem waist [while (std::mem::read_signed($, 2) != -1)]  @ header.ptrs.waistArmor [[name("Waists")]];
   EquipmentItem leg   [while (std::mem::read_signed($, 2) != -1)]  @ header.ptrs.legArmor   [[name("Legs")]];
@@ -122,7 +122,7 @@ struct EquipmentLeg {
 
 struct Equipments {
   EquipmentHeads  head  @ header.ptrs.headArmor  [[name("Heads")]];
-  EquipmentBodies body  @ header.ptrs.bodyArmor  [[name("Bodys")]];
+  EquipmentBodies body  @ header.ptrs.bodyArmor  [[name("Chests")]];
   EquipmentArms   arm   @ header.ptrs.armArmor   [[name("Arms")]];
   EquipmentWaists waist @ header.ptrs.waistArmor [[name("Waists")]];
   EquipmentLeg    leg   @ header.ptrs.legArmor   [[name("Legs")]];

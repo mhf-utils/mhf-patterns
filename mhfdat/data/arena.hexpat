@@ -1,10 +1,14 @@
 #pragma once
 #include <mhfdat/utils/index.pat>
 
+// =======================
+// Equipment
+// =======================
+
 struct DefBlock {
     u16 weaponClass;
     u16 weaponId;
-    u16;
+    u16 unk;
     u16 head;
     u16 chest;
     u16 arms;
@@ -18,10 +22,17 @@ struct ArenaEquips {
     DefBlock def[4];
 } [[inline]];
 
-ptVar<ArenaEquips> ArenaEquipment[17] @ header.ptrs.arenaEquipment;
+ptVar<ArenaEquips> ArenaEquipment[17]
+    @ header.ptrs.arenaEquipment
+    [[group("Arena"), name("Equipment")]];
+
+
+// =======================
+// Items
+// =======================
 
 using ItemBlock;
-fn itemBlockFmt (ItemBlock n) {
+fn itemBlockFmt(ItemBlock n) {
     return std::format("{:02}x {}", n.quantity, getItemName(n.id));
 };
 
@@ -34,16 +45,36 @@ struct ItemTable {
     ItemBlock items[while(std::mem::read_signed($, 2) != -1)];
 } [[inline]];
 
-ptVar<ItemTable> ArenaItems[68] @ header.ptrs.arenaItems;
+ptVar<ItemTable> ArenaItems[68]
+    @ header.ptrs.arenaItems
+    [[group("Arena"), name("Items")]];
 
-ptVar<ItemTable> unkPointers[23] @ header.ptrs.arenaAmmo
-[[comment("Maybe items to add as ammo for ranged weapons?")]];
+ptVar<ItemTable> ArenaAmmo[23]
+    @ header.ptrs.arenaAmmo
+    [[group("Arena"), name("Ammo"), comment("Possibly ammo or extra items for ranged weapons")]];
 
-u16 stageIDChunk0[28] @ header.ptrs.arenaStageIDC0;
-u16 stageIDChunk1[34] @ header.ptrs.arenaStageIDC1;
+
+// =======================
+// Stage IDs
+// =======================
+
+u16 ArenaStageIDsChunk0[28]
+    @ header.ptrs.arenaStageIDC0
+    [[group("Arena"), name("Stage IDs (Chunk 0)")]];
+
+u16 ArenaStageIDsChunk1[34]
+    @ header.ptrs.arenaStageIDC1
+    [[group("Arena"), name("Stage IDs (Chunk 1)")]];
+
+
+// =======================
+// Mystery
+// =======================
 
 struct unkChunk {
     u16 unkVals[10];
 } [[inline]];
 
-ptVar<unkChunk> moreMysteryPointers[23] @ header.ptrs.hd_dll_af5261;
+ptVar<unkChunk> ArenaMystery[23]
+    @ header.ptrs.hd_dll_af5261
+    [[group("Arena"), name("Mystery Data")]];

@@ -328,5 +328,5 @@ fn zenithSkills (u16 n){
 	return ret;
 };
 
-DecoID decoIDTable[6547] @ header.ptrs.Deco_ID [[name("Deco ID Table")]];
+DecoID decoIDTable[6547] @ header.ptrs.Deco_ID [[name("Data")]];
 

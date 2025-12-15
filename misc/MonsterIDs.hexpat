@@ -3,9 +3,9 @@
 #include <std/io.pat>
 #include <std/string.pat>
 
+const u8 MONSTER_NAME_COUNT = 0xB1;
+
 enum MonsterID : u8 {
-// |          Name          |  Hex  |  Dec  |
-// ==========================================
     UNK                     = 0x00, //   0
     Rathian                 = 0x01, //   1
     Fatalis                 = 0x02, //   2
@@ -185,7 +185,213 @@ enum MonsterID : u8 {
     King_Shakalaka          = 0xB0  // 176
 };
 
+const str MonsterNames[MONSTER_NAME_COUNT] = {
+    "UNK",
+    "Rathian",
+    "Fatalis",
+    "Kelbi",
+    "Mosswine",
+    "Bullfango",
+    "Yian Kut-Ku",
+    "Lao-Shan Lung",
+    "Cephadrome",
+    "Felyne",
+    "Veggie Elder",
+    "Rathalos",
+    "Aptonoth",
+    "Genprey",
+    "Diablos",
+    "Khezu",
+    "Velociprey",
+    "Gravios",
+    "Maybe Felyne",
+    "Vespoid",
+    "Gypceros",
+    "Plesioth",
+    "Basarios",
+    "Melynx",
+    "Hornetaur",
+    "Apceros",
+    "Monoblos",
+    "Velocidrome",
+    "Gendrome",
+    "Rocks",
+    "Ioprey",
+    "Iodrome",
+    "Pugis",
+    "Kirin",
+    "Cephalos",
+    "Giaprey & Giadrome",
+    "Crimson Fatalis",
+    "Pink Rathian",
+    "Blue Yian Kut-Ku",
+    "Purple Gypceros",
+    "Yian Garuga",
+    "Silver Rathalos",
+    "Gold Rathian",
+    "Black Diablos",
+    "White Monoblos",
+    "Red Khezu",
+    "Green Plesioth",
+    "Black Gravios",
+    "Diamyo Hermitaur",
+    "Azure Rathalos",
+    "Ashen Lao-Shan Lung",
+    "Blangonga",
+    "Congalala",
+    "Rajang",
+    "Kushala Daora",
+    "Shen Gaoren",
+    "Great Thunderbug",
+    "Shakalaka",
+    "Yama Tsukami",
+    "Chameleos",
+    "Rusted Kushala Daora",
+    "Blango",
+    "Conga",
+    "Remobra",
+    "Lunastra",
+    "Teostra",
+    "Hermitaur",
+    "Shogun Ceanataur",
+    "Bulldrome",
+    "Anteka",
+    "Popo",
+    "White Fatalis",
+    "Yama Tsukami (2)",
+    "Ceanataur",
+    "Hypnocatrice",
+    "Lavasioth",
+    "Tigrex",
+    "Akantor",
+    "Bright Hypnoc",
+    "Lavasioth (Subspecies)",
+    "Espinas",
+    "Orange Espinas",
+    "White Hypnox",
+    "Akura Vashimu",
+    "Akura Jebia",
+    "Berukyurosu",
+    "Cactus",
+    "Gorge Objects",
+    "Gorge Rocks",
+    "Pariapuria",
+    "White Espinas",
+    "Kamu Orugaron",
+    "Nono Orugaron",
+    "Raviente",
+    "Dyuragaua",
+    "Doragyurosu",
+    "Gurenzeburu",
+    "Burukku",
+    "Erupe",
+    "Rukodiora",
+    "Unknown",
+    "Gogomoa",
+    "Kokomoa",
+    "Taikun Zamuza",
+    "Abiorugu",
+    "Kuarusepusu",
+    "Odibatorasu",
+    "Disufiroa",
+    "Rebidiora",
+    "Anorupatisu",
+    "Hyujikiki",
+    "Midogaron",
+    "Giaorugu",
+    "Mi-Ru",
+    "Farunokku",
+    "Pokaradon",
+    "Shantien",
+    "Pokara",
+    "Dummy",
+    "Goruganosu",
+    "Aruganosu",
+    "Baruragaru",
+    "Zerureusu",
+    "Gougarf",
+    "Uruki",
+    "Forokururu",
+    "Meraginasu",
+    "Diorekkusu",
+    "Garuba Daora",
+    "Inagami",
+    "Varusaburosu",
+    "Poborubarumu",
+    "Duremudira",
+    "UNK",
+    "Felyne",
+    "Blue NPC",
+    "UNK",
+    "Cactus",
+    "Veggie Elders",
+    "Gureadomosu",
+    "Harudomerugu",
+    "Toridcless",
+    "Gasurabazura",
+    "Kusubami",
+    "Yama Kurai",
+    "Dure (3rd Phase)",
+    "Zinogre",
+    "Deviljho",
+    "Brachydios",
+    "Berserk Raviente",
+    "Toa Tesukatora",
+    "Barioth",
+    "Uragaan",
+    "Stygian Zinogre",
+    "Guanzorumu",
+    "Deviljho",
+    "UNK",
+    "Egyurasu",
+    "Voljang",
+    "Nargacuga",
+    "Keoaruboru",
+    "Zenaserisu",
+    "Gore Magala",
+    "Blinking Nargacuga",
+    "Shagaru Magala",
+    "Amatsu",
+    "Eruzerion",
+    "Musou Dure",
+    "Rocks",
+    "Seregios",
+    "Bogabadorumu",
+    "Blue Barrek",
+    "Musou Bogabadorumu",
+    "Costumed Uruki",
+    "Musou Zerureusu",
+    "PSO2 Rappy",
+    "King Shakalaka"
+};
+
+struct Monster {
+    MonsterID monster_id;
+    u8  padding0;
+    u16 monster_flag;
+    u16 base_points;
+    u16 level1_points;
+    u16 level2_points;
+    u16 level3_points;
+    u16 level4_points;
+    u16 level5_points;
+} [[name(fmtMonsterEntry(this))]];
+
 fn fmtMonsterID(MonsterID n) {
-    str s = std::string::to_string(n);
-    return std::string::substr(s, 11, std::string::length(s) - 11);
+    u8 id = u8(n);
+
+    if (id >= MONSTER_NAME_COUNT)
+        return "UNKNOWN";
+
+    return MonsterNames[id];
+};
+
+fn fmtMonsterEntry(Monster m) {
+    u8 id = u8(m.monster_id);
+
+    return std::format(
+        "{} - {}",
+        id,
+        fmtMonsterID(m.monster_id)
+    );
 };

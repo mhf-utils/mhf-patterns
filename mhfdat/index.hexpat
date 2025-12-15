@@ -56,7 +56,7 @@
 #endif
 
 #ifdef __DATA_PART_BREAKS
-#include <mhfdat/data/partbreaks.hexpat>
+#include <mhfdat/data/part_breaks.hexpat>
 #endif
 
 #ifdef __DATA_QUESTS

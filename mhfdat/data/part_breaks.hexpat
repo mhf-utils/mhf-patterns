@@ -16,9 +16,14 @@ fn partBreakDropFmt (PartBreakDrop n) {
 };
 
 struct PartBreakDropTable {
-    PartBreakDrop breakDrops [while(std::mem::read_signed($,2)!=-1)] 
-        [[inline]];
-} [[inline]];
+    PartBreakDrop breakDrops[
+        while (
+            std::mem::read_unsigned($, 2) != 0 &&
+            std::mem::read_unsigned($ + 2, 2) != 0 &&
+            ($ - __start) < 0x100   // limite HARD
+        )
+    ] [[inline]];
+};
 
 struct CarveDrop {
     u16 percentage;
@@ -31,11 +36,17 @@ fn carveDropFmt (CarveDrop n) {
 };
 
 struct CarveDropTable {
-    CarveDrop carves [while(std::mem::read_signed($,2)!=-1)] [[inline]];
-} [[inline]];
+    CarveDrop carves[
+        while (
+            std::mem::read_unsigned($, 2) != 0 &&
+            std::mem::read_unsigned($ + 2, 2) != 0 &&
+            ($ - __start) < 0x80
+        )
+    ] [[inline]];
+};
 
-ptVar<PartBreakDropTable> ptPartBreakDTs[numPartBreakDTs] @ header.ptrs.partBreakItemDrops;
-ptVar<CarveDropTable> ptCarveDTs[numCarveDTs] @ header.ptrs.carveItemDrops;
+ptVar<PartBreakDropTable> ptPartBreakDTs[counts.numPartBreakDTs] @ header.ptrs.partBreakItemDrops;
+ptVar<CarveDropTable> ptCarveDTs[counts.numCarveDTs] @ header.ptrs.carveItemDrops;
 
 struct HC_GR_Carve {
     MonsterID monId;

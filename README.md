@@ -1,36 +1,83 @@
-# Monster Hunter Frontier Patterns
+# Monster Hunter Frontier – ImHex Patterns
+ImHex patterns documenting the binary data structures used by **Monster Hunter Frontier (MHF)**.
+This repository aims to provide accurate, readable, and extensible patterns for exploring and reverse-engineering Frontier’s game files using **[ImHex](https://imhex.werwolv.net/)**.
 
-[imhex](https://imhex.werwolv.net/) [(github)](https://github.com/WerWolv/ImHex) patterns documenting the structure of data in Monster Hunter Frontier
+## 📦 Supported Formats
+The patterns primarily target Frontier binary files such as:
 
-## Format
+* `mhfdat.bin`
+* `mhfinf.bin`
+* `mhfpac.bin`
+* `mhfemd.bin`
+* quest-related binaries
 
-Patterns are titled by the file they document, or if sectioned, foldered by the file they document, and named by the aspect of the file. For example, `mhfdat/data/equipdata.hexpat` documents the equipment data section of `mhfdat.bin`, and is called in the main pattern, `mhfdat.bin.hexpat`. Section patterns are not loaded directly, but instead imported by the main pattern, and enabled or disabled by `#define` statements at the top of the pattern.
+Each file may be documented either:
 
-## Using these patterns
+* **directly** by a top-level pattern, or
+* **modularly**, via sectioned sub-patterns imported by a main file pattern.
 
-To properly utilize these patterns, they should be placed in one of the imhex "patterns" folders (see Help>About in the program). This includes subfolders. 
+## 🧩 Pattern Organization
+Patterns are organized by **file** and **responsibility**:
 
-I personally recommend making a Project, as imhex will look for a folder named "patterns" adjacent to the project file.
+```
+mhfdat/
+├── index.hexpat          # Main entry point for mhfdat.bin
+├── header.hexpat         # File header & pointers
+└── data/
+    ├── monsters.hexpat
+    ├── items.hexpat
+    ├── equipments.hexpat
+    ├── partbreaks.hexpat
+    └── ...
+```
 
-Some more information is available on our [Introduction Wiki page](https://github.com/var-username/Monster-Hunter-Frontier-Patterns/wiki/Introduction)
+### 🔹 Modular loading
+Section patterns are **not meant to be loaded directly**.
 
-## Why did I make this?
+They are imported by a main pattern (e.g. `mhfdat/index.hexpat`) and conditionally enabled using compile-time flags:
 
-In short I wanted to reverse engineer how Frontier stores data for the purposes of modding and simple exploration. Since there is very little public data on the matter, I started my own project.
+```c
+#define __DATA_MONSTERS 1
+#define __DATA_ITEMS 1
+```
 
-Also, funny
+This allows:
 
-## Resources
+* selective parsing
+* faster evaluation
+* easier debugging
 
-* [imhex Pattern Documentation](https://docs.werwolv.net/pattern-language/)
-* [ReFrontier](https://github.com/mhvuze/ReFrontier)
-    * At the moment, this is THE best resource documenting the data structure of Frontier
-    * ReFrontier mentions 010 template files made by Fist. The link is dead and I cannot find these templates anywhere. If found, those templates could be INCREDIBLY USEFUL
-* [ricochhet/MHF-Quest-Resources](https://github.com/ricochhet/MHF-Quest-Resources)
-* [Yuvi-App/MHF-QuestEditor](https://github.com/Yuvi-App/MHF-QuestEditor)
-* [suzaku01's repositories](https://github.com/suzaku01)
+## 🚀 Using These Patterns
+### Option 1 – ImHex global patterns folder (recommended)
+Copy or symlink this repository into one of ImHex’s pattern directories
+(see **Help → About** in ImHex to locate them).
 
+Example (Windows, admin shell):
 
-## Credits
-* Thanks to [@Malckyor](https://github.com/Malckyor) for giving me access to prior work he did with [@Chakratos](https://github.com/Chakratos)!
-* Thanks to [@DorielRivalet](https://github.com/DorielRivalet) for sending me the 010 templates they had access to!
+```cmd
+mklink /D "C:\Program Files\ImHex\patterns\mhf-pattern" "G:\path\to\mhf-pattern"
+```
+
+### Option 2 – ImHex Project (best for development)
+Create an ImHex project and place this repository in a sibling `patterns/` folder:
+
+```
+MyProject/
+├── project.imhex
+├── patterns/
+│   └── mhf-pattern/
+└── binaries/
+    └── mhfdat.bin
+```
+
+ImHex will automatically resolve imports from `patterns/`.
+
+## 🧠 What These Patterns Provide
+* 🧾 Struct-accurate parsing of Frontier binary formats
+* 🐲 Fully named monster tables (ID → hex → decimal → name)
+* 🎯 Drop tables, part breaks, carve data
+* 🧩 Pointer-based table resolution (`ptVar<>`)
+* 🔍 Safe parsing with bounds checking
+* 🧱 Modular, extensible design for future work
+
+Patterns favor **correctness and readability** over assumptions.

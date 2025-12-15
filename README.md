@@ -4,7 +4,7 @@
 
 ## Format
 
-Patterns are titled by the file they document, or if sectioned, foldered by the file they document, and named by the aspect of the file. For example, `mhfdat/equipdata.hexpat` documents the equipment data section of `mhfdat.bin`, and is called in the main pattern, `mhfdat.bin.hexpat`. Section patterns are not loaded directly, but instead imported by the main pattern, and enabled or disabled by `#define` statements at the top of the pattern.
+Patterns are titled by the file they document, or if sectioned, foldered by the file they document, and named by the aspect of the file. For example, `mhfdat/data/equipdata.hexpat` documents the equipment data section of `mhfdat.bin`, and is called in the main pattern, `mhfdat.bin.hexpat`. Section patterns are not loaded directly, but instead imported by the main pattern, and enabled or disabled by `#define` statements at the top of the pattern.
 
 ## Using these patterns
 

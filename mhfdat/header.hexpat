@@ -21,10 +21,10 @@ struct ptr_table {
     ptr armorForging            [[name("Armor Forging Pointer")]]; 
     ptr otherWeaponForging      [[name("Other Weapon Forging Pointer")]];
     ptr meleeWeaponUpgradePath  [[name("Melee Weapon Upgrade Path Pointer")]];
+    // @ 0x040
     ptr rangedWeaponUpgradePath [[name("Ranged Weapon Upgrade Path Pointer")]];
-    unk_ptr hd_dll_af47d8;
+    ptr DecoShop                [[name("Deco Shop Pointer")]];
     unk_ptr hd_dll_af47e1;
-
     ptr armorUpgradeMats        [[name("Armor Upgrade Materials Pointer")]];
 
     // @ 0x050
@@ -78,14 +78,14 @@ struct ptr_table {
     unk_ptr hd_dll_af4d14;
     unk_ptr hd_dll_af4d08;      // @ 0x0E0
     unk_ptr hd_dll_af47b5;
-    unk_ptr hd_dll_af47af       [[comment("Seems to point to how many of certain objects there are, such as weapons")]];
+    ptr hd_dll_af47af       [[name("Equipment Counts Pointer"), comment("Seems to point to how many of certain objects there are, such as weapons")]];
     unk_ptr hd_dll_af4d2d;
     
     // + 0x0F0
     ptr hunterPearlSkills       [[name("Hunter Pearl Skills")]];
 
     unk_ptr hd_dll_af4d7b;
-    unk_ptr hd_dll_af4daf;
+    ptr Deco_ID                 [[name("Deco ID?"), comment("maybe table for decos")]];
 
     ptr itemData                [[name("Item Data Pointer")]];
     ptr itemNames               [[name("Item Names Pointer")]];
@@ -99,8 +99,8 @@ struct ptr_table {
     unk_ptr hd_dll_af4e0f;
     unk_ptr hd_dll_af4e3a;
 
-    // + 0x120
-    ptr carveItemDrops          [[name("Carve Drop Data Pointer")]];
+    
+    ptr carveItemDrops          [[name("Carve Drop Data Pointer")]]; // + 0x120
     ptr partBreakItemDrops      [[name("Part Break Drop Data Pointer")]];
     unk_ptr hd_dll_af4ec1;
     ptr itemDesc                [[name("Item Descriptions Pointer")]];
@@ -209,7 +209,7 @@ struct ptr_table {
     unk_ptr hd_dll_af5a69;
     unk_ptr hd_dll_af5a6f;
     unk_ptr hd_dll_af5a75;
-    unk_ptr hd_dll_af5b1b;      // @ 0x2C0
+    ptr CuffCrafting            [[name("Cuff Crafting Pointer")]];      // @ 0x2C0
     unk_ptr hd_dll_af5b21;
     unk_ptr hd_dll_af5b27;
     unk_ptr hd_dll_af5a7b;
@@ -231,7 +231,7 @@ struct ptr_table {
     unk_ptr hd_dll_af5c06;
     unk_ptr hd_dll_af5c0c;      // @ 0x310
     unk_ptr hd_dll_af5c12;
-    unk_ptr hd_dll_af5b9d;
+    ptr skillValues;
     unk_ptr hd_dll_af5c18;
     unk_ptr hd_dll_af5c1e;      // @ 0x320
     unk_ptr hd_dll_af5bd0;
@@ -259,7 +259,7 @@ struct ptr_table {
     unk_ptr hd_dll_af5c96;
     unk_ptr hd_dll_af5c9c;
     unk_ptr hd_dll_af5ca2;
-    unk_ptr hd_dll_af5ca8;      // @ 0x380
+    ptr RastaWeaponSlotIndex [[name("Rasta Weapon Slot Index")]];      // @ 0x380
     unk_ptr hd_dll_af5cae;
     unk_ptr hd_dll_af5cb4;
     unk_ptr hd_dll_af5cba;
@@ -362,14 +362,14 @@ struct ptr_table {
     unk_ptr hd_dll_af6434;      // @ 0x510
     unk_ptr hd_dll_af643a;
     unk_ptr hd_dll_af6440;
-    unk_ptr hd_dll_af6477;
+    ptr GunTypeTable            [[name("Gun Type Table Pointer")]];
     unk_ptr hd_dll_af647d;      // @ 0x520
-    unk_ptr hd_dll_af6588;
+    ptr my_mission_data         [[name("My Mission Data Pointer")]];
     unk_ptr hd_dll_af658e;
     unk_ptr hd_dll_af659a;
     unk_ptr hd_dll_af65ea;      // @ 0x530
     unk_ptr hd_dll_af65f0;
-    unk_ptr hd_dll_af65f6;
+    ptr my_mission_objective    [[name("My Mission Objective Pointer")]];
     unk_ptr hd_dll_af65fc;
     unk_ptr hd_dll_af6602;      // @ 0x540
     unk_ptr hd_dll_af6608;
@@ -404,17 +404,17 @@ struct ptr_table {
     unk_ptr hd_dll_af703a;
     unk_ptr hd_dll_af66d6;
     unk_ptr hd_dll_af66dc;      // @ 0x5C0
-    unk_ptr hd_dll_af67da;
-    unk_ptr hd_dll_af683c;
-    unk_ptr hd_dll_af689c;
-    unk_ptr hd_dll_af68fc;      // @ 0x5D0
-    unk_ptr hd_dll_af695c;
-    unk_ptr hd_dll_af69bc;
-    unk_ptr hd_dll_af6a1c;
-    unk_ptr hd_dll_af6a7c;      // @ 0x5E0
-    unk_ptr hd_dll_af6adc;
-    unk_ptr hd_dll_af6b3c;
-    unk_ptr hd_dll_af6b9c;
+    ptr GreatSword_Params_pointer [[name("Great Sword Params Pointer")]];
+    ptr HeavyBowGun_Params_pointer [[name("Heavy Bowgun Params Pointer")]];
+    ptr Hammer_Params_pointer [[name("Hammer Params Pointer")]];
+    ptr Lance_Params_pointer [[name("Lance Params Pointer")]];      // @ 0x5D0
+    ptr SwordAndShield_Params_pointer [[name ("Sword and Shield Params Pointer")]];
+    ptr LightBowgun_Params_pointer [[name("Light Bowgun Params Pointer")]];
+    ptr DualBlades_Params_pointer [[name("Dual Blades Params Pointer")]];
+    ptr LongSword_Params_pointer [[name ("Longsword Params Pointer")]];      // @ 0x5E0
+    ptr HuntingHorn_Params_pointer [[name("Hunting Horn Params Pointer")]];
+    ptr GunLance_Params_pointer [[name("Gunlance Params Pointer")]];
+    ptr Bow_Params_pointer [[name("Bow Params Pointer")]];
 
     // @ 0x5F0
     ptr weaponGRForging         [[name("G-Rank Weapon Forging Pointer")]];
@@ -478,7 +478,7 @@ struct ptr_table {
     unk_ptr hd_dll_af715a;
     unk_ptr hd_dll_af71aa;
     unk_ptr hd_dll_af71fa;
-    unk_ptr hd_dll_af724a;      // @ 0x6E0
+    ptr GRankQuestList [[name("G-Rank Quest Pointer")]];      // @ 0x6E0
     unk_ptr hd_dll_af738a;
     unk_ptr hd_dll_af7390;
     unk_ptr hd_dll_af7396;
@@ -507,7 +507,7 @@ struct ptr_table {
     unk_ptr hd_dll_af72ea;
     unk_ptr hd_dll_af733a;
     unk_ptr hd_dll_af7759;
-    unk_ptr hd_dll_af775f;      // @ 0x750
+    ptr GrankCuffCrafting        [[name("G-Rank Cuff Crafting Pointer")]];      // @ 0x750
     unk_ptr hd_dll_af7765;
     padding[4];
     unk_ptr hd_dll_af7771;
@@ -533,7 +533,7 @@ struct ptr_table {
 
     ptr weaponSpecialForging    [[name("Special Weapon Forging Pointer")]];
     
-    ptr armorPremiumForging    [[name("Armor Premium Forging Pointer")]];      // @ 0x7B0
+    ptr armorPremiumForging     [[name("Armor Premium Forging Pointer")]];      // @ 0x7B0
     unk_ptr hd_dll_af787b;
     unk_ptr hd_dll_af7881;
     unk_ptr hd_dll_af7887;
@@ -554,7 +554,7 @@ struct ptr_table {
     unk_ptr hd_dll_af79d0;
     unk_ptr hd_dll_af7a00;
     unk_ptr hd_dll_af7a8e;      // @ 0x800
-    unk_ptr hd_dll_af7a94;
+    ptr AutomaticSkillsTable    [[name("Automatic Skills Table Pointer")]];
     unk_ptr hd_dll_af7a9a;
     unk_ptr hd_dll_af7aa0;
     unk_ptr hd_dll_af7aa6;      // @ 0x810
@@ -587,7 +587,7 @@ struct ptr_table {
     unk_ptr hd_dll_af7be3;
     unk_ptr hd_dll_af7c0a;      // @ 0x880
     unk_ptr hd_dll_af7c10;
-    unk_ptr hd_dll_af7c42;
+    ptr Tonfa_Params_pointer [[name("Tonfa Params Pointer")]];
     unk_ptr hd_dll_af7c9c;
     unk_ptr hd_dll_af7b5b;      // @ 0x890
     unk_ptr hd_dll_af7b61;
@@ -624,7 +624,7 @@ struct ptr_table {
     unk_ptr hd_dll_af469d;      // @ 0x910
     unk_ptr hd_dll_af818f;
     unk_ptr hd_dll_af81cc;
-    unk_ptr hd_dll_af821c;
+    unk_ptr hd_dll_af821c;      //0x91C
     unk_ptr hd_dll_af8183;      // @ 0x920
     unk_ptr hd_dll_af817d;
     unk_ptr hd_dll_af8189;
@@ -637,8 +637,8 @@ struct ptr_table {
     // @ 0x940
     ptr weaponTowerForging      [[name("Tower Weapon Forging Pointer")]];
 
-    unk_ptr hd_dll_af8320;
-    unk_ptr hd_dll_af8326;
+    ptr SigilTowerForging       [[name("Tower Sigil Forging Pointer")]];
+    ptr towerMedalShop          [[name("Tower Medal Shop Pointer")]];
     unk_ptr hd_dll_af832c;
     unk_ptr hd_dll_af8332;      // @ 0x950
     unk_ptr hd_dll_af8338;
@@ -674,7 +674,7 @@ struct ptr_table {
     padding[4];
     unk_ptr hd_dll_af85c4;
     padding[4];
-    unk_ptr hd_dll_af85ca;      // @ 0x9D0
+    unk_ptr hd_dll_af85ca;      // @ 0x9D0 Tower/G50 Params ID?
     padding[4];
     unk_ptr hd_dll_af85d0;
     unk_ptr hd_dll_af85d6;
@@ -727,7 +727,7 @@ struct ptr_table {
     unk_ptr hd_dll_af88c7;
     unk_ptr hd_dll_af88f2;
     padding[4];
-    padding[4];                 // @ 0xA90
+    ptr SwitchAxe_Params        [[name("Switch Axe Params Pointer")]];                 // @ 0xA90
     unk_ptr hd_dll_af8cac;
 
     ptr questList               [[name("Quest List Struct Pointer")]];
@@ -766,11 +766,11 @@ struct ptr_table {
     unk_ptr hd_dll_af4709;
     unk_ptr hd_dll_af8f07;
     unk_ptr hd_dll_af8f0d;
-    unk_ptr hd_dll_af8f13;      // @ 0xB10
+    ptr Road_Cat_Item_Shop_Pointer [[name("Road Cat Item Shop Pointer")]];      // @ 0xB10
     unk_ptr hd_dll_af8f19;
     unk_ptr hd_dll_af4729;
     unk_ptr hd_dll_af8f1f;
-    unk_ptr hd_dll_af8f25;      // @ 0xB20
+    ptr Road_Monster_Point_Value_Pointer [[name("Road Monster Point Value Pointer")]];      // @ 0xB20
     unk_ptr hd_dll_af8f2b;
     unk_ptr hd_dll_af8f31;
 
@@ -782,7 +782,7 @@ struct ptr_table {
     unk_ptr hd_dll_af8fca;
     unk_ptr hd_dll_af8fd0;      // @ 0xB40
     unk_ptr hd_dll_af8fd6;
-    unk_ptr hd_dll_af47db;
+    ptr GrankDecoShop          [[name("Grank Deco Shop Pointer")]];
     unk_ptr hd_dll_af8fdc;
     unk_ptr hd_dll_af8ff6;      // @ 0xB50
     unk_ptr hd_dll_af903a;
@@ -802,12 +802,12 @@ struct ptr_table {
     unk_ptr hd_dll_af91ba;
     unk_ptr hd_dll_af91e4;      // @ 0xB90
     unk_ptr hd_dll_af9323;
-    unk_ptr hd_dll_af9399;
+    ptr Magnetspike_params_pointer [[name("Magnetspike Params Pointer")]];
     unk_ptr hd_dll_af93fc;
     unk_ptr hd_dll_af9402;      // @ 0xBA0
     unk_ptr hd_dll_af9450;
     unk_ptr hd_dll_af9408;
-    unk_ptr hd_dll_af59bf;
+    ptr CombineShop [[name("Combine Shop Pointer")]];
 };
 
 struct mhfdat_header {

@@ -109,6 +109,26 @@ u32 __sizeof_Item = 0x24;
 fn plusone (u8 n) {
 	return n+1;
 };
+
+fn equipType (u16 n) {
+str ret = "!!Unknown!!";
+
+match (n) {
+	(0x00): ret = "Normal Cuff";
+	(0x01): ret = "Premium Cuff";
+	(0x02): ret = "Cat Deco";
+	(0x03): ret = "Cat Deco2";
+	(0x04): ret = "Tower Deco";
+	(0x06): ret = "Sigil";
+	(0x07): ret = "Sigil2";
+	(0x08): ret = "Z Cuff";
+	(0x09): ret = "Premium Z Cuff";
+	(0x0A): ret = "Sigil3";
+	(0x0B): ret = "Hidden Cuff";
+}
+
+return ret;
+};
 	
 fn getStructItemName(auto i) {
 	return getItemName(($-header.ptrs.itemData)/__sizeof_Item);
@@ -130,21 +150,21 @@ struct Item {
 	u8 iconColor [[comment("Icon color")]]; 
 	u8 unk07;
 	
-	u16 unk08; // pax says the internal name for this is bottle?
+	u16 bottle; // pax says the internal name for this is bottle?
 	u16 unk0A; // related to hc carbes/eggs/infos books, probably depreciated
 	
 	u32 buyPrice;
 	u32 sellPrice;
 
 	u16 type [[comment("Item Type")]]; // 04 = Consumable, 05 = Placeable	
-	u16 unk16; // deco_id
+	u16 decoID; // deco_id
 	
 	u16 unk18;
 	u8 unk1A;
 	u8 unk1B;
 	
-	u16 unk1C; // equip_type
-	u8 unk1E; //is_gz
+	u16 equipType; // equip_type is giving the item type, for sigils for example
+	u8 isGz; //is_gz
 	u8 unk1F;
 	
 	u16 unk20; 

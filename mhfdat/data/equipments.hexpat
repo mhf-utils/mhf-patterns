@@ -39,7 +39,8 @@ struct EquipmentItem {
 
   u8 sthEventCrown;
   u16 unk1E;
-  u32 unk20; 
+  u16 EquipID [[name("Equipment ID")]];
+  u16 unk22;
   u32 unk24; 
   u16 unk28;
 
@@ -54,7 +55,7 @@ struct EquipmentItem {
   u32 unk38; 
   u16 unk3C;
   u8 unk3E; 
-  u8 unk3F; 
+  u8 ZeroF; 
   u32 unk40; 
   u16 unk44; 
   u16 zenithSkill;

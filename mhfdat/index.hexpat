@@ -5,49 +5,84 @@
 
 // DEFAULT DISPLAY: Include common data headers and constants
 #include <mhfdat/header.hexpat>
-#include <mhfdat/constants.hexpat>
-
-// CONDITIONAL DISPLAY: Include specific modules based on defined flags
-#ifdef __ITEMS
-#include <mhfdat/items.hexpat>
-#endif
-
-#ifdef __SHOP
-#include <mhfdat/shop.hexpat>
-#endif
-
-#ifdef __WEAPONS
-#include <mhfdat/weapons.hexpat>
-#endif
-
-#ifdef __EQUIPMENTS
-#include <mhfdat/equipments.hexpat>
-#endif
-
-#ifdef __CRAFTING
-#include <mhfdat/crafting.hexpat>
-#endif
-
-#ifdef __PART_BREAKS
-#include <mhfdat/partbreaks.hexpat>
-#endif
-
-#ifdef __QUESTS
-#include <mhfdat/quests.hexpat>
-#endif
-
-#ifdef __ARENA
-#include <mhfdat/arena.hexpat>
-#endif
-
-#ifdef __SEASONAL_EVENTS
-#include <mhfdat/seasonalevents.hexpat>
-#endif
-
-#ifdef __SHARPNESS
-#include <mhfdat/sharpness.hexpat>
-#endif
 
 #ifdef __DECOMPILE
-#include <mhfdat/decompile/decompile.hexpat>
+#include <mhfdat/decompile.hexpat>
+#endif
+
+// CONDITIONAL DISPLAY: Include specific modules based on defined flags
+#ifdef __DATA_ARENA
+#include <mhfdat/data/arena.hexpat>
+#endif
+
+#ifdef __DATA_AUTOMATIC_SKILLS
+#include <mhfdat/data/automatic_skills.hexpat>
+#endif
+
+#ifdef __DATA_CRAFTING
+#include <mhfdat/data/crafting.hexpat>
+#endif
+
+#ifdef __DATA_DATA_COUNTERS
+#include <mhfdat/data/data_counters.hexpat>
+#endif
+
+#ifdef __DATA_DECOID
+#include <mhfdat/data/decoID.hexpat>
+#endif
+
+#ifdef __DATA_EQUIPMENTS
+#include <mhfdat/data/equipments.hexpat>
+#endif
+
+#ifdef __DATA_EQUIPMENT_COUNTS
+#include <mhfdat/data/equipment_counts.hexpat>
+#endif
+
+#ifdef __DATA_EXTRA_COUNTERS
+#include <mhfdat/data/extra_counters.hexpat>
+#endif
+
+#ifdef __DATA_ITEMS
+#include <mhfdat/data/items.hexpat>
+#endif
+
+#ifdef __DATA_MISSIONS
+#include <mhfdat/data/missions.hexpat>
+#endif
+
+#ifdef __DATA_MONSTERS
+#include <mhfdat/data/monsters.hexpat>
+#endif
+
+#ifdef __DATA_PART_BREAKS
+#include <mhfdat/data/partbreaks.hexpat>
+#endif
+
+#ifdef __DATA_QUESTS
+#include <mhfdat/data/quests.hexpat>
+#endif
+
+#ifdef __DATA_SEASONAL_EVENTS
+#include <mhfdat/data/seasonalevents.hexpat>
+#endif
+
+#ifdef __DATA_SHARPNESS
+#include <mhfdat/data/sharpness.hexpat>
+#endif
+
+#ifdef __DATA_SHOP_ROAD_CAT
+#include <mhfdat/data/shop_road_cat.hexpat>
+#endif
+
+#ifdef __DATA_SHOP_TOWER_MEDAL
+#include <mhfdat/data/shop_tower_medal.hexpat>
+#endif
+
+#ifdef __DATA_SHOP
+#include <mhfdat/data/shop.hexpat>
+#endif
+
+#ifdef __DATA_WEAPONS
+#include <mhfdat/data/weapons.hexpat>
 #endif

@@ -20,7 +20,7 @@ struct ptrToStringArray {
 
 /*!	
 	`ptr` variables are all copied into a new buffer, plus the new buffer's 
- 	base position in memory, implying the program will use these as pointers 
+	base position in memory, implying the program will use these as pointers 
 	to other positions in the file
 */
 
@@ -34,7 +34,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 
 // Commented out to reduce clutter
 
-	s32px4 hd_dll_af4966 [while(std::mem::read_signed($,4))] @ 
+	s32px4 hd_dll_af4966 [while(std::mem::read_signed($,4) && $ < 65536)] @ 
 		header.ptrs.equipDesc [[name("Pointers to equipment descriptions?")]];
 
 	#ifdef __WEAPON_NAMES
@@ -102,7 +102,6 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 	struct_af4c11 hd_dll_af4c11[0xE] @ header.ptrs.hd_dll_af4bf5
 		[[name("Equipment Description Pointers")]];
 	ptr hd_dll_af4c01[0xE] @ header.ptrs.hd_dll_af4bfb;
- 
 	// [mhfo-hd.dll + 0xaf4ce0]
 
 	struct struct_af4ce0 {
@@ -155,7 +154,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 
 	struct_af5001 hd_dll_af5001[0xB1] @ header.ptrs.hd_dll_af4ff0;
 
-	ptr hd_dll_af505b[0xE] @ header.ptrs.hd_dll_af504a;
+	//ptr hd_dll_af505b[0xE] @ header.ptrs.hd_dll_af504a;
 //
 
 /* Yeah I have no idea how this works 

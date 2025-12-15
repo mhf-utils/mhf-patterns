@@ -185,8 +185,7 @@ enum MonsterID : u8 {
     King_Shakalaka          = 0xB0  // 176
 };
 
-fn fmtMonsterID (MonsterID n) {
+fn fmtMonsterID(MonsterID n) {
     str s = std::string::to_string(n);
-    // Lop off the "MonsterID::" part of the string
     return std::string::substr(s, 11, std::string::length(s) - 11);
 };

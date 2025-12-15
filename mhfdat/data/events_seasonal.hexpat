@@ -1,0 +1,9 @@
+#include <type/time.pat>
+
+struct Event_Time {
+    u32;
+    type::time_t;
+    type::time_t;
+} [[static]];
+
+Event_Time seaonalEvents[136] @ header.ptrs.seasonalEventTiming;

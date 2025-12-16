@@ -241,7 +241,8 @@ fn validateCategoryByIcon(u8 icon, u16 category) {
 
 fn getItemSanity(auto i) {
 	return std::format(
-		"{} | {} | {} | {}",
+		"[{}] {} | {} | {} | {}",
+		getStructItemName(i),
 		validateInteractionByIcon(i.icon, i.interactionType),
 		validateUsabilityByIcon(i.icon, i.usabilityFlag),
 		validateCategoryByIcon(i.icon, i.type),
@@ -279,8 +280,7 @@ struct Item {
 
 	u16 unk20;
 	u16 unk22;
-}
-[[format("getItemSanity")]];
+} [[format("getItemSanity")]];
 // [[format("getStructItemName")]];
 
 

@@ -4,108 +4,86 @@
 /**
 	All icons can be found in 0055_001266FC.png, extracted from dat/mhf.dat
 */
-enum ItemIcon : u8 {
-	SMOKE = 0x00, 			// Ex: Farcaster, Smoke Bomb
-	ORB = 0x01,				// Ex: Paintball, Flash Bomb
-	BOMB = 0x02,			// Ex: Small Barrel Bomb
-	MEAT = 0x03,			// Ex: Raw Meat, Burnt Steak
-	FISH_BAIT = 0x04,		// Ex: Cricket, Worm, Tuna Bait
-	FISH = 0x05,			// Ex: Gormet Fish
-	BOX = 0x06,				// Ex: Trap Kit
-	WHETSTONE = 0x07,		// Ex: Whetstone
-	DUNG = 0x08,			// Ex: Dung, Dung Bomb
-	MONSTER = 0x09,			// Ex: Bullfango Head
-	BONES = 0x0A,			// Ex: Sm Monster Bone
-	BINOCULARS = 0x0B,		// Ex: Binoculars
-	MUSHROOM = 0x0C,		// Ex: Blue Mushroom
-	BUGNET = 0x0D,			// Ex: Bugnet
-	PELT = 0x0E,			// Ex: Mosswine Hide, Bullfango Pelt
-	LEAF = 0x0F,			// Ex: Herb
-	PICKAXE = 0x10,			// Ex: Iron Pickaxe
-	BARREL = 0x11,			// Ex: Small Barrel, Large Barrel
-	SEED = 0x12,			// Ex: Paintberry, Power Seed, Scatternut
-	BBQ_SPIT = 0x13,		// Ex: BBQ Spit
-	INSECT = 0x14,			// Ex: Insect Husk, Thunderbug
-	TRAP = 0x15,			// Ex: Pitfall Trap, Shock Trap
-	NET = 0x16,				// Ex: Web, Net
-	SCALE = 0x17,			// Ex: Broken Shell, Kut-Ku Scale
-	DRINK = 0x18,			// Ex: Potion, Cold Drink, Demondrug
-	EGG = 0x19,				// Ex: Monster Egg, Round Egg
-	AMMO = 0x1A,			// Ex: Normal S LV1
-	STONE = 0x1B,			// Ex: Stone, Iron Ore
-	HUSK = 0x1C,			// Ex: Huskberry, Bone Husks
-	MAP = 0x1D,				// Ex: Map
-	FLUTE = 0x1E,			// Ex: Flute
-	FANG = 0x1F,			// Ex: Wyvern Fang, Wyvern Claw
-	GRID = 0x20,			// Ex: Honey
-	QUESTION_MARK = 0x21,	// Ex: Garbage
-	COIN = 0x22,			// Ex: N Medal, Hunting Medal
-	SAC = 0x23,				// Ex: Catalyst, Screamer Sac, Might Pill
-	BOOK = 0x24,			// Ex: Book of Combos
-	TICKET = 0x25,			// Ex: Guild Ticket, Commendation, 30k Cheque
-	KNIFE = 0x26,			// Ex: Throwing Knife
-	MUSIC_SHEET = 0x29,		// Ex: HH Info
-	JEWEL = 0x2B,			// Ex: Aquaglow Jewel, Attack 1 Deco
-	HOUSE = 0x2C,			// Ex: House Expansion 1
-	PlANT = 0x2D,			// Ex: Green Onion
-	MOCHA = 0x2F,			// Ex: Mocha Green
-	POT = 0x30,				// Ex: Mocha Pot
-	BOOMERANG = 0x31,		// Ex: Boomerang
-	COATING = 0x32,			// Ex: Power Coating, Poison Coating
-	EMPTY_BOTTLE = 0x33,	// Ex: Empty Bottle
-	CARAPACE = 0x34,		// Ex: Small LobsterShl, Hermitaur Shell
-	/* Probably wrong
-	COMPASS = 0x35,			// Datamined
-	QUARTER_CIRCLE = 0x36,	// Datamined
-	CROSS = 0x37,			// Datamined
-	CROSSED_OUT = 0x3C,		// Datamined
-	MYSTERY_WEAPON = 0x3D,	// Datamined
-	GREATSWORD = 0x3E,		// Datamined
-	HEAVY_BOWGUN = 0x3F,	// Datamined
-	HAMMER = 0x40,			// Datamined
-	LANCE = 0x41,			// Datamined
-	SWORD_SHIELD = 0x42,	// Datamined
-	LIGHT_BOWGUN = 0x43,	// Datamined
-	DUAL_BLADES = 0x44,		// Datamined
-	LONGSWORD = 0x45,		// Datamined
-	HUNTING_HORN = 0x46, 	// Datamined
-	GUNLANCE = 0x47,		// Datamined
-	BOW = 0x48,				// Datamined
-	LEGWEAR = 0x49,			// Datamined
-	EQUIPED_MARKER = 0x4A,	// Datamined
-	HEADWEAR = 0x4B,		// Datamined
-	BODYWEAR = 0x4C,		// Datamined
-	ARMWEAR = 0x4D,			// Datamined
-	WAISTWEAR = 0x4E,		// Datamined
-	*/
-	SWORD_CRYSTAL = 0x4F,	// Ex: Bomb S.Crystal
-	POTION = 0x50,			// Ex: Halk Pot
-	FRUIT = 0x52,			// Ex: Shiriagari Fruit
-	/* Definitely wrong
-	SIGIL = 0x54,			// Datamined
-	G_RANK_MARKER = 0x58,	// Datamined
-	CAMERA = 0x5B,			// Datamined
-	CORNER_ARROWS = 0x5C,	// Datamined
-	TONFAS = 0x5D,			// Datamined
-	TREASURE = 0x5E,		// Datamined
-	PARTNYA_SWORD = 0x60,	// Datamined
-	PARTNYA_CLUB = 0x61,	// Datamined
-	PARTNYA_HELM = 0x62,	// Datamined
-	PARTNYA_CHEST = 0x63,	// Datamined
-	PARTNYA_HEAD = 0x64,	// Datamined
-	PARTNYA_CROWN = 0x65,	// Datamined
-	PARTNYA_MARKER = 0x66,	// Datamined
-	TOWER_MARKER = 0x67,	// Datamined
-	*/
-	TOWER_W_SIGIL = 0x56,	// Ex: (SnS) Beam Slash
-	TOWER_A_SIGIL = 0x5B,	// Ex: Skill UP Sigil
-	MANTLE = 0x5C,			// Ex: Narga Mantle
-	ARMOR_SPHERE = 0x5D,	// Ex: Armor Sphere
+fn getItemIconName(u8 icon) {
+	match (icon) {
+		(0x00): return "smoke";
+		(0x01): return "orb";
+		(0x02): return "bomb";
+		(0x03): return "meat";
+		(0x04): return "fish_bait";
+		(0x05): return "fish";
+		(0x06): return "box";
+		(0x07): return "whetstone";
+		(0x08): return "dung";
+		(0x09): return "monster";
+		(0x0A): return "bones";
+		(0x0B): return "binoculars";
+		(0x0C): return "mushroom";
+		(0x0D): return "bugnet";
+		(0x0E): return "pelt";
+		(0x0F): return "leaf";
+		(0x10): return "pickaxe";
+		(0x11): return "barrel";
+		(0x12): return "seed";
+		(0x13): return "bbq_spit";
+		(0x14): return "insect";
+		(0x15): return "trap";
+		(0x16): return "net";
+		(0x17): return "scale";
+		(0x18): return "drink";
+		(0x19): return "egg";
+		(0x1A): return "ammo";
+		(0x1B): return "stone";
+		(0x1C): return "husk";
+		(0x1D): return "map";
+		(0x1E): return "flute";
+		(0x1F): return "fang";
+		(0x20): return "grid";
+		(0x21): return "question_mark";
+		(0x22): return "coin";
+		(0x23): return "sac";
+		(0x24): return "book";
+		(0x25): return "ticket";
+		(0x26): return "knife";
+		(0x29): return "music_sheet";
+		(0x2B): return "jewel";
+		(0x2C): return "house";
+		(0x2D): return "plant";
+		(0x2F): return "mocha";
+		(0x30): return "pot";
+		(0x31): return "boomerang";
+		(0x32): return "coating";
+		(0x33): return "empty_bottle";
+		(0x34): return "carapace";
+		(0x4F): return "sword_crystal";
+		(0x50): return "potion";
+		(0x52): return "fruit";
+		(0x56): return "tower_w_sigil";
+		(0x5B): return "tower_a_sigil";
+		(0x5C): return "mantle";
+		(0x5D): return "armor_sphere";
+	}
+	return "unknown";
+};
+
+fn getItemIconColorName(u8 color) {
+	match (color) {
+		(0): return "white";
+		(1): return "red";
+		(2): return "green";
+		(3): return "blue";
+		(4): return "yellow";
+		(5): return "purple";
+		(6): return "teal";
+		(7): return "orange";
+		(8): return "pink";
+		(10): return "grey";
+	}
+	return "white";
 };
 
 u32 __sizeof_Item = 0x24;
 
-/// Add 1 to n (Used for pattern formatting)
 fn plusone (u8 n) {
 	return n+1;
 };
@@ -134,44 +112,177 @@ fn getStructItemName(auto i) {
 	return getItemName(($-header.ptrs.itemData)/__sizeof_Item);
 };
 
-struct Item {
-	u8 unk00; // interaction_type (1 = carryable, 2 = gun ammo, 3 = coating)
-	u8 unk01; // is_usable. bitflag & 0x10 == eatable
-	u8 rarity [[format("plusone")]];
-	u8 maxStack;
-	
-	u8 unk04; // data_bitset 0x20 sale, 6 mytra? 0x4 and 0x2 diva related, 0x40 = calculate tower points
-	ItemIcon icon [[comment("Item Icon")]];
+fn getItemInteractionTypeName(u8 n) {
+	match (n) {
+		(0): return "None";
+		(1): return "Carryable";
+		(2): return "Ammo";
+		(3): return "Coating";
+	}
+	return "Unknown";
+};
 
-	/** These colors are not the same as the text color codes 
-		00 = White, 01 = Red, 02 = Green, 03 = Blue, 04 = Yellow, 
-		05 = Purple, 06 = Light Blue, 08 = Pink, 0A = Gray
-	*/
-	u8 iconColor [[comment("Icon color")]]; 
+fn getItemUsabilityFlags(u8 f) {
+	str ret = "";
+	if (f & 0x01) ret += "Usable ";
+	if (f & 0x02) ret += "Quest ";
+	if (f & 0x10) ret += "Eatable ";
+	if (ret == "") ret = "None";
+	return ret;
+};
+
+fn getItemFlags(u8 f) {
+	str ret = "";
+	if (f & 0x20) ret += "Sellable ";
+	if (f & 0x40) ret += "TowerPoints ";
+	if (f & 0x04) ret += "DivaRelated ";
+	if (f & 0x02) ret += "DivaRelated2 ";
+	if (ret == "") ret = "None";
+	return ret;
+};
+
+fn getItemCategory(u16 n) {
+	match (n) {
+		(0x00): return "None";
+		(0x01): return "KeyItem";
+		(0x04): return "Consumable";
+		(0x05): return "Placeable";
+		(0x06): return "Ammo";
+		(0x07): return "Material";
+	}
+	return "UnknownCategory";
+};
+
+fn getItemEffectFromIconColor(u8 icon, u8 color) {
+	str iconName = getItemIconName(icon);
+
+	if (iconName == "meat") {
+		match (color) {
+			(0): return "RawMeat";
+			(1): return "PoisonMeat";
+			(3): return "ParalysisMeat";
+			(5): return "SleepMeat";
+			(4): return "RareMeat";
+		}
+	}
+
+	if (iconName == "ammo" || iconName == "coating") {
+		match (color) {
+			(1): return "Fire";
+			(2): return "Poison";
+			(3): return "Water";
+			(4): return "Thunder";
+			(5): return "Dragon";
+			(7): return "Blast";
+			(8): return "Sleep";
+		}
+	}
+
+	if (iconName == "drink" || iconName == "potion") {
+		match (color) {
+			(2): return "Heal";
+			(3): return "Environment";
+			(1): return "AttackBuff";
+			(5): return "MegaBuff";
+			(4): return "Stamina";
+		}
+	}
+
+	return "None";
+};
+
+fn validateEatableByIconColor(u8 icon, u8 color, u8 flags) {
+	str iconName = getItemIconName(icon);
+
+	if (iconName == "meat") {
+		if (color != 0 && (flags & 0x10))
+			return "⚠ bait meat marked eatable";
+	}
+
+	return "OK";
+};
+
+
+fn validateInteractionByIcon(u8 icon, u8 interactionType) {
+	str iconName = getItemIconName(icon);
+
+	if (iconName == "ammo" && interactionType != 2)
+		return "⚠ icon=ammo but interactionType!=Ammo";
+
+	if (iconName == "coating" && interactionType != 3)
+		return "⚠ icon=coating but interactionType!=Coating";
+
+	return "OK";
+};
+
+fn validateUsabilityByIcon(u8 icon, u8 flags) {
+	str iconName = getItemIconName(icon);
+
+	if (iconName == "meat" && !(flags & 0x10))
+		return "⚠ meat without Eatable flag";
+
+	if ((iconName == "potion" || iconName == "drink") && !(flags & 0x01))
+		return "⚠ consumable not usable";
+
+	return "OK";
+};
+
+fn validateCategoryByIcon(u8 icon, u16 category) {
+	str iconName = getItemIconName(icon);
+
+	if (iconName == "ammo" && category != 0x06)
+		return "⚠ ammo icon but category!=Ammo";
+
+	if (iconName == "trap" && category != 0x05)
+		return "⚠ trap icon but category!=Placeable";
+
+	return "OK";
+};
+
+fn getItemSanity(auto i) {
+	return std::format(
+		"{} | {} | {} | {}",
+		validateInteractionByIcon(i.icon, i.interactionType),
+		validateUsabilityByIcon(i.icon, i.usabilityFlag),
+		validateCategoryByIcon(i.icon, i.type),
+		getItemEffectFromIconColor(i.icon, i.iconColor)
+	);
+};
+
+struct Item {
+	u8 interactionType [[format("getItemInteractionTypeName")]];
+	u8 usabilityFlag   [[format("getItemUsabilityFlags")]];
+	u8 rarity          [[format("plusone")]];
+	u8 maxStack;
+
+	u8 itemFlags [[format("getItemFlags")]];
+	u8 icon      [[format("getItemIconName")]];
+	u8 iconColor [[format("getItemIconColorName")]];
 	u8 unk07;
-	
-	u16 bottle; // pax says the internal name for this is bottle?
-	u16 unk0A; // related to hc carbes/eggs/infos books, probably depreciated
-	
+
+	u16 bottle;
+	u16 unk0A;
+
 	u32 buyPrice;
 	u32 sellPrice;
 
-	u16 type [[comment("Item Type")]]; // 04 = Consumable, 05 = Placeable	
-	u16 decoID; // deco_id
-	
+	u16 type    [[format("getItemCategory")]];
+	u16 decoID;
+
 	u16 unk18;
 	u8 unk1A;
 	u8 unk1B;
-	
-	u16 equipType; // equip_type is giving the item type, for sigils for example
-	u8 isGz; //is_gz
+
+	u16 equipType [[format("equipType")]];
+	u8 isGz;
 	u8 unk1F;
-	
-	u16 unk20; 
-	u16 unk22; 
-} 
-[[format("getStructItemName")]]
-;
+
+	u16 unk20;
+	u16 unk22;
+}
+[[format("getItemSanity")]];
+// [[format("getStructItemName")]];
+
 
 struct ItemName {
 	s32p name;

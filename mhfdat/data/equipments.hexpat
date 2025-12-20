@@ -31,15 +31,17 @@ struct EquipmentItem {
   s8 dragonRes;
   s8 iceRes;
 
-  u8 unk19; 
+  u8 coefUpgrade; 
   u8 unk1A;
 
   u8 baseSlots; 
   u8 maxSlots;
 
-  u8 sthEventCrown;
-  u16 unk1E;
-  u16 EquipID [[name("Equipment ID")]];
+  u8 PostFesti;
+  u16 ShowNextLevel;
+  u16 EquipID [[
+    name("Equipment ID")
+  ]];
   u16 unk22;
   u32 unk24; 
   u16 unk28;
@@ -50,14 +52,15 @@ struct EquipmentItem {
   u8 skillId4; s8 skillPts4;
   u8 skillId5; s8 skillPts5;
 
-  u32 sthHiden;
+  u32 armorType;
 
-  u32 unk38; 
-  u16 unk3C;
-  u8 unk3E; 
+  u16 weapHiden; 
+  u16 decoItemID;
+  u16 towerSlots;
+  u8 Grank; 
   u8 ZeroF; 
-  u32 unk40; 
-  u16 unk44; 
+  u32 appPrice; 
+  u16 unk44;
   u16 zenithSkill;
 };
 

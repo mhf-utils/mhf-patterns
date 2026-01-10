@@ -29,8 +29,7 @@ struct ImportantNumbers {
     padding[0xCA];
     
     u16 numAutoSkills 
-        [[name("Number of Auto Skills"), 
-          comment("Value: 1484 (0x05CC)")]];
+        [[name("Number of Auto Skills")]];
     
 } [[name("Important Numbers")]];
 

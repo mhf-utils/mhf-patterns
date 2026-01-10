@@ -12,6 +12,23 @@ bitfield equipableBy {
   bool4:         1;
 };
 
+bitfield armorTypes {
+    gou : 1;           // bit 0
+    padding : 5;
+    Grank : 1;         // bit 6
+    supremacy : 1;     // bit 7
+    premium_HR : 1;       // bit 8
+    premium_GR : 1;  // bit 9 (utilisé dans GRANK_PREMIUM et ZENITH_PREMIUM)
+    padding : 4;
+    g_supremacy : 1;   // bit 14 (G_SUPREMACY)
+    gf_supremacy : 1;  // bit 15 (GF_SUPREMACY)
+    gx_supremacy : 1;  // bit 16 (GX_SUPREMACY)
+    padding : 1;
+    exotic : 1;        // bit 18
+    zenith : 1;        // bit 19
+    padding : 12;
+};
+
 struct EquipmentItem {
   s16 modelIdMale; 
   s16 modelIdFemale;
@@ -40,11 +57,16 @@ struct EquipmentItem {
   u8 PostFesti;
   u16 ShowNextLevel;
   u16 EquipID [[
-    name("Equipment ID")
+    name("Upgrade to Equipment ID 1")
   ]];
-  u16 unk22;
-  u32 unk24; 
-  u16 unk28;
+  u16 EquipID2 [[
+    name("Upgrade to Equipment ID 2")
+  ]];
+  u16 EquipID3 [[
+    name("Upgrade to Equipment ID 3")
+  ]];
+  u16 Effect_ID; 
+  u16 UpgradeID;
 
   u8 skillId1; s8 skillPts1;
   u8 skillId2; s8 skillPts2;
@@ -52,15 +74,15 @@ struct EquipmentItem {
   u8 skillId4; s8 skillPts4;
   u8 skillId5; s8 skillPts5;
 
-  u32 armorType;
+  armorTypes armorType;
 
-  u16 weapHiden; 
+  u32 weapHiden; 
+  u8 towerslots;
   u16 decoItemID;
-  u16 towerSlots;
   u8 Grank; 
   u8 ZeroF; 
   u32 appPrice; 
-  u16 unk44;
+  u8 unk44; 
   u16 zenithSkill;
 };
 

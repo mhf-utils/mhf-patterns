@@ -1,33 +1,35 @@
+#pragma once
+
 #include <misc/MonsterIDs.hexpat>
 #include <misc/types.pat>
 
-ptr hd_dll_af96ae[0xC] @ header.hd_dll_af96ab;
-ptr hd_dll_af96c1[3] @ header.hd_dll_af96be;
+ptr hd_dll_af96ae[0xC] @ header.pDur;
+ptr hd_dll_af96c1[3] @ header.pNando;
 
-ptr hd_dll_af9762[0xC] @ header.hd_dll_af975f;
+ptr hd_dll_af9762[0xC] @ header.pResDat;
 
-num hd_dll_af9780 @ (header.important_nums + 0xC);
+num hd_dll_af9780 @ (header.pEntryCounts + 0xC);
 struct unk_struct_af978a{MonsterID id; padding[3]; ptr; float;};
-unk_struct_af978a hd_dll_af978a[hd_dll_af9780] @ header.hd_dll_af9778;
+unk_struct_af978a hd_dll_af978a[hd_dll_af9780] @ header.pArenaEmTable;
 
-float hd_dll_af97a3_1[] @ header.hd_dll_af97a3;
-num hd_dll_af97a6 @ (header.important_nums + 0x10);
-ptr hd_dll_af97b2[hd_dll_af97a6] @ header.hd_dll_af97a0;
+float hd_dll_af97a3_1[] @ header.pArenaNandoVital;
+num hd_dll_af97a6 @ (header.pEntryCounts + 0x10);
+ptr hd_dll_af97b2[hd_dll_af97a6] @ header.pAiContents;
 
 // Seemingly useless loop at af97ce?
-ptr hd_dll_af97dc[while(std::mem::read_unsigned($,4))] @ header.hd_dll_af97c4;
+ptr hd_dll_af97dc[while(std::mem::read_unsigned($,4))] @ header.pTonfaGaugeLists;
 
 
-num hd_dll_af9809 @ (header.important_nums + 0x16);
-ptr hd_dll_af9816[hd_dll_af9809] @ header.hd_dll_af97f7;
-num hd_dll_af9827 @ (header.important_nums + 0x18);
+num hd_dll_af9809 @ (header.pEntryCounts + 0x16);
+ptr hd_dll_af9816[hd_dll_af9809] @ header.pAiStatusPacks;
+num hd_dll_af9827 @ (header.pEntryCounts + 0x18);
 
 struct p4_ptr {
 	padding[4]; ptr pointer;
 };
-p4_ptr hd_dll_af9834[hd_dll_af9827] @ (header.hd_dll_af982b);
+p4_ptr hd_dll_af9834[hd_dll_af9827] @ (header.pAiOverrideScripts);
 
-num hd_dll_af9850 @ (header.important_nums + 0x1c);
+num hd_dll_af9850 @ (header.pEntryCounts + 0x1c);
 
 struct unk_struct_af985f {
 	padding[0x1A]; s16 unk1A;
@@ -37,9 +39,9 @@ struct unk_struct_af985f {
 		padding[4];
 	}
 };
-unk_struct_af985f hd_dll_af985f[hd_dll_af9850] @ header.hd_dll_af9854;
+unk_struct_af985f hd_dll_af985f[hd_dll_af9850] @ header.pTargetCamTable;
 
-//u32 hd_dll_0503af[16] @ (header.hd_dll_af97a0 + 0x7a0);
+//u32 hd_dll_0503af[16] @ (header.pAiContents + 0x7a0);
 
 /* [mhfo-hd.dll + 0x02fb40] FUN_10030740
 	u32 hd_dll_02fbda @ 0x4C;
@@ -53,7 +55,7 @@ unk_struct_af985f hd_dll_af985f[hd_dll_af9850] @ header.hd_dll_af9854;
 		u32; padding[0xC];
 	};
 
-	ptr hd_dll_0503ac = header.hd_dll_af97a0;
+	ptr hd_dll_0503ac = header.pAiContents;
 	struct_0503bb hd_dll_0503bb[4] @ (hd_dll_0503ac + 0x7a0);
 	struct_0503bb hd_dll_0503df[4] @ (hd_dll_0503ac + 0x7a4);
 	struct_0503bb hd_dll_0503fa[4] @ (hd_dll_0503ac + 0x7a8);

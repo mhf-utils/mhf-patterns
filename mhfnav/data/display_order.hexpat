@@ -3,8 +3,14 @@
 #include <mhfnav/utils/index.pat>
 #include <mhfnav/header.hexpat>
 
+enum NaviGroup : u8 {
+    HR = 0,
+    GR = 1,
+    Other = 2
+};
+
 struct GroupSlotEntry {
-    u8 group;
+    NaviGroup group;
     u8 tabId;
 };
 

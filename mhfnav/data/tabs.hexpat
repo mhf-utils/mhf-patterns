@@ -17,18 +17,18 @@ enum ProgressType : u16 {
 
 bitfield TabFlags {
     disabled : 1;
-    unk1 : 1;
+    retired : 1;
     unk : 30;
 };
 
 bitfield TaskFlags {
     unk0 : 1;
     unk1 : 1;
-    unk2 : 1;
-    unk3 : 1;
-    unk4 : 1;
-    unk5 : 1;
-    silent : 1;
+    rowFrameByIndex : 1;
+    rowFrame5 : 1;
+    rowFrame4 : 1;
+    rowState80 : 1;
+    retired : 1;
     unk7 : 1;
 };
 
@@ -193,7 +193,7 @@ struct TaskEntry<auto Tab, auto Pool> {
 struct NaviTab {
     u32 tab = (addressof(this) - header.pTabs[0]) / 0x24;
     TabFlags flags;
-    u32 progressTab;
+    u32 unk04;
     u32 nTaskPool = rd32($ + 4);
     u32 pool = rd32($);
     TaskEntry<tab, pool> *pTaskPool[nTaskPool] : u32;

@@ -11,9 +11,9 @@ struct NaviConfig {
 struct MenuRow {
     float unused00[4];
     u32 boardEnabled;
-    u32 stateTimer;
-    u32 menuOpenTimer;
-    u32 menuNextTimer;
+    u32 screenInputDelay;
+    u32 menuOpenDelay;
+    u32 menuInputDelay;
 };
 
 struct HrMinRow {
@@ -39,15 +39,21 @@ struct WindowColorRow {
 };
 
 struct AnimationRow {
-    float fparams[3];
+    float startScale;
+    float scaleSpeed;
+    float scaleAccel;
     float unused0C;
-    u32 iparam0;
+    u32 holdFrames;
     u32 unused14[3];
 };
 
 struct PopupMotionRow {
-    float fparams[4];
-    u32 iparams[2];
+    float openSpeed;
+    float openAccel;
+    float closeSpeed;
+    float closeAccel;
+    u32 openStartPercent;
+    u32 closeStartPercent;
     u32 unused18[2];
 };
 
@@ -86,9 +92,12 @@ struct DivaWeaponRows {
 };
 
 struct PopupRow {
-    float popupF0;
+    float scrollSpeed;
     float unused04[3];
-    u32 iparams[4];
+    u32 waitFrames;
+    u32 waitRandomFrames;
+    u32 holdFrames;
+    u32 fadeStep;
 };
 
 struct GWeaponRows {
@@ -121,13 +130,13 @@ struct NaviConfigTable<auto N> {
     if (N >= 3) GrRangeRow grRange;
     if (N >= 4) HrMinRow hrUnlock2;
     if (N >= 5) WindowColorRow windowColor;
-    if (N >= 6) AnimationRow animation;
+    if (N >= 6) AnimationRow stampAnimation;
     if (N >= 7) PopupMotionRow popupMotion;
     if (N >= 8) TabCompleteRow tabComplete;
     if (N >= 9) UnusedRow unusedRow8;
     if (N >= 13) DivaWeaponRows divaWeapons;
     if (N >= 14) UnusedRow unusedRow13;
-    if (N >= 15) PopupRow popup;
+    if (N >= 15) PopupRow tipTicker;
     if (N >= 19) GWeaponRows gWeapons;
     if (N > 19) NaviConfig extraRows[N - 19];
 };

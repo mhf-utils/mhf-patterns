@@ -1,3 +1,5 @@
+#pragma once
+
 #include <std/mem.pat>
 #include <misc/types.pat>
 

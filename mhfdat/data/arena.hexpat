@@ -1,5 +1,6 @@
 #pragma once
 #include <mhfdat/utils/index.pat>
+#include <mhfdat/data/equipment_counts.hexpat>
 
 // =======================
 // Equipment
@@ -51,7 +52,7 @@ ptVar<ItemTable> ArenaItems[68]
 
 ptVar<ItemTable> ArenaAmmo[23]
     @ header.ptrs.arenaAmmo
-    [[group("Arena"), name("Ammo"), comment("Possibly ammo or extra items for ranged weapons")]];
+    [[group("Arena"), name("Ammo"), comment("Possibly ammo or extra items for ranged weapons; every list is empty on ZZ")]];
 
 
 // =======================
@@ -68,13 +69,25 @@ u16 ArenaStageIDsChunk1[34]
 
 
 // =======================
-// Mystery
+// Tutorial equipment sets (header 0x15C): important numbers + 0x48 pointers,
+// null for none, to 20-byte sets (23 pointers, 21 sets on ZZ). Layout from
+// ezemania2/mhf-file-editor, checked on ZZ (the sets give a Rookie Knife and
+// starter armor).
 // =======================
 
-struct unkChunk {
-    u16 unkVals[10];
-} [[inline]];
+struct TutorialSet {
+    u8  weaponType          [[format("getEquipType")]];
+    u8  unk01;
+    u16 weapon;
+    u16 weaponLevel;
+    u16 head;
+    u16 chest;
+    u16 arms;
+    u16 waist;
+    u16 legs;
+    u8  unk10[4];
+};
 
-ptVar<unkChunk> ArenaMystery[23]
-    @ header.ptrs.hd_dll_af5261
-    [[group("Arena"), name("Mystery Data")]];
+ptVar<TutorialSet> TutorialEquipSets[importantNums.numTutorialEquipSets]
+    @ header.ptrs.tutorialEquipSets
+    [[group("Arena"), name("Tutorial Equipment Sets")]];

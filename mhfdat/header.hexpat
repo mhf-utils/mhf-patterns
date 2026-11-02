@@ -1,5 +1,6 @@
 #pragma once
 
+#include <std/sys.pat>
 #include <misc/types.pat>
 
 struct signature {
@@ -19,7 +20,7 @@ struct ptr_table {
     padding[0x8];
     
     ptr armorForging            [[name("Armor Forging Pointer")]]; 
-    ptr otherWeaponForging      [[name("Other Weapon Forging Pointer")]];
+    ptr weaponForging           [[name("Weapon Forging Pointer"), comment("The basic forge list, melee and ranged weapons")]];
     ptr meleeWeaponUpgradePath  [[name("Melee Weapon Upgrade Path Pointer")]];
     // @ 0x040
     ptr rangedWeaponUpgradePath [[name("Ranged Weapon Upgrade Path Pointer")]];
@@ -62,15 +63,15 @@ struct ptr_table {
     
     unk_ptr hd_dll_af5038;      // @ 0x0A0
     ptr BulletSets              [[name("Bullet Sets Pointer")]];
-    unk_ptr hd_dll_af5044;
+    ptr weaponBonusSlots [[name("Weapon Upgrade Bonus Slots Pointer"), comment("Rows of 4 x s16; how many is unchecked (weapon_params.hexpat)")]]; // @ 0x0A8, hd_dll_af5044
     ptr SharpnessIds            [[name("Sharpness Ids Pointer")]];
-    unk_ptr hd_dll_af5073;      // @ 0x0B0
+    ptr coatingModifiers [[name("Coating Modifiers Pointer"), comment("Rows of 0x18 bytes; how many is unchecked (weapon_params.hexpat)")]]; // @ 0x0B0, hd_dll_af5073
     unk_ptr hd_dll_af5079;
     unk_ptr hd_dll_af507f;
     unk_ptr hd_dll_af5085;
     unk_ptr hd_dll_af508b;      // @ 0x0C0
     unk_ptr hd_dll_af4bc6;
-    unk_ptr hd_dll_af4bf5;
+    ptr shopCatalogs [[name("Shop Catalogs Pointer"), comment("14 records of 3 list pointers and a count; record 7 is the Guild Shop (shop_guild.hexpat)")]]; // @ 0x0C8, hd_dll_af4bf5
     unk_ptr hd_dll_af4bfb;
     unk_ptr hd_dll_af4cd1;      // @ 0x0D0
     unk_ptr hd_dll_af4cd7;
@@ -79,13 +80,13 @@ struct ptr_table {
     unk_ptr hd_dll_af4d08;      // @ 0x0E0
     unk_ptr hd_dll_af47b5;
     ptr hd_dll_af47af       [[name("Equipment Counts Pointer"), comment("Seems to point to how many of certain objects there are, such as weapons")]];
-    unk_ptr hd_dll_af4d2d;
+    ptr skillTree [[name("Skill Tree Pointer")]]; // @ 0x0EC, hd_dll_af4d2d
     
     // + 0x0F0
     ptr hunterPearlSkills       [[name("Hunter Pearl Skills")]];
 
-    unk_ptr hd_dll_af4d7b;
-    ptr Deco_ID                 [[name("Deco ID?"), comment("maybe table for decos")]];
+    ptr hunterPearlSkillLists [[name("Hunter Pearl Skill Lists Pointer"), comment("One list of Caravan gem skills per tier, important numbers + 0x5E of them")]]; // @ 0x0F4, hd_dll_af4d7b
+    ptr Deco_ID                 [[name("Decorations Pointer"), comment("An item's decoID (item +0x16) is its row here")]];
 
     ptr itemData                [[name("Item Data Pointer")]];
     ptr itemNames               [[name("Item Names Pointer")]];
@@ -105,7 +106,7 @@ struct ptr_table {
     unk_ptr hd_dll_af4ec1;
     ptr itemDesc                [[name("Item Descriptions Pointer")]];
 
-    unk_ptr hd_dll_af4f23;      // @ 0x130
+    ptr monsterCrowns [[name("Monster Crowns Pointer")]]; // @ 0x130, hd_dll_af4f23
     ptr monsterDesc             [[name("Monster Descriptions Pointer")]];
     unk_ptr hd_dll_af4ff0;
     unk_ptr hd_dll_af5145;
@@ -118,7 +119,7 @@ struct ptr_table {
     unk_ptr hd_dll_af51e0;      // @ 0x150
     ptr arenaStageIDC0          [[name("Arena Stage ID Chunk 0")]];
     ptr arenaAmmo               [[name("Arena Ammo Pointer??")]];
-    unk_ptr hd_dll_af5261;
+    ptr tutorialEquipSets [[name("Tutorial Equipment Sets Pointer")]]; // @ 0x15C, hd_dll_af5261
 
     // + 0x160
     ptr machaPotRewards         [[name("Macha Pot Rewards Pointer")]];
@@ -143,7 +144,7 @@ struct ptr_table {
     unk_ptr hd_dll_af55a0;
     unk_ptr hd_dll_af55d0;      // @ 0x1B0
     unk_ptr hd_dll_af5611;
-    unk_ptr hd_dll_af5640;
+    ptr beginnerQuests [[name("Beginner Quest IDs Pointer")]]; // @ 0x1B8, hd_dll_af5640
     unk_ptr hd_dll_af5646;
     unk_ptr hd_dll_af5661;      // @ 0x1C0
     unk_ptr hd_dll_af567c;
@@ -172,9 +173,9 @@ struct ptr_table {
     unk_ptr hd_dll_af584f;      // @ 0x220
     unk_ptr hd_dll_af5855;
     unk_ptr hd_dll_af584b;
-    unk_ptr hd_dll_af5861;
-    unk_ptr hd_dll_af5867;      // @ 0x230
-    unk_ptr hd_dll_af4da9;
+    ptr caravanVoyageRoutes [[name("Caravan Voyage Routes Pointer")]]; // @ 0x22C, hd_dll_af5861
+    ptr caravanLevels [[name("Caravan Levels Pointer")]]; // @ 0x230, hd_dll_af5867
+    ptr caravanTiers [[name("Caravan Tiers Pointer")]]; // @ 0x234, hd_dll_af4da9
     unk_ptr hd_dll_af586d;
     unk_ptr hd_dll_af588d;
     unk_ptr hd_dll_af58ca;      // @ 0x240
@@ -392,7 +393,7 @@ struct ptr_table {
     unk_ptr hd_dll_af668e;
     unk_ptr hd_dll_af6694;
     unk_ptr hd_dll_af669a;      // @ 0x590
-    unk_ptr hd_dll_af66a0;
+    ptr skillEffects [[name("Skill Effects Pointer")]]; // @ 0x594, hd_dll_af66a0
     unk_ptr hd_dll_af66a6;
     unk_ptr hd_dll_af66ac;
     unk_ptr hd_dll_af66b2;      // @ 0x5A0
@@ -419,8 +420,8 @@ struct ptr_table {
     // @ 0x5F0
     ptr weaponGRForging         [[name("G-Rank Weapon Forging Pointer")]];
     ptr armorGRForging          [[name("G-Rank Armor Forging Pointer")]];
-    unk_ptr hd_dll_af6c08;
-    ptr weaponG50Forging        [[name("G-50 Weapon Forging Pointer")]];
+    ptr g50MeleeUpgrades [[name("G-50 Melee Weapon Upgrades Pointer")]]; // @ 0x5F8, hd_dll_af6c08
+    ptr g50RangedUpgrades [[name("G-50 Ranged Weapon Upgrades Pointer")]]; // @ 0x5FC
 
     unk_ptr hd_dll_af6c14;      // @ 0x600
     unk_ptr hd_dll_af6c1a;
@@ -430,27 +431,28 @@ struct ptr_table {
     unk_ptr hd_dll_af6c32;
     unk_ptr hd_dll_af6c98;
     unk_ptr hd_dll_af6d00;
-    unk_ptr hd_dll_af6d60;      // @ 0x620
-    unk_ptr hd_dll_af6d66;
-    unk_ptr hd_dll_af6d6c;
-    unk_ptr hd_dll_af6da0;
+    // random sigils (sigils.hexpat)
+    ptr sigilCraftingRecipes    [[name("Sigil Crafting Recipes Pointer")]];        // @ 0x620, hd_dll_af6d60
+    ptr sigilSkillProbabilities [[name("Sigil Skill Probabilities Pointer")]];     // hd_dll_af6d66
+    ptr sigilSkillBlacklists    [[name("Sigil Skill Blacklists Pointer")]];        // hd_dll_af6d6c
+    ptr sigilSkillBaseInfo      [[name("Sigil Skill Base Info Pointer")]];         // hd_dll_af6da0
     unk_ptr hd_dll_af6da6;      // @ 0x630
     unk_ptr hd_dll_af6dac;
     unk_ptr hd_dll_af6db2;
     unk_ptr hd_dll_af6db8;
     unk_ptr hd_dll_af6dbe;      // @ 0x640
     unk_ptr hd_dll_af6e7c;
-    unk_ptr hd_dll_af6eab;
+    ptr skillParams [[name("Skill Parameters Pointer"), comment("Rush gauge thresholds at +0x64; the rest is shared with other skills")]]; // @ 0x648, hd_dll_af6eab
     unk_ptr hd_dll_af6eb1;
     unk_ptr hd_dll_af6eb7;      // @ 0x650
     unk_ptr hd_dll_af6e82;
     unk_ptr hd_dll_af6f6f;
-    unk_ptr hd_dll_af6f75;
+    ptr weaponParams [[name("Weapon Parameters Pointer")]]; // @ 0x65C, hd_dll_af6f75
     unk_ptr hd_dll_af6f7b;      // @ 0x660
     unk_ptr hd_dll_af6f81;
     unk_ptr hd_dll_af6fa8;
     unk_ptr hd_dll_af6fca;
-    unk_ptr hd_dll_af6fec;      // @ 0x670
+    ptr hornMelodies [[name("Horn Melodies Pointer")]]; // @ 0x670, hd_dll_af6fec
     unk_ptr hd_dll_af6ff2;
     unk_ptr hd_dll_af6ff8;
     unk_ptr hd_dll_af6ffe;
@@ -472,13 +474,14 @@ struct ptr_table {
     unk_ptr hd_dll_af706a;
     unk_ptr hd_dll_af7070;      // @ 0x6C0
     unk_ptr hd_dll_af704c;
-    unk_ptr hd_dll_af7076;
-    unk_ptr hd_dll_af70bc;
-    unk_ptr hd_dll_af710a;      // @ 0x6D0
-    unk_ptr hd_dll_af715a;
-    unk_ptr hd_dll_af71aa;
-    unk_ptr hd_dll_af71fa;
-    ptr GRankQuestList [[name("G-Rank Quest Pointer")]];      // @ 0x6E0
+    // G1 to G7 quest lists, each to a u32 holding the list's address (quests.hexpat)
+    ptr GRankQuestG1            [[name("G1 Quests Pointer")]];     // @ 0x6C8, hd_dll_af7076
+    ptr GRankQuestG2            [[name("G2 Quests Pointer")]];     // hd_dll_af70bc
+    ptr GRankQuestG3            [[name("G3 Quests Pointer")]];     // @ 0x6D0, hd_dll_af710a
+    ptr GRankQuestG4            [[name("G4 Quests Pointer")]];     // hd_dll_af715a
+    ptr GRankQuestG5            [[name("G5 Quests Pointer")]];     // hd_dll_af71aa
+    ptr GRankQuestG6            [[name("G6 Quests Pointer")]];     // hd_dll_af71fa
+    ptr GRankQuestG7            [[name("G7 Quests Pointer")]];     // @ 0x6E0
     unk_ptr hd_dll_af738a;
     unk_ptr hd_dll_af7390;
     unk_ptr hd_dll_af7396;
@@ -503,9 +506,9 @@ struct ptr_table {
     ptr carveGRHCItemDrops      [[name("Carve GR HC Drop Data Pointer")]];
 
     unk_ptr hd_dll_af7753;
-    unk_ptr hd_dll_af729a;      // @ 0x740
-    unk_ptr hd_dll_af72ea;
-    unk_ptr hd_dll_af733a;
+    ptr GRankQuestG8 [[name("G8 Quests Pointer")]]; // @ 0x740, hd_dll_af729a
+    ptr GRankQuestG9 [[name("G9 Quests Pointer")]]; // @ 0x744, hd_dll_af72ea
+    ptr GRankQuestG10 [[name("G10 Quests Pointer")]]; // @ 0x748, hd_dll_af733a
     unk_ptr hd_dll_af7759;
     ptr GrankCuffCrafting        [[name("G-Rank Cuff Crafting Pointer")]];      // @ 0x750
     unk_ptr hd_dll_af7765;
@@ -527,7 +530,7 @@ struct ptr_table {
     unk_ptr hd_dll_af7807;
     unk_ptr hd_dll_af780d;
     unk_ptr hd_dll_af7813;
-    unk_ptr hd_dll_af7819;      // @ 0x7A0
+    ptr vampirism [[name("Vampirism Pointer")]]; // @ 0x7A0, hd_dll_af7819
     unk_ptr hd_dll_af781f;
     unk_ptr hd_dll_af7825;
 
@@ -621,18 +624,18 @@ struct ptr_table {
     unk_ptr hd_dll_af8171;
     unk_ptr hd_dll_af5c6c;
     unk_ptr hd_dll_af8177;
-    unk_ptr hd_dll_af469d;      // @ 0x910
+    ptr extraCounters [[name("Extra Counters Pointer"), comment("u16 counts: +8 the Hunting Road skills")]]; // @ 0x910, hd_dll_af469d
     unk_ptr hd_dll_af818f;
     unk_ptr hd_dll_af81cc;
-    unk_ptr hd_dll_af821c;      //0x91C
+    ptr caravanRankingRoutes [[name("Caravan Ranking Routes Pointer")]]; // @ 0x91C, hd_dll_af821c
     unk_ptr hd_dll_af8183;      // @ 0x920
     unk_ptr hd_dll_af817d;
     unk_ptr hd_dll_af8189;
     unk_ptr hd_dll_af816b;
-    unk_ptr hd_dll_af82c4;      // @ 0x930
+    ptr roadSkills [[name("Hunting Road Skills Pointer")]]; // @ 0x930, hd_dll_af82c4
     unk_ptr hd_dll_af82ca;
-    unk_ptr hd_dll_af82d0;
-    unk_ptr hd_dll_af82d6;
+    ptr towerJewelRecipes [[name("Tower Jewel Recipes Pointer")]]; // @ 0x938, hd_dll_af82d0
+    ptr towerUpgradeCosts [[name("Tower Weapon Upgrade Costs Pointer")]]; // @ 0x93C, hd_dll_af82d6
 
     // @ 0x940
     ptr weaponTowerForging      [[name("Tower Weapon Forging Pointer")]];
@@ -654,7 +657,7 @@ struct ptr_table {
     unk_ptr hd_dll_af8374;
     unk_ptr hd_dll_af837a;      // @ 0x980
     unk_ptr hd_dll_af8380;
-    unk_ptr hd_dll_af46c9; 
+    ptr skillCounts [[name("Skill Counts Pointer"), comment("u16 counts: +2 the skill effects, +4 the vampirism rows")]]; // @ 0x988, hd_dll_af46c9
     unk_ptr hd_dll_af839f;
     unk_ptr hd_dll_af83a5;      // @ 0x990
     unk_ptr hd_dll_af83ab;
@@ -689,13 +692,13 @@ struct ptr_table {
     unk_ptr hd_dll_af8702;      // @ 0xA00
     unk_ptr hd_dll_af8708;
     unk_ptr hd_dll_af870e;
-    unk_ptr hd_dll_af8714;
-    unk_ptr hd_dll_af871a;      // @ 0xA10
-    unk_ptr hd_dll_af8720;
+    // evolution weapon levels, 100 each (crafting.hexpat)
+    ptr evoUpgradesFlash        [[name("Evolution Upgrade Pointer (Flash)")]];  // @ 0xA0C, hd_dll_af8714
+    ptr evoUpgradesShine        [[name("Evolution Upgrade Pointer (Shine)")]];  // @ 0xA10, hd_dll_af871a
+    ptr evoUpgradesGlory        [[name("Evolution Upgrade Pointer (Glory)")]];  // hd_dll_af8720
+    ptr evoUpgrades             [[name("Evolution Upgrade Pointer (Clear)")]];  // @ 0xA18
 
-    ptr evoUpgrades             [[name("Evolution Upgrade Pointer")]];
-
-    unk_ptr hd_dll_af872c;
+    ptr critConversion [[name("Crit Conversion Pointer")]]; // @ 0xA1C, hd_dll_af872c
     padding[4];                 // @ 0xA20
     unk_ptr hd_dll_af874a;
     unk_ptr hd_dll_af8750;
@@ -733,16 +736,16 @@ struct ptr_table {
     ptr questList               [[name("Quest List Struct Pointer")]];
 
     unk_ptr hd_dll_af8cf8;
-    unk_ptr hd_dll_af8cfe;      // @ 0xAA0
+    ptr obscurity [[name("Obscurity Pointer")]]; // @ 0xAA0, hd_dll_af8cfe
     unk_ptr hd_dll_af8d0f;
     unk_ptr hd_dll_af8d1d;
     unk_ptr hd_dll_af8d23;
     unk_ptr hd_dll_af8d29;      // @ 0xAB0
     unk_ptr hd_dll_af8d2f;
 
-    ptr transmogForging         [[name("Transmog Forging Pointer")]];
+    ptr transmogForging         [[name("Armor Transmog Forging Pointer")]];
 
-    ptr transmogForging2        [[name("Second Transmog Forging Pointer")]];
+    ptr transmogForging2        [[name("Second Armor Transmog Forging Pointer")]];
 
     // @ 0xAC0
     ptr zenithWeaponForging     [[name("Zenith Weapon Forging Pointer")]];
@@ -763,7 +766,7 @@ struct ptr_table {
     unk_ptr hd_dll_af8eb4;
     unk_ptr hd_dll_af8eba;
     unk_ptr hd_dll_af8f01;      // @ 0xB00
-    unk_ptr hd_dll_af4709;
+    ptr dataCounters [[name("Data Counters Pointer"), comment("u16 counts: +4 the Road cat shop, +8 the Road monster points")]]; // @ 0xB04, hd_dll_af4709
     unk_ptr hd_dll_af8f07;
     unk_ptr hd_dll_af8f0d;
     ptr Road_Cat_Item_Shop_Pointer [[name("Road Cat Item Shop Pointer")]];      // @ 0xB10
@@ -794,14 +797,14 @@ struct ptr_table {
     unk_ptr hd_dll_af90de;
     unk_ptr hd_dll_af90e4;      // @ 0xB70
     unk_ptr hd_dll_af90ea;
-    unk_ptr hd_dll_af90f0;
+    ptr obscurityUp [[name("Obscurity UP Pointer")]]; // @ 0xB78, hd_dll_af90f0
     unk_ptr hd_dll_af8f37;
     unk_ptr hd_dll_af8f3d;      // @ 0xB80
     unk_ptr hd_dll_af59b9;
     unk_ptr hd_dll_af9107;
     unk_ptr hd_dll_af91ba;
     unk_ptr hd_dll_af91e4;      // @ 0xB90
-    unk_ptr hd_dll_af9323;
+    ptr skillCells [[name("Skill Cells Pointer"), comment("+4: the Rush UP stage 3 block")]]; // @ 0xB94, hd_dll_af9323
     ptr Magnetspike_params_pointer [[name("Magnetspike Params Pointer")]];
     unk_ptr hd_dll_af93fc;
     unk_ptr hd_dll_af9402;      // @ 0xBA0

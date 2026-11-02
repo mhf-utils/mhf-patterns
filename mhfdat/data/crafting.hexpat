@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mhfdat/utils/index.pat>
+#include <mhfdat/data/equipment_counts.hexpat>
 #include <misc/s32p.pat>
 
 fn meleeName (u16 n) {
@@ -16,20 +17,6 @@ fn rangedName (u16 n) {
         header.ptrs.rangedWeaponNames,
         n
     );
-};
-
-fn getEquipType(u8 n) {
-    str ret = "!!Unknown!!";
-    match (n) {
-        (0x00): ret = "Legs";
-        (0x02): ret = "Head";
-        (0x03): ret = "Chest";
-        (0x04): ret = "Arms";
-        (0x05): ret = "Waist";
-        (0x06): ret = "Melee";
-        (0x07): ret = "Ranged";
-    }
-	return ret;
 };
 
 fn getEquipName(u32 n) {
@@ -117,8 +104,9 @@ struct RWUpgradePath {
     padding[4];
 } [[format("rUpgradeName"), color("88FF88")]];
 
-struct g50WUpgrade {
-    u16 weaponId         [[format("meleeName")]];
+// a G-50 upgrade level: the weapon, then its levels, success rate, cost and
+// materials (melee and ranged tables share the layout)
+struct g50UpgradeLevel {
     u16 level1;
     u16 level2;
     u16 fullSuccRate;
@@ -132,6 +120,16 @@ struct g50WUpgrade {
     u16 upgradeMaterial3 [[format("getItemName")]];
     u8 numMaterial3;
     padding[9];
+};
+
+struct g50MeleeUpgrade {
+    u16 weaponId [[format("meleeName")]];
+    g50UpgradeLevel level [[inline]];
+};
+
+struct g50RangedUpgrade {
+    u16 weaponId [[format("rangedName")]];
+    g50UpgradeLevel level [[inline]];
 };
 
 struct RegAUpgradeRow {
@@ -183,7 +181,7 @@ struct CraftMatReq {
     padding[4];
 	u16 unk24                    [[comment("Some kind of flag?")]];
 	padding[2];
-	u16 HRreq;
+	u16 rankReq                  [[comment("HR needed to forge, GR in the G-rank tables")]];
 	u16 unk2A                    [[comment("Some kind of flag?")]];
 	bool previewAble;
 	padding[3];
@@ -193,18 +191,21 @@ struct CraftMatReq {
     padding[3];
 } [[color("660066")]];
 
+// a crafting table ends at an entry whose type byte is 0xFF
 struct CraftMatTable {
     CraftMatReq entry [ while (std::mem::read_signed($, 1) != -1)] [[inline]];
 };
 
-MWUpgradePath mwUpgradePath[numMeleeW]  @ header.ptrs.meleeWeaponUpgradePath;
-RWUpgradePath rwUpgradePath[numRangedW] @ header.ptrs.rangedWeaponUpgradePath;
+MWUpgradePath mwUpgradePath[equipmentCounts.numMeleeW]  @ header.ptrs.meleeWeaponUpgradePath;
+RWUpgradePath rwUpgradePath[equipmentCounts.numRangedW] @ header.ptrs.rangedWeaponUpgradePath;
 
-#pragma array_limit 81914
-// Start of Selection
-g50WUpgrade g50WeaponUpgrades[81914] @ header.ptrs.weaponG50Forging;
+// G-50 upgrades: melee (header 0x5F8, important numbers + 0x22A rows, 62,726 on
+// ZZ) and ranged (header 0x5FC, + 0x22C, 19,188). On the JP file the ranged
+// table runs straight into the melee one: no end marker between them.
+g50MeleeUpgrade g50MeleeUpgrades[importantNums.g50MeleeWeaponUpgradesCounter] @ header.ptrs.g50MeleeUpgrades;
+g50RangedUpgrade g50RangedUpgrades[importantNums.g50RangedWeaponUpgradesCounter] @ header.ptrs.g50RangedUpgrades;
 
-// [mhfo-hd.dll + 0xaf47ed]
+// [mhfo-hd.dll + 0xaf47ed] an armor part's UpgradeID (+0x28) picks a list (ZZ: 4855)
 ptVar<GenericAUpgrade> armorUpgrades[while(std::mem::read_unsigned($,4))] @ header.ptrs.armorUpgradeMats;
 SigilTowerTable sigilTowerTable[while(std::mem::read_unsigned($, 4))]     @ header.ptrs.SigilTowerForging    [[name("Sigil Tower Forging Data")]];
 CraftMatTable towerArmorCraftingTable                                     @ header.ptrs.armorTowerForging    [[name("Tower Armor Forging Data")]];
@@ -212,13 +213,13 @@ CraftMatTable towerWeaponCraftingTable                                    @ head
 CraftMatTable specialWeaponCraftingTable                                  @ header.ptrs.weaponSpecialForging [[name("Special Weapon Forging Data??")]]; //length = 56 
 CraftMatTable armorGCraftingTable                                         @ header.ptrs.armorGRForging       [[name("G-Rank Armor Forging Data")]];
 CraftMatTable weaponGCraftingTable                                        @ header.ptrs.weaponGRForging      [[name("G-Rank Weapon Forging Data")]];
-CraftMatTable transmogCraftingTable2                                      @ header.ptrs.transmogForging2     [[name("Second Transmog Forging Data")]];
-CraftMatTable transmogCraftingTable                                       @ header.ptrs.transmogForging      [[name("Transmog Forging Data")]];
+CraftMatTable transmogCraftingTable2                                      @ header.ptrs.transmogForging2     [[name("Second Armor Transmog Forging Data")]];
+CraftMatTable transmogCraftingTable                                       @ header.ptrs.transmogForging      [[name("Armor Transmog Forging Data")]];
 CraftMatTable zenithWeaponCraftingTable                                   @ header.ptrs.zenithWeaponForging  [[name("Zenith Weapon Forging Data")]];
 CraftMatTable armorPremiumCraftingTable                                   @ header.ptrs.armorPremiumForging  [[name("Armor Premium Forging Data")]];
 CraftMatTable zArmorCraftingTable                                         @ header.ptrs.armorZenithForging   [[name("Zenith Armor Forging Data")]];
 CraftMatTable armorCraftingTable                                          @ header.ptrs.armorForging         [[name("Armor Forging Data")]];
-CraftMatTable miscCrafting5                                               @ header.ptrs.otherWeaponForging   [[name("Other Weapon Forging Data")]];
+CraftMatTable weaponCraftingTable                                         @ header.ptrs.weaponForging        [[name("Weapon Forging Data")]];
 
 
 struct evoUpgradeSub {
@@ -252,10 +253,11 @@ struct evoUpgrade {
     padding[2];
 };
 
+// each list has its header pointer: they follow each other on ZZ, but don't rely on it
 evoUpgrade evoUpgradesClear[100] @ header.ptrs.evoUpgrades;
-evoUpgrade evoUpgradesGlory[100] @ $;
-evoUpgrade evoUpgradesShine[100] @ $;
-evoUpgrade evoUpgradesFlash[100] @ $;
+evoUpgrade evoUpgradesGlory[100] @ header.ptrs.evoUpgradesGlory;
+evoUpgrade evoUpgradesShine[100] @ header.ptrs.evoUpgradesShine;
+evoUpgrade evoUpgradesFlash[100] @ header.ptrs.evoUpgradesFlash;
 
 struct DecoShop {
     u16 decoItemID       [[format("getItemName")]];
@@ -289,21 +291,22 @@ struct TowerG50WeaponParams {
     u16 upgradePath;      
 };
 
+// a weapon's TowerParamId (melee +0x26, ranged +0x2C) picks one of its class's 130 lists
 struct WeaponTypeParams2 {
 	ptr dataptr [[hidden]];
     TowerG50WeaponParams g50LevelStats[while(std::mem::read_unsigned($, 2) != 0xFFFF)] @ dataptr;};
 
 struct WeaponTypeParams {
-    WeaponTypeParams2 greatSwordParams [130]      @ header.ptrs.GreatSword_Params_pointer     [[name("Tower/G50 Params - Sword and Shield")]];
-	WeaponTypeParams2 heavyBowgunParams  [130]    @ header.ptrs.HeavyBowGun_Params_pointer    [[name("Tower/G50 Params - Dual Blades")]];
-	WeaponTypeParams2 hammerParams  [130]         @ header.ptrs.Hammer_Params_pointer         [[name("Tower/G50 Params - Great Sword")]];
-	WeaponTypeParams2 lanceParams  [130]          @ header.ptrs.Lance_Params_pointer          [[name("Tower/G50 Params - Long Sword")]];
-	WeaponTypeParams2 swordAndShieldParams  [130] @ header.ptrs.SwordAndShield_Params_pointer [[name("Tower/G50 Params - Lance")]];
-	WeaponTypeParams2 lightBowgunParams  [130]    @ header.ptrs.LightBowgun_Params_pointer    [[name("Tower/G50 Params - Gunlance")]];
-	WeaponTypeParams2 dualBladesParams  [130]     @ header.ptrs.DualBlades_Params_pointer     [[name("Tower/G50 Params - Hammer")]];
-	WeaponTypeParams2 longswordParams  [130]      @ header.ptrs.LongSword_Params_pointer      [[name("Tower/G50 Params - Hunting Horn")]];
-	WeaponTypeParams2 huntingHornParams  [130]    @ header.ptrs.HuntingHorn_Params_pointer    [[name("Tower/G50 Params - Heavy Bow Gun")]];
-	WeaponTypeParams2 gunlanceParams  [130]       @ header.ptrs.GunLance_Params_pointer       [[name("Tower/G50 Params - Light Bow Gun")]];
+    WeaponTypeParams2 greatSwordParams [130]      @ header.ptrs.GreatSword_Params_pointer     [[name("Tower/G50 Params - Great Sword")]];
+	WeaponTypeParams2 heavyBowgunParams  [130]    @ header.ptrs.HeavyBowGun_Params_pointer    [[name("Tower/G50 Params - Heavy Bowgun")]];
+	WeaponTypeParams2 hammerParams  [130]         @ header.ptrs.Hammer_Params_pointer         [[name("Tower/G50 Params - Hammer")]];
+	WeaponTypeParams2 lanceParams  [130]          @ header.ptrs.Lance_Params_pointer          [[name("Tower/G50 Params - Lance")]];
+	WeaponTypeParams2 swordAndShieldParams  [130] @ header.ptrs.SwordAndShield_Params_pointer [[name("Tower/G50 Params - Sword and Shield")]];
+	WeaponTypeParams2 lightBowgunParams  [130]    @ header.ptrs.LightBowgun_Params_pointer    [[name("Tower/G50 Params - Light Bowgun")]];
+	WeaponTypeParams2 dualBladesParams  [130]     @ header.ptrs.DualBlades_Params_pointer     [[name("Tower/G50 Params - Dual Blades")]];
+	WeaponTypeParams2 longswordParams  [130]      @ header.ptrs.LongSword_Params_pointer      [[name("Tower/G50 Params - Long Sword")]];
+	WeaponTypeParams2 huntingHornParams  [130]    @ header.ptrs.HuntingHorn_Params_pointer    [[name("Tower/G50 Params - Hunting Horn")]];
+	WeaponTypeParams2 gunlanceParams  [130]       @ header.ptrs.GunLance_Params_pointer       [[name("Tower/G50 Params - Gunlance")]];
 	WeaponTypeParams2 bowParams  [130]            @ header.ptrs.Bow_Params_pointer            [[name("Tower/G50 Params - Bow")]];
 	WeaponTypeParams2 tonfaParams  [130]          @ header.ptrs.Tonfa_Params_pointer          [[name("Tower/G50 Params - Tonfa")]];
 	WeaponTypeParams2 switchAxeParams [130]       @ header.ptrs.SwitchAxe_Params              [[name("Tower/G50 Params - Switch Axe")]];

@@ -1,14 +1,7 @@
 #pragma once
 
 #include <misc/s32p.pat>
-
-#ifndef __ITEM_DATA
-// Define plusone if it wasn't defined in itemdata.hexpat
-// Add 1 to n (Used for pattern formatting)
-fn plusone (u8 n) {
-	return n+1;
-};
-#endif
+#include <mhfdat/utils/index.pat>
 
 // Multiply n by 10 (Used for pattern formatting)
 fn timesten (u8 n) {
@@ -31,29 +24,6 @@ fn rangedNameWE (auto n) {
 	
 // TODO: Maybe replace these functions with enums?
 // It won't look as pretty but it'd make a bit more sense
-fn className (u8 n) {
-	str ret = "!!Unknown!!";
-
-	match (n) {
-		(0x00): ret = "Great Sword";
-		(0x01): ret = "Heavy Bowgun";
-		(0x02): ret = "Hammer";
-		(0x03): ret = "Lance";
-		(0x04): ret = "Sword and Shield";
-		(0x05): ret = "Light Bowgun";
-		(0x06): ret = "Dual Blades";
-		(0x07): ret = "Long Sword";
-		(0x08): ret = "Hunting Horn";
-		(0x09): ret = "Gunlance";
-		(0x0A): ret = "Bow";
-		(0x0B): ret = "Tonfa";
-		(0x0C): ret = "Switch Axe F";
-		(0x0D): ret = "Magnet Spike";
-	}
-
-	return ret;
-};
-	
 fn elementName (u8 n) {
 	str ret = "!!Unknown!!";
 

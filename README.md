@@ -9,7 +9,9 @@ The patterns primarily target Frontier binary files such as:
 * `mhfinf.bin`
 * `mhfpac.bin`
 * `mhfemd.bin`
-* quest-related binaries
+* `mhfjmp.bin`, `mhfnav.bin`
+* quest files (`questfile.bin.hexpat`, decompressed)
+* sigils in character saves (`save/sigil.hexpat`, server side)
 
 Each file may be documented either:
 
@@ -23,12 +25,23 @@ Patterns are organized by **file** and **responsibility**:
 mhfdat/
 ├── index.hexpat          # Main entry point for mhfdat.bin
 ├── header.hexpat         # File header & pointers
+├── utils/index.pat       # Helpers shared by the sections (names, next table...)
 └── data/
-    ├── monsters.hexpat
+    ├── monsters.hexpat   # Monster crowns and descriptions
     ├── items.hexpat
     ├── equipments.hexpat
-    ├── partbreaks.hexpat
+    ├── part_breaks.hexpat
+    ├── sigils.hexpat     # Random sigils
+    ├── skills.hexpat     # Skill tree, skill effects, Vampirism, Crit Conversion, Rush, Obscurity
+    ├── caravan.hexpat    # Voyage and ranking routes, levels, gem skills and tiers
+    ├── road.hexpat       # Hunting Road monster points and skills
+    ├── tower.hexpat      # Tower jewel recipes and upgrade costs
+    ├── shop_guild.hexpat # Shop catalogs and the Guild Shop
+    ├── weapon_params.hexpat # Per-class weapon parameters, bullet sets, horn melodies
     └── ...
+quest/
+├── block.hexpat          # A quest's main block, shared by quest files and mhfinf
+└── objective.hexpat
 ```
 
 ### 🔹 Modular loading
@@ -40,6 +53,8 @@ They are imported by a main pattern (e.g. `mhfdat/index.hexpat`) and conditional
 #define __DATA_MONSTERS 1
 #define __DATA_ITEMS 1
 ```
+
+Every `__DATA_*` flag of `mhfdat.bin.hexpat` can be enabled alone or all at once; `__DECOMPILE` adds the raw tables as the client reads them.
 
 This allows:
 
@@ -72,6 +87,16 @@ MyProject/
 
 ImHex will automatically resolve imports from `patterns/`.
 
+### Option 3 – Command line
+ImHex (1.38 tested) runs a pattern without its window, from this folder. It needs a terminal (under a script, wrap it in `script -q -c "…" /dev/null`):
+
+```sh
+# run it: errors, and std::print output with -v
+imhex --pl run -v -i mhfdat.bin -p mhfdat.bin.hexpat -I . -D __DATA_ITEMS
+# export what it parsed (slow on large tables: every format function runs)
+imhex --pl format -i mhfdat.bin -p mhfdat.bin.hexpat -I . -D __DATA_SIGILS -f json -o sigils.json
+```
+
 ## 🧠 What These Patterns Provide
 * 🧾 Struct-accurate parsing of Frontier binary formats
 * 🐲 Fully named monster tables (ID → hex → decimal → name)
@@ -81,3 +106,20 @@ ImHex will automatically resolve imports from `patterns/`.
 * 🧱 Modular, extensible design for future work
 
 Patterns favor **correctness and readability** over assumptions.
+
+## 📐 Conventions checked on the ZZ files
+* A table is sized by the counts the file gives (header, important numbers, equipment counts) rather than by scanning for a marker: the leg armors don't end at a `-1`.
+* A table with no end marker ends at the next table the header points to (`nextTable`), and some markers lie past it (the JP combine shop runs into the tables after it).
+* Tables are reached through their header pointer only: the EN client relocated most of them compared to the JP one (G-rank quest lists, for instance).
+* Some tables have no count in the file (14 weapon classes, 44 bullet sets, 15 Caravan levels, 16 ranking groups, the 68/17/23 arena lists): each fixed length was checked to end at zero padding or at the table's own data on the ZZ JP and EN files. Two are still unknown and only partly shown: the weapon upgrade bonus slots (header 0xA8) and the coating modifiers (header 0xB0).
+* Monster description i (header 0x134) belongs to the monster of crown row i (header 0x130): the descriptions have no monster id of their own.
+* G-50 weapon upgrades: header 0x5F8 holds the melee ones and 0x5FC the ranged ones, counted at important numbers + 0x22A and + 0x22C. On the JP file the ranged table runs into the melee one with no end marker.
+
+## 🙏 Credits
+* This repository started as a fork of [var-username/Monster-Hunter-Frontier-Patterns](https://github.com/var-username/Monster-Hunter-Frontier-Patterns) by **var-username**, with contributions from **ezemania2** and **Relial**. The random sigils (`mhfdat/data/sigils.hexpat`), the save sigils (`save/sigil.hexpat`) and the Hunter Navi tab fields come from it.
+* Its own credits carry over: [@Malckyor](https://github.com/Malckyor) and [@Chakratos](https://github.com/Chakratos) for prior work, [@DorielRivalet](https://github.com/DorielRivalet) for 010 templates, [@sekaiwish](https://github.com/sekaiwish) for server emulation and client 010 templates.
+* The quest block fields follow [Paxlord/PaxMHFZQuestEditor](https://github.com/Paxlord/PaxMHFZQuestEditor) where noted.
+* The layouts of the skill, Caravan, Hunting Road skill, crown, weapon parameter, Guild Shop and Tower tables come from [ezemania2/mhf-file-editor](https://github.com/ezemania2/mhf-file-editor), re-checked on the ZZ files; the Hunting Road monster points from [BlazeMH/Blaze-Hunting-Road-Editor](https://github.com/BlazeMH/Blaze-Hunting-Road-Editor), as that editor credits.
+
+## 📜 License
+[LGPL-3.0](LICENSE.md), as the original repository.

@@ -1,5 +1,6 @@
 #pragma once
 #include <misc/s32p.pat>
+#include <mhfdat/data/equipment_counts.hexpat>
 
 bitfield equipableBy {
   isMaleEquip:   1; 
@@ -15,7 +16,7 @@ bitfield equipableBy {
 bitfield armorTypes {
     gou : 1;           // bit 0
     padding : 5;
-    Grank : 1;         // bit 6
+    Grank : 1;         // bit 6 (the byte at 0x3F is not the G rank)
     supremacy : 1;     // bit 7
     premium_HR : 1;       // bit 8
     premium_GR : 1;  // bit 9 (utilisé dans GRANK_PREMIUM et ZENITH_PREMIUM)
@@ -79,7 +80,7 @@ struct EquipmentItem {
   u32 weapHiden; 
   u8 towerslots;
   u16 decoItemID;
-  u8 Grank; 
+  u8 unk3F [[comment("Not the G rank (armorType bit 6 is): 0x0F on almost every armor")]];
   u8 ZeroF; 
   u32 appPrice; 
   u8 unk44; 
@@ -97,52 +98,43 @@ struct EquipmentDescription {
   s32p mhfy;
 };
 
-struct TableEquipments {
-  EquipmentItem head  [while (std::mem::read_signed($, 2) != -1)]  @ header.ptrs.headArmor  [[name("Heads")]];
-  EquipmentItem body  [while (std::mem::read_signed($, 2) != -1)]  @ header.ptrs.bodyArmor  [[name("Chests")]];
-  EquipmentItem arm   [while (std::mem::read_signed($, 2) != -1)]  @ header.ptrs.armArmor   [[name("Arms")]];
-  EquipmentItem waist [while (std::mem::read_signed($, 2) != -1)]  @ header.ptrs.waistArmor [[name("Waists")]];
-  EquipmentItem leg   [while (std::mem::read_signed($, 2) != -1)]  @ header.ptrs.legArmor   [[name("Legs")]];
-};
-
-TableEquipments tableEquipments;
-
-u32 EquipmentLength        = sizeof(EquipmentItem);
-u32 EquipmentHeadQuantity  = sizeof(tableEquipments.head)  / EquipmentLength;
-u32 EquipmentBodyQuantity  = sizeof(tableEquipments.body)  / EquipmentLength;
-u32 EquipmentArmQuantity   = sizeof(tableEquipments.arm)   / EquipmentLength;
-u32 EquipmentWaistQuantity = sizeof(tableEquipments.waist) / EquipmentLength;
-u32 EquipmentLegQuantity   = sizeof(tableEquipments.leg)   / EquipmentLength;
-u32 EquipmentQuantity      = EquipmentHeadQuantity + EquipmentBodyQuantity + EquipmentArmQuantity + EquipmentWaistQuantity + EquipmentLegQuantity;
+// The counts come from the equipment counts (header 0x0E8): the legs don't end
+// at a -1 (ZZ EN: 13514 legs, a scan to -1 finds 13528). The descriptions are
+// one table, head first and leg last, each part where the previous one ends.
+u32 __descHeads  = header.ptrs.equipDesc;
+u32 __descBodies = __descHeads  + 0x10 * equipmentCounts.numHeadA;
+u32 __descArms   = __descBodies + 0x10 * equipmentCounts.numBodyA;
+u32 __descWaists = __descArms   + 0x10 * equipmentCounts.numArmA;
+u32 __descLegs   = __descWaists + 0x10 * equipmentCounts.numWaistA;
 
 struct EquipmentHeads {
-  EquipmentItem        data         [EquipmentHeadQuantity]  @ header.ptrs.headArmor      [[name("Data")]];
-  EquipmentName        names        [EquipmentHeadQuantity]  @ header.ptrs.headArmorNames [[name("Names")]];
-  EquipmentDescription descriptions [EquipmentHeadQuantity]  @ header.ptrs.equipDesc      [[name("Descriptions")]];
+  EquipmentItem        data         [equipmentCounts.numHeadA]  @ header.ptrs.headArmor      [[name("Data")]];
+  EquipmentName        names        [equipmentCounts.numHeadA]  @ header.ptrs.headArmorNames [[name("Names")]];
+  EquipmentDescription descriptions [equipmentCounts.numHeadA]  @ __descHeads                [[name("Descriptions")]];
 };
 
 struct EquipmentBodies {
-  EquipmentItem        data         [EquipmentBodyQuantity]  @ header.ptrs.bodyArmor      [[name("Data")]];
-  EquipmentName        names        [EquipmentBodyQuantity]  @ header.ptrs.bodyArmorNames [[name("Names")]];
-  EquipmentDescription descriptions [EquipmentBodyQuantity]  @ header.ptrs.equipDesc      [[name("Descriptions")]];
+  EquipmentItem        data         [equipmentCounts.numBodyA]  @ header.ptrs.bodyArmor      [[name("Data")]];
+  EquipmentName        names        [equipmentCounts.numBodyA]  @ header.ptrs.bodyArmorNames [[name("Names")]];
+  EquipmentDescription descriptions [equipmentCounts.numBodyA]  @ __descBodies               [[name("Descriptions")]];
 };
 
 struct EquipmentArms {
-  EquipmentItem        data         [EquipmentArmQuantity]   @ header.ptrs.armArmor       [[name("Data")]];
-  EquipmentName        names        [EquipmentArmQuantity]   @ header.ptrs.armArmorNames  [[name("Names")]];
-  EquipmentDescription descriptions [EquipmentArmQuantity]   @ header.ptrs.equipDesc      [[name("Descriptions")]];
+  EquipmentItem        data         [equipmentCounts.numArmA]   @ header.ptrs.armArmor       [[name("Data")]];
+  EquipmentName        names        [equipmentCounts.numArmA]   @ header.ptrs.armArmorNames  [[name("Names")]];
+  EquipmentDescription descriptions [equipmentCounts.numArmA]   @ __descArms                 [[name("Descriptions")]];
 };
 
 struct EquipmentWaists {
-  EquipmentItem        data         [EquipmentWaistQuantity] @ header.ptrs.waistArmor      [[name("Data")]];
-  EquipmentName        names        [EquipmentWaistQuantity] @ header.ptrs.waistArmorNames [[name("Names")]];
-  EquipmentDescription descriptions [EquipmentWaistQuantity] @ header.ptrs.equipDesc       [[name("Descriptions")]];
+  EquipmentItem        data         [equipmentCounts.numWaistA] @ header.ptrs.waistArmor      [[name("Data")]];
+  EquipmentName        names        [equipmentCounts.numWaistA] @ header.ptrs.waistArmorNames [[name("Names")]];
+  EquipmentDescription descriptions [equipmentCounts.numWaistA] @ __descWaists                [[name("Descriptions")]];
 };
 
 struct EquipmentLeg {
-  EquipmentItem        data         [EquipmentLegQuantity]   @ header.ptrs.legArmor        [[name("Data")]];
-  EquipmentName        names        [EquipmentLegQuantity]   @ header.ptrs.legArmorNames   [[name("Names")]];
-  EquipmentDescription descriptions [EquipmentLegQuantity]   @ header.ptrs.equipDesc       [[name("Descriptions")]];
+  EquipmentItem        data         [equipmentCounts.numLegA]   @ header.ptrs.legArmor        [[name("Data")]];
+  EquipmentName        names        [equipmentCounts.numLegA]   @ header.ptrs.legArmorNames   [[name("Names")]];
+  EquipmentDescription descriptions [equipmentCounts.numLegA]   @ __descLegs                  [[name("Descriptions")]];
 };
 
 struct Equipments {

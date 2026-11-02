@@ -19,9 +19,11 @@ struct monsterStatRow{
 	float unk14;
 } [[static]]; //size of 0x18;
 
+// 84 rows (ZZ: the blocks are 0x7E0 bytes apart). A quest picks the row its
+// monsters use with the u16 at 0x48 of its file (0-80 in the quest dump).
 struct MonsterStats {
-	monsterStatRow statBlock[68] [[inline]];
-} [[inline]]; //size of 0x660
+	monsterStatRow statBlock[84] [[inline]];
+} [[inline]]; //size of 0x7E0
 
 // [mhfo-hd.dll + 0xaf96a5]
 u8 numMonsters @ (header.important_nums + 4) [[name("Number of monsters")]];
@@ -84,7 +86,7 @@ struct monsterStatBlock {
 	MonsterStats *stats: ptr; 
 	
 	//[mhfo-hd.dll + 0xaf973d]
-	ptVar<hitzoneStatTable> unk04[0xC] [[name("Ptrs to Hitzone stats?")]]; 
+	ptVar<hitzoneStatTable> hitzones[0xC] [[name("Ptrs to Hitzone stats?")]]; // + 0x0C
 	
 	padding[0xC]; // This is just improvizing
 
@@ -95,13 +97,13 @@ struct monsterStatBlock {
 		[9]  = Zenith
 		[11] = Something
 	 */
-	ptVar<enrageStats> unk40[0xC] [[name("Ptrs to Enrage stats?")]];
+	ptVar<enrageStats> enrage[0xC] [[name("Ptrs to Enrage stats?")]]; // + 0x48
 	
-	float unk70 [0xC] [[sealed]]; //Improvising
-	u16 unkA0 [[name("Base Health")]];
-	u16 unkA2 [[comment("Health for large? See vespoid")]];
-	u16;
-	u16;
+	float unk78 [0xC] [[sealed]]; //Improvising
+	u16 baseHP [[name("Base Health"), comment("+ 0xA8: Rathian 5000, Diablos 7000 on ZZ; the stat rows' hp multiplies it")]];
+	u16 unkAA [[comment("Health for large? See vespoid")]];
+	u16 unkAC;
+	u16 unkAE;
 	
 	// [mhfo-hd.dll + 0xaf96dd]
 	ptr;
@@ -109,7 +111,7 @@ struct monsterStatBlock {
 	padding[4];
 	if (std::mem::read_signed($, 4)) {
 		// [mhfo-hd.dll + 0xaf9723]
-		unk_struct_af9710 *unkAC[200]: ptr;
+		unk_struct_af9710 *unkB8[200]: ptr;
 	} else {
 		padding[4];
 	}

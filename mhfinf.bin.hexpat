@@ -3,6 +3,8 @@
 #pragma array_limit 200000
 #include <std/sys.pat>
 #include <std/io.pat>
+#include <std/mem.pat>
+#include <std/core.pat>
 #include <misc/s32p.pat>
 #include <misc/types.pat>
 
@@ -11,6 +13,7 @@
 #include <misc/MapIDs.hexpat>
 
 #include <quest/objective.hexpat>
+#include <quest/block.hexpat>
 
 //#define __DECOMPILE 1
 
@@ -26,7 +29,7 @@ std::assert_warn(header3 == 0x00000088, __header_fail_msg);
 u32 hd_dll_afa411 @ 0x10 
     [[name("Inf Quantities")]];
 num hd_dll_afa421 @ hd_dll_afa411
-    [[name("Number of quest table entries")]];
+    [[name("Number of quest table entries"), comment("Then the sizes of the 28 counter lists")]];
 
 ptr ptQuestTable @ 0x14
     [[name("Pointer to quest table")]];
@@ -35,69 +38,12 @@ ptr ptQuestTable @ 0x14
 #include <mhfinf/decompile.hexpat>
 #endif
 
-struct QuestText {
-    s32p title;
-    s32p textMain;
-    s32p textSubA;
-    s32p testSubB;
-    s32p successCond;
-    s32p failCond;
-    s32p contractor;
-    s32p description;
-};
-
+// a quest's main block (quest/block.hexpat), the same bytes as in its quest file
 struct QuestData {
     // If current address is 0x0, we read a bad pointer, skip to next
     if($==0x00000000) continue;
 
-    padding[0x0B];
-    u8 playerQty;
-    u32 questFee;
-    u32 zennyReward;
-    u32 zennyKO;
-    u32 zennySubA;
-    u32 zennySubB;
-    u32 questTime [[comment("Timing in frames (30Hz)")]];
-    u32 mapID;
-    QuestText *questStringptr : ptr;
-    u16 questRestrictions;
-    u16 questID;
-    
-    QuestObj mainGoal;
-
-    QuestObj subAGoal;
-
-    QuestObj subBGoal;
-    
-    // Based on https://github.com/ricochhet/MHF-Quest-Resources/blob/main/FrontierTools/Tools/QuestTool/QuestReader.cs#L101
-    u32 rank; 
-    u16 joinMinRank;
-    u16 joinMaxRank;
-    u16 postMinRank;
-    u16 postMaxRank;
-
-    padding[8];
-
-    // Forced equipment section (size 0x30)
-    // Attachments are +0x80 for some reason
-    u16 legsAndAttach[4];
-    u16 weaponAndAttach[4];
-    u16 headAndAttach[4];
-    u16 chestAndAttach[4];
-    u16 armsAndAttach[4];
-    u16 waistAndAttach[4];
-
-    u32 [[hidden]];
-
-    padding[20];
-
-    u32 hrMainReward;
-    u32 hrSubAReward;
-    u32 hrSubBReward;
-    ItemID mainRewardList[3];
-    padding[3];
-    MonsterID;
-    padding[0x86];
+    QuestBlock block [[inline]];
 } [[inline]];
 
 /// Pointer to quest data struct
@@ -105,6 +51,8 @@ struct ptQuestData {
     QuestData *qd : u32 [[inline]];
 };
 
+// ZZ EN: 44 groups, 3050 slots, 211 null; a quest's id is its block's QuestID
+// (most often the previous group's end + its index, not always)
 struct QuestTableEntry {
     u16 endID;
     u16 count;
@@ -112,3 +60,18 @@ struct QuestTableEntry {
 };
 
 QuestTableEntry questTable[hd_dll_afa421] @ ptQuestTable;
+
+// The counters' lists: 28 header pointers (0x18 to 0x84), each to a list of
+// tabs whose size follows the group count; a tab is a list of quest ids ending
+// at 0 (ZZ EN: 2781 ids, all of them quests of the groups but 8).
+struct CounterTab {
+    u16 *questIds[while(std::mem::read_unsigned($, 2) != 0)] : u32;
+};
+
+struct CounterList {
+    ptr tabs;
+    u16 count @ hd_dll_afa411 + 2 * (std::core::array_index() + 1);
+    CounterTab entries[count] @ tabs;
+};
+
+CounterList counterLists[28] @ 0x18 [[name("Counter lists")]];

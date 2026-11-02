@@ -1,12 +1,14 @@
 #pragma once
 
 #include <misc/types.pat>
+#include <mhfdat/utils/index.pat>
 
+// realigned on the data: the price is the u32 at 0x04 (checked by the forge on JP and EN)
 struct DecoID {
 u8 slot_nb;
-u16 flags;
+u8 flags;
+u16 unk02;
 u32 price;
-padding[1];
 u8 skillID1[[
     format("SkillName"),
     name("Skill ID 1")
@@ -328,5 +330,6 @@ fn zenithSkills (u16 n){
 	return ret;
 };
 
-DecoID decoIDTable[6547] @ header.ptrs.Deco_ID [[name("Data")]];
+// no end marker: the table ends at the next table the header points to (ZZ EN: 6542 rows, JP: 6547)
+DecoID decoIDTable[(nextTable(header.ptrs.Deco_ID) - header.ptrs.Deco_ID) / sizeof(DecoID)] @ header.ptrs.Deco_ID [[name("Data")]];
 

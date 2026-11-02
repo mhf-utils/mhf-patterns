@@ -6,9 +6,15 @@ This repository aims to provide accurate, readable, and extensible patterns for 
 The patterns primarily target Frontier binary files such as:
 
 * `mhfdat.bin`
-* `mhfinf.bin`
-* `mhfpac.bin`
 * `mhfemd.bin`
+* `mhfgao.bin`
+* `mhfinf.bin`
+* `mhfjmp.bin`
+* `mhfnav.bin`
+* `mhfpac.bin`
+* `mhfrcc.bin`
+* `mhfsdt.bin`
+* `mhfsqd.bin`
 * quest-related binaries
 
 Each file may be documented either:

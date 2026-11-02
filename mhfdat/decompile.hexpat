@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mhfdat/utils/index.pat>
+#include <mhfdat/data/equipment_counts.hexpat>
 #include <misc/types.pat>
 #include <std/io.pat>
 
@@ -38,11 +39,11 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 		header.ptrs.equipDesc [[name("Pointers to equipment descriptions?")]];
 
 	#ifdef __WEAPON_NAMES
-	s32px4 hd_dll_af49df[numMeleeW] @ header.ptrs.meleeWeaponDesc
+	s32px4 hd_dll_af49df[equipmentCounts.numMeleeW] @ header.ptrs.meleeWeaponDesc
 	//[[name("Pointers to Melee Weapon Descriptions")]]
 	;
 
-	s32px4 hd_dll_af4a6f[numRangedW] @ header.ptrs.rangedWeaponDesc
+	s32px4 hd_dll_af4a6f[equipmentCounts.numRangedW] @ header.ptrs.rangedWeaponDesc
 	//[[name("Pointers to Ranged Weapon Descriptions")]]
 	;
 	#endif
@@ -99,7 +100,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 		}
 	};
 
-	struct_af4c11 hd_dll_af4c11[0xE] @ header.ptrs.hd_dll_af4bf5
+	struct_af4c11 hd_dll_af4c11[0xE] @ header.ptrs.shopCatalogs
 		[[name("Equipment Description Pointers")]];
 	ptr hd_dll_af4c01[0xE] @ header.ptrs.hd_dll_af4bfb;
 	// [mhfo-hd.dll + 0xaf4ce0]
@@ -115,7 +116,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 	varPaddT<u16, 0x2> hd_dll_af4d20[while(std::mem::read_signed($,2)!=-1)] 
 		@ header.ptrs.hd_dll_af4d08;
 	varPaddT<u16, 0x20> hd_dll_af4d43[while(std::mem::read_signed($,2)!=-1)] 
-		@ header.ptrs.hd_dll_af4d2d;
+		@ header.ptrs.skillTree;
 
 	// Some function is called, parameter is hd_dll_af4d2d
 
@@ -126,7 +127,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 
 	// Could probably just make this while(read_signed), but whatever
 	ptr hd_dll_af4d91[std::mem::read_signed(header.ptrs.important_nums + 0x5E,2)] 
-		@ header.ptrs.hd_dll_af4d7b;
+		@ header.ptrs.hunterPearlSkillLists;
 
 	varPaddT<u16, 0x2> hd_dll_af4e03[while(std::mem::read_signed($,2))] 
 		@ header.ptrs.hd_dll_af4de0;
@@ -136,9 +137,9 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 		@ header.ptrs.hd_dll_af4e3a;
 
 	// Each of these u8s are written to incrementally, 0 to [0xaf4fa4]
-	varPaddT<u8, 0xD> hd_dll_af4fa8[numMonsterDesc] @ header.ptrs.hd_dll_af4f23;
+	varPaddT<u8, 0xD> hd_dll_af4fa8[importantNums.numMonsterDesc] @ header.ptrs.monsterCrowns;
 
-	s32p hd_dll_af4fd7[numMonsterDesc] @ header.ptrs.monsterDesc 
+	s32p hd_dll_af4fd7[importantNums.numMonsterDesc] @ header.ptrs.monsterDesc 
 		[[name("Monster Descriptions")]];
 
 	struct struct_af5001 {
@@ -225,7 +226,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 	ptrToNumItemPair hd_dll_af514b[0xE] @ header.ptrs.hd_dll_af5145;
 
 	num hd_dll_af526a @ (header.ptrs.important_nums + 0x48);
-	ptr hd_dll_af5277[hd_dll_af526a] @ header.ptrs.hd_dll_af5261;
+	ptr hd_dll_af5277[hd_dll_af526a] @ header.ptrs.tutorialEquipSets;
 
 	struct macha_pot_rewards {
 		item_num_pair items[6] [[inline]];

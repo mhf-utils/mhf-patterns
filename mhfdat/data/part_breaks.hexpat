@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mhfdat/utils/index.pat>
+#include <mhfdat/data/equipment_counts.hexpat>
 #include <misc/MonsterIDs.hexpat>
 
 struct PartBreakDrop {
@@ -15,14 +16,9 @@ fn partBreakDropFmt (PartBreakDrop n) {
         getItemName(n.itemID));
 };
 
+// drop rows end at a 0xFFFF percentage (ZZ: 10 part break rows at most, 15 carve rows)
 struct PartBreakDropTable {
-    PartBreakDrop breakDrops[
-        while (
-            std::mem::read_unsigned($, 2) != 0 &&
-            std::mem::read_unsigned($ + 2, 2) != 0 &&
-            ($ - __start) < 0x100   // limite HARD
-        )
-    ] [[inline]];
+    PartBreakDrop breakDrops[while (std::mem::read_unsigned($, 2) != 0xFFFF)] [[inline]];
 };
 
 struct CarveDrop {
@@ -36,17 +32,24 @@ fn carveDropFmt (CarveDrop n) {
 };
 
 struct CarveDropTable {
-    CarveDrop carves[
-        while (
-            std::mem::read_unsigned($, 2) != 0 &&
-            std::mem::read_unsigned($ + 2, 2) != 0 &&
-            ($ - __start) < 0x80
-        )
-    ] [[inline]];
+    CarveDrop carves[while (std::mem::read_unsigned($, 2) != 0xFFFF)] [[inline]];
 };
 
-ptVar<PartBreakDropTable> ptPartBreakDTs[counts.numPartBreakDTs] @ header.ptrs.partBreakItemDrops;
-ptVar<CarveDropTable> ptCarveDTs[counts.numCarveDTs] @ header.ptrs.carveItemDrops;
+ptVar<PartBreakDropTable> ptPartBreakDTs[importantNums.numPartBreakDTs] @ header.ptrs.partBreakItemDrops;
+ptVar<CarveDropTable> ptCarveDTs[importantNums.numCarveDTs] @ header.ptrs.carveItemDrops;
+
+struct MachaPotReward {
+    u16 itemID [[format("getItemName")]];
+    u16 number;
+};
+
+// 6 rewards per set; the list of sets ends at a null pointer (ZZ: 33 sets)
+struct MachaPotSet {
+    MachaPotReward rewards[6] [[inline]];
+};
+
+ptVar<MachaPotSet> machaPotRewards[while (std::mem::read_unsigned($, 4) != 0)]
+    @ header.ptrs.machaPotRewards [[name("Macha Pot Rewards")]];
 
 struct HC_GR_Carve {
     MonsterID monId;

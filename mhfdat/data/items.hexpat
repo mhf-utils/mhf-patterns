@@ -84,10 +84,6 @@ fn getItemIconColorName(u8 color) {
 
 u32 __sizeof_Item = 0x24;
 
-fn plusone (u8 n) {
-	return n+1;
-};
-
 fn equipType (u16 n) {
 str ret = "!!Unknown!!";
 
@@ -267,8 +263,9 @@ struct Item {
 	u32 buyPrice;
 	u32 sellPrice;
 
-	u16 type    [[format("getItemCategory")]];
-	u16 decoID;
+	// getItemCategory's names don't match the ZZ data (checked against the items), kept raw
+	u16 type;
+	u16 decoID [[comment("Row of the decorations table (header 0x0F8, decoID.hexpat) for decorations and cuffs, 0 otherwise")]];
 
 	u16 unk18;
 	u8 unk1A;

@@ -10,9 +10,11 @@ u32 hd_dll_1cbc66 @ 0x08 [[name("LenArea")]];
 u32 Unk_C @ 0x0C         [[name("PStrings")]];
 u32 Unk_10 @ 0x10        [[name("LenStrings")]];
 
+// the move menu: 24 destinations of 0x38 bytes (ZZ EN), each with up to 4
+// town stage ids
 struct Menu {
     u32 JumpID;
-    u32 unk0C        [[comment("always FF FF FF FF")]];
+    u32 unk04        [[comment("always FF FF FF FF")]];
     u16 AreaID;
     u16 AreaID2;
     u16 AreaID3;

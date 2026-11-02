@@ -5,17 +5,7 @@
 #include <misc/s32p.pat>
 
 #include <quest/objective.hexpat>
-
-struct QuestText {
-    s32p title;
-    s32p textMain;
-    s32p textSubA;
-    s32p testSubB;
-    s32p successCond;
-    s32p failCond;
-    s32p contractor;
-    s32p description;
-};
+#include <quest/block.hexpat>
 
 struct RewardItem {
     u16 rate;
@@ -39,19 +29,20 @@ struct GatherItem {
 } [[single_color]];
 
 struct RewardTable {
-    u8 tableId;
-    u8;
+    u8 tableId [[comment("1: main objective (every quest), 2: sub A, 3: sub B; 0, 4, 5, 8, 41-47 are rarer, role unknown")]];
+    u8 flags [[comment("0x80 on most")]];
     u16;
     u32 tableOffset;
     RewardItem items[while(std::mem::read_signed($,2)!=-1)] @ tableOffset;
 } [[single_color]];
 
 struct LargeMonsterSpawn {
-    MonsterID monster;
+    MonsterID monster [[comment("A u16, 0xFFFF: no monster")]];
     if(monster == 0xFF) {continue;}
-    padding[3];
+    padding[1];
+    u16 variant;
     u32 spawnAmount;
-    u32 spawnStage;
+    u32 spawnStage [[comment("A stage id, as the loaded stages name them (not an area index)")]];
     padding[0x10];
     u32 orientation;
     float xPos;
@@ -74,6 +65,9 @@ struct MinionSpawn {
     padding[0x10];
 };
 
+// The first loaded stage is where the quest starts. Night variants (n0-n2)
+// load other stage ids for the same areas, but their doors still name the
+// day ids.
 struct Stage {
     u32 stageID;
     padding[12];
@@ -98,6 +92,8 @@ struct ptMapSection {
     u16 unk @ (addressof(section) + sizeof(section) + 4);
 };
 
+// Small monsters: 3 sets (or none) of sections, one per stage; the sets often
+// point to the same sections, and sections may share their spawn lists
 struct MapZones {
     ptMapSection mapSections[while(std::mem::read_unsigned($,4)!=0)];
 };
@@ -111,6 +107,9 @@ struct largeMonsterPointers{
     LargeMonsterSpawn monsterSpawns[5] @ largeMonsterSpawns;
 };
 
+// A door: the stage it leads to (doors go both ways, which tells which area
+// row is which stage when the rows don't follow the stage ids' order: forest
+// and hills, snowy mountains)
 struct floatSet {
     s16 targetStageId1;
     if (targetStageId1 == -1) {
@@ -137,6 +136,9 @@ struct playerAreaChange {
     }
 };
 
+// One row per area, row 0 being the start area; they end where the
+// transitions start (header 0x1C). The rows follow the stage ids in increasing
+// order on most maps.
 struct AreaMappings {
     float Area_xPos;
     float Area_zPos;
@@ -163,12 +165,13 @@ struct gatheringPoint{
     u16 minCount;
 };
 
+// an area row's gathering points, until an X of -1.0 (0 to 6 on the quest dump)
 struct ptGatheringPoint {
     ptr ptr;
 
     // Ignore null pointers
     if (ptr != 0) {
-        gatheringPoint point[4] @ ptr;
+        gatheringPoint point[while(std::mem::read_unsigned($, 4) != 0xBF800000)] @ ptr;
     }
 };
 
@@ -211,7 +214,7 @@ struct generalQuestProperties {
         [[name("Quest Monster size multiplier"),
         comment("% of normal size. Decimal 100 = 100%")]];
     u16 unk46 [[hidden]]; //SizeRange
-    u32 statTable1; //MonsStatTable1
+    u32 monsterStatRow [[comment("The row of mhfemd's stat blocks the monsters use (HP, attack...): 0-80 in the quest dump")]]; //MonsStatTable1
     u32 mainRankPoints; 
     u32 unk50 [[hidden]]; //kn
     u32 subARankPoints;
@@ -229,7 +232,7 @@ struct generalQuestProperties {
     // qua
     u16 gatheringTablesQty;
     u16 unk7A [[hidden]];
-    u8 area1zones;
+    u8 area1zones [[comment("The number of areas")]];
     u8 area2zones;
     u8 area3zones;
     u8 area4zones;
@@ -237,92 +240,6 @@ struct generalQuestProperties {
     u16 unk80 [[hidden]];
     u16 unk82 [[hidden]];
     u16 unk84 [[hidden]];
-};
-
-struct mainQuestProperties {
-    u8 unkC0 [[hidden]];
-    u8 MusicModeFlag;
-    u8 QuestLocaleFlags;
-    u8 unkC3 [[hidden]];
-    u8 RankingID;
-    u8 unkC5 [[hidden]];
-    u16 unkC6 [[hidden]];
-    u16 RankBand0;
-    u16 unkCA [[hidden]]; //QuestTypeID untatID
-    u32 QuestFee;
-    u32 RewardMain;
-    u32 CartsOrRewardReduction;
-    u16 RewardA;
-    padding[2];
-    u16 rewardB;
-
-    u16 HardHunterRankReq;
-    u32 QuestTime;
-    qMapID QuestMap;
-    ptr QuestStringsPtr;
-    u16 unkEC [[hidden]];
-    u16 QuestID;
-    QuestObj QuestObjectives[3];
-    u8 unk108 [[hidden]]; 
-    u8 unk109 [[hidden]];
-    padding[2];
-    u16 JoinRankMin;
-    u16 JoinRankMax;
-    u16 PostRankMin;
-    u16 PostRankMax;
-
-    padding[8];
-
-    // 1.4 Forced Equipment
-    // Forced equipment section (size 0x30)
-    // Attachments are +0x80 for some reason
-    u16 legsAndAttach[4];
-    u16 weaponAndAttach[4];
-    u16 headAndAttach[4];
-    u16 chestAndAttach[4];
-    u16 armsAndAttach[4];
-    u16 waistAndAttach[4];
-
-    u32 unk14C [[hidden]];
-
-    // 1.3 Quest and Monster Variations
-    u8 monsterVariants[3];
-    u8 mapVariant;
-    ItemID requiredItemType;
-    u8 requiredItemCount;
-    u8 questVariant1;
-    u8 questVariant2;
-    u8 questVariant3;
-    u8 questVariant4;
-
-    padding[5];
-
-    u32 allowedEquipBitmask;
-
-    // Rewards Focus
-    u32 mainPoints;
-    u32 subAPoints;
-    u32 subBPoints;
-
-    ItemID items[3];
-    
-    // Interception Settings
-    if (QuestObjectives[0].goalType == questObjType::SlayAll) {
-        u8 monsterVariant1;
-        u8 monsterVariant2;
-        u8 monsterVariant3;
-        MonsterID monsters[5];
-    } else {
-        padding[3];
-        MonsterID monsterID179;
-    }
-
-    padding[0xA];
-
-    u32 questClearsAllowed;
-    //MonsterID questMonsterIcon; // I think this is wrong
-    
-    QuestText questText @ QuestStringsPtr;
 };
 
 struct QuestFileHeader {
@@ -353,15 +270,18 @@ QuestFileHeader header @ 0x0;
 generalQuestProperties genQuestProp @ $;
 
 // 1.2 Main Quest Properties
-mainQuestProperties MainQuestProperties @ header.questTypeFlagsPtr;
+QuestBlock MainQuestProperties @ header.questTypeFlagsPtr;
 
 // 2.0 Loaded Stages
 Stage loadedStages[while($ < header.unk34)] @ header.loadedStagesPtr; //Player slot spawns?
 
 // 3.0 Supply Box
-SupplyItem supplies[24] @ header.supplyBoxPtr;
-SupplyItem suppliesSubA[8] @ (header.supplyBoxPtr + 0x60);
-SupplyItem suppliesSubB[8] @ (header.supplyBoxPtr + 0x80);
+// The two 8-item boxes are not tied to the sub objectives (1,044 quests of
+// the dump use them without any): box 3 almost only comes with box 2, extra
+// supplies most likely delivered during the quest.
+SupplyItem supplies[24] @ header.supplyBoxPtr [[name("Supply box")]];
+SupplyItem supplyBox2[8] @ (header.supplyBoxPtr + 0x60) [[name("Supply box 2")]];
+SupplyItem supplyBox3[8] @ (header.supplyBoxPtr + 0x80) [[name("Supply box 3")]];
 
 // 4.0 Reward
 RewardTable rewards[while(std::mem::read_signed($,2)!=-1)] 
@@ -390,14 +310,16 @@ u32 returnBC_ID @ header.mapInfoPtr + sizeof(qMapID);
 
 // 11.0 Gathering Points per Area
 
-// The area1zones length is an assumption, just looks better than a loop
+// One list per area row, in the area mappings' order, in the area's
+// coordinates like the monsters (checked on the quest dump: placed on the
+// maps' plans with the rows' stages, they fall on the drawn areas)
 ptGatheringPoint gatheringPerArea[genQuestProp.area1zones] 
     @ header.gatheringPointsPtr;
 
-// 12.0 Base Camp Facilities
+// 12.0 Facilities per Area
 
-// The area1zones length is an assumption, and 
-// I liked it better than looping
+// One list per area row, as the gathering points (types 3, 5 and 7 come once
+// a quest: blue box, bed, red box)
 ptVar<facPointBlock> facilities[genQuestProp.area1zones] 
     @ header.areaFacilitiesPtr;
 

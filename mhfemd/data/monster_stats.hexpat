@@ -87,7 +87,7 @@ struct MonStatRow {
     u8 nandoTableIdx[2];
     s8 nandoAdd[3];
     s8 sclAdd[3];
-    monsterStatRow *stats[84] : u32;
+    monsterStatRow *stats[84] : u32 [[comment("A quest picks the row its monsters use with the u16 at 0x48 of its file (0-80 in the quest dump)")]];
     HzvSetRef meatDat[12];
     u8 meatSetCount[12];
     /**
@@ -99,7 +99,7 @@ struct MonStatRow {
      */
     IkariRef ikari[12];
     float hinshiPer[12];
-    s16 vital[4];
+    s16 vital[4] [[comment("vital[0] is the base HP (Rathian 5000, Diablos 7000 on ZZ), the stat rows' vital multiplies it")]];
     u32 motAdjTypeCount = motAdjTypes(rd32($));
     if (rd32($) != 0)
         MonsterMotionEffectEntry *motAdj[200 * motAdjTypeCount] : u32;

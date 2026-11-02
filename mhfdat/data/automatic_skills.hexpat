@@ -3,6 +3,7 @@
 #include <misc/s32p.pat>
 #include <misc/automaticskills.hexpat>
 #include <std/mem.pat>
+#include <mhfdat/utils/index.pat>
 
 fn getEquipClass(u8 n) {
 	match (n) {
@@ -10,20 +11,6 @@ fn getEquipClass(u8 n) {
 		(0): return "Weapon";
 	}
 	return "UnknownClass";
-};
-
-fn getEquipType(u8 n) {
-	str ret = "!!Unknown!!";
-	match (n) {
-		(0x00): ret = "Legs";
-		(0x02): ret = "Head";
-		(0x03): ret = "Chest";
-		(0x04): ret = "Arms";
-		(0x05): ret = "Waist";
-		(0x06): ret = "Melee";
-		(0x07): ret = "Ranged";
-	}
-	return ret;
 };
 
 fn getEquipNameFromID(u16 equipID, u8 equipType) {

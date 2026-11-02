@@ -19,6 +19,10 @@
 #include <mhfdat/data/automatic_skills.hexpat>
 #endif
 
+#ifdef __DATA_CARAVAN
+#include <mhfdat/data/caravan.hexpat>
+#endif
+
 #ifdef __DATA_CRAFTING
 #include <mhfdat/data/crafting.hexpat>
 #endif
@@ -63,12 +67,24 @@
 #include <mhfdat/data/quests.hexpat>
 #endif
 
+#ifdef __DATA_ROAD
+#include <mhfdat/data/road.hexpat>
+#endif
+
 #ifdef __DATA_SEASONAL_EVENTS
 #include <mhfdat/data/seasonalevents.hexpat>
 #endif
 
 #ifdef __DATA_SHARPNESS
 #include <mhfdat/data/sharpness.hexpat>
+#endif
+
+#ifdef __DATA_SHOP
+#include <mhfdat/data/shop.hexpat>
+#endif
+
+#ifdef __DATA_SHOP_GUILD
+#include <mhfdat/data/shop_guild.hexpat>
 #endif
 
 #ifdef __DATA_SHOP_ROAD_CAT
@@ -79,10 +95,22 @@
 #include <mhfdat/data/shop_tower_medal.hexpat>
 #endif
 
-#ifdef __DATA_SHOP
-#include <mhfdat/data/shop.hexpat>
+#ifdef __DATA_SIGILS
+#include <mhfdat/data/sigils.hexpat>
+#endif
+
+#ifdef __DATA_SKILLS
+#include <mhfdat/data/skills.hexpat>
+#endif
+
+#ifdef __DATA_TOWER
+#include <mhfdat/data/tower.hexpat>
 #endif
 
 #ifdef __DATA_WEAPONS
 #include <mhfdat/data/weapons.hexpat>
+#endif
+
+#ifdef __DATA_WEAPON_PARAMS
+#include <mhfdat/data/weapon_params.hexpat>
 #endif

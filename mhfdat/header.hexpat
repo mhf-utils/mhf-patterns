@@ -151,16 +151,16 @@ struct ptr_table {
     unk_ptr hd_dll_af57f2;
     unk_ptr hd_dll_af583d;
     unk_ptr hd_dll_af5843;      // @ 0x1D0
-    unk_ptr hd_dll_af56ea;
+    ptr mytraAdventures [[name("Mytra Adventure Dispatch Pointer")]]; // @ 0x1D4, hd_dll_af56ea
     unk_ptr hd_dll_af56cc;
-    unk_ptr hd_dll_af56d2;
-    unk_ptr hd_dll_af56d8;      // @ 0x1E0
-    unk_ptr hd_dll_af56de;
-    unk_ptr hd_dll_af56e4;
-    unk_ptr hd_dll_af5682;
-    unk_ptr hd_dll_af5693;      // @ 0x1F0
-    unk_ptr hd_dll_af56a4;
-    unk_ptr hd_dll_af56b5;
+    ptr mytraShopStage0 [[name("Mytra Shop Stock Stage 0 Pointer")]]; // @ 0x1DC, hd_dll_af56d2
+    ptr mytraShopStage2 [[name("Mytra Shop Stock Stage 2 Pointer")]]; // @ 0x1E0, hd_dll_af56d8
+    ptr mytraShopStage3 [[name("Mytra Shop Stock Stage 3 Pointer")]]; // @ 0x1E4, hd_dll_af56de
+    ptr mytraShopStage3G [[name("Mytra Shop Stock Stage 3 GR600 Pointer")]]; // @ 0x1E8, hd_dll_af56e4
+    ptr mytraCatMixStage0 [[name("Mytra Cat Mix Stage 0 Pointer")]]; // @ 0x1EC, hd_dll_af5682
+    ptr mytraCatMixStage2 [[name("Mytra Cat Mix Stage 2 Pointer")]]; // @ 0x1F0, hd_dll_af5693
+    ptr mytraCatMixStage3 [[name("Mytra Cat Mix Stage 3 Pointer")]]; // @ 0x1F4, hd_dll_af56a4
+    ptr mytraCatMixStage3G [[name("Mytra Cat Mix Stage 3 GR600 Pointer")]]; // @ 0x1F8, hd_dll_af56b5
     unk_ptr hd_dll_af56c6;
     ptr meowkaPotRecipes [[name("Meowka Pot Recipes Pointer")]]; // @ 0x200, hd_dll_af57bf
     unk_ptr hd_dll_af5772;
@@ -194,13 +194,13 @@ struct ptr_table {
     unk_ptr hd_dll_af59cb;
     unk_ptr hd_dll_af5a21;
     unk_ptr hd_dll_af5a27;
-    unk_ptr hd_dll_af5a2d;      // @ 0x280
-    unk_ptr hd_dll_af5a33;
+    ptr weaponEffectSets [[name("Weapon Effect Sets Pointer")]]; // @ 0x280, hd_dll_af5a2d
+    ptr weaponEffects [[name("Weapon Effects Pointer")]]; // @ 0x284, hd_dll_af5a33
     unk_ptr hd_dll_af5a39;
     unk_ptr hd_dll_af5a3f;
     unk_ptr hd_dll_af5a45;      // @ 0x290
-    unk_ptr hd_dll_af5a4b;
-    unk_ptr hd_dll_af5a51;
+    ptr modelEffectSets [[name("Model Effect Sets Pointer")]]; // @ 0x294, hd_dll_af5a4b
+    ptr modelEffects [[name("Model Effects Pointer")]]; // @ 0x298, hd_dll_af5a51
     ptr rastaItemSets [[name("Rasta Item Sets Pointer")]]; // @ 0x29C, hd_dll_af5a57
     unk_ptr hd_dll_af5a5d;      // @ 0x2A0
     unk_ptr hd_dll_af5ae0;
@@ -352,8 +352,8 @@ struct ptr_table {
     unk_ptr hd_dll_af62c2;
     unk_ptr hd_dll_af6304;
     unk_ptr hd_dll_af630a;
-    unk_ptr hd_dll_af6310;      // @ 0x4F0
-    unk_ptr hd_dll_af632e;
+    ptr randomShellTypes [[name("Random Gunlance Shell Types Pointer")]]; // @ 0x4F0, hd_dll_af6310
+    ptr handlingDrawSpeed [[name("Handling Draw Speed Pointer")]]; // @ 0x4F4, hd_dll_af632e
     ptr randomSharpnessGunlance [[name("Random Sharpness Gunlance Pointer")]]; // @ 0x4F8, hd_dll_af6316
     unk_ptr hd_dll_af5ce4;
     unk_ptr hd_dll_af631c;      // @ 0x500
@@ -430,7 +430,7 @@ struct ptr_table {
     unk_ptr hd_dll_af6c2c;      // @ 0x610
     ptr weaponActions [[name("Weapon Action Scripts Pointer")]]; // @ 0x614, hd_dll_af6c32
     unk_ptr hd_dll_af6c98;
-    unk_ptr hd_dll_af6d00;
+    ptr playerSoundBanks [[name("Player Sound Banks Pointer")]]; // @ 0x61C, hd_dll_af6d00
     // random sigils (sigils.hexpat)
     ptr sigilCraftingRecipes    [[name("Sigil Crafting Recipes Pointer")]];        // @ 0x620, hd_dll_af6d60
     ptr sigilSkillProbabilities [[name("Sigil Skill Probabilities Pointer")]];     // hd_dll_af6d66
@@ -719,7 +719,7 @@ struct ptr_table {
     unk_ptr hd_dll_af87c1;
     unk_ptr hd_dll_af87f2;
     unk_ptr hd_dll_af87f8;      // @ 0xA60
-    padding[4];
+    u32 playerSoundBankCount [[name("Player Sound Bank Count")]]; // @ 0xA64, + 0x12 banks
     unk_ptr hd_dll_af87fe;
     unk_ptr hd_dll_af8804;
     unk_ptr hd_dll_af8819;      // @ 0xA70
@@ -754,7 +754,7 @@ struct ptr_table {
     unk_ptr hd_dll_af8d66;
     unk_ptr hd_dll_af8dc1;
     unk_ptr hd_dll_af8dc7;      // @ 0xAD0
-    unk_ptr hd_dll_af8d60;
+    ptr monsterStartActions [[name("Monster Start Actions Pointer")]]; // @ 0xAD4, hd_dll_af8d60
     unk_ptr hd_dll_af7da4;
     unk_ptr hd_dll_af7daa;
     unk_ptr hd_dll_af8e16;      // @ 0xAE0

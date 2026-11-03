@@ -182,6 +182,12 @@ RandomSharpnessList randomSharpnessLance @ header.ptrs.randomSharpnessLance [[na
 RandomSharpnessList randomSharpnessHammerHorn @ header.ptrs.randomSharpnessHammerHorn [[name("Random Sharpness: Hammer, Hunting Horn")]];
 RandomSharpnessList randomSharpnessGunlance @ header.ptrs.randomSharpnessGunlance [[name("Random Sharpness: Gunlance")]];
 
+// Random gunlances roll their shell type in header 0x4F0 (normal, long,
+// spread). Header 0x4F4: the draw speed the handling skill (or a G finesse
+// weapon) sets when it is faster than the weapon's own.
+u8 randomShellTypes[3] @ header.ptrs.randomShellTypes [[name("Random Gunlance Shell Types")]];
+float handlingDrawSpeed @ header.ptrs.handlingDrawSpeed [[name("Handling Draw Speed")]];
+
 // =======================
 // Light Bowgun rapid fire. Per ammo type (header 0xA0, up to the next
 // table): the shots of a burst and the speed level (an index in the client's

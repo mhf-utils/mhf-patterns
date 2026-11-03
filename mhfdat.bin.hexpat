@@ -10,6 +10,7 @@
 //#define __DATA_DATA_COUNTERS 1
 //#define __DATA_DECOID 1
 //#define __DATA_EQUIPMENTS 1
+//#define __DATA_EQUIPMENT_EFFECTS 1
 //#define __DATA_EXTRA_COUNTERS 1
 //#define __DATA_GOOCOO 1
 //#define __DATA_GUILD_COOKING 1
@@ -20,8 +21,10 @@
 //#define __DATA_MISSIONS 1
 //#define __DATA_MONSTERS 1
 //#define __DATA_MONSTER_SOUNDS 1
+//#define __DATA_MYTRA 1
 //#define __DATA_PARTNER 1
 //#define __DATA_PART_BREAKS 1
+//#define __DATA_PLAYER_SOUNDS 1
 //#define __DATA_QUESTS 1
 //#define __DATA_ROAD 1
 //#define __DATA_SEASONAL_EVENTS 1

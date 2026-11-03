@@ -73,6 +73,25 @@ MonsterCarvePoints monsterCarvePoints[MONSTER_NAME_COUNT]
     @ header.ptrs.monsterCarvePoints
     [[name("Monster Carve Points")]];
 
+// Start actions (header 0xAD4): on quests whose variant has flag 0x2000, a
+// listed monster starts in this action (act, sub) and locomotion state
+// (EnemyWork +0x410), until a monster of -1
+fn startActionMonster(s32 n) {
+    MonsterID m = u8(n);
+    return fmtMonsterID(m);
+};
+
+struct MonsterStartAction {
+    s32 monster [[format("startActionMonster")]];
+    s32 act;
+    s32 sub;
+    s32 locomotion;
+};
+
+MonsterStartAction monsterStartActions[while(std::mem::read_signed($, 4) >= 0)]
+    @ header.ptrs.monsterStartActions
+    [[name("Monster Start Actions")]];
+
 // Monster icons (header 0x51C): per monster id, the section of som_sef.pac
 // holding its icon; 0x84 and values above 0x8D show the default icon 0x8E
 struct MonsterIcon {

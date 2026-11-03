@@ -55,6 +55,10 @@
 #include <mhfdat/data/equipment_counts.hexpat>
 #endif
 
+#ifdef __DATA_EQUIPMENT_EFFECTS
+#include <mhfdat/data/equipment_effects.hexpat>
+#endif
+
 #ifdef __DATA_EXTRA_COUNTERS
 #include <mhfdat/data/extra_counters.hexpat>
 #endif
@@ -95,12 +99,20 @@
 #include <mhfdat/data/monster_sounds.hexpat>
 #endif
 
+#ifdef __DATA_MYTRA
+#include <mhfdat/data/mytra.hexpat>
+#endif
+
 #ifdef __DATA_PARTNER
 #include <mhfdat/data/partner.hexpat>
 #endif
 
 #ifdef __DATA_PART_BREAKS
 #include <mhfdat/data/part_breaks.hexpat>
+#endif
+
+#ifdef __DATA_PLAYER_SOUNDS
+#include <mhfdat/data/player_sounds.hexpat>
 #endif
 
 #ifdef __DATA_QUESTS

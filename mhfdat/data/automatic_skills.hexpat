@@ -4,6 +4,7 @@
 #include <misc/automaticskills.hexpat>
 #include <std/mem.pat>
 #include <mhfdat/utils/index.pat>
+#include <mhfdat/data/equipment_counts.hexpat>
 
 fn getEquipClass(u8 n) {
 	match (n) {
@@ -45,38 +46,4 @@ fn autoskillsFmt(AutoSkill entry) {
 	);
 };
 
-fn get_autoskills_count(ptr start_addr) {
-	u32 count = 0;
-	ptr current_addr = start_addr;
-
-	while (count < 5000) {
-		if (current_addr + sizeof(AutoSkill) > std::mem::size())
-			break;
-
-		u8  equipClass = std::mem::read_unsigned(current_addr,     1);
-		u8  eqType     = std::mem::read_unsigned(current_addr + 1, 1);
-		u16 equipID    = std::mem::read_unsigned(current_addr + 2, 2);
-		u16 skill_id   = std::mem::read_unsigned(current_addr + 4, 2);
-
-		if (equipClass == 0 && eqType == 0 && equipID == 0 && skill_id == 0)
-			break;
-		if (equipID == 0xFFFF)
-			break;
-		if (eqType > 7 && eqType != 0)
-			break;
-		if (eqType == 1)
-			break;
-
-		count += 1;
-		current_addr += sizeof(AutoSkill);
-	}
-
-	if (count == 0)
-		count = 1;
-
-	return count;
-};
-
-AutoSkill automaticSkills[
-	get_autoskills_count(header.ptrs.AutomaticSkillsTable)
-] @ header.ptrs.AutomaticSkillsTable [[name("Automatic Skills")]];
+AutoSkill automaticSkills[importantNums.numAutoSkills] @ header.ptrs.AutomaticSkillsTable [[name("Automatic Skills")]];

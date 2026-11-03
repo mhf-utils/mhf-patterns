@@ -73,11 +73,11 @@ struct ptr_table {
     unk_ptr hd_dll_af4bc6;
     ptr shopCatalogs [[name("Shop Catalogs Pointer"), comment("14 records of 3 list pointers and a count; record 7 is the Guild Shop (shop_guild.hexpat)")]]; // @ 0x0C8, hd_dll_af4bf5
     unk_ptr hd_dll_af4bfb;
-    unk_ptr hd_dll_af4cd1;      // @ 0x0D0
-    unk_ptr hd_dll_af4cd7;
+    ptr wswordEfts [[name("Dual Blades Blade Effects Pointer")]]; // @ 0x0D0, hd_dll_af4cd1
+    ptr wswordEftReachScale [[name("Dual Blades Effect Reach Scale Pointer")]]; // @ 0x0D4, hd_dll_af4cd7
     ptr weaponReachBodies [[name("Weapon Reach Bodies Pointer")]]; // @ 0x0D8, hd_dll_af4cc5
-    unk_ptr hd_dll_af4d14;
-    unk_ptr hd_dll_af4d08;      // @ 0x0E0
+    ptr weaponPosByReach [[name("Weapon Position By Reach Pointer")]]; // @ 0x0DC, hd_dll_af4d14
+    ptr wswordEftModelRanges [[name("Dual Blades Effect Model Ranges Pointer")]]; // @ 0x0E0, hd_dll_af4d08
     unk_ptr hd_dll_af47b5;
     ptr hd_dll_af47af       [[name("Equipment Counts Pointer"), comment("Seems to point to how many of certain objects there are, such as weapons")]];
     ptr skillTree [[name("Skill Tree Pointer")]]; // @ 0x0EC, hd_dll_af4d2d
@@ -394,9 +394,9 @@ struct ptr_table {
     unk_ptr hd_dll_af6694;
     unk_ptr hd_dll_af669a;      // @ 0x590
     ptr skillEffects [[name("Skill Effects Pointer")]]; // @ 0x594, hd_dll_af66a0
-    unk_ptr hd_dll_af66a6;
-    unk_ptr hd_dll_af66ac;
-    unk_ptr hd_dll_af66b2;      // @ 0x5A0
+    ptr gArmorFxElementRate [[name("G Armor Fx Element Rate Pointer")]]; // @ 0x598, hd_dll_af66a6
+    ptr gArmorFxStatusRate [[name("G Armor Fx Status Rate Pointer")]]; // @ 0x59C, hd_dll_af66ac
+    ptr gArmorFxElementPercent [[name("G Armor Fx Element Percent Pointer")]]; // @ 0x5A0, hd_dll_af66b2
     unk_ptr hd_dll_af66b8;
     unk_ptr hd_dll_af66be;
     unk_ptr hd_dll_af66c4;
@@ -649,10 +649,10 @@ struct ptr_table {
     unk_ptr hd_dll_af8344;
     unk_ptr hd_dll_af834a;      // @ 0x960
     unk_ptr hd_dll_af8350;
-    unk_ptr hd_dll_af8356;
-    unk_ptr hd_dll_af835c;
-    unk_ptr hd_dll_af8362;      // @ 0x970
-    unk_ptr hd_dll_af8368;
+    ptr armorFlag10000ElementRate [[name("Armor Flag 0x10000 Element Rate Pointer")]]; // @ 0x968, hd_dll_af8356
+    ptr armorFlag10000StatusRate [[name("Armor Flag 0x10000 Status Rate Pointer")]]; // @ 0x96C, hd_dll_af835c
+    ptr armorFlag10000ElementPercent [[name("Armor Flag 0x10000 Element Percent Pointer")]]; // @ 0x970, hd_dll_af8362
+    ptr skillSlotId4ElementPercent [[name("Skill Slot Id 4 Element Percent Pointer")]]; // @ 0x974, hd_dll_af8368
     unk_ptr hd_dll_af836e;
     unk_ptr hd_dll_af8374;
     unk_ptr hd_dll_af837a;      // @ 0x980
@@ -771,8 +771,8 @@ struct ptr_table {
     unk_ptr hd_dll_af8f0d;
     ptr Road_Cat_Item_Shop_Pointer [[name("Road Cat Item Shop Pointer")]];      // @ 0xB10
     unk_ptr hd_dll_af8f19;
-    unk_ptr hd_dll_af4729;
-    unk_ptr hd_dll_af8f1f;
+    ptr interceptionMonsterCount [[name("Interception Monster Count Pointer")]]; // @ 0xB18, hd_dll_af4729
+    ptr interceptionMonsterStars [[name("Interception Monster G Stars Pointer")]]; // @ 0xB1C, hd_dll_af8f1f
     ptr Road_Monster_Point_Value_Pointer [[name("Road Monster Point Value Pointer")]];      // @ 0xB20
     unk_ptr hd_dll_af8f2b;
     unk_ptr hd_dll_af8f31;

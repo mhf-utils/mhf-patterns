@@ -167,6 +167,69 @@ struct ReachBodyRow {
 ReachBodyRow weaponReachBodies[while(std::mem::read_unsigned($, 4) != 0)] @ header.ptrs.weaponReachBodies [[name("Weapon Reach Bodies")]];
 
 // =======================
+// Dual Blades blade effects (Wii U Calc_wsword_eft_id, eft03_ofs_calc,
+// eft03_mat_calc, eft05_mat_calc). Header 0xE0: ranges of weapon model ids
+// (player +0x38C, class 6 only) until -1; the effect index is the model's
+// position across the ranges, and picks a row of header 0xD0 (468 rows on
+// ZZ, the sum of the ranges). A row has one side per blade joint (0x0E, 0x12):
+// effect 03 offsets (x, z) and the two scales of the joint matrix, then
+// effect 05 offset and scale, the scale times header 0xD4 at the weapon's
+// reach (getPlateSkillWeaponReachPlate). Header 0xDC (Wii U
+// shell64_get_weapon_pos, eft13_pos_set, eft41_i): a position (s16 x, y, z)
+// on the weapon by reach.
+// =======================
+
+struct WswordEftModelRange {
+    s16 firstModel;
+    s16 lastModel;
+};
+
+struct WswordEftModelRanges {
+    WswordEftModelRange ranges[while(std::mem::read_signed($, 2) != -1)];
+    WswordEftModelRange end;
+};
+
+struct WswordEft03Side {
+    float offsetX;
+    float offsetZ;
+    float scaleRow0;
+    float scaleRow1;
+};
+
+struct WswordEft05Side {
+    float offset[3];
+    float scale;
+};
+
+struct WswordEftRow {
+    WswordEft03Side eft03Joint0E;
+    WswordEft03Side eft03Joint12;
+    WswordEft05Side eft05Joint0E;
+    WswordEft05Side eft05Joint12;
+};
+
+fn wswordEftCount() {
+    u32 p = header.ptrs.wswordEftModelRanges;
+    u32 n = 0;
+    while (std::mem::read_signed(p, 2) != -1) {
+        n += std::mem::read_signed(p + 2, 2) - std::mem::read_signed(p, 2) + 1;
+        p += 4;
+    }
+    return n;
+};
+
+struct WeaponPos {
+    s16 x;
+    s16 y;
+    s16 z;
+};
+
+WswordEftModelRanges wswordEftModelRanges @ header.ptrs.wswordEftModelRanges [[name("Dual Blades Effect Model Ranges")]];
+WswordEftRow wswordEfts[wswordEftCount()] @ header.ptrs.wswordEfts [[name("Dual Blades Blade Effects")]];
+float wswordEftReachScale[8] @ header.ptrs.wswordEftReachScale [[name("Dual Blades Effect 05 Scale By Reach")]];
+WeaponPos weaponPosByReach[8] @ header.ptrs.weaponPosByReach [[name("Weapon Position By Reach")]];
+
+// =======================
 // Motion values (header 0x63C, and 0x74C for the alternate bank): one row per
 // action id below 0x35, empty when valid is 0. A hit's key - 1 (0 to 11)
 // picks the column: the raw motion value goes to the hit, the element one
@@ -228,6 +291,27 @@ float handlingDrawSpeed @ header.ptrs.handlingDrawSpeed [[name("Handling Draw Sp
 u32 gunnerShotPowerLists[44] @ header.ptrs.gunnerShotPower [[name("Gunner Shot Power Lists")]];
 float hcKaiCritDamage[6] @ header.ptrs.hcKaiCritDamage [[name("HC Kai Critical Damage Bonus")]];
 s16 hcKaiDefense[6] @ header.ptrs.hcKaiDefense [[name("HC Kai Defense Bonus")]];
+
+// =======================
+// Element and status multipliers by worn armor pieces (0-5), applied to the
+// weapon's element (rate 0) or status (rate 1) in qualifying quests.
+// G Armor fx pieces (armor flags 0x80, 0x4000, 0x8000; Wii U
+// Pl_G_Armor_fx_num, PlGetGousyuFxAttrValue / ...Int): header 0x598 / 0x59C
+// (rates) and 0x5A0 (element percent). HD only, pieces with armor flag
+// 0x10000: 0x968 / 0x96C (rates) and 0x970 (percent). The count of id 4 in
+// the player's 15 skill context slots (+0x50A) adds 0x968 / 0x96C too, and
+// 0x974 in the percent version (which the code indexes by the flag 0x10000
+// count). Readers: FUN_10A853A0 (rates), FUN_10A854C0 (percents),
+// player_status_attack_multiplier.
+// =======================
+
+float gArmorFxElementRate[6] @ header.ptrs.gArmorFxElementRate [[name("G Armor Fx Element Rate")]];
+float gArmorFxStatusRate[6] @ header.ptrs.gArmorFxStatusRate [[name("G Armor Fx Status Rate")]];
+s32 gArmorFxElementPercent[6] @ header.ptrs.gArmorFxElementPercent [[name("G Armor Fx Element Percent")]];
+float armorFlag10000ElementRate[6] @ header.ptrs.armorFlag10000ElementRate [[name("Armor Flag 0x10000 Element Rate")]];
+float armorFlag10000StatusRate[6] @ header.ptrs.armorFlag10000StatusRate [[name("Armor Flag 0x10000 Status Rate")]];
+s32 armorFlag10000ElementPercent[6] @ header.ptrs.armorFlag10000ElementPercent [[name("Armor Flag 0x10000 Element Percent")]];
+s32 skillSlotId4ElementPercent[6] @ header.ptrs.skillSlotId4ElementPercent [[name("Skill Slot Id 4 Element Percent")]];
 
 // =======================
 // Bowgun just reload and just shot (header 0x668 / 0x66C; the Wii U client

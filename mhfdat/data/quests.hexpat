@@ -120,3 +120,18 @@ PriorityRequestEntry priorityRequestEntries[importantNums.numPriorityRequestEntr
 
 // Beginner quests (header 0x1B8): important numbers + 0x3C quest ids (2 on ZZ)
 u16 beginnerQuests[importantNums.numBeginnerQuests] @ header.ptrs.beginnerQuests [[name("Beginner Quests")]];
+
+// Continuous interception quests (quest variant3 bit 0x20, mhf-client
+// 連続迎撃): header 0xB18 points to the row count, header 0xB1C to one row
+// per monster. In a G-rank field, the row of the current target (quest work
+// +0x9C, entity +0x03) replaces the quest's G star for the priority request
+// tier (priorityRequest_quest_tier: 3-4 -> 6, 5-7 -> 7) and for the defense
+// recalculation (player_recalc_defense_value_basic / _full; variant3 bit 0x10
+// forces 8).
+struct InterceptionMonsterStar {
+	u8 monster [[format("priorityRequestMonster")]];
+	u8 gStar;
+};
+
+u16 interceptionMonsterCount @ header.ptrs.interceptionMonsterCount [[name("Interception Monster Count")]];
+InterceptionMonsterStar interceptionMonsterStars[interceptionMonsterCount] @ header.ptrs.interceptionMonsterStars [[name("Interception Monster G Stars")]];

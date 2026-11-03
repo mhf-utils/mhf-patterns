@@ -230,6 +230,35 @@ float wswordEftReachScale[8] @ header.ptrs.wswordEftReachScale [[name("Dual Blad
 WeaponPos weaponPosByReach[8] @ header.ptrs.weaponPosByReach [[name("Weapon Position By Reach")]];
 
 // =======================
+// Bow model materials. Header 0x580 (important numbers + 0x1F0 rows, sorted
+// by model; FUN_11266E20 binary searches it with the player's weapon model
+// id): the row of header 0x57C for that bow model (Link, Plunderer, Prima
+// Shooter, Suzaku Fire Bow, Starry Sky Bow... on ZZ); a model not listed uses
+// row 0. A 0x57C column is an index in the material table (0x8C bytes each)
+// of the common render resource (DAT_1ED7D6A0 + 0x30), picked by the reader:
+// column 0 by the arrow shell (kind 24) draw FUN_11266EE0, columns 1 and 2 by
+// the two FUN_10B7FA70 draws (FUN_10B7F510), column 3 by
+// shell_atk_tbl_1162AFA8_i_b (shell work + 0x2C4). Column 4 has no reader.
+// Rows 0 to 9: 9 is the largest row of 0x580.
+// =======================
+
+struct BowModelMaterialRow {
+    u16 model;
+    u16 row;
+};
+
+struct BowModelMaterials {
+    u16 arrowShellMaterial;
+    u16 fxMaterial1;
+    u16 fxMaterial2;
+    u16 atkTbl1162AFA8Material;
+    u16 unk08;
+};
+
+BowModelMaterialRow bowModelMaterialRows[importantNums.numBowModelMaterialRows] @ header.ptrs.bowModelMaterialRows [[name("Bow Model Material Rows")]];
+BowModelMaterials bowModelMaterials[10] @ header.ptrs.bowModelMaterials [[name("Bow Model Materials")]];
+
+// =======================
 // Motion values (header 0x63C, and 0x74C for the alternate bank): one row per
 // action id below 0x35, empty when valid is 0. A hit's key - 1 (0 to 11)
 // picks the column: the raw motion value goes to the hit, the element one

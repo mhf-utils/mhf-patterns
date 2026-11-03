@@ -177,3 +177,53 @@ struct Furious {
 };
 
 Furious furious @ std::mem::read_unsigned(header.ptrs.skillCells, 4) [[name("Furious")]];
+
+// Skill bonus values (header 0xAA4). "Zenith effect N" = the player has a
+// zenith skill whose mhfdat 0xAB0 rows hold effect type N
+// (skill_is_granted_by_equipped_gear). Frames are at 30 per second.
+struct SkillBonusValues {
+	u16 *vampirismAttackGain[14] : u32 [[comment("Vampirism proc: attack added per weapon class (skill_vampirism_apply_attack_buff)")]];
+	u16 vampirismAttackCap [[comment("cap of that attack stack; the proc effect turns red at it")]];
+	u16 incitementAttack [[comment("Incitement (skill 0x1D7) active: attack added (player_recalc_attack_power_full)")]];
+	u16 critConversionUp1Scale [[comment("zenith effect 7 (C. Conversion Up+1): x 0.001 x sqrt(affinity) attack")]];
+	u16 critConversionUp2Scale [[comment("zenith effect 8 (C. Conversion Up+2)")]];
+	u16 stylishAssaultUp1AttackPerStack [[comment("zenith effect 9 (S. Assault Up+1): attack per stack above the first")]];
+	u16 stylishAssaultUp1StackLimit [[comment("zenith effect 9: stacks cap at this + 1")]];
+	u16 stylishAssaultUp2AttackPerStack [[comment("zenith effect 10 (S. Assault Up+2)")]];
+	u16 stylishAssaultUp2StackLimit [[comment("zenith effect 10: stacks cap at this + 1")]];
+	u16 dissolverUpThresholdCut [[comment("zenith effect 11 (Dissolver Up): lowers the elemental exploit threshold (player unique param +0x10)")]];
+	u16 thunderCladUp1Frames [[comment("zenith effect 12 (Thunder Clad Up+1): frames added")]];
+	u16 thunderCladUp2Frames [[comment("zenith effect 13 (Thunder Clad Up+2)")]];
+	u16 iceAgeUp1Frames [[comment("zenith effect 14 (Ice Age Up): frames added")]];
+	u16 iceAgeUp2Frames [[comment("zenith effect 15 (Ice Age Up, second)")]];
+	u8  vampirismUpHealChance [[comment("zenith effect 16 (Vampirism Up+1 / +2): heal chance percent added (player_lifesteal_on_hit)")]];
+	u8  unk1F;
+	float safChargeMoveScale [[comment("SAF sigil 0x61 value 3: root motion scale while charging (motions 0x5D1, 0x428)")]];
+};
+
+SkillBonusValues skillBonusValues @ header.ptrs.skillBonusValues [[name("Skill Bonus Values")]];
+
+// Header 0xB88: two pointers. The first goes to the Spacing gauge parameters
+// (skill_spacing_accumulate_gauge, FUN_101C5300, FUN_101C5680, FUN_101C5900;
+// nested pointer tables, not typed yet). The second to 4 values:
+// - soulAttack: attack added with zenith effect 26 (Soul Up) and Red Soul
+//   (skill 0x1CA), or with render slot status bit 0x800000
+//   (player_recalc_attack_power_basic / _full);
+// - soulDefense: defense added with Blue Soul (skill 0x1CB)
+//   (player_recalc_defense_value_basic / _full);
+// - autoRecoverySeconds: with render slot status bit 0x400000, the auto
+//   recovery timer is set to this x 30 frames (player_entity_tick_hp_regen);
+// - unk06: read by FUN_101C5B70 after a distance check between two players.
+struct SoulValues {
+	s16 soulAttack;
+	s16 soulDefense;
+	s16 autoRecoverySeconds;
+	s16 unk06;
+};
+
+struct SpacingAndSoulValues {
+	u32 spacingParams;
+	SoulValues *soulValues : u32;
+};
+
+SpacingAndSoulValues spacingAndSoulValues @ header.ptrs.spacingAndSoulValues [[name("Spacing And Soul Values")]];

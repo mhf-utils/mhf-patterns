@@ -201,7 +201,11 @@ struct ImportantNumbers {
     u16 numSeasonalEvents
         [[name("Number of Seasonal Events")]];
 
-    padding[0x16];
+    padding[0x14];
+
+    // Offset 0x1F0: bow model material rows (header 0x580)
+    u16 numBowModelMaterialRows
+        [[name("Number of Bow Model Material Rows")]];
 
     // Offset 0x1F2: Guild Priority Request entries and rotations (header 0x584, 0x588)
     u16 numPriorityRequestEntries

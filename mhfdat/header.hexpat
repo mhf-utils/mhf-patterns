@@ -387,8 +387,8 @@ struct ptr_table {
     unk_ptr hd_dll_af666a;      // @ 0x570
     unk_ptr hd_dll_af6670;
     unk_ptr hd_dll_af6676;
-    unk_ptr hd_dll_af667c;
-    unk_ptr hd_dll_af6682;      // @ 0x580
+    ptr bowModelMaterials [[name("Bow Model Materials Pointer")]]; // @ 0x57C, hd_dll_af667c
+    ptr bowModelMaterialRows [[name("Bow Model Material Rows Pointer")]]; // @ 0x580, hd_dll_af6682
     ptr priorityRequestEntries [[name("Guild Priority Request Entries Pointer")]]; // @ 0x584, hd_dll_af6688
     ptr priorityRequestRotations [[name("Guild Priority Request Rotations Pointer")]]; // @ 0x588, hd_dll_af668e
     unk_ptr hd_dll_af6694;
@@ -737,7 +737,7 @@ struct ptr_table {
 
     unk_ptr hd_dll_af8cf8;
     ptr obscurity [[name("Obscurity Pointer")]]; // @ 0xAA0, hd_dll_af8cfe
-    unk_ptr hd_dll_af8d0f;
+    ptr skillBonusValues [[name("Skill Bonus Values Pointer")]]; // @ 0xAA4, hd_dll_af8d0f
     unk_ptr hd_dll_af8d1d;
     unk_ptr hd_dll_af8d23;
     unk_ptr hd_dll_af8d29;      // @ 0xAB0
@@ -801,7 +801,7 @@ struct ptr_table {
     unk_ptr hd_dll_af8f37;
     unk_ptr hd_dll_af8f3d;      // @ 0xB80
     unk_ptr hd_dll_af59b9;
-    unk_ptr hd_dll_af9107;
+    ptr spacingAndSoulValues [[name("Spacing And Soul Values Pointer")]]; // @ 0xB88, hd_dll_af9107
     unk_ptr hd_dll_af91ba;
     unk_ptr hd_dll_af91e4;      // @ 0xB90
     ptr skillCells [[name("Skill Cells Pointer"), comment("+4: the Rush UP stage 3 block")]]; // @ 0xB94, hd_dll_af9323

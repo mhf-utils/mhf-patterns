@@ -61,7 +61,7 @@ struct ptr_table {
                                 ]];
     
     
-    unk_ptr hd_dll_af5038;      // @ 0x0A0
+    ptr rapidFireAmmo [[name("Rapid Fire Ammo Pointer")]]; // @ 0x0A0, hd_dll_af5038
     ptr BulletSets              [[name("Bullet Sets Pointer")]];
     ptr weaponBonusSlots [[name("Weapon Upgrade Bonus Slots Pointer"), comment("Rows of 4 x s16; how many is unchecked (weapon_params.hexpat)")]]; // @ 0x0A8, hd_dll_af5044
     ptr SharpnessIds            [[name("Sharpness Ids Pointer")]];
@@ -69,7 +69,7 @@ struct ptr_table {
     unk_ptr hd_dll_af5079;
     unk_ptr hd_dll_af507f;
     unk_ptr hd_dll_af5085;
-    unk_ptr hd_dll_af508b;      // @ 0x0C0
+    ptr rapidFireWeapons [[name("Rapid Fire Weapons Pointer")]]; // @ 0x0C0, hd_dll_af508b
     unk_ptr hd_dll_af4bc6;
     ptr shopCatalogs [[name("Shop Catalogs Pointer"), comment("14 records of 3 list pointers and a count; record 7 is the Guild Shop (shop_guild.hexpat)")]]; // @ 0x0C8, hd_dll_af4bf5
     unk_ptr hd_dll_af4bfb;
@@ -124,7 +124,7 @@ struct ptr_table {
     // + 0x160
     ptr machaPotRewards         [[name("Macha Pot Rewards Pointer")]];
 
-    unk_ptr hd_dll_af52c0;
+    ptr machaPotItems [[name("Macha Pot Items Pointer")]]; // @ 0x164, hd_dll_af52c0
     unk_ptr hd_dll_af52ba;
     unk_ptr hd_dll_af52f3;
 
@@ -132,9 +132,9 @@ struct ptr_table {
 
     unk_ptr hd_dll_af5397;      // @ 0x180
     unk_ptr hd_dll_af53c0;
-    unk_ptr hd_dll_af53f0;
-    unk_ptr hd_dll_af5421;
-    unk_ptr hd_dll_af5427;      // @ 0x190
+    ptr cookingCategories [[name("Cooking Ingredient Categories Pointer")]]; // @ 0x188, hd_dll_af53f0
+    ptr cookingCategoryStats [[name("Cooking Category Stats Pointer")]]; // @ 0x18C, hd_dll_af5421
+    ptr cookingStatTiers [[name("Cooking Stat Tiers Pointer")]]; // @ 0x190, hd_dll_af5427
     unk_ptr hd_dll_af542d;
     unk_ptr hd_dll_af5455;
     unk_ptr hd_dll_af5491;
@@ -162,7 +162,7 @@ struct ptr_table {
     unk_ptr hd_dll_af56a4;
     unk_ptr hd_dll_af56b5;
     unk_ptr hd_dll_af56c6;
-    unk_ptr hd_dll_af57bf;      // @ 0x200
+    ptr meowkaPotRecipes [[name("Meowka Pot Recipes Pointer")]]; // @ 0x200, hd_dll_af57bf
     unk_ptr hd_dll_af5772;
     unk_ptr hd_dll_af5778;
     unk_ptr hd_dll_af577e;
@@ -201,7 +201,7 @@ struct ptr_table {
     unk_ptr hd_dll_af5a45;      // @ 0x290
     unk_ptr hd_dll_af5a4b;
     unk_ptr hd_dll_af5a51;
-    unk_ptr hd_dll_af5a57;
+    ptr rastaItemSets [[name("Rasta Item Sets Pointer")]]; // @ 0x29C, hd_dll_af5a57
     unk_ptr hd_dll_af5a5d;      // @ 0x2A0
     unk_ptr hd_dll_af5ae0;
     unk_ptr hd_dll_af5ab1;
@@ -232,9 +232,9 @@ struct ptr_table {
     unk_ptr hd_dll_af5c06;
     unk_ptr hd_dll_af5c0c;      // @ 0x310
     unk_ptr hd_dll_af5c12;
-    ptr skillValues;
+    ptr secretBookEffects [[name("Secret Book Effects Pointer")]]; // @ 0x318
     unk_ptr hd_dll_af5c18;
-    unk_ptr hd_dll_af5c1e;      // @ 0x320
+    ptr partnerFaces [[name("Partner Faces Pointer")]]; // @ 0x320, hd_dll_af5c1e
     unk_ptr hd_dll_af5bd0;
     unk_ptr hd_dll_af5bd6;
 
@@ -251,8 +251,8 @@ struct ptr_table {
     unk_ptr hd_dll_af5c54;      // @ 0x350
     unk_ptr hd_dll_af5c5a;
     unk_ptr hd_dll_af5c60;
-    unk_ptr hd_dll_af5c72;
-    unk_ptr hd_dll_af5c78;      // @ 0x360
+    ptr legendRastaLoadouts [[name("Legend Rasta Loadouts Pointer")]]; // @ 0x35C, hd_dll_af5c72
+    ptr legendRastaGroups [[name("Legend Rasta Groups Pointer")]]; // @ 0x360, hd_dll_af5c78
     unk_ptr hd_dll_af5c7e;
     unk_ptr hd_dll_af5c84;
     unk_ptr hd_dll_af5c8a;
@@ -293,45 +293,45 @@ struct ptr_table {
     unk_ptr hd_dll_af5eb0;
     unk_ptr hd_dll_af5ee0;
     unk_ptr hd_dll_af5f10;      // @ 0x400
-    unk_ptr hd_dll_af5f40;
-    unk_ptr hd_dll_af5f46;
-    unk_ptr hd_dll_af5f71;
-    unk_ptr hd_dll_af5f77;      // @ 0x410
-    unk_ptr hd_dll_af5f7d;
-    unk_ptr hd_dll_af5f83;
-    unk_ptr hd_dll_af5f89;
-    unk_ptr hd_dll_af5f8f;      // @ 0x420
-    unk_ptr hd_dll_af5f95;
-    padding[0x4];
-    unk_ptr hd_dll_af5fa1;
-    unk_ptr hd_dll_af5fa7;      // @ 0x430
-    unk_ptr hd_dll_af5fad;
+    ptr goocooFoods [[name("Goocoo Foods Pointer")]]; // @ 0x404, hd_dll_af5f40
+    ptr goocooFoodTexts [[name("Goocoo Food Texts Pointer")]]; // @ 0x408, hd_dll_af5f46
+    ptr goocooSitItems [[name("Goocoo House-Sitting Items Pointer")]]; // @ 0x40C, hd_dll_af5f71
+    ptr goocooSitGradeChances [[name("Goocoo House-Sitting Grade Chances Pointer")]]; // @ 0x410, hd_dll_af5f77
+    ptr goocooSitCounts [[name("Goocoo House-Sitting Counts Pointer")]]; // @ 0x414, hd_dll_af5f7d
+    ptr goocooSitPersonalityMods [[name("Goocoo House-Sitting Personality Modifiers Pointer")]]; // @ 0x418, hd_dll_af5f83
+    ptr goocooSitMoodMods [[name("Goocoo House-Sitting Mood Modifiers Pointer")]]; // @ 0x41C, hd_dll_af5f89
+    ptr goocooSitFishRarity [[name("Goocoo House-Sitting Fish Rarity Pointer")]]; // @ 0x420, hd_dll_af5f8f
+    ptr goocooSitBugsRarity [[name("Goocoo House-Sitting Bugs Rarity Pointer")]]; // @ 0x424, hd_dll_af5f95
+    ptr goocooSitJunkRarity [[name("Goocoo House-Sitting Junk Rarity Pointer")]]; // @ 0x428
+    ptr goocooSitBargainsRarity [[name("Goocoo House-Sitting Bargains Rarity Pointer")]]; // @ 0x42C, hd_dll_af5fa1
+    ptr goocooSitGrades [[name("Goocoo House-Sitting Grades Pointer")]]; // @ 0x430, hd_dll_af5fa7
+    ptr goocooSitMoodItems [[name("Goocoo House-Sitting Mood Items Pointer")]]; // @ 0x434, hd_dll_af5fad
     unk_ptr hd_dll_af5fb3;
-    unk_ptr hd_dll_af5fb9;
-    unk_ptr hd_dll_af5fbf;      // @ 0x440
-    unk_ptr hd_dll_af5ff0;
-    unk_ptr hd_dll_af6020;
-    unk_ptr hd_dll_af6050;
-    unk_ptr hd_dll_af6056;      // @ 0x450
-    unk_ptr hd_dll_af605c;
-    unk_ptr hd_dll_af6062;
-    unk_ptr hd_dll_af6090;
-    unk_ptr hd_dll_af60c0;      // @ 0x460
-    unk_ptr hd_dll_af60f0;
-    unk_ptr hd_dll_af6120;
-    unk_ptr hd_dll_af6150;
-    unk_ptr hd_dll_af6180;      // @ 0x470
+    ptr goocooPersonalities [[name("Goocoo Personalities Pointer")]]; // @ 0x43C, hd_dll_af5fb9
+    ptr goocooCareActions [[name("Goocoo Care Actions Pointer")]]; // @ 0x440, hd_dll_af5fbf
+    ptr goocooCareStyles [[name("Goocoo Care Styles Pointer")]]; // @ 0x444, hd_dll_af5ff0
+    ptr goocooPersonalityNames [[name("Goocoo Personality Names Pointer")]]; // @ 0x448, hd_dll_af6020
+    ptr goocooRemodelBeds [[name("Goocoo Remodel Beds Pointer")]]; // @ 0x44C, hd_dll_af6050
+    ptr goocooRemodelPools [[name("Goocoo Remodel Pools Pointer")]]; // @ 0x450, hd_dll_af6056
+    ptr goocooRemodelGrounds [[name("Goocoo Remodel Grounds Pointer")]]; // @ 0x454, hd_dll_af605c
+    ptr goocooBedNames [[name("Goocoo Bed Names Pointer")]]; // @ 0x458, hd_dll_af6062
+    ptr goocooPoolNames [[name("Goocoo Pool Names Pointer")]]; // @ 0x45C, hd_dll_af6090
+    ptr goocooGroundNames [[name("Goocoo Ground Names Pointer")]]; // @ 0x460, hd_dll_af60c0
+    ptr goocooBedTexts [[name("Goocoo Bed Texts Pointer")]]; // @ 0x464, hd_dll_af60f0
+    ptr goocooPoolTexts [[name("Goocoo Pool Texts Pointer")]]; // @ 0x468, hd_dll_af6120
+    ptr goocooGroundTexts [[name("Goocoo Ground Texts Pointer")]]; // @ 0x46C, hd_dll_af6150
+    ptr goocooSeriesNames [[name("Goocoo Series Names Pointer")]]; // @ 0x470, hd_dll_af6180
     unk_ptr hd_dll_af61b0;
-    unk_ptr hd_dll_af61e0;
-    unk_ptr hd_dll_af61e6;
+    ptr goocooTrustParams [[name("Goocoo Trust Parameters Pointer")]]; // @ 0x478, hd_dll_af61e0
+    ptr goocooTrustDecay [[name("Goocoo Trust Decay Pointer")]]; // @ 0x47C, hd_dll_af61e6
     unk_ptr hd_dll_af61ec;      // @ 0x480
     unk_ptr hd_dll_af61f2;
     unk_ptr hd_dll_af61f8;
     unk_ptr hd_dll_af61fe;
     unk_ptr hd_dll_af6204;      // @ 0x490
-    unk_ptr hd_dll_af620a;
-    unk_ptr hd_dll_af623d;
-    unk_ptr hd_dll_af6243;
+    ptr goocooExchanges [[name("Goocoo Exchanges Pointer")]]; // @ 0x494, hd_dll_af620a
+    ptr goocooClothesCosts [[name("Goocoo Clothes Costs Pointer")]]; // @ 0x498, hd_dll_af623d
+    ptr goocooRemodelCosts [[name("Goocoo Remodel Costs Pointer")]]; // @ 0x49C, hd_dll_af6243
     unk_ptr hd_dll_af6249;      // @ 0x4A0
     unk_ptr hd_dll_af6280;
     unk_ptr hd_dll_af6286;
@@ -339,8 +339,8 @@ struct ptr_table {
     unk_ptr hd_dll_af6292;      // @ 0x4B0
     unk_ptr hd_dll_af6298;
     unk_ptr hd_dll_af62d4;
-    unk_ptr hd_dll_af62c8;
-    unk_ptr hd_dll_af62ce;      // @ 0x4C0
+    ptr goocooPotMaterials [[name("Goocoo Pot Materials Pointer")]]; // @ 0x4BC, hd_dll_af62c8
+    ptr goocooPotSoups [[name("Goocoo Pot Soups Pointer")]]; // @ 0x4C0, hd_dll_af62ce
     unk_ptr hd_dll_af62da;
     unk_ptr hd_dll_af62e0;
     unk_ptr hd_dll_af629e;
@@ -360,7 +360,7 @@ struct ptr_table {
     unk_ptr hd_dll_af6322;
     unk_ptr hd_dll_af6328;
     unk_ptr hd_dll_af6334;
-    unk_ptr hd_dll_af6434;      // @ 0x510
+    ptr halkFoods [[name("Halk Foods Pointer")]]; // @ 0x510, hd_dll_af6434
     unk_ptr hd_dll_af643a;
     unk_ptr hd_dll_af6440;
     ptr GunTypeTable            [[name("Gun Type Table Pointer")]];
@@ -378,7 +378,7 @@ struct ptr_table {
     ptr seasonalEventTiming     [[name("Seasonal Event Timing Table Pointer")]];
     unk_ptr hd_dll_af661a;      // @ 0x550
     unk_ptr hd_dll_af6640;
-    unk_ptr hd_dll_af6646;
+    ptr cookedDishes [[name("Cooked Dishes Pointer")]]; // @ 0x558, hd_dll_af6646
     unk_ptr hd_dll_af664c;
     unk_ptr hd_dll_af6652;      // @ 0x560
     unk_ptr hd_dll_af6658;
@@ -402,7 +402,7 @@ struct ptr_table {
     unk_ptr hd_dll_af66c4;
     unk_ptr hd_dll_af66ca;      // @ 0x5B0
     unk_ptr hd_dll_af66d0;
-    unk_ptr hd_dll_af703a;
+    ptr secretBookSrLevels [[name("Secret Book SR Levels Pointer")]]; // @ 0x5B8, hd_dll_af703a
     unk_ptr hd_dll_af66d6;
     unk_ptr hd_dll_af66dc;      // @ 0x5C0
     ptr GreatSword_Params_pointer [[name("Great Sword Params Pointer")]];
@@ -468,9 +468,9 @@ struct ptr_table {
     unk_ptr hd_dll_af7052;
     unk_ptr hd_dll_af7040;
     unk_ptr hd_dll_af7046;
-    unk_ptr hd_dll_af7058;      // @ 0x6B0
-    unk_ptr hd_dll_af705e;
-    unk_ptr hd_dll_af7064;
+    ptr partnerStarterWeapons [[name("Partner Starter Weapons Pointer")]]; // @ 0x6B0, hd_dll_af7058
+    ptr partnerArmorSetA [[name("Partner Armor Set A Pointer")]]; // @ 0x6B4, hd_dll_af705e
+    ptr partnerArmorSetB [[name("Partner Armor Set B Pointer")]]; // @ 0x6B8, hd_dll_af7064
     unk_ptr hd_dll_af706a;
     unk_ptr hd_dll_af7070;      // @ 0x6C0
     unk_ptr hd_dll_af704c;
@@ -527,7 +527,7 @@ struct ptr_table {
     unk_ptr hd_dll_af77f5;
     unk_ptr hd_dll_af77fb;
     unk_ptr hd_dll_af7801;      // @ 0x790
-    unk_ptr hd_dll_af7807;
+    ptr superRapidFirePower [[name("Super Rapid Fire Power Pointer")]]; // @ 0x794, hd_dll_af7807
     unk_ptr hd_dll_af780d;
     unk_ptr hd_dll_af7813;
     ptr vampirism [[name("Vampirism Pointer")]]; // @ 0x7A0, hd_dll_af7819
@@ -556,7 +556,7 @@ struct ptr_table {
     unk_ptr hd_dll_af79a0;
     unk_ptr hd_dll_af79d0;
     unk_ptr hd_dll_af7a00;
-    unk_ptr hd_dll_af7a8e;      // @ 0x800
+    ptr partnerLooks [[name("Partner Looks Pointer")]]; // @ 0x800, hd_dll_af7a8e
     ptr AutomaticSkillsTable    [[name("Automatic Skills Table Pointer")]];
     unk_ptr hd_dll_af7a9a;
     unk_ptr hd_dll_af7aa0;
@@ -570,20 +570,20 @@ struct ptr_table {
     padding[0x4];
     unk_ptr hd_dll_af7b07;      // @ 0x830
     unk_ptr hd_dll_af7b0d;
-    unk_ptr hd_dll_af7b13;
+    ptr partnerSkills [[name("Partner Skills Pointer")]]; // @ 0x838, hd_dll_af7b13
     unk_ptr hd_dll_af7b19;
     unk_ptr hd_dll_af7b1f;      // @ 0x840
     unk_ptr hd_dll_af7b25;
     unk_ptr hd_dll_af7b2b;
-    unk_ptr hd_dll_af7b31;
+    ptr partnerTeachFees [[name("Partner Teach Fees Pointer")]]; // @ 0x84C, hd_dll_af7b31
     unk_ptr hd_dll_af7b37;      // @ 0x850
     unk_ptr hd_dll_af7b3d;
     unk_ptr hd_dll_af7b43;
-    unk_ptr hd_dll_af7b49;
-    unk_ptr hd_dll_af7b4f;      // @ 0x860
+    ptr partnerSkillPointCaps [[name("Partner Skill Point Caps Pointer")]]; // @ 0x85C, hd_dll_af7b49
+    ptr partnerSkillSlotCounts [[name("Partner Skill Slot Counts Pointer")]]; // @ 0x860, hd_dll_af7b4f
     unk_ptr hd_dll_af7b73;
-    unk_ptr hd_dll_af7b79;
-    unk_ptr hd_dll_af7b7f;
+    ptr guildCookingRecipes [[name("Guild Cooking Recipes Pointer")]]; // @ 0x868, hd_dll_af7b79
+    ptr guildCookingIngredients [[name("Guild Cooking Ingredients Pointer")]]; // @ 0x86C, hd_dll_af7b7f
     unk_ptr hd_dll_af7b85;      // @ 0x870
     unk_ptr hd_dll_af7b8b;
     unk_ptr hd_dll_af7b91;
@@ -595,7 +595,7 @@ struct ptr_table {
     unk_ptr hd_dll_af7b5b;      // @ 0x890
     unk_ptr hd_dll_af7b61;
     unk_ptr hd_dll_af7b67;
-    unk_ptr hd_dll_af7ca2;
+    ptr guildCookingSkillPools [[name("Guild Cooking Skill Pools Pointer")]]; // @ 0x89C, hd_dll_af7ca2
     unk_ptr hd_dll_af7cc8;      // @ 0x8A0
     unk_ptr hd_dll_af7cce;
     unk_ptr hd_dll_af7cd4;
@@ -659,8 +659,8 @@ struct ptr_table {
     unk_ptr hd_dll_af8380;
     ptr skillCounts [[name("Skill Counts Pointer"), comment("u16 counts: +2 the skill effects, +4 the vampirism rows")]]; // @ 0x988, hd_dll_af46c9
     unk_ptr hd_dll_af839f;
-    unk_ptr hd_dll_af83a5;      // @ 0x990
-    unk_ptr hd_dll_af83ab;
+    ptr transcendDepths [[name("Transcend Depths Pointer")]]; // @ 0x990, hd_dll_af83a5
+    ptr transcendQuestGains [[name("Transcend Quest Gains Pointer")]]; // @ 0x994, hd_dll_af83ab
 
     ptr armorTowerForging       [[name("Tower Armor Forging Pointer")]];
 
@@ -678,8 +678,8 @@ struct ptr_table {
     unk_ptr hd_dll_af85c4;
     padding[4];
     unk_ptr hd_dll_af85ca;      // @ 0x9D0 Tower/G50 Params ID?
-    padding[4];
-    unk_ptr hd_dll_af85d0;
+    u32 partnerExtraSkillCount [[name("Partner Extra Skill Count")]]; // @ 0x9D4
+    ptr partnerExtraSkills [[name("Partner Extra Skills Pointer")]]; // @ 0x9D8, hd_dll_af85d0
     unk_ptr hd_dll_af85d6;
     unk_ptr hd_dll_af8601;      // @ 0x9E0
     unk_ptr hd_dll_af8630;
@@ -701,11 +701,11 @@ struct ptr_table {
     ptr critConversion [[name("Crit Conversion Pointer")]]; // @ 0xA1C, hd_dll_af872c
     padding[4];                 // @ 0xA20
     unk_ptr hd_dll_af874a;
-    unk_ptr hd_dll_af8750;
-    unk_ptr hd_dll_af875c;
-    unk_ptr hd_dll_af8762;      // @ 0xA30
-    unk_ptr hd_dll_af8768;
-    unk_ptr hd_dll_af876e;
+    ptr clanMissionTargets [[name("Clan Mission Targets Pointer")]]; // @ 0xA28, hd_dll_af8750
+    ptr clanMissionSlayChances [[name("Clan Mission Slay Chances Pointer")]]; // @ 0xA2C, hd_dll_af875c
+    ptr clanMissionTimeWeights [[name("Clan Mission Time Weights Pointer")]]; // @ 0xA30, hd_dll_af8762
+    ptr clanMissionRewardWeights [[name("Clan Mission Reward Weights Pointer")]]; // @ 0xA34, hd_dll_af8768
+    ptr clanMissionMultiplierWeights [[name("Clan Mission Multiplier Weights Pointer")]]; // @ 0xA38, hd_dll_af876e
     unk_ptr hd_dll_af8756;
 
     // @ 0xA40
@@ -779,7 +779,7 @@ struct ptr_table {
 
     ptr specialShops            [[name("Special Shops Pointer")]];
 
-    unk_ptr hd_dll_af4749;      // @ 0xB30
+    ptr conquestQuests [[name("Conquest Quests Pointer")]]; // @ 0xB30, hd_dll_af4749
     unk_ptr hd_dll_af4772;
     unk_ptr hd_dll_af8f80;
     unk_ptr hd_dll_af8fca;

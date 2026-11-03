@@ -51,6 +51,11 @@ struct MachaPotSet {
 ptVar<MachaPotSet> machaPotRewards[while (std::mem::read_unsigned($, 4) != 0)]
     @ header.ptrs.machaPotRewards [[name("Macha Pot Rewards")]];
 
+// The pot item of each set (header 0x164), in the same order, ending at -1:
+// collecting a pot looks its item up here and takes the set at that index
+ItemId machaPotItems[while (std::mem::read_signed($, 2) != -1)]
+    @ header.ptrs.machaPotItems [[name("Macha Pot Items")]];
+
 struct HC_GR_Carve {
     MonsterID monId;
     padding[1];

@@ -3,18 +3,27 @@
 //#define __DATA_ARENA 1
 //#define __DATA_AUTOMATIC_SKILLS 1
 //#define __DATA_CARAVAN 1
+//#define __DATA_CLAN 1
+//#define __DATA_COOKING 1
 //#define __DATA_CRAFTING 1
 //#define __DATA_DATA_COUNTERS 1
 //#define __DATA_DECOID 1
 //#define __DATA_EQUIPMENTS 1
 //#define __DATA_EXTRA_COUNTERS 1
+//#define __DATA_GOOCOO 1
+//#define __DATA_GUILD_COOKING 1
+//#define __DATA_HALK 1
 //#define __DATA_ITEMS 1
+//#define __DATA_LEGEND_RASTA 1
+//#define __DATA_MEOWKA_POT 1
 //#define __DATA_MISSIONS 1
 //#define __DATA_MONSTERS 1
+//#define __DATA_PARTNER 1
 //#define __DATA_PART_BREAKS 1
 //#define __DATA_QUESTS 1
 //#define __DATA_ROAD 1
 //#define __DATA_SEASONAL_EVENTS 1
+//#define __DATA_SECRET_BOOK 1
 //#define __DATA_SHARPNESS 1
 //#define __DATA_SHOP 1
 //#define __DATA_SHOP_GUILD 1
@@ -23,6 +32,7 @@
 //#define __DATA_SIGILS 1
 //#define __DATA_SKILLS 1
 //#define __DATA_TOWER 1
+//#define __DATA_TRANSCEND 1
 //#define __DATA_WEAPONS 1
 //#define __DATA_WEAPON_PARAMS 1
 

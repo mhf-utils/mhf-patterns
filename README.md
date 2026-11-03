@@ -16,6 +16,7 @@ The patterns primarily target Frontier binary files such as:
 * `mhfsdt.bin`
 * `mhfsqd.bin`
 * quest-related binaries
+* character saves: `savedata`, `platebox`, `platemyset`, `partner` (decompressed)
 
 Each file may be documented either:
 
@@ -34,18 +35,36 @@ mhfdat/
     ├── monsters.hexpat   # Monster crowns and descriptions
     ├── items.hexpat
     ├── equipments.hexpat
-    ├── part_breaks.hexpat
+    ├── part_breaks.hexpat # Part break and carve drops, Macha Pot rewards
     ├── sigils.hexpat     # Random sigils
-    ├── skills.hexpat     # Skill tree, skill effects, Vampirism, Crit Conversion, Rush, Obscurity
+    ├── skills.hexpat     # Skill tree, skill effects, Vampirism, Crit Conversion, Rush, Obscurity, Furious
     ├── caravan.hexpat    # Voyage and ranking routes, levels, gem skills and tiers
     ├── road.hexpat       # Hunting Road monster points and skills
     ├── tower.hexpat      # Tower jewel recipes and upgrade costs
     ├── shop_guild.hexpat # Shop catalogs and the Guild Shop
-    ├── weapon_params.hexpat # Per-class weapon parameters, bullet sets, horn melodies
+    ├── weapon_params.hexpat # Per-class weapon parameters, bullet sets, horn melodies, rapid fire
+    ├── quests.hexpat     # HR, G-rank, Conquest and beginner quest lists
+    ├── clan.hexpat       # Clan mission targets and roll weights
+    ├── cooking.hexpat    # Kitchen meal ingredients, stat tiers, special dishes
+    ├── guild_cooking.hexpat # Guild cooking recipes, ingredients, skill pools
+    ├── goocoo.hexpat     # Goocoo food, house-sitting, remodelling, exchange, pot
+    ├── halk.hexpat       # Halk food
+    ├── meowka_pot.hexpat # Garden Meowka Pot recipes
+    ├── legend_rasta.hexpat # Legend Rasta loadouts and groups, Rasta item sets
+    ├── partner.hexpat    # Partner creation, faces, skills and extra skills
+    ├── secret_book.hexpat # Secret Book effects and SR levels
+    ├── transcend.hexpat  # Transcend depths and quest clear gains
     └── ...
 quest/
 ├── block.hexpat          # A quest's main block, shared by quest files and mhfinf
 └── objective.hexpat
+save/
+├── equip.hexpat          # Equipment slots and classes shared by the saves
+└── plate.hexpat          # Sigil skills and slots shared by platebox and platemyset
+savedata.bin.hexpat       # Decompressed character save (0x24D24 bytes)
+platebox.bin.hexpat       # Decompressed sigil box, up to 300 slots
+platemyset.bin.hexpat     # Sigil sets, 40 x 3 slots
+partner.bin.hexpat        # Partner blob and its equipment box
 ```
 
 ### 🔹 Modular loading
@@ -124,6 +143,8 @@ Patterns favor **correctness and readability** over assumptions.
 * Its own credits carry over: [@Malckyor](https://github.com/Malckyor) and [@Chakratos](https://github.com/Chakratos) for prior work, [@DorielRivalet](https://github.com/DorielRivalet) for 010 templates, [@sekaiwish](https://github.com/sekaiwish) for server emulation and client 010 templates.
 * The quest block fields follow [Paxlord/PaxMHFZQuestEditor](https://github.com/Paxlord/PaxMHFZQuestEditor) where noted.
 * The layouts of the skill, Caravan, Hunting Road skill, crown, weapon parameter, Guild Shop and Tower tables come from [ezemania2/mhf-file-editor](https://github.com/ezemania2/mhf-file-editor), re-checked on the ZZ files; the Hunting Road monster points from [BlazeMH/Blaze-Hunting-Road-Editor](https://github.com/BlazeMH/Blaze-Hunting-Road-Editor), as that editor credits.
+* The clan mission, cooking, guild cooking, Goocoo, Halk, Meowka Pot, Legend Rasta, Partner, Secret Book, Transcend, Conquest quest, rapid fire and Furious tables, and the Hunter Jewel fields of the gem skills, come from ezemania2's reverse engineering of the mhfo-hd.dll code that reads them, checked on the ZZ files.
+* The save patterns (`savedata`, `platebox`, `platemyset`, `partner`) come from ezemania2's reverse engineering of mhfo-hd.dll and Otya063/mhf-client's `UserSaveData`, checked on ZZ saves; the sigil skill ids follow [Relial/mhfz_sigil_editor](https://github.com/Relial/mhfz_sigil_editor). A compressed save (`cmp 20110113` header) must be expanded first.
 
 ## 📜 License
 [LGPL-3.0](LICENSE.md), as the original repository.

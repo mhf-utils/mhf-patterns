@@ -100,7 +100,9 @@ RushUpStage3 rushUpStage3 @ std::mem::read_unsigned(header.ptrs.skillCells + 4, 
 // (header 0xB78): values per weapon class. Obscurity UP's stack values hold
 // the attack of each stack of each class, one class after the other (as many
 // as its most stacks); the most stacks add up to 48 on ZZ, the room the list
-// has.
+// has. The Obscurity block also holds the Switch Axe F guard sigil (0x61,
+// value 2): a wider guard angle, and a heal of the guarded damage x 0.001
+// with a minimum.
 // =======================
 
 struct PerClass {
@@ -111,6 +113,11 @@ struct Obscurity {
     PerClass *attackPerStack : u32;
     PerClass *maxStacks : u32;
     s16 stackDelay;
+    s16 unk0A;
+    u16 safGuardAngleBonus;
+    s16 safGuardHealPermille;
+    s16 safGuardHealMin;
+    s16 unk12;
 };
 
 Obscurity obscurity @ header.ptrs.obscurity [[name("Obscurity")]];
@@ -131,3 +138,42 @@ s16 obscurityUpStackValues[sumOfMaxStacks(std::mem::read_unsigned(header.ptrs.ob
 PerClass obscurityUpMaxStacks @ std::mem::read_unsigned(header.ptrs.obscurityUp + 4, 4) [[name("Obscurity UP Max Stacks")]];
 PerClass obscurityUpSharpness @ std::mem::read_unsigned(header.ptrs.obscurityUp + 8, 4) [[name("Obscurity UP Sharpness")]];
 PerClass obscurityUpSharpnessAlt @ std::mem::read_unsigned(header.ptrs.obscurityUp + 12, 4) [[name("Obscurity UP Sharpness (alt)")]];
+
+// =======================
+// Furious (skill 529): behind the pointer at +0 of the cell header 0xB94
+// points to. The bonuses of stages 1 to 3, the gauge thresholds of stages 0
+// to 3 (the last is the cap), the attack gauge scale per weapon class and
+// what an evade or a guard adds (3 tables, picked by the caller).
+// =======================
+
+struct FuriousStagesI16 {
+    s16 stages[3];
+};
+
+struct FuriousStagesF32 {
+    float stages[3];
+};
+
+struct FuriousThresholds {
+    s32 stages[4];
+};
+
+struct Furious {
+    FuriousStagesI16 *attack : u32;
+    FuriousStagesI16 *affinity : u32 [[comment("Percent")]];
+    FuriousStagesF32 *elementMultiplier : u32;
+    FuriousStagesF32 *statusMultiplier : u32;
+    FuriousThresholds *attackGaugeThresholds : u32;
+    FuriousThresholds *evadeGuardGaugeThresholds : u32;
+    PerClass *attackGaugeScale : u32;
+    PerClass *evadeGuardGain0 : u32;
+    PerClass *evadeGuardGain1 : u32;
+    PerClass *evadeGuardGain2 : u32;
+    float *unk28[8] : u32;
+    s16 maxStage;
+    s16 unk2E;
+    s32 unk30;
+    s32 unk34                   [[comment("A minimum attack gauge gain for weapon classes 1 and 5")]];
+};
+
+Furious furious @ std::mem::read_unsigned(header.ptrs.skillCells, 4) [[name("Furious")]];

@@ -68,5 +68,25 @@ struct GRQuests {
 
 GRQuests gRankQuests @ header.ptrs.GRankQuestG1 [[name("GR")]];
 
+// Conquest quests (header 0xB30): important numbers + 0x400 quest ids (16 on
+// ZZ). A quest's index here gives its conquest level, [1, 200, 1000,
+// 9999][index & 3]; a quest not in the list is level 1. The Fatalis AI reads
+// it (level > 999 unlocks its third phase).
+fn conquestLevel(u32 index) {
+	match (index & 3) {
+		(0): return 1;
+		(1): return 200;
+		(2): return 1000;
+		(3): return 9999;
+	}
+};
+
+struct ConquestQuest {
+	u16 level = conquestLevel(($ - header.ptrs.conquestQuests) / 2) [[export]];
+	u16 quest;
+};
+
+ConquestQuest conquestQuests[importantNums.numConquestQuests] @ header.ptrs.conquestQuests [[name("Conquest Quests")]];
+
 // Beginner quests (header 0x1B8): important numbers + 0x3C quest ids (2 on ZZ)
 u16 beginnerQuests[importantNums.numBeginnerQuests] @ header.ptrs.beginnerQuests [[name("Beginner Quests")]];

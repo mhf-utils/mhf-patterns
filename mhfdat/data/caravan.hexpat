@@ -2,7 +2,7 @@
 
 /**
 	Caravan: voyage routes and the levels that list them, ranking routes,
-	gem skills (hunter pearls) and their tiers.
+	gem skills (hunter pearls, the Hunter Jewel) and their tiers.
 	Layouts from ezemania2/mhf-file-editor; counts and ends checked on the ZZ JP
 	and EN files: 111 voyage routes (their texts are inline Shift-JIS, still
 	Japanese in the EN file; the bytes after them belong to the tables header
@@ -126,10 +126,12 @@ ptVar<RankingGroup> caravanRankingGroups[16]
 
 struct GemSkill {
     s16 skill;
-    s16 level                   [[comment("Only the low byte is read")]];
-    u8  unk04[4];
-    u16 points[8]               [[comment("Caravan points needed on each of the 8 counters")]];
-    u8  unk18[24];
+    u8  cost                    [[comment("Up to 10 for all the equipped skills; cost 0 skills are always on in town")]];
+    u8  group                   [[comment("One equipped skill per group, 0 for none")]];
+    s16 supersededBy            [[comment("Hidden once this skill is offered and unlocked")]];
+    u8  unk06[2];
+    u16 points[8]               [[comment("Points needed per color: pink, brown, yellow, green, white, purple, cyan; the 8th is 0")]];
+    u8  effectValues[24]        [[comment("Read by the skill's own code")]];
 };
 
 GemSkill gemSkills[while(std::mem::read_signed($, 2) != -1)]
@@ -145,10 +147,10 @@ ptVar<GemSkillList> gemSkillLists[importantNums.numHunterPearlSkillLists]
     [[name("Gem Skill Lists")]];
 
 struct CaravanTier {
-    u8  unk00[4];
-    u16 pointCap;
-    u8  percent;
-    u8  previousTierUnlock      [[comment("The unlock requirement of the tier before this row's")]];
+    u32 cpCost                  [[comment("To upgrade from this tier; halved with course 3 or 7")]];
+    u16 pointCap                [[comment("Per color")]];
+    u8  percent                 [[comment("Of the cap every color needs to upgrade")]];
+    u8  previousTierUnlock      [[comment("The fame points the tier before this row's needs to upgrade")]];
 };
 
 CaravanTier caravanTiers[importantNums.numHunterPearlSkillLists + 1]

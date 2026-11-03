@@ -2,11 +2,12 @@
 
 /**
 	Tables per weapon class or ammo type: weapon parameters, bullet sets, horn
-	melodies, and two tables whose length is unknown.
+	melodies, Light Bowgun rapid fire, and two tables whose length is unknown.
 	Layouts and names from ezemania2/mhf-file-editor. Checked on the ZZ JP and
 	EN files: the 14 parameter rows and the 44 bullet sets end at zero padding,
 	the 71 melodies too (important numbers + 0x258); the class multiplier is
 	the weapon's bloat x 100 (480 for the Great Sword's 4.8).
+	The rapid fire tables come from the mhfo-hd.dll code that reads them.
 */
 
 #include <std/core.pat>
@@ -134,3 +135,87 @@ struct CoatingModifier {
 };
 
 CoatingModifier coatingModifiers[23] @ header.ptrs.coatingModifiers [[name("Coating Modifiers (length unchecked)")]];
+
+// =======================
+// Light Bowgun rapid fire. Per ammo type (header 0xA0, up to the next
+// table): the shots of a burst and the speed level (an index in the client's
+// {1.0, 1.5, 1.6}). Per ranged weapon (header 0xC0, important numbers + 0x1A
+// rows, sorted by weapon id): the ammo types it rapid fires; sigils add or
+// remove some. Super rapid fire (header 0x794, important numbers + 0x2C4
+// rows): the power of each ammo type is 0.5 x its multiplier at the chain
+// level (0-15).
+// =======================
+
+fn ammoName(u32 i) {
+    match (i) {
+        (0): return "Normal S Lv1";
+        (1): return "Normal S Lv2";
+        (2): return "Normal S Lv3";
+        (3): return "Pierce S Lv1";
+        (4): return "Pierce S Lv2";
+        (5): return "Pierce S Lv3";
+        (6): return "Pellet S Lv1";
+        (7): return "Pellet S Lv2";
+        (8): return "Pellet S Lv3";
+        (9): return "Crag S Lv1";
+        (10): return "Crag S Lv2";
+        (11): return "Crag S Lv3";
+        (12): return "Clust S Lv1";
+        (13): return "Clust S Lv2";
+        (14): return "Clust S Lv3";
+        (15): return "Flaming S";
+        (16): return "Water S";
+        (17): return "Thunder S";
+        (18): return "Freeze S";
+        (_): return std::format("Ammo {}", i);
+    }
+};
+
+struct RapidFireAmmo {
+    u8 unk00;
+    u8 unk01;
+    u8 burstShots;
+    u8 speedLevel;
+} [[name(ammoName((addressof(this) - header.ptrs.rapidFireAmmo) / 4))]];
+
+RapidFireAmmo rapidFireAmmo[(nextTable(header.ptrs.rapidFireAmmo) - header.ptrs.rapidFireAmmo) / 4]
+    @ header.ptrs.rapidFireAmmo
+    [[name("Rapid Fire Ammo")]];
+
+bitfield RapidFireAmmoMask {
+    normalLv1  : 1;
+    normalLv2  : 1;
+    normalLv3  : 1;
+    pierceLv1  : 1;
+    pierceLv2  : 1;
+    pierceLv3  : 1;
+    pelletLv1  : 1;
+    pelletLv2  : 1;
+    pelletLv3  : 1;
+    cragLv1    : 1;
+    cragLv2    : 1;
+    cragLv3    : 1;
+    clustLv1   : 1;
+    clustLv2   : 1;
+    clustLv3   : 1;
+    flaming    : 1;
+    water      : 1;
+    thunder    : 1;
+    freeze     : 1;
+    unk        : 13;
+};
+
+struct RapidFireWeapon {
+    u16 rangedWeapon;
+    padding[2];
+    RapidFireAmmoMask ammo;
+};
+
+RapidFireWeapon rapidFireWeapons[importantNums.numRapidFireWeapons] @ header.ptrs.rapidFireWeapons [[name("Rapid Fire Weapons")]];
+
+struct SuperRapidFirePower {
+    u32   ammo                  [[format("ammoName")]];
+    float multByChainLevel[16];
+};
+
+SuperRapidFirePower superRapidFirePower[importantNums.numSuperRapidFirePowers] @ header.ptrs.superRapidFirePower [[name("Super Rapid Fire Power")]];

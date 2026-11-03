@@ -4,7 +4,11 @@
 
 // The block header 0x10 points to: the counts of tables that have no end marker
 struct ImportantNumbers {
-    padding[0x1C];
+    padding[0x1A];
+
+    // Offset 0x1A: ranged weapons with rapid fire (header 0xC0)
+    u16 numRapidFireWeapons
+        [[name("Number of Rapid Fire Weapons")]];
 
     // Offset 0x1C - [mhfo-hd.dll + 0xaf4e70]
     u16 numCarveDTs
@@ -32,13 +36,147 @@ struct ImportantNumbers {
     u16 numTutorialEquipSets
         [[name("Number of Tutorial Equipment Sets")]];
 
-    padding[0x14];
+    padding[0x6];
+
+    // Offset 0x50: garden Meowka Pot recipes (header 0x200)
+    u16 numMeowkaPotRecipes
+        [[name("Number of Meowka Pot Recipes")]];
+
+    padding[0xC];
 
     // Offset 0x5E: Caravan gem skill lists, one per tier (header 0xF4) [mhfo-hd.dll + 0xaf4d91]
     u16 numHunterPearlSkillLists
         [[name("Number of Hunter Pearl Skill Lists")]];
 
-    padding[0x17A];
+    padding[0x7C];
+
+    // Offset 0xDC: Partner faces (header 0x320)
+    u16 numPartnerFaces
+        [[name("Number of Partner Faces")]];
+
+    padding[0x18];
+
+    // Offset 0xF6: Legend Rasta groups (header 0x360)
+    u16 numLegendRastaGroups
+        [[name("Number of Legend Rasta Groups")]];
+
+    padding[0x4E];
+
+    // Offset 0x146: Goocoo tables (header 0x404 to 0x4C0), one count per table in header order
+    u16 numGoocooFoods
+        [[name("Number of Goocoo Foods")]];
+
+    u16 numGoocooFoodTexts
+        [[name("Number of Goocoo Food Texts")]];
+
+    u16 numGoocooSitItems
+        [[name("Number of Goocoo House-Sitting Items")]];
+
+    u16 numGoocooSitGradeChances
+        [[name("Number of Goocoo House-Sitting Grade Chances")]];
+
+    u16 numGoocooSitCounts
+        [[name("Number of Goocoo House-Sitting Counts")]];
+
+    u16 numGoocooSitPersonalityMods
+        [[name("Number of Goocoo House-Sitting Personality Modifiers")]];
+
+    u16 numGoocooSitMoodMods
+        [[name("Number of Goocoo House-Sitting Mood Modifiers")]];
+
+    u16 numGoocooSitFishRarity
+        [[name("Number of Goocoo House-Sitting Fish Rarity Rows")]];
+
+    u16 numGoocooSitBugsRarity
+        [[name("Number of Goocoo House-Sitting Bugs Rarity Rows")]];
+
+    u16 numGoocooSitJunkRarity
+        [[name("Number of Goocoo House-Sitting Junk Rarity Rows")]];
+
+    u16 numGoocooSitBargainsRarity
+        [[name("Number of Goocoo House-Sitting Bargains Rarity Rows")]];
+
+    u16 numGoocooSitGrades
+        [[name("Number of Goocoo House-Sitting Grades")]];
+
+    u16 numGoocooSitMoodItems
+        [[name("Number of Goocoo House-Sitting Mood Items")]];
+
+    padding[0x2];
+
+    u16 numGoocooPersonalities
+        [[name("Number of Goocoo Personalities")]];
+
+    u16 numGoocooCareActions
+        [[name("Number of Goocoo Care Actions")]];
+
+    u16 numGoocooCareStyles
+        [[name("Number of Goocoo Care Styles")]];
+
+    u16 numGoocooPersonalityNames
+        [[name("Number of Goocoo Personality Names")]];
+
+    u16 numGoocooRemodelBeds
+        [[name("Number of Goocoo Remodel Beds")]];
+
+    u16 numGoocooRemodelPools
+        [[name("Number of Goocoo Remodel Pools")]];
+
+    u16 numGoocooRemodelGrounds
+        [[name("Number of Goocoo Remodel Grounds")]];
+
+    u16 numGoocooBedNames
+        [[name("Number of Goocoo Bed Names")]];
+
+    u16 numGoocooPoolNames
+        [[name("Number of Goocoo Pool Names")]];
+
+    u16 numGoocooGroundNames
+        [[name("Number of Goocoo Ground Names")]];
+
+    u16 numGoocooBedTexts
+        [[name("Number of Goocoo Bed Texts")]];
+
+    u16 numGoocooPoolTexts
+        [[name("Number of Goocoo Pool Texts")]];
+
+    u16 numGoocooGroundTexts
+        [[name("Number of Goocoo Ground Texts")]];
+
+    u16 numGoocooSeriesNames
+        [[name("Number of Goocoo Series Names")]];
+
+    padding[0x2];
+
+    u16 numGoocooTrustParams
+        [[name("Number of Goocoo Trust Parameters")]];
+
+    u16 numGoocooTrustDecay
+        [[name("Number of Goocoo Trust Decay Steps")]];
+
+    padding[0x8];
+
+    u16 numGoocooExchanges
+        [[name("Number of Goocoo Exchanges")]];
+
+    u16 numGoocooClothesCosts
+        [[name("Number of Goocoo Clothes Costs")]];
+
+    u16 numGoocooRemodelCosts
+        [[name("Number of Goocoo Remodel Costs")]];
+
+    padding[0xA];
+
+    u16 numGoocooPotMaterials
+        [[name("Number of Goocoo Pot Materials")]];
+
+    padding[0x22];
+
+    // Offset 0x1C0: Halk foods (header 0x510)
+    u16 numHalkFoods
+        [[name("Number of Halk Foods")]];
+
+    padding[0x18];
 
     // Offset 0x1DA: seasonal event timings (header 0x54C)
     u16 numSeasonalEvents
@@ -58,12 +196,39 @@ struct ImportantNumbers {
     u16 numHornMelodies
         [[name("Number of Horn Melodies")]];
 
-    padding[0x9E];
+    padding[0xA];
+
+    // Offset 0x264: Partner starter weapons (header 0x6B0)
+    u16 numPartnerStarterWeapons
+        [[name("Number of Partner Starter Weapons")]];
+
+    padding[0x5E];
+
+    // Offset 0x2C4: super rapid fire power rows (header 0x794)
+    u16 numSuperRapidFirePowers
+        [[name("Number of Super Rapid Fire Powers")]];
+
+    padding[0x32];
 
     u16 numAutoSkills
         [[name("Number of Auto Skills")]];
 
-    padding[0x76];
+    padding[0x12];
+
+    // Offset 0x30C: Partner skills (header 0x838)
+    u16 numPartnerSkills
+        [[name("Number of Partner Skills")]];
+
+    padding[0x16];
+
+    // Offset 0x324: guild cooking recipes and ingredients (header 0x868, 0x86C)
+    u16 numGuildCookingRecipes
+        [[name("Number of Guild Cooking Recipes")]];
+
+    u16 numGuildCookingIngredients
+        [[name("Number of Guild Cooking Ingredients")]];
+
+    padding[0x48];
 
     // Offset 0x370: 11 on ZZ, the Caravan ranking route groups that are used (header 0x91C)
     u16 numRankingGroups
@@ -76,6 +241,24 @@ struct ImportantNumbers {
     // Offset 0x38A: tower jewel recipes (header 0x938)
     u16 numTowerJewelRecipes
         [[name("Number of Tower Jewel Recipes")]];
+
+    padding[0x1C];
+
+    // Offset 0x3A8: Transcend depths (header 0x990)
+    u16 numTranscendDepths
+        [[name("Number of Transcend Depths")]];
+
+    padding[0x26];
+
+    // Offset 0x3D0: clan mission part targets (header 0xA28)
+    u16 numClanMissionTargets
+        [[name("Number of Clan Mission Targets")]];
+
+    padding[0x2E];
+
+    // Offset 0x400: Conquest quest ids (header 0xB30)
+    u16 numConquestQuests
+        [[name("Number of Conquest Quests")]];
 
 } [[name("Important Numbers")]];
 

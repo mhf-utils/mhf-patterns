@@ -23,6 +23,14 @@
 #include <mhfdat/data/caravan.hexpat>
 #endif
 
+#ifdef __DATA_CLAN
+#include <mhfdat/data/clan.hexpat>
+#endif
+
+#ifdef __DATA_COOKING
+#include <mhfdat/data/cooking.hexpat>
+#endif
+
 #ifdef __DATA_CRAFTING
 #include <mhfdat/data/crafting.hexpat>
 #endif
@@ -47,8 +55,28 @@
 #include <mhfdat/data/extra_counters.hexpat>
 #endif
 
+#ifdef __DATA_GOOCOO
+#include <mhfdat/data/goocoo.hexpat>
+#endif
+
+#ifdef __DATA_GUILD_COOKING
+#include <mhfdat/data/guild_cooking.hexpat>
+#endif
+
+#ifdef __DATA_HALK
+#include <mhfdat/data/halk.hexpat>
+#endif
+
 #ifdef __DATA_ITEMS
 #include <mhfdat/data/items.hexpat>
+#endif
+
+#ifdef __DATA_LEGEND_RASTA
+#include <mhfdat/data/legend_rasta.hexpat>
+#endif
+
+#ifdef __DATA_MEOWKA_POT
+#include <mhfdat/data/meowka_pot.hexpat>
 #endif
 
 #ifdef __DATA_MISSIONS
@@ -57,6 +85,10 @@
 
 #ifdef __DATA_MONSTERS
 #include <mhfdat/data/monsters.hexpat>
+#endif
+
+#ifdef __DATA_PARTNER
+#include <mhfdat/data/partner.hexpat>
 #endif
 
 #ifdef __DATA_PART_BREAKS
@@ -73,6 +105,10 @@
 
 #ifdef __DATA_SEASONAL_EVENTS
 #include <mhfdat/data/seasonalevents.hexpat>
+#endif
+
+#ifdef __DATA_SECRET_BOOK
+#include <mhfdat/data/secret_book.hexpat>
 #endif
 
 #ifdef __DATA_SHARPNESS
@@ -105,6 +141,10 @@
 
 #ifdef __DATA_TOWER
 #include <mhfdat/data/tower.hexpat>
+#endif
+
+#ifdef __DATA_TRANSCEND
+#include <mhfdat/data/transcend.hexpat>
 #endif
 
 #ifdef __DATA_WEAPONS

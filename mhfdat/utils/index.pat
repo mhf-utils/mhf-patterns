@@ -16,6 +16,11 @@ return std::format("{:04X}", n);
 };
 
 /**
+	An item ID shown with its name, for arrays of item IDs
+*/
+using ItemId = u16 [[format("getItemName")]];
+
+/**
 	Add 1 to n (used for pattern formatting: rarities are stored from 0)
 */
 fn plusone (u8 n) {

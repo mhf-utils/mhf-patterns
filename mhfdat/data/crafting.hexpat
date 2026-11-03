@@ -230,43 +230,6 @@ CraftMatTable armorCraftingTable                                          @ head
 CraftMatTable weaponCraftingTable                                         @ header.ptrs.weaponForging        [[name("Weapon Forging Data")]];
 
 
-struct evoUpgradeSub {
-    u16 dmg;
-    u16 unkSub2;
-    u16 eleDamage;
-    padding[2];
-    u16 unkSub8;
-    padding[2];
-} [[single_color]];
-
-struct evoUpgrade {
-    u32 gCost;
-    u16 unk04;
-    u16 level;
-    evoUpgradeSub sub[11];
-    u16 unk8C   [[comment("Increments with level from 650 to 850")]]; 
-    u8 unk8E;
-    padding[1];
-    u16 unk90;
-    padding[2];
-    float unk94 [[comment("Always 0.70??")]]; 
-    float unk98 [[comment("Always 1.00??")]];
-    float unk9C [[comment("Always 1.20??")]];
-    float unkA0 [[comment("Always 2.50??")]];
-    float unkA4 [[comment("Always 1.43??")]]; 
-    u16 unkA8   [[comment("Increments")]];
-    u16 unkAA   [[comment("Increments")]];
-    u8 unkAC    [[comment("Increments with level. 32 32, 33 33, ... in HR")]];
-    u8 unkAD    [[comment("Increments with level")]];
-    padding[2];
-};
-
-// each list has its header pointer: they follow each other on ZZ, but don't rely on it
-evoUpgrade evoUpgradesClear[100] @ header.ptrs.evoUpgrades;
-evoUpgrade evoUpgradesGlory[100] @ header.ptrs.evoUpgradesGlory;
-evoUpgrade evoUpgradesShine[100] @ header.ptrs.evoUpgradesShine;
-evoUpgrade evoUpgradesFlash[100] @ header.ptrs.evoUpgradesFlash;
-
 struct DecoShop {
     u16 decoItemID       [[format("getItemName")]];
     u16 ReceiptCategory;

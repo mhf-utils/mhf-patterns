@@ -39,6 +39,10 @@
 #include <mhfdat/data/crafting.hexpat>
 #endif
 
+#ifdef __DATA_EVOLUTION
+#include <mhfdat/data/evolution.hexpat>
+#endif
+
 #ifdef __DATA_DATA_COUNTERS
 #include <mhfdat/data/data_counters.hexpat>
 #endif

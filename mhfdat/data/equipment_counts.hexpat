@@ -48,7 +48,16 @@ struct ImportantNumbers {
     u16 numHunterPearlSkillLists
         [[name("Number of Hunter Pearl Skill Lists")]];
 
-    padding[0x7C];
+    padding[0x54];
+
+    // Offset 0xB4: evolution weapon series (header 0x2CC melee, 0x2D0 ranged)
+    u16 numEvoMeleeWeapons
+        [[name("Number of Evolution Melee Weapons")]];
+
+    u16 numEvoRangedWeapons
+        [[name("Number of Evolution Ranged Weapons")]];
+
+    padding[0x24];
 
     // Offset 0xDC: Partner faces (header 0x320)
     u16 numPartnerFaces

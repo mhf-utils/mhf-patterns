@@ -213,12 +213,12 @@ struct ptr_table {
     ptr CuffCrafting            [[name("Cuff Crafting Pointer")]];      // @ 0x2C0
     unk_ptr hd_dll_af5b21;
     unk_ptr hd_dll_af5b27;
-    unk_ptr hd_dll_af5a7b;
-    unk_ptr hd_dll_af5a81;      // @ 0x2D0
-    unk_ptr hd_dll_af5a87;
-    unk_ptr hd_dll_af5a8d;
-    unk_ptr hd_dll_af5a93;
-    unk_ptr hd_dll_af5a99;      // @ 0x2E0
+    ptr evoMeleeWeaponSeries [[name("Evolution Melee Weapon Series Pointer")]]; // @ 0x2CC, hd_dll_af5a7b
+    ptr evoRangedWeaponSeries [[name("Evolution Ranged Weapon Series Pointer")]]; // @ 0x2D0, hd_dll_af5a81
+    ptr evoSeries0 [[name("Evolution Series 0 Pointer")]]; // @ 0x2D4, hd_dll_af5a87
+    ptr evoSeries1 [[name("Evolution Series 1 Pointer")]]; // @ 0x2D8, hd_dll_af5a8d
+    ptr evoSeries2 [[name("Evolution Series 2 Pointer")]]; // @ 0x2DC, hd_dll_af5a93
+    ptr evoSeries3 [[name("Evolution Series 3 Pointer")]]; // @ 0x2E0, hd_dll_af5a99
     unk_ptr hd_dll_af5b6c;
     unk_ptr hd_dll_af5a9f;
     unk_ptr hd_dll_af5aa5;
@@ -270,10 +270,10 @@ struct ptr_table {
     unk_ptr hd_dll_af5cde;
     unk_ptr hd_dll_af5cc0;      // @ 0x3A0
     unk_ptr hd_dll_af5cc6;
-    unk_ptr hd_dll_af5cea;
-    unk_ptr hd_dll_af5cf0;
-    unk_ptr hd_dll_af5cf6;      // @ 0x3B0
-    unk_ptr hd_dll_af5cfc;
+    ptr evoSeries4 [[name("Evolution Series 4 Pointer")]]; // @ 0x3A8, hd_dll_af5cea
+    ptr evoSeries5 [[name("Evolution Series 5 Pointer")]]; // @ 0x3AC, hd_dll_af5cf0
+    ptr evoSeries6 [[name("Evolution Series 6 Pointer")]]; // @ 0x3B0, hd_dll_af5cf6
+    ptr evoSeries7 [[name("Evolution Series 7 Pointer")]]; // @ 0x3B4, hd_dll_af5cfc
     unk_ptr hd_dll_af5d02;
     unk_ptr hd_dll_af5d08;
     unk_ptr hd_dll_af5d0e;      // @ 0x3C0
@@ -688,10 +688,10 @@ struct ptr_table {
     ptr specialSlotChancesCaptureG [[name("Special Capture G Reward Slot Chances Pointer")]]; // @ 0x9F0, hd_dll_af86c0
     unk_ptr hd_dll_af86f0;
     unk_ptr hd_dll_af86f6;
-    unk_ptr hd_dll_af86fc;
-    unk_ptr hd_dll_af8702;      // @ 0xA00
-    unk_ptr hd_dll_af8708;
-    unk_ptr hd_dll_af870e;
+    ptr evoSeries8 [[name("Evolution Series 8 Pointer")]]; // @ 0x9FC, hd_dll_af86fc
+    ptr evoSeries9 [[name("Evolution Series 9 Pointer")]]; // @ 0xA00, hd_dll_af8702
+    ptr evoSeries10 [[name("Evolution Series 10 Pointer")]]; // @ 0xA04, hd_dll_af8708
+    ptr evoSeries11 [[name("Evolution Series 11 Pointer")]]; // @ 0xA08, hd_dll_af870e
     // evolution weapon levels, 100 each (crafting.hexpat)
     ptr evoUpgradesFlash        [[name("Evolution Upgrade Pointer (Flash)")]];  // @ 0xA0C, hd_dll_af8714
     ptr evoUpgradesShine        [[name("Evolution Upgrade Pointer (Shine)")]];  // @ 0xA10, hd_dll_af871a

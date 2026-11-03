@@ -127,6 +127,10 @@
 #include <mhfdat/data/quests.hexpat>
 #endif
 
+#ifdef __DATA_QUEST_REWARDS
+#include <mhfdat/data/quest_rewards.hexpat>
+#endif
+
 #ifdef __DATA_RASTA_GUILD
 #include <mhfdat/data/rasta_guild.hexpat>
 #endif

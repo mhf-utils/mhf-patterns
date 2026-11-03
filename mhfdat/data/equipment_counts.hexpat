@@ -282,7 +282,13 @@ struct ImportantNumbers {
     u16 numSuperRapidFirePowers
         [[name("Number of Super Rapid Fire Powers")]];
 
-    padding[0x32];
+    padding[0x22];
+
+    // Offset 0x2E8: items the reward rate does not scale (header 0x7E4)
+    u16 numRewardRateExemptItems
+        [[name("Number of Reward Rate Exempt Items")]];
+
+    padding[0xE];
 
     u16 numAutoSkills
         [[name("Number of Auto Skills")]];
@@ -302,7 +308,13 @@ struct ImportantNumbers {
     u16 numGuildCookingIngredients
         [[name("Number of Guild Cooking Ingredients")]];
 
-    padding[0x48];
+    padding[0x3E];
+
+    // Offset 0x366: Shiten reward rows (header 0x900)
+    u16 numShitenRewards
+        [[name("Number of Shiten Rewards")]];
+
+    padding[0x8];
 
     // Offset 0x370: 11 on ZZ, the Caravan ranking route groups that are used (header 0x91C)
     u16 numRankingGroups
@@ -333,6 +345,10 @@ struct ImportantNumbers {
     // Offset 0x400: Conquest quest ids (header 0xB30)
     u16 numConquestQuests
         [[name("Number of Conquest Quests")]];
+
+    // Offset 0x402: Shiten quest ids (header 0xB34)
+    u16 numShitenQuests
+        [[name("Number of Shiten Quests")]];
 
 } [[name("Important Numbers")]];
 

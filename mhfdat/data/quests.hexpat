@@ -135,3 +135,29 @@ struct InterceptionMonsterStar {
 
 u16 interceptionMonsterCount @ header.ptrs.interceptionMonsterCount [[name("Interception Monster Count")]];
 InterceptionMonsterStar interceptionMonsterStars[interceptionMonsterCount] @ header.ptrs.interceptionMonsterStars [[name("Interception Monster G Stars")]];
+
+// Great Slaying (大討伐, Raviente) quest ids (header 0x4E8), read by 29
+// functions (hit_detected, the reward generator, the balloon idle timer, the
+// Hunter Navi checkers, quest hall join checks...). Each field is one quest
+// id; "support first" starts a run of 5 support (【支援】) quests. The code
+// also treats some fields as range starts: firstQuest .. lastQuest - 1
+// (berserk, hit_detected) or firstQuest .. firstQuest + 5 except + 4
+// (berserkExtreme, captureBreakRewardsZenith choice). Titles from the quest
+// files.
+struct GreatSlayingQuests {
+    u16 ravienteFirstQuest [[comment("震撼！絶島主 (HagiLv 0)")]];
+    u16 ravienteLastQuest [[comment("no balloon idle timer; Hunter Navi task 09_07")]];
+    u16 violentFirstQuest [[comment("白き絶島主 (HagiLv 1)")]];
+    u16 violentLastQuest [[comment("no balloon idle timer; Hunter Navi tasks 09_07 / 09_11 (hunterNavi_ck_09_11_violent_raviente)")]];
+    u16 berserkFirstQuest [[comment("猛震！黒き絶島主 (G)")]];
+    u16 berserkLastQuest [[comment("no balloon idle timer; Hunter Navi 09_07 / 09_12 (great_slaying_is_berserk_last_quest)")]];
+    u16 berserkSupportFirstQuest [[comment("【支援】, 5 quests")]];
+    u16 berserkExtremeFirstQuest [[comment("極震！黒き絶島主 (G)")]];
+    u16 berserkExtremeLastQuest [[comment("as berserkLastQuest")]];
+    u16 berserkExtremeSupportFirstQuest [[comment("【支援】, 5 quests")]];
+    u16 berserkSmallPartyFirstQuest [[comment("猛震！黒き絶島主(少人数) (G)")]];
+    u16 berserkSmallPartyLastQuest [[comment("as berserkLastQuest")]];
+    u16 berserkSmallPartySupportFirstQuest [[comment("【支援】, 5 quests")]];
+};
+
+GreatSlayingQuests greatSlayingQuests @ header.ptrs.greatSlayingQuests [[name("Great Slaying Quests")]];

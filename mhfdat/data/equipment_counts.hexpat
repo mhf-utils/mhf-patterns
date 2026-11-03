@@ -224,13 +224,39 @@ struct ImportantNumbers {
     u16 g50RangedWeaponUpgradesCounter
         [[name("g50 ranged weapon updrades counter")]];
 
-    padding[0x2A];
+    padding[0x1C];
+
+    // Offset 0x24A: Road floor milestones (header 0x64C)
+    u16 numRoadMilestones
+        [[name("Number of Road Floor Milestones")]];
+
+    padding[0x4];
+
+    // Offset 0x250: just reload rows per list (header 0x668)
+    u16 numJustReloadRows
+        [[name("Number of Just Reload Rows")]];
+
+    // Offset 0x252: just reload lists (header 0x668)
+    u16 numJustReloadLists
+        [[name("Number of Just Reload Lists")]];
+
+    // Offset 0x254: just shot rows per list (header 0x66C)
+    u16 numJustShotRows
+        [[name("Number of Just Shot Rows")]];
+
+    padding[0x2];
 
     // Offset 0x258: hunting horn melodies (header 0x670)
     u16 numHornMelodies
         [[name("Number of Horn Melodies")]];
 
-    padding[0xA];
+    padding[0x2];
+
+    // Offset 0x25C: gunlance shells (header 0x678)
+    u16 numGunlanceShells
+        [[name("Number of Gunlance Shell Rows")]];
+
+    padding[0x6];
 
     // Offset 0x264: Partner starter weapons (header 0x6B0)
     u16 numPartnerStarterWeapons

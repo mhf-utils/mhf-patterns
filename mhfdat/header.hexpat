@@ -443,28 +443,28 @@ struct ptr_table {
     unk_ptr hd_dll_af6dbe;      // @ 0x640
     unk_ptr hd_dll_af6e7c;
     ptr skillParams [[name("Skill Parameters Pointer"), comment("Rush gauge thresholds at +0x64; the rest is shared with other skills")]]; // @ 0x648, hd_dll_af6eab
-    unk_ptr hd_dll_af6eb1;
+    ptr roadMilestones [[name("Road Floor Milestones Pointer")]]; // @ 0x64C, hd_dll_af6eb1
     unk_ptr hd_dll_af6eb7;      // @ 0x650
     unk_ptr hd_dll_af6e82;
     unk_ptr hd_dll_af6f6f;
     ptr weaponParams [[name("Weapon Parameters Pointer")]]; // @ 0x65C, hd_dll_af6f75
     unk_ptr hd_dll_af6f7b;      // @ 0x660
     unk_ptr hd_dll_af6f81;
-    unk_ptr hd_dll_af6fa8;
-    unk_ptr hd_dll_af6fca;
+    ptr justReloadLists [[name("Just Reload Lists Pointer")]]; // @ 0x668, hd_dll_af6fa8
+    ptr justShotLists [[name("Just Shot Lists Pointer")]]; // @ 0x66C, hd_dll_af6fca
     ptr hornMelodies [[name("Horn Melodies Pointer")]]; // @ 0x670, hd_dll_af6fec
     unk_ptr hd_dll_af6ff2;
-    unk_ptr hd_dll_af6ff8;
+    ptr gunlanceShells [[name("Gunlance Shells Pointer")]]; // @ 0x678, hd_dll_af6ff8
     unk_ptr hd_dll_af6ffe;
     unk_ptr hd_dll_af7004;      // @ 0x680
     unk_ptr hd_dll_af700a;
-    unk_ptr hd_dll_af7010;
-    unk_ptr hd_dll_af7016;
-    unk_ptr hd_dll_af701c;      // @ 0x690
-    unk_ptr hd_dll_af7022;
-    unk_ptr hd_dll_af7028;
-    unk_ptr hd_dll_af702e;
-    unk_ptr hd_dll_af7034;      // @ 0x6A0
+    ptr gunlanceShellSharpnessCost [[name("Gunlance Shell Sharpness Cost Pointer")]]; // @ 0x688, hd_dll_af7010
+    ptr gunlanceSpDragonCannonDamageRate [[name("Gunlance Sp Dragon Cannon Damage Rate Pointer")]]; // @ 0x68C, hd_dll_af7016
+    ptr gunlanceSpDragonCannonTimerRate [[name("Gunlance Sp Dragon Cannon Timer Rate Pointer")]]; // @ 0x690, hd_dll_af701c
+    ptr gunlanceSpDragonCannonSharpnessCost [[name("Gunlance Sp Dragon Cannon Sharpness Cost Pointer")]]; // @ 0x694, hd_dll_af7022
+    ptr gunlanceExShotDamageRate [[name("Gunlance Extreme Shot Damage Rate Pointer")]]; // @ 0x698, hd_dll_af7028
+    ptr gunlanceExShotTimerRate [[name("Gunlance Extreme Shot Timer Rate Pointer")]]; // @ 0x69C, hd_dll_af702e
+    ptr gunlanceExShotSharpnessCost [[name("Gunlance Extreme Shot Sharpness Cost Pointer")]]; // @ 0x6A0, hd_dll_af7034
     unk_ptr hd_dll_af7052;
     unk_ptr hd_dll_af7040;
     unk_ptr hd_dll_af7046;

@@ -39,10 +39,10 @@ mhfdat/
     ├── sigils.hexpat     # Random sigils
     ├── skills.hexpat     # Skill tree, skill effects, Vampirism, Crit Conversion, Rush, Obscurity, Furious
     ├── caravan.hexpat    # Voyage and ranking routes, levels, gem skills and tiers
-    ├── road.hexpat       # Hunting Road monster points and skills
+    ├── road.hexpat       # Hunting Road monster points, skills and floor milestones
     ├── tower.hexpat      # Tower jewel recipes and upgrade costs
     ├── shop_guild.hexpat # Shop catalogs and the Guild Shop
-    ├── weapon_params.hexpat # Per-class weapon parameters, bullet sets, horn melodies, rapid fire, motion values, random weapon sharpness, hit capsules, gunner shot power
+    ├── weapon_params.hexpat # Per-class weapon parameters, bullet sets, horn melodies, rapid fire, motion values, random weapon sharpness, reach bodies, gunner shot power, HC Kai bonuses, just reload / shot, gunlance shells
     ├── quests.hexpat     # HR, G-rank, Conquest and beginner quest lists, Guild Priority Requests
     ├── clan.hexpat       # Clan mission targets and roll weights
     ├── cooking.hexpat    # Kitchen meal ingredients, stat tiers, special dishes

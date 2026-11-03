@@ -11,11 +11,16 @@
 	Skill fields from ezemania2/mhf-file-editor; the monster point layout comes
 	from BlazeMH/Blaze-Hunting-Road-Editor (GPL-3.0), as that editor credits.
 	The Road cat shop (header 0xB10) is in shop_road_cat.hexpat.
+	Floor milestones (header 0x64C, important numbers + 0x24A rows): when a
+	Road run settles (road_settle_floor_score), every row whose threshold
+	lies between the old and the new value adds `add` to a save counter
+	(UserSaveData +146976), capped by header 0x648 +0x14.
 */
 
 #include <std/core.pat>
 #include <misc/MonsterIDs.hexpat>
 #include <mhfdat/utils/index.pat>
+#include <mhfdat/data/equipment_counts.hexpat>
 
 // Monster: id, flag, then its base points and those of Road levels 1 to 5
 Monster roadMonsterPoints[std::mem::read_unsigned(header.ptrs.dataCounters + 8, 2)]
@@ -45,3 +50,12 @@ struct RoadSkill {
 RoadSkill roadSkills[std::mem::read_unsigned(header.ptrs.extraCounters + 8, 2)]
     @ header.ptrs.roadSkills
     [[name("Road Skills")]];
+
+struct RoadMilestone {
+    u16 threshold;
+    u16 add;
+};
+
+RoadMilestone roadMilestones[importantNums.numRoadMilestones]
+    @ header.ptrs.roadMilestones
+    [[name("Road Floor Milestones")]];

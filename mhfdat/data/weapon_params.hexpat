@@ -230,6 +230,119 @@ float hcKaiCritDamage[6] @ header.ptrs.hcKaiCritDamage [[name("HC Kai Critical D
 s16 hcKaiDefense[6] @ header.ptrs.hcKaiDefense [[name("HC Kai Defense Bonus")]];
 
 // =======================
+// Bowgun just reload and just shot (header 0x668 / 0x66C; the Wii U client
+// keeps them in code: GetJustReloadActionData, We01_GetJustShotInputData).
+// 0x668: one list per reload speed tier (important numbers + 0x252 lists of
+// + 0x250 rows); 0x66C: the just shot list, the second one with sigil 0x47
+// (+ 0x254 rows each). A row has the shape of a weapon action cancel
+// (weapon_actions.hexpat), read by FUN_10A68690 the way
+// weapon_action_cancel_check reads a cancel, but its conditions test the
+// player's motion id instead of the action step: input inputId pressed
+// inside window A, then nextActType starts inside window B.
+// =======================
+
+struct JustActionCondition {
+    u16 motion;
+    u8  mode;
+    s8  blend;
+    u16 frame;
+    u16 count;
+};
+
+struct JustActionRow {
+    u16 minStep;
+    u16 inputId;
+    u16 groupBit;
+    JustActionCondition windowAOpen;
+    JustActionCondition windowAClose;
+    u16 nextActType;
+    JustActionCondition windowBOpen;
+    JustActionCondition windowBClose;
+};
+
+struct JustReloadList {
+    JustActionRow rows[importantNums.numJustReloadRows];
+};
+
+struct JustShotList {
+    JustActionRow rows[importantNums.numJustShotRows];
+};
+
+ptVar<JustReloadList> justReloadLists[importantNums.numJustReloadLists] @ header.ptrs.justReloadLists [[name("Just Reload Lists")]];
+ptVar<JustShotList> justShotLists[2] @ header.ptrs.justShotLists [[name("Just Shot Lists")]];
+
+// =======================
+// Gunlance shells (header 0x678; Wii U getBaseDamage, setWeaponAttributeData,
+// shell38_i): one row per gunlance attribute (hit +0xC74, important numbers
+// + 0x25C rows: 9 shell levels x 3 shell types, row = (level - 1) x 3 + type).
+// we09_bomb spawns the shell through shell_k38_call_shell(type, level, action,
+// kind), and the hit's action (+0x42) and kind (+0x43) pick the values:
+// - actions 0-3, kind 0 or 1 (we09_bomb mode 0 / 1, one hit): shell*;
+// - mode 2 (attributeBomb, action 1, and wideAttributeBomb, action 3)
+//   spawns two hits: kind 2 takes attributeBomb*, kind 3 carries the
+//   weapon's element (its value x attributeHitElementPercent / 100); a weapon
+//   with no element makes kind 3 a hit of effect 0x1C (hit +0x84) worth
+//   attributeHitNoElementValue (hit +0x89) with attributeHitNoElementRaw as
+//   raw. A sword crystal of type 1 or 0xB (setKensibinAttributeData) makes
+//   the hit effect 0x23 worth attributeBomb* x 2 instead.
+// - action 4 (dragon cannon) and 5 (HD Extreme shot): dragonCannon*.
+// The fire values are the hits' fire element (heat blade triples it).
+// =======================
+
+struct GunlanceShellRow {
+    u8  shellRaw;
+    u8  shellFire;
+    u8  attributeBombRaw;
+    u8  attributeBombFire;
+    u8  attributeHitNoElementRaw;
+    u8  attributeHitNoElementValue;
+    u8  unk06[2];
+    s32 attributeHitElementPercent;
+    u8  dragonCannonRaw;
+    u8  dragonCannonFire;
+    u8  unk0E[2];
+};
+
+GunlanceShellRow gunlanceShells[importantNums.numGunlanceShells] @ header.ptrs.gunlanceShells [[name("Gunlance Shells")]];
+
+// =======================
+// Gunlance shelling (header 0x688-0x6A0; Wii U we09_bomb, getShell38DamegeRate,
+// we09_atk_sp_dragon_cannon). Rows are the gunlance's shell type (its
+// attribute % 3). we09_bomb(action, mode) takes the sharpness cost of the
+// action from 0x688 (the Wii U row has 6 actions, HD inserted exShot
+// as action 5 and moved the step bomb to 6). Action 4 at charge level 0 is the
+// dragon cannon (shell 4); at charge level 1-8 it is the sp dragon cannon
+// (shell 5), which adds the level's 0x694 sharpness and takes its damage
+// rate from 0x68C and its timer (player +0xB24) rate from 0x690. The charge
+// level (player +0xB28; Wii U +0xAD0) starts at 1 and gains 1 per charge
+// input, each one feeding a loaded shell, up to 8. Action 5 (shell 7, HD
+// only, event 0x13 of gl_ex_event_handler, the Extreme style script) reads
+// 0x698 / 0x69C / 0x6A0 the same way.
+// =======================
+
+struct GunlanceShellCostRow {
+    s16 bomb                 [[comment("action 0, Wii U we09_attack_bomb")]];
+    s16 attributeBomb        [[comment("action 1, Wii U we09_attack_attribute_bomb (mode 2: shell hit kinds 2 and 3)")]];
+    s16 wideBomb             [[comment("action 2, Wii U we09_atk_wide_bomb (one cost per shell it fires)")]];
+    s16 wideAttributeBomb    [[comment("action 3, Wii U we09_atk_wide_bomb in mode 2; HD gl_rapid_fire_action_update")]];
+    s16 dragonCannon         [[comment("action 4, plain and sp dragon cannon")]];
+    s16 exShot               [[comment("action 5, HD only: event 0x13 of gl_ex_event_handler")]];
+    s16 moveStepBomb         [[comment("action 6 (Wii U 5, we09_attack_move_step_bomb); HD gl_evade_step_action_update")]];
+};
+
+struct GunlanceChargeLevelRow<T> {
+    T byChargeLevel[8]       [[comment("charge level 1-8 at index 0-7")]];
+};
+
+GunlanceShellCostRow gunlanceShellSharpnessCost[3] @ header.ptrs.gunlanceShellSharpnessCost [[name("Gunlance Shell Sharpness Cost")]];
+GunlanceChargeLevelRow<float> gunlanceSpDragonCannonDamageRate[3] @ header.ptrs.gunlanceSpDragonCannonDamageRate [[name("Gunlance Sp Dragon Cannon Damage Rate")]];
+GunlanceChargeLevelRow<float> gunlanceSpDragonCannonTimerRate[3] @ header.ptrs.gunlanceSpDragonCannonTimerRate [[name("Gunlance Sp Dragon Cannon Timer Rate")]];
+GunlanceChargeLevelRow<s16> gunlanceSpDragonCannonSharpnessCost[3] @ header.ptrs.gunlanceSpDragonCannonSharpnessCost [[name("Gunlance Sp Dragon Cannon Sharpness Cost")]];
+GunlanceChargeLevelRow<float> gunlanceExShotDamageRate[3] @ header.ptrs.gunlanceExShotDamageRate [[name("Gunlance Extreme Shot Damage Rate")]];
+GunlanceChargeLevelRow<float> gunlanceExShotTimerRate[3] @ header.ptrs.gunlanceExShotTimerRate [[name("Gunlance Extreme Shot Timer Rate")]];
+GunlanceChargeLevelRow<s16> gunlanceExShotSharpnessCost[3] @ header.ptrs.gunlanceExShotSharpnessCost [[name("Gunlance Extreme Shot Sharpness Cost")]];
+
+// =======================
 // Light Bowgun rapid fire. Per ammo type (header 0xA0, up to the next
 // table): the shots of a burst and the speed level (an index in the client's
 // {1.0, 1.5, 1.6}). Per ranged weapon (header 0xC0, important numbers + 0x1A

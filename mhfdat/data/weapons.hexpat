@@ -1,6 +1,7 @@
 #pragma once
 
 #include <misc/s32p.pat>
+#include <std/core.pat>
 #include <mhfdat/utils/index.pat>
 
 // Multiply n by 10 (Used for pattern formatting)
@@ -370,3 +371,22 @@ struct Weapons {
 };
 
 Weapons weapons @ header.ptrs.meleeWeapons [[name("Weapons")]];
+
+// =======================
+// Compound elements (header 0x6A8): element types 6-18 (elementName), one
+// row each, row = type - 6. Each row is up to 5 {base element 1-5, percent}
+// pairs, element 0 ends it. element_compound_split (FUN_1081F980) and
+// element_compound_part_value (value x percent / 100) read them;
+// transcend_add_attack_exp_by_weapon picks the matching Veins.
+// =======================
+
+struct CompoundElementPart {
+    u8 element [[format("elementName")]];
+    u8 percent;
+};
+
+struct CompoundElement {
+    CompoundElementPart parts[5];
+} [[name(elementName(std::core::array_index() + 6))]];
+
+CompoundElement compoundElements[13] @ header.ptrs.compoundElements [[name("Compound Elements")]];

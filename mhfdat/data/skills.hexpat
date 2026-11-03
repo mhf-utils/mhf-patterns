@@ -405,3 +405,138 @@ struct MagnetSpikeTunables {
 };
 
 MagnetSpikeTunables magnetSpikeTunables @ header.ptrs.magnetSpikeTunables [[name("Magnet Spike Tunables")]];
+
+// =======================
+// Point Breakthrough (header 0xB4C): per-part gauges in SkillWork (+0x580
+// gauges, +0x5A0 part flags, +0x614 accumulated gain, +0x624 flag timers).
+// Tables are s16[14] by weapon class (entity +3).
+// =======================
+
+struct PointBreakthroughTunables {
+    s16 *gaugeGainByClass[14] : u32 [[comment("skill_point_breakthrough_on_hit_add_gauge: added to the hit part's gauge (x skill_point_breakthrough_gauge_gain_multiplier)")]];
+    s16 *gaugeDecayByClass[14] : u32 [[comment("taken from the other parts' gauges on a hit; also the decay of unflagged gauges when no part is flagged (skill_point_breakthrough_tick_gauges)")]];
+    s16 *flaggedGaugeDecayByClass[14] : u32 [[comment("tick decay of a flagged part's gauge")]];
+    s16 *breakthroughValueByClass[14] : u32 [[comment("SkillWork +0x5AA when a part's gauge reaches gaugeMax and gets flagged (skill_point_breakthrough_update_part_flags)")]];
+    s16 *hitValueByClass[14] : u32 [[comment("SkillWork +0x5AE on a hit (cleared every tick)")]];
+    s16 breakthroughHitAdd [[comment("skill_point_breakthrough_flagged_hit_bonus: added to the hit's values [1]-[3] (capped 1000) when it lands on the flagged part")]];
+    s16 breakthroughHitAddRaviente [[comment("same, monsters 0x5D / 0x95 (Raviente, Berserk Raviente)")]];
+    s16 gaugeMax [[comment("gauge cap; a part at it gets flagged")]];
+    s16 decayInterval [[comment("SkillWork +0x5AC reload: counts down 2 per tick, the gauges decay when it runs out")]];
+    float skillGainMult [[comment("skill_point_breakthrough_gauge_gain_multiplier with skills 0x170 (Fencing+2), 0x1ED / 0x20D (Sword God+2 / +3) and its flag set; else 1.2 or 1.0")]];
+    s16 partGainCap [[comment("gain stops while any part's accumulated gain (SkillWork +0x614) is at it")]];
+    s16 flagDuration [[comment("part flag timer (SkillWork +0x624), counts down 2 per tick; the flag and the gauge clear at 0")]];
+};
+
+PointBreakthroughTunables pointBreakthroughTunables @ header.ptrs.pointBreakthroughTunables [[name("Point Breakthrough Tunables")]];
+
+// =======================
+// Combat Supremacy (header 0x954), read while skill_combat_supremacy_is_active
+// =======================
+
+struct CombatSupremacyTunables {
+    float attackMult [[comment("player_recalc_attack_power_full")]];
+    s32 staminaDrainDivisor [[comment("player_stamina_drain_tick_apply: drain per tick = constant / it")]];
+    s32 buffTimerDrainMult [[comment("buff timers count down this much faster: Dash Juice (player_dash_juice_timer_tick_down), horn song 5 (weapon_horn_song_timers_tick), SkillWork +0x2B6 / +0x532 (FUN_10A62A70 / FUN_10A62B00), timer [1] of SkillWork +0x530 (FUN_114B7C70)")]];
+    float drainMultTier3 [[comment("special hall quests, player_stamina_drain_reduction_tier 3")]];
+    float drainMultTier45 [[comment("special hall quests, tier 4 / 5")]];
+    float drainMultHalf [[comment("special hall quests tier 1 / 2; elsewhere Marathon Runner (0xB8) or Peerless (0x121)")]];
+    s32 shortSprinterDivisorSub [[comment("Short Sprinter (0xB9): taken from staminaDrainDivisor")]];
+};
+
+CombatSupremacyTunables combatSupremacyTunables @ header.ptrs.combatSupremacyTunables [[name("Combat Supremacy Tunables")]];
+
+// =======================
+// Zenith skills (header 0xAA8, 0xAAC, 0xAB0), counts at +0x14 / +0x16 /
+// +0x18 of the block header 0x988 points to. Zenith skill ids index 0xAA8;
+// names are mhfpac pZenithSkillNames[32 + id], tree names
+// pZenithSkillNames[tree]. Proofs: docs/reverse/zenith_skills.md.
+// =======================
+
+struct ZenithSkill {
+    u16 tree [[comment("zenith_values_to_tree_points")]];
+    u16 points [[comment("tree points the skill gives (zenith_values_to_tree_points)")]];
+    u16 requiredSkillTree [[comment("normal skill tree that must be active (zenith_skill_raise_normal_skill -> zenith_required_tree_active_check, zenith_skills_apply: 0 = none)")]];
+    u16 levels [[comment("levels added to that tree (zenith_skill_raise_normal_skill -> skill_tree_raise_levels)")]];
+    u16 gap08;
+} [[name(std::format("Zenith skill {}", std::core::array_index()))]];
+
+ZenithSkill zenithSkills[std::mem::read_unsigned(header.ptrs.skillCounts + 0x14, 2)] @ header.ptrs.zenithSkills [[name("Zenith Skills")]];
+
+struct ZenithTreeSkills {
+    u16 skillByPoints[7] [[comment("zenith_tree_skill_get: [min(points, 7) - 1] = zenith skill id")]];
+} [[name(std::format("Zenith tree {}", std::core::array_index()))]];
+
+ZenithTreeSkills zenithTreeSkills[std::mem::read_unsigned(header.ptrs.skillCounts + 0x16, 2)] @ header.ptrs.zenithTreeSkills [[name("Zenith Tree Skills")]];
+
+struct ZenithSkillEffect {
+    u16 zenithSkill [[comment("rows of a skill follow each other; skill_dat_index_rebuild indexes the first row and the count per skill")]];
+    u16 effect [[comment("effect type asked by skill_is_granted_by_equipped_gear (\"zenith effect N\" in SkillBonusValues)")]];
+    u16 minLevel [[comment("FUN_1004AE00: the row counts when this <= the level asked")]];
+};
+
+ZenithSkillEffect zenithSkillEffects[std::mem::read_unsigned(header.ptrs.skillCounts + 0x18, 2)] @ header.ptrs.zenithSkillEffects [[name("Zenith Skill Effects")]];
+
+// =======================
+// Taunt, Sneak and Incitement (header 0x80C, 0x830)
+// =======================
+
+struct IncitementTunables {
+    u16 damageTakenPercent [[comment("player_apply_damage_reduction_skills: damage x this / 100 with Incitement (0x1D7) while the monster targets the player")]];
+    u16 gap02;
+    u16 enmityCutPercentSneak [[comment("monster_aggro_apply_taunt_and_incitement: % of incitementEnmityCut taken from the other players with Sneak (0x13); 100 without Sneak or Taunt")]];
+    u16 enmityCutPercentTaunt [[comment("same with Taunt (0x14)")]];
+    u16 targetLockSeconds [[comment("monster_func: Incitement target lock timer = this x 60 frames")]];
+    u16 playerAggroTimer [[comment("monster_func / monster_aggro_tick_decay_and_target_lock: per-player aggro timer = this x 30 frames")]];
+};
+
+IncitementTunables incitementTunables @ header.ptrs.incitementTunables [[name("Incitement Tunables")]];
+u16 incitementEnmityCut[14] @ header.ptrs.incitementEnmityCut [[name("Incitement Enmity Cut"), comment("by weapon class: enmity taken from the other players on an Incitement hit (x enmityCutPercent / 100)")]];
+
+// =======================
+// Assistance (header 0x8C4): skill 0x1E1, or a player with it nearby
+// =======================
+
+struct AssistanceTunables {
+    s16 radius [[comment("skill_assistance_nearby_provider_found: distance (compared squared) to a player in the same stage")]];
+    u16 attackAdd [[comment("player_recalc_attack_power_full")]];
+    u16 defenseAdd [[comment("player_recalc_defense_value_full")]];
+    u16 gap06;
+};
+
+AssistanceTunables assistanceTunables @ header.ptrs.assistanceTunables [[name("Assistance Tunables")]];
+
+// Trap Expert (0x15F) / Trap Master (0x160) combinations (header 0x368), count
+// at +0x1A of the block header 0x988 points to: combination records whose
+// result (+2) is in this list get the trap skill bonus
+// (item_trap_skill_applies_to_item_is_active)
+ItemId trapSkillCombineResults[std::mem::read_unsigned(header.ptrs.skillCounts + 0x1A, 2)] @ header.ptrs.trapSkillCombineResults [[name("Trap Skill Combine Results")]];
+
+// =======================
+// Fixed skills by weapon class (header 0x9B8, and 0x9C0 when
+// weapon_is_g_or_gou_class: G, G-K, Gou GR1 / GR2 or Gousyu GR3 weapon).
+// Used instead of the gear skills for a mercenary hunter
+// (CheckRankCondition2 in a quest: pw +0xD05 or player slot flag 1, GameWork
+// +0x3263 bit of the slot; pw +0xD4B in town): Skill_set_PL then calls
+// skills_load_fixed_skill_list, which copies the ids with a non-zero flag to
+// pw +0xBCC (27 at most); player_skill_id_is_active asks
+// fixed_skill_list_lookup first, so a listed skill is forced on (flag 1) or
+// off (flag 0) whatever the gear. Each list ends at skill id 0.
+// =======================
+
+struct FixedSkill {
+    u16 skill [[comment("active skill id (mhfpac pSkillNames)")]];
+    u16 active [[comment("1 = forced on, 0 = forced off")]];
+};
+
+struct FixedSkillList {
+    FixedSkill skills[while (std::mem::read_unsigned($, 2) != 0)];
+    u16 end;
+    u16 endFlag;
+};
+
+struct FixedSkillListPtr {
+    FixedSkillList *list : u32 [[inline]];
+};
+
+FixedSkillListPtr fixedSkillsByClass[14] @ header.ptrs.fixedSkillsByClass [[name("Fixed Skills by Class"), comment("by weapon class (entity +3); [14] is 0")]];
+FixedSkillListPtr fixedSkillsByClassG[14] @ header.ptrs.fixedSkillsByClassG [[name("Fixed Skills by Class (G)"), comment("same, G / Gou class weapons")]];

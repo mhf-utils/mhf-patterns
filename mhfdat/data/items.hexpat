@@ -1,5 +1,6 @@
 #pragma once
 #include <mhfdat/utils/index.pat>
+#include <mhfdat/data/equipment_counts.hexpat>
 
 /**
 	All icons can be found in 0055_001266FC.png, extracted from dat/mhf.dat
@@ -303,3 +304,35 @@ struct Items {
 };
 
 Items items @ header.ptrs.itemData [[name("Items")]];
+
+// =======================
+// Koryo (功猟) amulets (header 0x7D8, important numbers + 0x2E2 rows): the
+// amulets of the Koryo Point Exchange (mhfpac pKoryoRewardTexts, 7 per page,
+// koryo_amulet_shop_list_build). In a quest koryo_amulet_best_in_pouch_get
+// (kind) picks the carried amulet of that kind with the highest tier.
+// =======================
+
+enum KoryoAmuletKind : u16 {
+    Haste = 1,
+    Gathering = 2,
+    Health = 3,
+    Stamina = 4,
+    TwoToned = 5,
+    Adrenaline = 6,
+    Starvation = 7,
+};
+
+struct KoryoAmulet {
+    KoryoAmuletKind kind;
+    u16 tier [[comment("the highest tier carried wins")]];
+    ItemId item;
+    u16 koryoCost [[comment("exchange cost in Koryo points (\"Cost %s(%d)\")")]];
+    u16 gap08;
+    u16 gap0A;
+    u16 value [[comment("Haste: seconds; Gathering: max gathers +; Health: max HP + (koryo_amulet_health_apply); Two Toned: hunter jewel points % (hunter_gem_quest_points_calc); Adrenaline: HP set to it (koryo_amulet_adrenaline_apply); Starvation: 25")]];
+    u16 gap0E;
+    u16 value2 [[comment("Haste: 20; Gathering: min gathers +; Stamina: max stamina + (koryo_amulet_stamina_apply)")]];
+    u8 gap12[14];
+};
+
+KoryoAmulet koryoAmulets[importantNums.numKoryoAmulets] @ header.ptrs.koryoAmulets [[name("Koryo Amulets")]];

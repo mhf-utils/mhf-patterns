@@ -12,6 +12,7 @@
 #include <std/mem.pat>
 #include <std/core.pat>
 #include <mhfdat/utils/index.pat>
+#include <mhfdat/data/equipment_counts.hexpat>
 
 enum SigilSkill: u16 {
     Empty = 0,
@@ -220,3 +221,55 @@ SigilSkillProbabilities probabilities[recipes_len] @ header.ptrs.sigilSkillProba
 BlacklistPtr blacklist_ptrs[recipes_len] @ header.ptrs.sigilSkillBlacklists
     [[name("Sigil Random Skill Blacklists")]];
 SigilSkillBaseInfo random_points_rolls[132] @ header.ptrs.sigilSkillBaseInfo [[name("Sigil Skill Base Info")]];
+
+// =======================
+// Zenith and Ranged sigils (header 0xBA8): the three weapon sigils (pw +0x920
+// types, +0x926 values) all Zenith (0x71-0x7C, with ZCooldown and ZDuration)
+// or all Ranged (0x7D-0x83). A sigil action (sigil_activate_action_update) applies them:
+// Zenith sigils go to SkillWork +0x92C (timers) and +0x964 / +0x994 (12
+// effect slots: sigil, level); Ranged sigils spawn the dome shell
+// (shell_k400_call_shell). Effect = base + perLevel * (level - 1), level
+// capped at maxLevel (sigil_effect_row_get). Proofs:
+// tools/mhfdat_re/data/ba8_notes.md.
+// =======================
+
+struct SigilEffectRow {
+    s32 base;
+    s16 perLevel;
+    s16 maxLevel [[comment("0 = no cap on the level")]];
+};
+
+struct SigilEffectCaps {
+    u16 rangedAttack [[comment("RAttack sum (sigil_ranged_attack_add, player_recalc_attack_power_full); ZAttack is added on top")]];
+    u16 rangedElement [[comment("RElement (weapon_element_attack_value_with_skills)")]];
+    u16 rangedAffinity [[comment("RAffinity (weapon_total_affinity_percent)")]];
+    u16 rangedStatus [[comment("RStatus (weapon_init_hitbox_damage_from_params)")]];
+    u16 rangedStun [[comment("RStun (on_hit_effects_dispatch)")]];
+    u16 rangedHealing [[comment("RHealing (player_entity_tick_hp_regen); ZHealing is added on top")]];
+    u16 rangedAllRes [[comment("RAllRes (player_update_elemental_resistances)")]];
+};
+
+struct ZenithRangedSigils {
+    u32 zenithRowsPtr [[comment("points to zenithRows below (block +0x1C)")]];
+    u32 rangedParamsPtr [[comment("points to rangedCooldown (block +0x08)")]];
+    float rangedCooldown [[comment("sigil_ranged_dome_apply: SkillWork +0x92C / +0x930 for a Ranged set (a Zenith set takes ZCooldown)")]];
+    float rangedDuration [[comment("SkillWork +0x934 / +0x938 for a Ranged set (Zenith: ZDuration); x 2 x k_fall_threshold_y = dome shell reaction param (HitEvent_BarrelBombAOE_Init)")]];
+    float rangedDomeScale [[comment("x 1500 = dome shell size (HitEvent_BarrelBombAOE_Init)")]];
+    SigilEffectRow *rangedRows[7] : u32 [[comment("sigils 0x7D-0x83: RAttack, RElement, RAffinity, RStatus, RStun, RHealing, RAllRes")]];
+    SigilEffectCaps *caps : u32 [[comment("caps of the summed Ranged effects")]];
+    SigilEffectRow *zenithRows[12] : u32 [[comment("sigils 0x71-0x7C: ZCooldown, ZDuration, ZFireRes, ZWaterRes, ZIceRes, ZThunderRes, ZDragonRes, ZHealing, ZHeroics, ZAttack, ZElement, ZMovementSpeed")]];
+};
+
+ZenithRangedSigils zenithRangedSigils @ header.ptrs.zenithRangedSigils [[name("Zenith and Ranged Sigils")]];
+
+// =======================
+// Sigil crafting skill lists, both read while showing a recipe's skill chances
+// (sigil_craft_draw_skill_chances). Header 0x894 (count important numbers
+// +0x338): skills listed once in the recipe's possible skills
+// (sigil_craft_build_skill_preview, sigil_craft_skill_is_unique). Header
+// 0x898 (count +0x33A): skills named after their value when a chance row
+// has low == high (sigil_get_name, sigil_craft_skill_is_value_named).
+// =======================
+
+SigilSkill sigilCraftUniqueSkills[importantNums.numSigilCraftUniqueSkills] @ header.ptrs.sigilCraftUniqueSkills [[name("Sigil Craft Unique Skills")]];
+SigilSkill sigilCraftValueNamedSkills[importantNums.numSigilCraftValueNamedSkills] @ header.ptrs.sigilCraftValueNamedSkills [[name("Sigil Craft Value-Named Skills")]];

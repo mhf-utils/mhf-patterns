@@ -59,3 +59,37 @@ struct RoadMilestone {
 RoadMilestone roadMilestones[importantNums.numRoadMilestones]
     @ header.ptrs.roadMilestones
     [[name("Road Floor Milestones")]];
+
+// =======================
+// Monster scaling by Road floor (header 0xB0C: multiplayer Road, 0xB7C: the
+// solo Road quest 0x5C4C), read by em_calc_attack_mult (through
+// road_monster_scale_get), em_calc_defense_mult, em_calc_flinch_value,
+// em_hp_vital_set, em_torabasami_dmg_timer_set and em_ana_loop_timer_set in a
+// Road quest (variant2 & 0x80). The first row with maxFloor >= the current
+// floor (0x1E87FAF0) applies, else the last row. Row counts: dataCounters
+// +0x02 and +0x0E. Proofs: tools/mhfdat_re/data/b0c_b4c_954_notes.md.
+// =======================
+
+struct RoadMonsterScale {
+    u8 maxFloor;
+    u8 gap01[3];
+    float attack [[comment("em_calc_attack_mult")]];
+    float defense [[comment("em_calc_defense_mult")]];
+    float flinch [[comment("em_calc_flinch_value")]];
+    float trapTime [[comment("em_torabasami_dmg_timer_set")]];
+    float pitfallTime [[comment("em_ana_loop_timer_set")]];
+};
+
+struct SoloRoadMonsterScale {
+    u8 maxFloor;
+    u8 gap01[3];
+    float hp [[comment("em_hp_vital_set")]];
+    float attack [[comment("em_calc_attack_mult")]];
+    float defense [[comment("em_calc_defense_mult")]];
+    float flinch [[comment("em_calc_flinch_value")]];
+    float trapTime [[comment("em_torabasami_dmg_timer_set")]];
+    float pitfallTime [[comment("em_ana_loop_timer_set")]];
+};
+
+RoadMonsterScale roadMonsterScales[std::mem::read_unsigned(header.ptrs.dataCounters + 0x02, 2)] @ header.ptrs.roadMonsterScales [[name("Road Monster Scales"), comment("no HP field: em_hp_vital_set multiplies by 0.0 when a row matches (XORPS at 0x1085992C) and by 1.0 when none does")]];
+SoloRoadMonsterScale soloRoadMonsterScales[std::mem::read_unsigned(header.ptrs.dataCounters + 0x0E, 2)] @ header.ptrs.soloRoadMonsterScales [[name("Solo Road Monster Scales")]];

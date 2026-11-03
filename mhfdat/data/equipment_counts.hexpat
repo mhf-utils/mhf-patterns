@@ -282,7 +282,13 @@ struct ImportantNumbers {
     u16 numSuperRapidFirePowers
         [[name("Number of Super Rapid Fire Powers")]];
 
-    padding[0x22];
+    padding[0x1C];
+
+    // Offset 0x2E2: Koryo amulets (header 0x7D8)
+    u16 numKoryoAmulets
+        [[name("Number of Koryo Amulets")]];
+
+    padding[0x4];
 
     // Offset 0x2E8: items the reward rate does not scale (header 0x7E4)
     u16 numRewardRateExemptItems
@@ -308,7 +314,16 @@ struct ImportantNumbers {
     u16 numGuildCookingIngredients
         [[name("Number of Guild Cooking Ingredients")]];
 
-    padding[0x3E];
+    padding[0x10];
+
+    // Offset 0x338: sigil crafting skill lists (header 0x894, 0x898)
+    u16 numSigilCraftUniqueSkills
+        [[name("Number of Sigil Craft Unique Skills")]];
+
+    u16 numSigilCraftValueNamedSkills
+        [[name("Number of Sigil Craft Value-Named Skills")]];
+
+    padding[0x2A];
 
     // Offset 0x366: Shiten reward rows (header 0x900)
     u16 numShitenRewards

@@ -722,7 +722,7 @@ struct ptr_table {
     u32 playerSoundBankCount [[name("Player Sound Bank Count")]]; // @ 0xA64, + 0x12 banks
     unk_ptr hd_dll_af87fe;
     unk_ptr hd_dll_af8804;
-    unk_ptr hd_dll_af8819;      // @ 0xA70
+    ptr bowgunShotTables [[name("Bowgun Shot Tables Pointer")]]; // @ 0xA70, hd_dll_af8819
     padding[4];
     unk_ptr hd_dll_af8886;
     padding[4];

@@ -716,7 +716,7 @@ struct DualBladesConstants {
 DualBladesConstants dualBladesConstants @ header.ptrs.weaponConstants [[name("Dual Blades Constants")]];
 
 struct LongSwordConstants {
-    u16 lsSpiritFullBuffFrames @ weaponConstantsBase + 0x0f0 [[comment("+0xf0 FUN_10A9D6A0 (ls_act_dispatch_style012): when the gauge pw +0xA12 reaches 100, an attack buff (+10, +40 in weapon special mode 2) lasts this many frames (pw +0x720)")]];
+    u16 lsSpiritFullBuffFrames @ weaponConstantsBase + 0x0f0 [[comment("+0xf0 FUN_10A9D6A0 (ls_act_dispatch_style012): when the gauge pw +0xA12 reaches 100, an attack buff (+10, +40 with the Long Sword Active Feature, effect 2) lasts this many frames (pw +0x720)")]];
     u8 gap0F2[2] @ weaponConstantsBase + 0x0f2 [[comment("+0xf2 no direct reader found")]];
 };
 
@@ -907,7 +907,7 @@ struct SafStyleGauge {
     s16 gaugeMax [[comment("saf_style_gauge_max: gauge cap (saf_gauge_add)")]];
     s16 gaugeThreshold [[comment("saf_style_gauge_threshold: saf_gauge_above_threshold = gauge > it")]];
     s16 passiveGain [[comment("saf_style_passive_gain: gain every passiveGainFrames (saf_passive_gain_tick from player_entity_tick_hp_regen)")]];
-    s16 reloadGain [[comment("saf_style_reload_gain: event 15 argument 0 gain (the gauge max instead when weapon_special_mode_table_get)")]];
+    s16 reloadGain [[comment("saf_style_reload_gain: event 15 argument 0 gain (the gauge max instead with the Switch Axe F Active Feature, GetDailyFeatureTable)")]];
     s16 startGauge [[comment("saf_style_start_gauge: gauge at weapon init (saf_weapon_init)")]];
 };
 
@@ -1155,3 +1155,76 @@ struct EvadeActionLists {
 };
 
 EvadeActionLists evadeActions @ header.ptrs.evadeActions [[name("Evade Actions")]];
+
+// =======================
+// Bowgun shot tables (header 0xA70, Otya unkA70): fifteen pointers, then the
+// counts of some tables. Read by the bowgun shot code (kind 6 shells,
+// gunner_shot_hitbox_init, FUN_111E2CB0 shot update, FUN_111E3FC0 / gunner_shot_trail_update
+// hits). A shot row is picked by the shell row (+6); a shot's distance stage
+// (shot work +1) rises as its age (+0x94) passes the thresholds of its band
+// row (gunner_shot_critical_distance_band_update) and picks the damage
+// multiplier of the stage tables (gunner_shot_apply_ammo_to_hit). Proofs:
+// tools/mhfdat_re/data/a70_notes.md.
+// =======================
+
+struct BowgunShotRow {
+    u8 pattern [[comment("2: velocity built from the shot's spread bits (+0xDE) (gunner_shot_hitbox_init); 4: multi-hit shot, one more hit every 4 frames from frame 3 while the hit count (+3) <= hitBehaviorValue (FUN_111E2CB0); em101_counter_dmg_scale tests 4")]];
+    u8 trailPart [[comment("effect part (row x 0x8C of _DAT_1ED7D6A0 +0x30) drawn on the shot (gunner_shot_trail_update); 0x62: plus the shot age, random seed, render position copy (FUN_111E5670); 0xFF: none")]];
+    u8 trailColor [[comment("row of trailColors (gunner_shot_trail_update)")]];
+    u8 effect412Delay [[comment("row of effect412Delays: after that many frames effect 0x412 spawns at the shot (effect412_spawn_at_shot)")]];
+    s16 distanceBand [[comment("row of the distance band lists; -1 = no distance stages")]];
+    s16 modelMode [[comment("not 0: the shot gets a render slot (FUN_111E7540), then FUN_111E75A0 (FUN_111E2CB0)")]];
+    float speed [[comment("forward speed = speed + random x speedRandom, both x the shot's speed factors (gunner_shot_hitbox_init)")]];
+    float speedRandom;
+    float gravity [[comment("shot +0x60 = -(random x gravityRandom + gravity)")]];
+    float gravityRandom;
+    float spread [[comment("FUN_111E2CB0: random lateral spread x it x speed")]];
+    float wobble [[comment("FUN_111E2CB0: random wobble over the first 20 frames, x it (and the coating modifiers)")]];
+    s16 moveFrames [[comment("FUN_111E2CB0: the shot moves while its age is below it")]];
+    u8 hitBehavior [[comment("on hit (FUN_111E2CB0 / FUN_111E3FC0 / gunner_shot_hit_behavior_get): 1 / 3-5 / 0xC-0xE stay on the target while age < hitBehaviorValue; 6 / 8 keep hitting while the hit count (+0xA) < hitBehaviorValue; 7 / 0xC / 0xD / 0xE spawn the cluster row 0 / 0 / 1 / 2; 0xE also FUN_111FDBF0; 0xA: FUN_11421ED0")]];
+    u8 hitBehaviorValue;
+};
+
+struct BowgunDistanceBand {
+    s16 thresholds[8] [[comment("shot age per stage (x the coating modifiers); -1 ends")]];
+};
+
+struct BowgunDistanceBandList {
+    BowgunDistanceBand *bands[21] : u32;
+};
+
+struct BowgunClusterRow {
+    u8 shotRow [[comment("gunner_shot_spawn_cluster: shot row of the fragments")]];
+    padding[1];
+    s16 count [[comment("number of fragments")]];
+};
+
+struct BowgunStageMults {
+    float stages[7] [[comment("damage multiplier by distance stage")]];
+};
+
+struct BowgunShotTables {
+    BowgunShotRow *shotRows[53] : u32 [[comment("by shell row (+6); 53 rows fill the block")]];
+    u32 *shotHitFlags[53] : u32 [[comment("gunner_shot_hitbox_init: ORed into hit +0x90, by shell row")]];
+    BowgunDistanceBandList *distanceBands : u32 [[comment("gunner_shot_distance_band_list_get default (Light Bowgun styles 0 / 3, other classes)")]];
+    BowgunDistanceBandList *distanceBandsLbgStyles12 : u32 [[comment("Light Bowgun in styles 1 / 2")]];
+    BowgunDistanceBandList *distanceBandsFlag8 : u32 [[comment("shots with flag 8 (shot work +0x3C)")]];
+    BowgunDistanceBandList *distanceBandsHbg : u32 [[comment("Heavy Bowgun")]];
+    u16 *effect412Delays[3] : u32 [[comment("frames, by shot row +3 (FUN_111E2CB0)")]];
+    BowgunClusterRow *clusterRows[3] : u32 [[comment("by hitBehavior 0xC / 0xD / 0xE (7 uses row 0)")]];
+    u32 *trailColors[4] : u32 [[comment("by shot row +2 (gunner_shot_trail_update -> FUN_1000C390)")]];
+    BowgunStageMults *stageMult : u32 [[comment("gunner_shot_apply_ammo_to_hit: default (Light Bowgun, other classes)")]];
+    BowgunStageMults *stageMultLbgStyles12 : u32 [[comment("Light Bowgun in styles 1 / 2 without the Active Feature")]];
+    BowgunStageMults *stageMultFlag8 : u32 [[comment("shots with flag 8 (+0x3C)")]];
+    BowgunStageMults *stageMultHbg : u32 [[comment("Heavy Bowgun without the Active Feature")]];
+    BowgunStageMults *stageMultLbgActiveFeature : u32 [[comment("Light Bowgun with Active Feature effect 9 (IsMineDailyFeature(9))")]];
+    BowgunStageMults *stageMultHbgActiveFeature : u32 [[comment("Heavy Bowgun with Active Feature effect 8 (IsMineDailyFeature(8))")]];
+    u16 numDistanceBands [[comment("21 (no reader; matches the band lists)")]];
+    u16 numEffect412Delays [[comment("3 (no reader)")]];
+    u16 gap40 [[comment("6, no reader found")]];
+    u16 numTrailColors [[comment("4 (no reader)")]];
+    u16 numDistanceStages [[comment("7 (no reader; matches the stage tables)")]];
+    padding[2];
+};
+
+BowgunShotTables bowgunShotTables @ header.ptrs.bowgunShotTables [[name("Bowgun Shot Tables")]];

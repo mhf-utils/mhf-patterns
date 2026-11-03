@@ -352,10 +352,10 @@ struct MagnetSpikeValues {
 	s16 magnetActionEndPercent [[comment("[41] that action: progress percent that ends it (FUN_1032B340(1), FUN_101BC900)")]];
 	s16 magnetAfterWindowExtraFrames [[comment("[42] added with magnetAfterWindowFrames to the input lock timer and SkillWork +0x20E (magnet_state_end, FUN_101BC2A0, FUN_101BC900)")]];
 	s16 magnetAfterWindowFrames [[comment("[43] after the magnet window the MS work +0x4E counts down from it; the control hint shows in its first 25 frames")]];
-	s16 magnetWindowSpecialMode0E [[comment("[44] magnet window in weapon special mode 0xE (magnet_window_get)")]];
-	s16 magnetHitValueSpecialMode0E [[comment("[45] weapon special mode 0xE: added to a kind 121 shell hit value +0x6C (FUN_101EAF90)")]];
-	s16 specialMode0EOnHitAdd [[comment("[46] weapon special mode 0xE: added to the on-hit value sum when hit +0x77 bit 2 (FUN_101BE660, on_hit_effects_dispatch)")]];
-	s16 specialMode0EOnHitRateTenths [[comment("[47] weapon special mode 0xE: the on-hit rate x it / 10 (on_hit_effects_dispatch)")]];
+	s16 activeFeatureMagnetWindowAdd [[comment("[44] Active Feature effect 14 (Magnet Spike, IsMineDailyFeature): added to the magnet window (magnet_window_get)")]];
+	s16 activeFeatureMagnetHitValueAdd [[comment("[45] Active Feature effect 14: added to a kind 121 shell hit value +0x6C (FUN_101EAF90); Ferias: Magnetic Bind 600 -> 750 MV")]];
+	s16 activeFeatureOnHitAdd [[comment("[46] Active Feature effect 14: added to the on-hit value sum when hit +0x77 bit 2 (ms_daily_feature_onhit_add, on_hit_effects_dispatch)")]];
+	s16 activeFeatureStunRateTenths [[comment("[47] Active Feature effect 14: on_hit_effects_dispatch multiplies by it / 10 the factor that effect 4 (Hammer) multiplies by 1.5 (Ferias: stun x1.5 / impact stun x1.3)")]];
 	s16 msGaugeRegenTech4 [[comment("[48] gauge regen instead of msGaugeRegen with weapon tech 0xD tier 4 and MS work +0x86 > 0")]];
 	s16 msTech4AttackPercent [[comment("[49] attack x it / 100 with weapon tech 0xD tier 4 and MS work +0x86 > 0 (player_recalc_attack_power_full)")]];
 	s16 msStylishAssaultSeconds [[comment("[50] Stylish Assault buff duration with a Magnet Spike (class 13 gate), x 30 frames (skill_stylish_assault_buff_timer_update)")]];

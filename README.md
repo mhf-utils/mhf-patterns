@@ -42,7 +42,7 @@ mhfdat/
     ├── road.hexpat       # Hunting Road monster points and skills
     ├── tower.hexpat      # Tower jewel recipes and upgrade costs
     ├── shop_guild.hexpat # Shop catalogs and the Guild Shop
-    ├── weapon_params.hexpat # Per-class weapon parameters, bullet sets, horn melodies, rapid fire, motion values, random weapon sharpness
+    ├── weapon_params.hexpat # Per-class weapon parameters, bullet sets, horn melodies, rapid fire, motion values, random weapon sharpness, hit capsules, gunner shot power
     ├── quests.hexpat     # HR, G-rank, Conquest and beginner quest lists, Guild Priority Requests
     ├── clan.hexpat       # Clan mission targets and roll weights
     ├── cooking.hexpat    # Kitchen meal ingredients, stat tiers, special dishes
@@ -60,6 +60,9 @@ mhfdat/
     ├── equipment_effects.hexpat # Weapon and armor visual effects (sets and rows)
     ├── mytra.hexpat      # Mytra Adventure Dispatch, shop stock and cat mixes
     ├── player_sounds.hexpat # Player motion sound banks
+    ├── item_lists.hexpat # Protected items and box search filters
+    ├── player_unique_params.hexpat # Player unique parameters (pl_get_unq_prm): tuning rows by mechanic (Vigorous, evade frames, Bomber...)
+    ├── rasta_guild.hexpat # Rasta hunt orders, Loyalty and Cred costs and level tables
     └── ...
 quest/
 ├── block.hexpat          # A quest's main block, shared by quest files and mhfinf

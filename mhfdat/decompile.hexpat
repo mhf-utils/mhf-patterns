@@ -111,7 +111,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 	};
 
 	struct_af4ce0 hd_dll_af4ce0[while(std::mem::read_signed($,4))] 
-		@ header.ptrs.hd_dll_af4cc5;
+		@ header.ptrs.weaponReachBodies;
 
 	varPaddT<u16, 0x2> hd_dll_af4d20[while(std::mem::read_signed($,2)!=-1)] 
 		@ header.ptrs.hd_dll_af4d08;

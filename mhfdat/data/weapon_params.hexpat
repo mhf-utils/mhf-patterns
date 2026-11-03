@@ -137,6 +137,36 @@ struct CoatingModifier {
 CoatingModifier coatingModifiers[23] @ header.ptrs.coatingModifiers [[name("Coating Modifiers (length unchecked)")]];
 
 // =======================
+// Weapon reach bodies (header 0xD8; Wii U getWeaponReachBodyPtr): rows of 8
+// lists, one per weapon reach (melee weapon length, changed by the reach
+// sigil, getPlateSkillWeaponReachPlate; ranged weapons use Medium), until a
+// row whose first list is null (42 rows on ZZ, picked by the caller). A list
+// holds the weapon's hit capsules until a kind of -1: a radius around the
+// segment from start to end, in the weapon's space.
+// =======================
+
+struct HitCapsule {
+    s16   kind;
+    s16   unk02;
+    u16   index;
+    u8    unk06[6];
+    float radius;
+    float start[3];
+    float end[3];
+};
+
+struct HitCapsuleList {
+    HitCapsule capsules[while(std::mem::read_signed($, 2) != -1)];
+    s16 end;
+};
+
+struct ReachBodyRow {
+    ptVar<HitCapsuleList> byReach[8];
+};
+
+ReachBodyRow weaponReachBodies[while(std::mem::read_unsigned($, 4) != 0)] @ header.ptrs.weaponReachBodies [[name("Weapon Reach Bodies")]];
+
+// =======================
 // Motion values (header 0x63C, and 0x74C for the alternate bank): one row per
 // action id below 0x35, empty when valid is 0. A hit's key - 1 (0 to 11)
 // picks the column: the raw motion value goes to the hit, the element one
@@ -187,6 +217,17 @@ RandomSharpnessList randomSharpnessGunlance @ header.ptrs.randomSharpnessGunlanc
 // weapon) sets when it is faster than the weapon's own.
 u8 randomShellTypes[3] @ header.ptrs.randomShellTypes [[name("Random Gunlance Shell Types")]];
 float handlingDrawSpeed @ header.ptrs.handlingDrawSpeed [[name("Handling Draw Speed")]];
+
+// Gunner shot power (header 0x1C8): one pointer per ammo type (44, the hit's
+// ammo +0x1A) to a u16 list indexed by the hit's byte +0x0B; the value is
+// the shot's power (hit +0x6C). The list lengths are not proven, so only the
+// pointers are shown. HC Kai armor (armor flag 0x100; Wii U
+// PlGetHCkaiCriDmgValue / PlGetHCkaiDefValue), in HC quests or G-rank fields,
+// by the number of worn HC Kai pieces (0-5): header 0x5B0 adds a multiplier
+// to critical hits (all 0 on ZZ), header 0x5B4 adds defense.
+u32 gunnerShotPowerLists[44] @ header.ptrs.gunnerShotPower [[name("Gunner Shot Power Lists")]];
+float hcKaiCritDamage[6] @ header.ptrs.hcKaiCritDamage [[name("HC Kai Critical Damage Bonus")]];
+s16 hcKaiDefense[6] @ header.ptrs.hcKaiDefense [[name("HC Kai Defense Bonus")]];
 
 // =======================
 // Light Bowgun rapid fire. Per ammo type (header 0xA0, up to the next

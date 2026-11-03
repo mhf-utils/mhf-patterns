@@ -54,7 +54,26 @@ struct ImportantNumbers {
     u16 numPartnerFaces
         [[name("Number of Partner Faces")]];
 
-    padding[0x18];
+    padding[0xC];
+
+    // Offset 0xEA: items monsters cannot steal and daily missions skip (header 0x33C)
+    u16 numProtectedItems
+        [[name("Number of Protected Items")]];
+
+    // Offset 0xEC: item box search filters (header 0x34C-0x358)
+    u16 numBoxSearchIcons
+        [[name("Number of Box Search Icons")]];
+
+    u16 numBoxSearchDecorations
+        [[name("Number of Box Search Decorations")]];
+
+    u16 numBoxSearchSkillTrees
+        [[name("Number of Box Search Skill Trees")]];
+
+    u16 numBoxSearchZenithSkills
+        [[name("Number of Box Search Zenith Skills")]];
+
+    padding[0x2];
 
     // Offset 0xF6: Legend Rasta groups (header 0x360)
     u16 numLegendRastaGroups
@@ -217,7 +236,13 @@ struct ImportantNumbers {
     u16 numPartnerStarterWeapons
         [[name("Number of Partner Starter Weapons")]];
 
-    padding[0x5E];
+    padding[0x2C];
+
+    // Offset 0x292: player unique parameters (header 0x72C, pl_get_unq_prm)
+    u16 numPlayerUniqueParams
+        [[name("Number of Player Unique Parameter Rows")]];
+
+    padding[0x30];
 
     // Offset 0x2C4: super rapid fire power rows (header 0x794)
     u16 numSuperRapidFirePowers

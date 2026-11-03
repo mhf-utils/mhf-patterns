@@ -75,7 +75,7 @@ struct ptr_table {
     unk_ptr hd_dll_af4bfb;
     unk_ptr hd_dll_af4cd1;      // @ 0x0D0
     unk_ptr hd_dll_af4cd7;
-    unk_ptr hd_dll_af4cc5;
+    ptr weaponReachBodies [[name("Weapon Reach Bodies Pointer")]]; // @ 0x0D8, hd_dll_af4cc5
     unk_ptr hd_dll_af4d14;
     unk_ptr hd_dll_af4d08;      // @ 0x0E0
     unk_ptr hd_dll_af47b5;
@@ -148,7 +148,7 @@ struct ptr_table {
     unk_ptr hd_dll_af5646;
     unk_ptr hd_dll_af5661;      // @ 0x1C0
     unk_ptr hd_dll_af567c;
-    unk_ptr hd_dll_af57f2;
+    ptr gunnerShotPower [[name("Gunner Shot Power Pointer")]]; // @ 0x1C8, hd_dll_af57f2
     unk_ptr hd_dll_af583d;
     unk_ptr hd_dll_af5843;      // @ 0x1D0
     ptr mytraAdventures [[name("Mytra Adventure Dispatch Pointer")]]; // @ 0x1D4, hd_dll_af56ea
@@ -183,9 +183,9 @@ struct ptr_table {
     unk_ptr hd_dll_af58aa;
     unk_ptr hd_dll_af592a;
     unk_ptr hd_dll_af590a;      // @ 0x250
-    unk_ptr hd_dll_af594a;
-    unk_ptr hd_dll_af596a;
-    unk_ptr hd_dll_af5970;
+    ptr rastaHuntOrders [[name("Rasta Hunt Orders Pointer")]]; // @ 0x254, hd_dll_af594a
+    ptr rastaLoyaltyCosts [[name("Rasta Loyalty Costs Pointer")]]; // @ 0x258, hd_dll_af596a
+    ptr rastaCredCosts [[name("Rasta Cred Costs Pointer")]]; // @ 0x25C, hd_dll_af5970
     unk_ptr hd_dll_af5976;      // @ 0x260
     unk_ptr hd_dll_af59a1;
     unk_ptr hd_dll_af59a7;
@@ -243,19 +243,19 @@ struct ptr_table {
     unk_ptr hd_dll_af5c24;      // @ 0x330
     unk_ptr hd_dll_af5c2a;
     unk_ptr hd_dll_af5c30;
-    unk_ptr hd_dll_af5c36;
+    ptr protectedItems [[name("Protected Items Pointer")]]; // @ 0x33C, hd_dll_af5c36
     unk_ptr hd_dll_af5c3c;      // @ 0x340
     unk_ptr hd_dll_af5c42;
     unk_ptr hd_dll_af5c48;
-    unk_ptr hd_dll_af5c4e;
-    unk_ptr hd_dll_af5c54;      // @ 0x350
-    unk_ptr hd_dll_af5c5a;
-    unk_ptr hd_dll_af5c60;
+    ptr boxSearchIcons [[name("Box Search Icons Pointer")]]; // @ 0x34C, hd_dll_af5c4e
+    ptr boxSearchDecorations [[name("Box Search Decorations Pointer")]]; // @ 0x350, hd_dll_af5c54
+    ptr boxSearchSkillTrees [[name("Box Search Skill Trees Pointer")]]; // @ 0x354, hd_dll_af5c5a
+    ptr boxSearchZenithSkills [[name("Box Search Zenith Skills Pointer")]]; // @ 0x358, hd_dll_af5c60
     ptr legendRastaLoadouts [[name("Legend Rasta Loadouts Pointer")]]; // @ 0x35C, hd_dll_af5c72
     ptr legendRastaGroups [[name("Legend Rasta Groups Pointer")]]; // @ 0x360, hd_dll_af5c78
     unk_ptr hd_dll_af5c7e;
     unk_ptr hd_dll_af5c84;
-    unk_ptr hd_dll_af5c8a;
+    ptr exGWeaponData [[name("Ex G Weapon Data Pointer")]]; // @ 0x36C, hd_dll_af5c8a
     ptr randomSharpnessSwordAndShield [[name("Random Sharpness Sword and Shield Pointer")]]; // @ 0x370, hd_dll_af5c90
     ptr randomSharpnessDualBlades [[name("Random Sharpness Dual Blades Pointer")]]; // @ 0x374, hd_dll_af5c96
     ptr randomSharpnessGreatSwordLongSword [[name("Random Sharpness Great Sword and Long Sword Pointer")]]; // @ 0x378, hd_dll_af5c9c
@@ -400,8 +400,8 @@ struct ptr_table {
     unk_ptr hd_dll_af66b8;
     unk_ptr hd_dll_af66be;
     unk_ptr hd_dll_af66c4;
-    unk_ptr hd_dll_af66ca;      // @ 0x5B0
-    unk_ptr hd_dll_af66d0;
+    ptr hcKaiCritDamage [[name("HC Kai Critical Damage Pointer")]]; // @ 0x5B0, hd_dll_af66ca
+    ptr hcKaiDefense [[name("HC Kai Defense Pointer")]]; // @ 0x5B4, hd_dll_af66d0
     ptr secretBookSrLevels [[name("Secret Book SR Levels Pointer")]]; // @ 0x5B8, hd_dll_af703a
     unk_ptr hd_dll_af66d6;
     ptr monsterAltSoundTables [[name("Monster Alternate Sound Tables Pointer")]]; // @ 0x5C0, hd_dll_af66dc
@@ -423,10 +423,10 @@ struct ptr_table {
     ptr g50MeleeUpgrades [[name("G-50 Melee Weapon Upgrades Pointer")]]; // @ 0x5F8, hd_dll_af6c08
     ptr g50RangedUpgrades [[name("G-50 Ranged Weapon Upgrades Pointer")]]; // @ 0x5FC
 
-    unk_ptr hd_dll_af6c14;      // @ 0x600
-    unk_ptr hd_dll_af6c1a;
-    unk_ptr hd_dll_af6c20;
-    unk_ptr hd_dll_af6c26;
+    ptr rastaLoyaltyAttackPercent [[name("Rasta Loyalty Attack Percent Pointer")]]; // @ 0x600, hd_dll_af6c14
+    ptr rastaLoyaltyElementPercent [[name("Rasta Loyalty Element Percent Pointer")]]; // @ 0x604, hd_dll_af6c1a
+    ptr rastaCredDefensePercent [[name("Rasta Cred Defense Percent Pointer")]]; // @ 0x608, hd_dll_af6c20
+    ptr rastaCredSkillSlots [[name("Rasta Cred Skill Slots Pointer")]]; // @ 0x60C, hd_dll_af6c26
     unk_ptr hd_dll_af6c2c;      // @ 0x610
     ptr weaponActions [[name("Weapon Action Scripts Pointer")]]; // @ 0x614, hd_dll_af6c32
     unk_ptr hd_dll_af6c98;
@@ -499,7 +499,7 @@ struct ptr_table {
     unk_ptr hd_dll_af7729;      // @ 0x720
     unk_ptr hd_dll_af772f;
     unk_ptr hd_dll_af7735;
-    unk_ptr hd_dll_af773b;
+    ptr playerUniqueParams [[name("Player Unique Parameters Pointer")]]; // @ 0x72C, hd_dll_af773b
     unk_ptr hd_dll_af7741;      // @ 0x730
     unk_ptr hd_dll_af7747;
 

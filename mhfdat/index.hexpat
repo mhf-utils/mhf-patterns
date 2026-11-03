@@ -79,6 +79,10 @@
 #include <mhfdat/data/items.hexpat>
 #endif
 
+#ifdef __DATA_ITEM_LISTS
+#include <mhfdat/data/item_lists.hexpat>
+#endif
+
 #ifdef __DATA_LEGEND_RASTA
 #include <mhfdat/data/legend_rasta.hexpat>
 #endif
@@ -103,6 +107,10 @@
 #include <mhfdat/data/mytra.hexpat>
 #endif
 
+#ifdef __DATA_PLAYER_UNIQUE_PARAMS
+#include <mhfdat/data/player_unique_params.hexpat>
+#endif
+
 #ifdef __DATA_PARTNER
 #include <mhfdat/data/partner.hexpat>
 #endif
@@ -117,6 +125,10 @@
 
 #ifdef __DATA_QUESTS
 #include <mhfdat/data/quests.hexpat>
+#endif
+
+#ifdef __DATA_RASTA_GUILD
+#include <mhfdat/data/rasta_guild.hexpat>
 #endif
 
 #ifdef __DATA_ROAD

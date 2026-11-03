@@ -630,7 +630,7 @@ struct ptr_table {
     ptr caravanRankingRoutes [[name("Caravan Ranking Routes Pointer")]]; // @ 0x91C, hd_dll_af821c
     unk_ptr hd_dll_af8183;      // @ 0x920
     unk_ptr hd_dll_af817d;
-    unk_ptr hd_dll_af8189;
+    ptr towerSkills [[name("Tower Skills Pointer")]]; // @ 0x928, hd_dll_af8189
     unk_ptr hd_dll_af816b;
     ptr roadSkills [[name("Hunting Road Skills Pointer")]]; // @ 0x930, hd_dll_af82c4
     unk_ptr hd_dll_af82ca;
@@ -669,7 +669,7 @@ struct ptr_table {
     unk_ptr hd_dll_af83bd;
     padding[4];
     unk_ptr hd_dll_af83c3;
-    padding[4];                 // @ 0x9B0
+    ptr thunderCladPursuitDrawingArts [[name("Thunder Clad, Status Pursuit, Drawing Arts Pointer")]]; // @ 0x9B0
     unk_ptr hd_dll_af84a9;
     unk_ptr hd_dll_af8536;
     unk_ptr hd_dll_af84f4;
@@ -712,8 +712,8 @@ struct ptr_table {
     ptr itemSourceStrings       [[name("Item Source Strings Pointer")]];
 
     unk_ptr hd_dll_af8774;
-    ptr skillWorkLevelBonuses [[name("Skill Work Level Bonuses Pointer")]]; // @ 0xA48, hd_dll_af877a
-    u32 skillWorkLevelBonusCount [[name("Skill Work Level Bonus Count")]]; // @ 0xA4C
+    ptr towerSupportBonuses [[name("Tower Support Bonuses Pointer")]]; // @ 0xA48, hd_dll_af877a
+    u32 towerSupportBonusCount [[name("Tower Support Bonus Count")]]; // @ 0xA4C
     unk_ptr hd_dll_af8780;      // @ 0xA50
     unk_ptr hd_dll_af87bb;
     unk_ptr hd_dll_af87c1;

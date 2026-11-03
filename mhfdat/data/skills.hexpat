@@ -228,26 +228,67 @@ struct SpacingAndSoulValues {
 
 SpacingAndSoulValues spacingAndSoulValues @ header.ptrs.spacingAndSoulValues [[name("Spacing And Soul Values")]];
 
-// Header 0xA48 (header 0xA4C holds the row count, not a pointer): bonuses by
-// the level (1-5) of a byte of the player's SkillWork, only in the quests
-// ValidateRankAccess accepts (EmergencyHuntArea / TowerQuestRange ids,
-// Duremudira, or quest variant2 bit 0x80), on top of the header 0x928 value
-// for the same level. Each reader looks for its kind:
-// - kind 1: attack + valueByLevel x 0.01, level SkillWork +0x708
-//   (CalculatePlayerBonuses);
-// - kind 2: defense + valueByLevel x 0.01, level +0x709 (FUN_10A858A0, from
-//   player_recalc_defense_value_basic / _full);
-// - kind 0xC: level +0x70A (FUN_111C5370, FUN_111C6390); kind 0xD: level
-//   +0x70C (FUN_111BCDC0); kind 0xE: level +0x70E (FUN_109F5680, from
-//   Player_ActionType0_StateUpdate): valueByLevel x 0.01;
-// - kind 6: level +0x70D, rateByLevel multiplies a value (FUN_111BCAB0,
-//   FUN_111BC4F0).
-// Kinds 7, 8 and 9 have no reader. What sets the SkillWork levels is not
-// found yet.
-struct SkillWorkLevelBonus {
-	s32 kind;
-	s32 valueByLevel[5];
-	float rateByLevel[5];
+// Header 0x9B0: parameters of skills 0x1EE-0x1F1 (Thunder Clad, Status
+// Pursuit, Drawing Arts+1 / +2). Tables "by class" have one u16 per weapon
+// class (player +0x03). Skill id lists end on 0x217.
+// - Thunder Clad: the gauge (SkillWork +0x544) fills on hits (hitGain x
+//   FUN_10A66980, on_hit_effects_dispatch), when a hit is evaded (evadeGain,
+//   hit iframe flag 0x08, skill_thunder_clad_evade_gain), and while the
+//   player moves outside the listed actions
+//   (moveGain, skill_thunder_clad_move_gain); at gaugeMax it activates (flag 4) for
+//   durationSeconds x 30 frames plus the zenith frames
+//   (zenith_thunder_clad_frames_add). While active: the attack reach bonus is
+//   at least activeReachBonus (player_attack_reach_bonus_max), the listed
+//   skills count as active (player_buff_id_is_active), and each hit adds
+//   statusGaugeAdd to the three status gauges (skill 0x1EE branch of
+//   player_trigger_status_pursuit_effect).
+// - Drawing Arts+1 / +2 (SkillWork +0x684 flags 1 / 2, set on weapon draw):
+//   the listed skills count as active; the query byte +0x12 picks list A or B.
+// - Status Pursuit (skill 0x1EF; hit status bits as in mhfsdt StatusMask:
+//   0x1 sleep, 0x2 poison, 0x4 paralysis): bonus damage = (add + the hit's
+//   status value) x rate / 1000 for a poison hit on a monster with +0x890 > 0,
+//   or a paralysis hit on a monster with +0x828 = 4
+//   (skill_status_pursuit_bonus_damage); a sleep hit on a monster with +0x828
+//   = 2 adds gaugeAdd to the three status gauges
+//   (player_trigger_status_pursuit_effect).
+struct ThunderCladActionPair {
+	u8 playerByte15;
+	u8 playerByte14;
 };
 
-SkillWorkLevelBonus skillWorkLevelBonuses[header.ptrs.skillWorkLevelBonusCount] @ header.ptrs.skillWorkLevelBonuses [[name("Skill Work Level Bonuses")]];
+struct ThunderCladExcludedActions {
+	ThunderCladActionPair pairs[while(std::mem::read_signed($, 1) != -1)];
+	s8 end;
+};
+
+struct ThunderCladParams {
+	float activeReachBonus;
+	s32 gaugeMax;
+	u16 durationSeconds;
+	u16 statusGaugeAdd;
+	ThunderCladExcludedActions *excludedActions : u32;
+	u16 *hitGainByClass[14] : u32;
+	u16 *evadeGainByClass[14] : u32;
+	u16 *moveGainByClass[14] : u32;
+};
+
+struct SkillIdList {
+	u16 skills[while(std::mem::read_unsigned($, 2) != 0x217)];
+	u16 end;
+};
+
+struct ThunderCladPursuitDrawingArts {
+	ThunderCladParams *thunderClad : u32;
+	SkillIdList *thunderCladSkills : u32;
+	SkillIdList *drawingArts1SkillsA : u32;
+	SkillIdList *drawingArts1SkillsB : u32;
+	SkillIdList *drawingArts2SkillsA : u32;
+	SkillIdList *drawingArts2SkillsB : u32;
+	u16 *statusPursuitPoisonAddByClass[14] : u32;
+	u16 *statusPursuitParalysisAddByClass[14] : u32;
+	u16 *statusPursuitGaugeAddByClass[14] : u32;
+	u16 *statusPursuitPoisonRateByClass[14] : u32;
+	u16 *statusPursuitParalysisRateByClass[14] : u32;
+};
+
+ThunderCladPursuitDrawingArts thunderCladPursuitDrawingArts @ header.ptrs.thunderCladPursuitDrawingArts [[name("Thunder Clad, Status Pursuit, Drawing Arts")]];

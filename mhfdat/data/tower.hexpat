@@ -61,3 +61,79 @@ struct ptTowerUpgradeCostTable {
 ptTowerUpgradeCostTable towerUpgradeCosts[while(std::mem::read_unsigned($, 4) != 0)]
     @ header.ptrs.towerUpgradeCosts
     [[name("Tower Weapon Upgrade Costs")]];
+
+// Tower skills (header 0x928): one row per tower skill id (names: mhfpac
+// pTowerSkillNames, 0xD58). tower_skill_level(id) reads the player's
+// level of that skill (20 (id, level) pairs: per player in quests, save
+// +0x23A3C in town; only in the quests quest_tower_skills_apply accepts) and caps it
+// at maxLevel; the skill's code reads the rate (floats) or the value (s32) at
+// that level. Read so far: 1 Attack value (CalculatePlayerBonuses), 2 Defense
+// value (FUN_10A858A0), 6 Flame Protection rate (FUN_111BCAB0), 10 技巧術
+// level (tower_gimmick_try_use), 19 Guardian Offense value.
+fn towerSkillName(u32 i) {
+    match (i) {
+        (0): return "None";
+        (1): return "Attack";
+        (2): return "Defense";
+        (3): return "希望への活力";
+        (4): return "Stamina";
+        (5): return "Recovery";
+        (6): return "Flame Protection";
+        (7): return "Shock Protection";
+        (8): return "打撃保護";
+        (9): return "斬撃保護";
+        (10): return "技巧術";
+        (11): return "Negotiation";
+        (12): return "砲撃手";
+        (13): return "破壊王";
+        (14): return "Care";
+        (15): return "Pharmacist";
+        (16): return "Treasure";
+        (17): return "激遭";
+        (18): return "Virus Res.";
+        (19): return "Guardian Offense";
+        (20): return "Guardian Defense";
+        (21): return "罠回避";
+        (22): return "Frost Res.";
+        (23): return "Fire Res";
+        (24): return "Water Res";
+        (25): return "Ice Res";
+        (26): return "Thunder Res";
+        (27): return "Dragon Res";
+        (28): return "Starting Gm Up";
+        (29): return "Rd P Up";
+        (30): return "Revival Sage";
+        (31): return "Advancement Guru";
+        (32): return "Last Stand";
+        (33): return "Bonus Encounter";
+        (34): return "All Res";
+        (35): return "Rewards Up";
+    }
+    return "?";
+};
+
+struct TowerSkill {
+    u32 maxLevel;
+    float rateByLevel[8]        [[comment("[level - 1]")]];
+    s32 valueByLevel[8]         [[comment("[level - 1]")]];
+} [[name(towerSkillName(std::core::array_index()))]];
+
+TowerSkill towerSkills[36] @ header.ptrs.towerSkills [[name("Tower Skills")]];
+
+// Tower support bonuses (header 0xA48; header 0xA4C holds the row count, not a
+// pointer): the "効果ＵＰ" support effects of pTowerSupportTexts. A row is
+// for one tower skill id (kind) and adds to its tower skill value (header
+// 0x928) at the support level (1-5) held in a SkillWork byte: kind 1 Attack
+// (+0x708, CalculatePlayerBonuses), 2 Defense (+0x709, FUN_10A858A0), 12
+// 砲撃手 (+0x70A, FUN_111C5370, FUN_111C6390), 13 破壊王 (+0x70C,
+// FUN_111BCDC0), 6 Flame Protection (+0x70D, rate, FUN_111BCAB0,
+// FUN_111BC4F0), 14 Care (+0x70E, FUN_109F5680): value x 0.01 or rate. Kinds 7,
+// 8 and 9 (the other protections) have no reader. What sets the support
+// levels is not found yet.
+struct TowerSupportBonus {
+    s32 kind                    [[format("towerSkillName")]];
+    s32 valueByLevel[5];
+    float rateByLevel[5];
+};
+
+TowerSupportBonus towerSupportBonuses[header.ptrs.towerSupportBonusCount] @ header.ptrs.towerSupportBonuses [[name("Tower Support Bonuses")]];

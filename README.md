@@ -37,10 +37,10 @@ mhfdat/
     ├── equipments.hexpat
     ├── part_breaks.hexpat # Part break and carve drops, Macha Pot rewards
     ├── sigils.hexpat     # Random sigils
-    ├── skills.hexpat     # Skill tree, skill effects, Vampirism, Crit Conversion, Rush, Obscurity, Furious, zenith Up skill values, Soul values
+    ├── skills.hexpat     # Skill tree, skill effects, Vampirism, Crit Conversion, Rush, Obscurity, Furious, zenith Up skill values, Soul values, Thunder Clad, Status Pursuit, Drawing Arts
     ├── caravan.hexpat    # Voyage and ranking routes, levels, gem skills and tiers
     ├── road.hexpat       # Hunting Road monster points, skills and floor milestones
-    ├── tower.hexpat      # Tower jewel recipes and upgrade costs
+    ├── tower.hexpat      # Tower jewel recipes and upgrade costs, tower skills and support bonuses
     ├── shop_guild.hexpat # Shop catalogs and the Guild Shop
     ├── weapon_params.hexpat # Per-class weapon parameters, bullet sets, horn melodies, rapid fire, motion values, random weapon sharpness, reach bodies, gunner shot power, HC Kai bonuses, armor piece element / status rates, Dual Blades blade effects, bow model materials, just reload / shot, gunlance shells
     ├── quests.hexpat     # HR, G-rank, Conquest and beginner quest lists, Guild Priority Requests, interception monster G stars

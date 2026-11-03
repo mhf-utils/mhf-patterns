@@ -803,7 +803,7 @@ struct ptr_table {
     unk_ptr hd_dll_af59b9;
     ptr spacingAndSoulValues [[name("Spacing And Soul Values Pointer")]]; // @ 0xB88, hd_dll_af9107
     unk_ptr hd_dll_af91ba;
-    unk_ptr hd_dll_af91e4;      // @ 0xB90
+    ptr magnetSpikeTunables [[name("Magnet Spike Tunables Pointer")]]; // @ 0xB90, hd_dll_af91e4
     ptr skillCells [[name("Skill Cells Pointer"), comment("+4: the Rush UP stage 3 block")]]; // @ 0xB94, hd_dll_af9323
     ptr Magnetspike_params_pointer [[name("Magnetspike Params Pointer")]];
     unk_ptr hd_dll_af93fc;

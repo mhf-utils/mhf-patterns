@@ -310,14 +310,35 @@ RandomSharpnessList randomSharpnessGunlance @ header.ptrs.randomSharpnessGunlanc
 u8 randomShellTypes[3] @ header.ptrs.randomShellTypes [[name("Random Gunlance Shell Types")]];
 float handlingDrawSpeed @ header.ptrs.handlingDrawSpeed [[name("Handling Draw Speed")]];
 
-// Gunner shot power (header 0x1C8): one pointer per ammo type (44, the hit's
-// ammo +0x1A) to a u16 list indexed by the hit's byte +0x0B; the value is
-// the shot's power (hit +0x6C). The list lengths are not proven, so only the
-// pointers are shown. HC Kai armor (armor flag 0x100; Wii U
-// PlGetHCkaiCriDmgValue / PlGetHCkaiDefValue), in HC quests or G-rank fields,
-// by the number of worn HC Kai pieces (0-5): header 0x5B0 adds a multiplier
-// to critical hits (all 0 on ZZ), header 0x5B4 adds defense.
-u32 gunnerShotPowerLists[44] @ header.ptrs.gunnerShotPower [[name("Gunner Shot Power Lists")]];
+// Gunner shot power (header 0x1C8): pointers picked by the hit's ammo +0x1A,
+// each to a u16 list indexed by the hit's byte +0x0B; the value is the
+// shot's power (hit +0x6C). The lists follow the pointers in the same block
+// (several pointers share one), each ending at 0xFFFF and padded to 4 bytes,
+// so the pointers stop where the first list starts: 20 pointers to 14 lists
+// on the ZZ EN file, and the block ends at the next header table.
+struct ShotPowerList {
+    u16 power[while(std::mem::read_unsigned($, 2) != 0xFFFF)];
+    u16 end;
+};
+
+fn shotPowerPointerCount() {
+    u32 p = header.ptrs.gunnerShotPower;
+    u32 first = std::mem::read_unsigned(p, 4);
+    u32 n = 0;
+    while (p + n * 4 < first) {
+        if (std::mem::read_unsigned(p + n * 4, 4) < first)
+            first = std::mem::read_unsigned(p + n * 4, 4);
+        n += 1;
+    }
+    return n;
+};
+
+ptVar<ShotPowerList> gunnerShotPowerLists[shotPowerPointerCount()] @ header.ptrs.gunnerShotPower [[name("Gunner Shot Power Lists")]];
+
+// HC Kai armor (armor flag 0x100; Wii U PlGetHCkaiCriDmgValue /
+// PlGetHCkaiDefValue), in HC quests or G-rank fields, by the number of worn
+// HC Kai pieces (0-5): header 0x5B0 adds a multiplier to critical hits (all
+// 0 on ZZ), header 0x5B4 adds defense.
 float hcKaiCritDamage[6] @ header.ptrs.hcKaiCritDamage [[name("HC Kai Critical Damage Bonus")]];
 s16 hcKaiDefense[6] @ header.ptrs.hcKaiDefense [[name("HC Kai Defense Bonus")]];
 

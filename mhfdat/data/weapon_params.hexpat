@@ -1159,7 +1159,7 @@ EvadeActionLists evadeActions @ header.ptrs.evadeActions [[name("Evade Actions")
 // =======================
 // Bowgun shot tables (header 0xA70, Otya unkA70): fifteen pointers, then the
 // counts of some tables. Read by the bowgun shot code (kind 6 shells,
-// gunner_shot_hitbox_init, FUN_111E2CB0 shot update, FUN_111E3FC0 / gunner_shot_trail_update
+// gunner_shot_hitbox_init, gunner_shot_flight_update shot update, gunner_shot_hit_update / gunner_shot_trail_update
 // hits). A shot row is picked by the shell row (+6); a shot's distance stage
 // (shot work +1) rises as its age (+0x94) passes the thresholds of its band
 // row (gunner_shot_critical_distance_band_update) and picks the damage
@@ -1168,20 +1168,20 @@ EvadeActionLists evadeActions @ header.ptrs.evadeActions [[name("Evade Actions")
 // =======================
 
 struct BowgunShotRow {
-    u8 pattern [[comment("2: velocity built from the shot's spread bits (+0xDE) (gunner_shot_hitbox_init); 4: multi-hit shot, one more hit every 4 frames from frame 3 while the hit count (+3) <= hitBehaviorValue (FUN_111E2CB0); em101_counter_dmg_scale tests 4")]];
-    u8 trailPart [[comment("effect part (row x 0x8C of _DAT_1ED7D6A0 +0x30) drawn on the shot (gunner_shot_trail_update); 0x62: plus the shot age, random seed, render position copy (FUN_111E5670); 0xFF: none")]];
+    u8 pattern [[comment("2: velocity built from the shot's spread bits (+0xDE) (gunner_shot_hitbox_init); 4: multi-hit shot, one more hit every 4 frames from frame 3 while the hit count (+3) <= hitBehaviorValue (gunner_shot_flight_update); em101_counter_dmg_scale tests 4")]];
+    u8 trailPart [[comment("effect part (row x 0x8C of _DAT_1ED7D6A0 +0x30) drawn on the shot (gunner_shot_trail_update); 0x62: plus the shot age, random seed, render position copy (gunner_shot_tick); 0xFF: none")]];
     u8 trailColor [[comment("row of trailColors (gunner_shot_trail_update)")]];
     u8 effect412Delay [[comment("row of effect412Delays: after that many frames effect 0x412 spawns at the shot (effect412_spawn_at_shot)")]];
     s16 distanceBand [[comment("row of the distance band lists; -1 = no distance stages")]];
-    s16 modelMode [[comment("not 0: the shot gets a render slot (FUN_111E7540), then FUN_111E75A0 (FUN_111E2CB0)")]];
+    s16 modelMode [[comment("not 0: the shot gets a render slot (gunner_shot_model_slot_alloc), then FUN_111E75A0 (gunner_shot_flight_update)")]];
     float speed [[comment("forward speed = speed + random x speedRandom, both x the shot's speed factors (gunner_shot_hitbox_init)")]];
     float speedRandom;
     float gravity [[comment("shot +0x60 = -(random x gravityRandom + gravity)")]];
     float gravityRandom;
-    float spread [[comment("FUN_111E2CB0: random lateral spread x it x speed")]];
-    float wobble [[comment("FUN_111E2CB0: random wobble over the first 20 frames, x it (and the coating modifiers)")]];
-    s16 moveFrames [[comment("FUN_111E2CB0: the shot moves while its age is below it")]];
-    u8 hitBehavior [[comment("on hit (FUN_111E2CB0 / FUN_111E3FC0 / gunner_shot_hit_behavior_get): 1 / 3-5 / 0xC-0xE stay on the target while age < hitBehaviorValue; 6 / 8 keep hitting while the hit count (+0xA) < hitBehaviorValue; 7 / 0xC / 0xD / 0xE spawn the cluster row 0 / 0 / 1 / 2; 0xE also FUN_111FDBF0; 0xA: FUN_11421ED0")]];
+    float spread [[comment("gunner_shot_flight_update: random lateral spread x it x speed")]];
+    float wobble [[comment("gunner_shot_flight_update: random wobble over the first 20 frames, x it (and the coating modifiers)")]];
+    s16 moveFrames [[comment("gunner_shot_flight_update: the shot moves while its age is below it")]];
+    u8 hitBehavior [[comment("gunner_shot_hit_update (monster hit, jump table 0x111E45C8) / gunner_shot_flight_update (end): 6 = ricochet and 8 = pierce, more hits while the hit count (+0xA) < hitBehaviorValue; 7 = cluster, monster hit spawns cluster row hitBehaviorValue (ground end: row 0); 0xC / 0xD / 0xE spawn cluster row 0 / 1 / 2; 1 / 3-5 / 0xC-0xE stay on the target while age < hitBehaviorValue; 0xA: FUN_11421ED0")]];
     u8 hitBehaviorValue;
 };
 
@@ -1204,13 +1204,13 @@ struct BowgunStageMults {
 };
 
 struct BowgunShotTables {
-    BowgunShotRow *shotRows[53] : u32 [[comment("by shell row (+6); 53 rows fill the block")]];
+    BowgunShotRow *shotRows[53] : u32 [[comment("by shell row (+6); 53 rows fill the block. Rows 0-19 follow the Ferias shot list (doc-gun.htm): Normal 1-3, Pierce 1-3, Pellet 1-3, Crag 1-3, Clust 1-3, Flame, Water, Thunder, Freeze, Dragon")]];
     u32 *shotHitFlags[53] : u32 [[comment("gunner_shot_hitbox_init: ORed into hit +0x90, by shell row")]];
     BowgunDistanceBandList *distanceBands : u32 [[comment("gunner_shot_distance_band_list_get default (Light Bowgun styles 0 / 3, other classes)")]];
     BowgunDistanceBandList *distanceBandsLbgStyles12 : u32 [[comment("Light Bowgun in styles 1 / 2")]];
     BowgunDistanceBandList *distanceBandsFlag8 : u32 [[comment("shots with flag 8 (shot work +0x3C)")]];
     BowgunDistanceBandList *distanceBandsHbg : u32 [[comment("Heavy Bowgun")]];
-    u16 *effect412Delays[3] : u32 [[comment("frames, by shot row +3 (FUN_111E2CB0)")]];
+    u16 *effect412Delays[3] : u32 [[comment("frames, by shot row +3 (gunner_shot_flight_update)")]];
     BowgunClusterRow *clusterRows[3] : u32 [[comment("by hitBehavior 0xC / 0xD / 0xE (7 uses row 0)")]];
     u32 *trailColors[4] : u32 [[comment("by shot row +2 (gunner_shot_trail_update -> FUN_1000C390)")]];
     BowgunStageMults *stageMult : u32 [[comment("gunner_shot_apply_ammo_to_hit: default (Light Bowgun, other classes)")]];

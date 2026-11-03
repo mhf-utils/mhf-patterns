@@ -195,7 +195,11 @@ struct ImportantNumbers {
     u16 numHalkFoods
         [[name("Number of Halk Foods")]];
 
-    padding[0x18];
+    padding[0x16];
+
+    // Offset 0x1D8: sound distance curves 2 (header 0x544, apply_sound_and_shake)
+    u16 numSoundCurves2
+        [[name("Number of Sound Curves 2")]];
 
     // Offset 0x1DA: seasonal event timings (header 0x54C)
     u16 numSeasonalEvents

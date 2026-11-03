@@ -372,9 +372,9 @@ struct ptr_table {
     unk_ptr hd_dll_af65f0;
     ptr my_mission_objective    [[name("My Mission Objective Pointer")]];
     unk_ptr hd_dll_af65fc;
-    unk_ptr hd_dll_af6602;      // @ 0x540
-    unk_ptr hd_dll_af6608;
-    unk_ptr hd_dll_af660e;
+    ptr soundVolumeCurves [[name("Sound Volume Curves Pointer")]]; // @ 0x540, hd_dll_af6602
+    ptr soundCurves2 [[name("Sound Curves 2 Pointer")]]; // @ 0x544, hd_dll_af6608
+    ptr soundTypes [[name("Sound Types Pointer")]]; // @ 0x548, hd_dll_af660e
     ptr seasonalEventTiming     [[name("Seasonal Event Timing Table Pointer")]];
     unk_ptr hd_dll_af661a;      // @ 0x550
     unk_ptr hd_dll_af6640;
@@ -445,10 +445,10 @@ struct ptr_table {
     ptr skillParams [[name("Skill Parameters Pointer"), comment("Rush gauge thresholds at +0x64; the rest is shared with other skills")]]; // @ 0x648, hd_dll_af6eab
     ptr roadMilestones [[name("Road Floor Milestones Pointer")]]; // @ 0x64C, hd_dll_af6eb1
     unk_ptr hd_dll_af6eb7;      // @ 0x650
-    unk_ptr hd_dll_af6e82;
+    ptr lanceComboRules [[name("Lance Combo Rules Pointer")]]; // @ 0x654, hd_dll_af6e82
     unk_ptr hd_dll_af6f6f;
     ptr weaponParams [[name("Weapon Parameters Pointer")]]; // @ 0x65C, hd_dll_af6f75
-    unk_ptr hd_dll_af6f7b;      // @ 0x660
+    ptr weaponConstants [[name("Weapon Constants Pointer")]]; // @ 0x660, hd_dll_af6f7b
     unk_ptr hd_dll_af6f81;
     ptr justReloadLists [[name("Just Reload Lists Pointer")]]; // @ 0x668, hd_dll_af6fa8
     ptr justShotLists [[name("Just Shot Lists Pointer")]]; // @ 0x66C, hd_dll_af6fca
@@ -604,7 +604,7 @@ struct ptr_table {
     unk_ptr hd_dll_af7ce0;
     unk_ptr hd_dll_af7ce6;
     unk_ptr hd_dll_af7cec;
-    unk_ptr hd_dll_af7d34;      // @ 0x8C0
+    ptr evadeActions [[name("Evade Actions Pointer")]]; // @ 0x8C0, hd_dll_af7d34
     unk_ptr hd_dll_af7d67;
     unk_ptr hd_dll_af7e55;
     unk_ptr hd_dll_af7e5b;
@@ -728,8 +728,8 @@ struct ptr_table {
     padding[4];
     unk_ptr hd_dll_af888c;      // @ 0xA80
     unk_ptr hd_dll_af88c7;
-    unk_ptr hd_dll_af88f2;
-    padding[4];
+    ptr switchAxeFTunables [[name("Switch Axe F Tunables Pointer")]]; // @ 0xA88, hd_dll_af88f2
+    ptr weaponSkillModifiers [[name("Weapon Skill Modifiers Pointer")]]; // @ 0xA8C
     ptr SwitchAxe_Params        [[name("Switch Axe Params Pointer")]];                 // @ 0xA90
     unk_ptr hd_dll_af8cac;
 

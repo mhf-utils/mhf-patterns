@@ -42,7 +42,7 @@ mhfdat/
     ├── road.hexpat       # Hunting Road monster points, skills and floor milestones
     ├── tower.hexpat      # Tower jewel recipes and upgrade costs, tower skills and support bonuses
     ├── shop_guild.hexpat # Shop catalogs and the Guild Shop
-    ├── weapon_params.hexpat # Per-class weapon parameters, bullet sets, horn melodies, rapid fire, motion values, random weapon sharpness, reach bodies, gunner shot power, HC Kai bonuses, armor piece element / status rates, Dual Blades blade effects, bow model materials, just reload / shot, gunlance shells
+    ├── weapon_params.hexpat # Per-class weapon parameters, bullet sets, horn melodies, rapid fire, motion values, random weapon sharpness, reach bodies, gunner shot power, HC Kai bonuses, armor piece element / status rates, Dual Blades blade effects, bow model materials, just reload / shot, gunlance shells, weapon constants by weapon (0x660), Switch Axe F tunables (0xA88), Lance combo rules (0x654), weapon skill modifiers (0xA8C), evade actions (0x8C0)
     ├── quests.hexpat     # HR, G-rank, Conquest and beginner quest lists, Guild Priority Requests, interception monster G stars
     ├── clan.hexpat       # Clan mission targets and roll weights
     ├── cooking.hexpat    # Kitchen meal ingredients, stat tiers, special dishes
@@ -59,7 +59,7 @@ mhfdat/
     ├── weapon_actions.hexpat # Weapon action scripts: steps, cancels, events
     ├── equipment_effects.hexpat # Weapon and armor visual effects (sets and rows)
     ├── mytra.hexpat      # Mytra Adventure Dispatch, shop stock and cat mixes
-    ├── player_sounds.hexpat # Player motion sound banks
+    ├── player_sounds.hexpat # Player motion sound banks, sound distance types and curves (0x540-0x548)
     ├── item_lists.hexpat # Protected items and box search filters
     ├── player_unique_params.hexpat # Player unique parameters (pl_get_unq_prm): tuning rows by mechanic (Vigorous, evade frames, Bomber...)
     ├── rasta_guild.hexpat # Rasta hunt orders, Loyalty and Cred costs and level tables

@@ -41,3 +41,37 @@ struct PlayerSoundBank {
 PlayerSoundBank playerSoundBanks[header.ptrs.playerSoundBankCount + 0x12]
     @ header.ptrs.playerSoundBanks
     [[name("Player Sound Banks")]];
+
+/**
+	Sound distance (headers 0x548, 0x540, 0x544): apply_sound_and_shake (and
+	apply_sound_shake_effect) takes a sound type row from 0x548 (0x53 for one
+	raid side, remapped by 0x119DEFD8 in the maze tower), hears the sound up to
+	maxDistance, at full level within fullDistance, and between them reads the
+	level from a 17-step curve of 0x540 (s8, 127 = full), lerped by distance.
+	The sound id is the requested id + soundIdOffset. Proofs:
+	tools/mhfdat_re/data/548_notes.md.
+*/
+
+#include <mhfdat/data/equipment_counts.hexpat>
+
+struct SoundType {
+    float fullDistance [[comment("closer than it: curve step 0 and no pan")]];
+    float maxDistance [[comment("not played past it")]];
+    u16 curve [[comment("row of soundVolumeCurves (check_player_movement_mode != 1)")]];
+    u16 curveAlt [[comment("row used when check_player_movement_mode == 1 (in a raid zone: when FUN_108D03F0 is 0)")]];
+    u32 soundIdOffset [[comment("added to the requested sound id; also read by fixed rows: [0] FUN_112D08A0 / FUN_11376E90, [1] em_atk15_thunder, [9] em106_set_bind, [15] FUN_112BEF20, any row FUN_114DCED0")]];
+    s16 curve2 [[comment("row of soundCurves2 when < numSoundCurves2, -1 = none")]];
+    padding[2];
+};
+
+struct SoundVolumeCurve {
+    s8 levels[17] [[comment("level by distance step (0 = fullDistance, 16 = maxDistance)")]];
+};
+
+struct SoundCurve2 {
+    s32 values[17] [[comment("lerped by distance like the level; no use of the result found in apply_sound_and_shake")]];
+};
+
+SoundType soundTypes[112] @ header.ptrs.soundTypes [[name("Sound Types")]];
+SoundVolumeCurve soundVolumeCurves[139] @ header.ptrs.soundVolumeCurves [[name("Sound Volume Curves")]];
+SoundCurve2 soundCurves2[importantNums.numSoundCurves2] @ header.ptrs.soundCurves2 [[name("Sound Curves 2")]];

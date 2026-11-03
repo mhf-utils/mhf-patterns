@@ -712,8 +712,8 @@ struct ptr_table {
     ptr itemSourceStrings       [[name("Item Source Strings Pointer")]];
 
     unk_ptr hd_dll_af8774;
-    unk_ptr hd_dll_af877a;
-    padding[4];
+    ptr skillWorkLevelBonuses [[name("Skill Work Level Bonuses Pointer")]]; // @ 0xA48, hd_dll_af877a
+    u32 skillWorkLevelBonusCount [[name("Skill Work Level Bonus Count")]]; // @ 0xA4C
     unk_ptr hd_dll_af8780;      // @ 0xA50
     unk_ptr hd_dll_af87bb;
     unk_ptr hd_dll_af87c1;

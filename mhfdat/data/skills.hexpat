@@ -227,3 +227,27 @@ struct SpacingAndSoulValues {
 };
 
 SpacingAndSoulValues spacingAndSoulValues @ header.ptrs.spacingAndSoulValues [[name("Spacing And Soul Values")]];
+
+// Header 0xA48 (header 0xA4C holds the row count, not a pointer): bonuses by
+// the level (1-5) of a byte of the player's SkillWork, only in the quests
+// ValidateRankAccess accepts (EmergencyHuntArea / TowerQuestRange ids,
+// Duremudira, or quest variant2 bit 0x80), on top of the header 0x928 value
+// for the same level. Each reader looks for its kind:
+// - kind 1: attack + valueByLevel x 0.01, level SkillWork +0x708
+//   (CalculatePlayerBonuses);
+// - kind 2: defense + valueByLevel x 0.01, level +0x709 (FUN_10A858A0, from
+//   player_recalc_defense_value_basic / _full);
+// - kind 0xC: level +0x70A (FUN_111C5370, FUN_111C6390); kind 0xD: level
+//   +0x70C (FUN_111BCDC0); kind 0xE: level +0x70E (FUN_109F5680, from
+//   Player_ActionType0_StateUpdate): valueByLevel x 0.01;
+// - kind 6: level +0x70D, rateByLevel multiplies a value (FUN_111BCAB0,
+//   FUN_111BC4F0).
+// Kinds 7, 8 and 9 have no reader. What sets the SkillWork levels is not
+// found yet.
+struct SkillWorkLevelBonus {
+	s32 kind;
+	s32 valueByLevel[5];
+	float rateByLevel[5];
+};
+
+SkillWorkLevelBonus skillWorkLevelBonuses[header.ptrs.skillWorkLevelBonusCount] @ header.ptrs.skillWorkLevelBonuses [[name("Skill Work Level Bonuses")]];

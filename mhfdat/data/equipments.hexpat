@@ -14,16 +14,16 @@ bitfield equipableBy {
 };
 
 bitfield armorTypes {
-    gou : 1;           // bit 0
+    gArmorF : 1;       // bit 0, Wii U Pl_G_Armor_f_num (was gou)
     padding : 5;
     Grank : 1;         // bit 6 (the byte at 0x3F is not the G rank)
-    supremacy : 1;     // bit 7
-    premium_HR : 1;       // bit 8
-    premium_GR : 1;  // bit 9 (utilisé dans GRANK_PREMIUM et ZENITH_PREMIUM)
+    supremacy : 1;     // bit 7; Wii U Pl_G_Armor_fx_num counts bits 7, 14 and 15 together
+    hcKai : 1;         // bit 8, Wii U Pl_HC_Armor_kai_num (was premium_HR); HC Kai bonuses, header 0x5B0 / 0x5B4
+    gClassS : 1;       // bit 9, Wii U Pl_G_Class_S_Armor_num (was premium_GR)
     padding : 4;
-    g_supremacy : 1;   // bit 14 (G_SUPREMACY)
-    gf_supremacy : 1;  // bit 15 (GF_SUPREMACY)
-    gx_supremacy : 1;  // bit 16 (GX_SUPREMACY)
+    gHasyu : 1;        // bit 14, Wii U Pl_G_Armor_hasyu_num (was g_supremacy)
+    retsusyu : 1;      // bit 15, Wii U Pl_Retsusyu_Armor_num (was gf_supremacy)
+    gx_supremacy : 1;  // bit 16 (GX_SUPREMACY); HD only, header 0x968-0x970 by piece count
     padding : 1;
     exotic : 1;        // bit 18
     zenith : 1;        // bit 19

@@ -38,3 +38,47 @@ MonsterCrown monsterCrowns[importantNums.numMonsterDesc]
 s32p monsterDescriptions[importantNums.numMonsterDesc]
     @ header.ptrs.monsterDesc
     [[name("Monster Descriptions"), comment("Row i is the monster of crown row i")]];
+
+// Carve points (header 0x138): one row per monster id. A carve point gives
+// the carve table (header 0x120 row) of each rank (HagiLv), how many carves
+// (skill 0xC0 adds one), the reach in percent of the monster's size and the
+// point's offset from the monster (from a bone when boneFlag is set). The
+// list ends at a row whose unk1E is 0x8000. HagiLv 9 quests use header 0xAC8
+// instead; some Zenith variants take altCarvePoints.
+struct CarvePoint {
+    s16 carveTableByRank[12];
+    u16 carveCount;
+    u16 reachPercent;
+    u16 unk1C;
+    u16 unk1E;
+    u8  boneFlag;
+    u8  unk21;
+    s16 offsetX;
+    s16 offsetY;
+    s16 offsetZ;
+};
+
+struct CarvePointList {
+    CarvePoint points[while(std::mem::read_unsigned($ + 0x1E, 2) != 0x8000)];
+    CarvePoint terminator;
+};
+
+struct MonsterCarvePoints {
+    ptVar<CarvePointList> carvePoints;
+    u32 altCarvePoints;
+    u32 unk08;
+} [[name(fmtMonsterID(std::core::array_index()))]];
+
+MonsterCarvePoints monsterCarvePoints[MONSTER_NAME_COUNT]
+    @ header.ptrs.monsterCarvePoints
+    [[name("Monster Carve Points")]];
+
+// Monster icons (header 0x51C): per monster id, the section of som_sef.pac
+// holding its icon; 0x84 and values above 0x8D show the default icon 0x8E
+struct MonsterIcon {
+    u16 section;
+} [[name(fmtMonsterID(std::core::array_index()))]];
+
+MonsterIcon monsterIconIndices[MONSTER_NAME_COUNT]
+    @ header.ptrs.monsterIconIndices
+    [[name("Monster Icon Indices")]];

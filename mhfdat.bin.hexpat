@@ -4,6 +4,7 @@
 //#define __DATA_AUTOMATIC_SKILLS 1
 //#define __DATA_CARAVAN 1
 //#define __DATA_CLAN 1
+//#define __DATA_COMBINE 1
 //#define __DATA_COOKING 1
 //#define __DATA_CRAFTING 1
 //#define __DATA_DATA_COUNTERS 1
@@ -18,6 +19,7 @@
 //#define __DATA_MEOWKA_POT 1
 //#define __DATA_MISSIONS 1
 //#define __DATA_MONSTERS 1
+//#define __DATA_MONSTER_SOUNDS 1
 //#define __DATA_PARTNER 1
 //#define __DATA_PART_BREAKS 1
 //#define __DATA_QUESTS 1
@@ -34,6 +36,7 @@
 //#define __DATA_TOWER 1
 //#define __DATA_TRANSCEND 1
 //#define __DATA_WEAPONS 1
+//#define __DATA_WEAPON_ACTIONS 1
 //#define __DATA_WEAPON_PARAMS 1
 
 #include <mhfdat/index.hexpat>

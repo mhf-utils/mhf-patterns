@@ -130,7 +130,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 		@ header.ptrs.hunterPearlSkillLists;
 
 	varPaddT<u16, 0x2> hd_dll_af4e03[while(std::mem::read_signed($,2))] 
-		@ header.ptrs.hd_dll_af4de0;
+		@ header.ptrs.combineTripleBuckets;
 	varPaddT<u16, 0x2> hd_dll_af4e29[while(std::mem::read_signed($,2)!=-1)] 
 		@ header.ptrs.hd_dll_af4e0f;
 	varPaddT<u16, 0x4> hd_dll_af4e49[while(std::mem::read_signed($,2)!=-1)] 
@@ -153,7 +153,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 		}
 	};
 
-	struct_af5001 hd_dll_af5001[0xB1] @ header.ptrs.hd_dll_af4ff0;
+	struct_af5001 hd_dll_af5001[0xB1] @ header.ptrs.monsterCarvePoints;
 
 	//ptr hd_dll_af505b[0xE] @ header.ptrs.hd_dll_af504a;
 //
@@ -291,7 +291,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 		}
 	};
 
-	struct_af5312 hd_dll_af5312 [0xB1] @ header.ptrs.hd_dll_af530c;
+	struct_af5312 hd_dll_af5312 [0xB1] @ header.ptrs.monsterSoundTables;
 
 	num hd_dll_af53a0 @ (header.ptrs.important_nums + 0x26)
 		[[name("Number of Hunting Horn Guide Pages?")]];

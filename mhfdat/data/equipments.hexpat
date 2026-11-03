@@ -50,7 +50,7 @@ struct EquipmentItem {
   s8 iceRes;
 
   u8 coefUpgrade; 
-  u8 unk1A;
+  u8 upgradeCostRow [[comment("Row of the armor upgrade cost percents (header 0xB8)")]];
 
   u8 baseSlots; 
   u8 maxSlots;
@@ -146,3 +146,11 @@ struct Equipments {
 };
 
 Equipments equipments @ header.ptrs.headArmor [[name("Equipments")]];
+
+// Pointers to the tables above, as the code indexes them: armor data by equip
+// type (header 0x94: legs, head, head again, chest, arms, waist), names by
+// equip type (header 0x98: legs, none, head, chest, arms, waist, melee,
+// ranged), armor names from head to legs (header 0x9C)
+u32 armorTablesByEquipType[6] @ header.ptrs.armorStatArray [[name("Armor Tables by Equip Type")]];
+u32 nameTablesByEquipType[8] @ header.ptrs.armorWeaponStatArray [[name("Name Tables by Equip Type")]];
+u32 armorNameTablesHeadToLegs[5] @ header.ptrs.armorNameArray [[name("Armor Name Tables, Head to Legs")]];

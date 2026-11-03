@@ -67,6 +67,17 @@ u16 ArenaStageIDsChunk1[34]
     @ header.ptrs.arenaStageIDC1
     [[group("Arena"), name("Stage IDs (Chunk 1)")]];
 
+// The training text of each stage (header 0x150): row i is the quest at index
+// i of Chunk 0; each row lists its lines, ending at a null pointer
+struct ArenaStageInfo {
+    s32p lines[while(std::mem::read_unsigned($, 4) != 0)];
+    u32  end;
+};
+
+ptVar<ArenaStageInfo> ArenaStageInfoTexts[while(std::mem::read_unsigned($, 4) != 0)]
+    @ header.ptrs.arenaStageInfoText
+    [[group("Arena"), name("Stage Info Texts")]];
+
 
 // =======================
 // Tutorial equipment sets (header 0x15C): important numbers + 0x48 pointers,

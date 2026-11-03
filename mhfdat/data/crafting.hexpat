@@ -205,6 +205,14 @@ RWUpgradePath rwUpgradePath[equipmentCounts.numRangedW] @ header.ptrs.rangedWeap
 g50MeleeUpgrade g50MeleeUpgrades[importantNums.g50MeleeWeaponUpgradesCounter] @ header.ptrs.g50MeleeUpgrades;
 g50RangedUpgrade g50RangedUpgrades[importantNums.g50RangedWeaponUpgradesCounter] @ header.ptrs.g50RangedUpgrades;
 
+// Armor upgrade zenny (header 0xB8): zennyCost x percent[upgradeCostRow, max
+// 15][current level, max 6] / 100
+struct ArmorUpgradeCostRow {
+    u16 percentByLevel[7];
+};
+
+ArmorUpgradeCostRow armorUpgradeCostPercent[16] @ header.ptrs.armorUpgradeCostPercent [[name("Armor Upgrade Cost Percent")]];
+
 // [mhfo-hd.dll + 0xaf47ed] an armor part's UpgradeID (+0x28) picks a list (ZZ: 4855)
 ptVar<GenericAUpgrade> armorUpgrades[while(std::mem::read_unsigned($,4))] @ header.ptrs.armorUpgradeMats;
 SigilTowerTable sigilTowerTable[while(std::mem::read_unsigned($, 4))]     @ header.ptrs.SigilTowerForging    [[name("Sigil Tower Forging Data")]];

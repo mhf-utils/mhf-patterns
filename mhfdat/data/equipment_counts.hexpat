@@ -182,7 +182,22 @@ struct ImportantNumbers {
     u16 numSeasonalEvents
         [[name("Number of Seasonal Events")]];
 
-    padding[0x4E];
+    padding[0x16];
+
+    // Offset 0x1F2: Guild Priority Request entries and rotations (header 0x584, 0x588)
+    u16 numPriorityRequestEntries
+        [[name("Number of Guild Priority Request Entries")]];
+
+    u16 numPriorityRequestRotations
+        [[name("Number of Guild Priority Request Rotations")]];
+
+    padding[0x18];
+
+    // Offset 0x20E: monster alternate sound tables (header 0x5C0)
+    u16 numMonsterAltSoundTables
+        [[name("Number of Monster Alternate Sound Tables")]];
+
+    padding[0x1A];
 
     u16 g50MeleeWeaponUpgradesCounter
         [[name("g50 melee weapons upgrades counter")]];

@@ -137,6 +137,52 @@ struct CoatingModifier {
 CoatingModifier coatingModifiers[23] @ header.ptrs.coatingModifiers [[name("Coating Modifiers (length unchecked)")]];
 
 // =======================
+// Motion values (header 0x63C, and 0x74C for the alternate bank): one row per
+// action id below 0x35, empty when valid is 0. A hit's key - 1 (0 to 11)
+// picks the column: the raw motion value goes to the hit, the element one
+// too, the status power when it is not 0.
+// =======================
+
+struct MotionValueRow {
+    u8    valid;
+    padding[3];
+    u16   raw[12];
+    u8    element[12];
+    u8    unk28[12];
+    u8    statusPower[12];
+    float scale[12];
+    u16   rawSecondary[12];
+};
+
+MotionValueRow motionValues[0x35] @ header.ptrs.motionValues [[name("Motion Values")]];
+MotionValueRow motionValuesAlt[0x35] @ header.ptrs.motionValuesAlt [[name("Motion Values (alternate bank)")]];
+
+// =======================
+// Random (ex G) melee weapons: the sharpness a rolled value gives, per weapon
+// class (header 0x370 Sword and Shield, 0x374 Dual Blades, 0x378 Great Sword
+// and Long Sword, 0x37C Lance, 0x380 Hammer and Hunting Horn, 0x4F8
+// Gunlance), until a sharpness id of 0xFF. The id picks the color table; the
+// max sharpness is (step + 3) x 50, as a weapon's own sharpnessMax.
+// =======================
+
+struct RandomSharpness {
+    u8 sharpnessId;
+    u8 maxStep;
+};
+
+struct RandomSharpnessList {
+    RandomSharpness rows[while(std::mem::read_unsigned($, 1) != 0xFF)];
+    RandomSharpness end;
+};
+
+RandomSharpnessList randomSharpnessSwordAndShield @ header.ptrs.randomSharpnessSwordAndShield [[name("Random Sharpness: Sword and Shield")]];
+RandomSharpnessList randomSharpnessDualBlades @ header.ptrs.randomSharpnessDualBlades [[name("Random Sharpness: Dual Blades")]];
+RandomSharpnessList randomSharpnessGreatSwordLongSword @ header.ptrs.randomSharpnessGreatSwordLongSword [[name("Random Sharpness: Great Sword, Long Sword")]];
+RandomSharpnessList randomSharpnessLance @ header.ptrs.randomSharpnessLance [[name("Random Sharpness: Lance")]];
+RandomSharpnessList randomSharpnessHammerHorn @ header.ptrs.randomSharpnessHammerHorn [[name("Random Sharpness: Hammer, Hunting Horn")]];
+RandomSharpnessList randomSharpnessGunlance @ header.ptrs.randomSharpnessGunlance [[name("Random Sharpness: Gunlance")]];
+
+// =======================
 // Light Bowgun rapid fire. Per ammo type (header 0xA0, up to the next
 // table): the shots of a burst and the speed level (an index in the client's
 // {1.0, 1.5, 1.6}). Per ranged weapon (header 0xC0, important numbers + 0x1A

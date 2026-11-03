@@ -27,6 +27,10 @@
 #include <mhfdat/data/clan.hexpat>
 #endif
 
+#ifdef __DATA_COMBINE
+#include <mhfdat/data/combine.hexpat>
+#endif
+
 #ifdef __DATA_COOKING
 #include <mhfdat/data/cooking.hexpat>
 #endif
@@ -85,6 +89,10 @@
 
 #ifdef __DATA_MONSTERS
 #include <mhfdat/data/monsters.hexpat>
+#endif
+
+#ifdef __DATA_MONSTER_SOUNDS
+#include <mhfdat/data/monster_sounds.hexpat>
 #endif
 
 #ifdef __DATA_PARTNER
@@ -149,6 +157,10 @@
 
 #ifdef __DATA_WEAPONS
 #include <mhfdat/data/weapons.hexpat>
+#endif
+
+#ifdef __DATA_WEAPON_ACTIONS
+#include <mhfdat/data/weapon_actions.hexpat>
 #endif
 
 #ifdef __DATA_WEAPON_PARAMS

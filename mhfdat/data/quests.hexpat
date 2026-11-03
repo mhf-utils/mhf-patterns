@@ -4,6 +4,7 @@
 
 #include <std/mem.pat>
 #include <mhfdat/header.hexpat>
+#include <misc/MonsterIDs.hexpat>
 
 struct QuestItem {
 	u16 questId;
@@ -87,6 +88,35 @@ struct ConquestQuest {
 };
 
 ConquestQuest conquestQuests[importantNums.numConquestQuests] @ header.ptrs.conquestQuests [[name("Conquest Quests")]];
+
+// Guild Priority Requests: the monsters each tier asks for, by server day
+// (day = (server time + 75600) / 86400, so it turns at 12:00 JST). A
+// rotation (header 0x588, important numbers + 0x1F4 rows) cycles over
+// periodDays from startDay; its entries (header 0x584, important numbers +
+// 0x1F2 rows) give the monster of each day index and tier: 1-4 the Souls
+// tiers (HR1-2, HR3-4, HR5, Gou), 5-7 the Ribbons tiers (G1-2, G3-4, G5-7).
+struct PriorityRequestRotation {
+	s32 rotation;
+	s32 startDay;
+	s32 periodDays;
+};
+
+PriorityRequestRotation priorityRequestRotations[importantNums.numPriorityRequestRotations] @ header.ptrs.priorityRequestRotations [[name("Guild Priority Request Rotations")]];
+
+fn priorityRequestMonster(s32 n) {
+	MonsterID m = u8(n);
+	return fmtMonsterID(m);
+};
+
+struct PriorityRequestEntry {
+	s32 rotation;
+	s32 dayIndex;
+	s32 tier;
+	s32 monster [[format("priorityRequestMonster")]];
+	s32 unk10;
+};
+
+PriorityRequestEntry priorityRequestEntries[importantNums.numPriorityRequestEntries] @ header.ptrs.priorityRequestEntries [[name("Guild Priority Request Monsters")]];
 
 // Beginner quests (header 0x1B8): important numbers + 0x3C quest ids (2 on ZZ)
 u16 beginnerQuests[importantNums.numBeginnerQuests] @ header.ptrs.beginnerQuests [[name("Beginner Quests")]];

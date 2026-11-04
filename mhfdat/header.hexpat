@@ -532,7 +532,7 @@ struct ptr_table {
     unk_ptr hd_dll_af7813;
     ptr vampirism [[name("Vampirism Pointer")]]; // @ 0x7A0, hd_dll_af7819
     unk_ptr hd_dll_af781f;
-    unk_ptr hd_dll_af7825;
+    ptr npcMotionSounds [[name("NPC Motion Sounds Pointer")]]; // @ 0x7A8, hd_dll_af7825
 
     ptr weaponSpecialForging    [[name("Special Weapon Forging Pointer")]];
     

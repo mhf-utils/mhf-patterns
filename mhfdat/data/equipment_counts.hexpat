@@ -291,7 +291,13 @@ struct ImportantNumbers {
     u16 numSuperRapidFirePowers
         [[name("Number of Super Rapid Fire Powers")]];
 
-    padding[0x1C];
+    padding[0x4];
+
+    // Offset 0x2CA: lobby NPC motion sounds (header 0x7A8), the last row is the 0 end row
+    u16 numNpcMotionSounds
+        [[name("Number of NPC Motion Sound Rows")]];
+
+    padding[0x16];
 
     // Offset 0x2E2: Koryo amulets (header 0x7D8)
     u16 numKoryoAmulets

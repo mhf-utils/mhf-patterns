@@ -115,6 +115,10 @@
 #include <mhfdat/data/mytra.hexpat>
 #endif
 
+#ifdef __DATA_NPC_SOUNDS
+#include <mhfdat/data/npc_sounds.hexpat>
+#endif
+
 #ifdef __DATA_PARTNER
 #include <mhfdat/data/partner.hexpat>
 #endif

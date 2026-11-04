@@ -24,7 +24,7 @@ struct TreasureCorpArea {
     u32 listsD[6] [[comment("Runtime pointers to 0x8EC lists, by tier")]];
 };
 
-// FUN_106d69f0(area, n, m): roll % 100 < chance2 (+ the m-th chance2Add, + a
+// treasure_corp_roll_result(area, n, m): roll % 100 < chance2 (+ the m-th chance2Add, + a
 // header 0x904 bonus) gives result 2, < chance2 + chance1 (+ adds) result 1, else 0.
 // Groups of 5 per area (n, m = 1-5).
 struct TreasureCorpResultChance {

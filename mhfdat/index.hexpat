@@ -15,6 +15,10 @@
 #include <mhfdat/data/arena.hexpat>
 #endif
 
+#ifdef __DATA_ARMOR_VISUALS
+#include <mhfdat/data/armor_visuals.hexpat>
+#endif
+
 #ifdef __DATA_AUTOMATIC_SKILLS
 #include <mhfdat/data/automatic_skills.hexpat>
 #endif
@@ -83,6 +87,10 @@
 #include <mhfdat/data/halk.hexpat>
 #endif
 
+#ifdef __DATA_HUNTING_INFO
+#include <mhfdat/data/hunting_info.hexpat>
+#endif
+
 #ifdef __DATA_ITEMS
 #include <mhfdat/data/items.hexpat>
 #endif
@@ -135,6 +143,10 @@
 #include <mhfdat/data/player_unique_params.hexpat>
 #endif
 
+#ifdef __DATA_PUBLIC_BAR
+#include <mhfdat/data/public_bar.hexpat>
+#endif
+
 #ifdef __DATA_QUESTS
 #include <mhfdat/data/quests.hexpat>
 #endif
@@ -145,10 +157,6 @@
 
 #ifdef __DATA_RASTA_GUILD
 #include <mhfdat/data/rasta_guild.hexpat>
-#endif
-
-#ifdef __DATA_PUBLIC_BAR
-#include <mhfdat/data/public_bar.hexpat>
 #endif
 
 #ifdef __DATA_ROAD

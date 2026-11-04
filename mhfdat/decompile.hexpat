@@ -306,7 +306,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 	// TODO: Loop at [mhfo-hd.dll + 0xaf53ff]
 
 	num hd_dll_af5436 @ (header.ptrs.important_nums + 0x2a);
-	ptr hd_dll_af5443[hd_dll_af5436] @ header.ptrs.hd_dll_af542d;
+	ptr hd_dll_af5443[hd_dll_af5436] @ header.ptrs.huntingInfoItems;
 
 	num hd_dll_af435e @ (header.ptrs.important_nums + 0x32);
 //

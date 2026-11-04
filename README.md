@@ -48,11 +48,13 @@ mhfdat/
     ├── guild_weekly_bonus.hexpat # Guild weekly bonus values by level (attack, defense, Partnyaa stats, Treasure Corp)
     ├── npc_sounds.hexpat # Town NPC motion sounds (sound events by NPC id and motion)
     ├── public_bar.hexpat # Public Bar recruit choices: HR Reqs, Targets (with unlock rules), Messages
+    ├── hunting_info.hexpat # Hunting Info page items by area, season and time
+    ├── armor_visuals.hexpat # Armor model id limits by gender, armor colors
     ├── evolution.hexpat  # Evolution weapons: weapon series lists, the 16 series level tables (Flash, Shine, Glory, Clear)
     ├── quests.hexpat     # HR, G-rank, Conquest and beginner quest lists, Guild Priority Requests, interception monster G stars
     ├── quest_rewards.hexpat # Quest reward slot chances, capture / break, Secret Book, Shiten and map bonus rewards
     ├── clan.hexpat       # Clan mission targets and roll weights
-    ├── cooking.hexpat    # Kitchen meal ingredients, stat tiers, special dishes
+    ├── cooking.hexpat    # Kitchen meal ingredients, stat tiers, special dishes, recipes, menu layout
     ├── guild_cooking.hexpat # Guild cooking recipes, ingredients, skill pools
     ├── goocoo.hexpat     # Goocoo food, house-sitting, remodelling, exchange, pot
     ├── halk.hexpat       # Halk food

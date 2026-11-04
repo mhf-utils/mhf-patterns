@@ -78,7 +78,7 @@ struct ptr_table {
     ptr weaponReachBodies [[name("Weapon Reach Bodies Pointer")]]; // @ 0x0D8, hd_dll_af4cc5
     ptr weaponPosByReach [[name("Weapon Position By Reach Pointer")]]; // @ 0x0DC, hd_dll_af4d14
     ptr wswordEftModelRanges [[name("Dual Blades Effect Model Ranges Pointer")]]; // @ 0x0E0, hd_dll_af4d08
-    unk_ptr hd_dll_af47b5;
+    ptr armorModelIdLimits [[name("Armor Model Id Limits Pointer")]]; // @ 0x0E4, hd_dll_af47b5
     ptr hd_dll_af47af       [[name("Equipment Counts Pointer"), comment("Seems to point to how many of certain objects there are, such as weapons")]];
     ptr skillTree [[name("Skill Tree Pointer")]]; // @ 0x0EC, hd_dll_af4d2d
     
@@ -111,7 +111,7 @@ struct ptr_table {
     ptr monsterCarvePoints [[name("Monster Carve Points Pointer")]]; // @ 0x138, hd_dll_af4ff0
     unk_ptr hd_dll_af5145;
 
-    unk_ptr hd_dll_af517d;      // @ 0x140
+    ptr armorColors [[name("Armor Colors Pointer")]]; // @ 0x140, hd_dll_af517d
     ptr arenaItems              [[name("Arena Item Data Pointer")]];
     ptr arenaEquipment          [[name("Arena Equipment Data Pointer")]];
     ptr arenaStageIDC1          [[name("Arena Stage ID Chunk 1")]];
@@ -135,7 +135,7 @@ struct ptr_table {
     ptr cookingCategories [[name("Cooking Ingredient Categories Pointer")]]; // @ 0x188, hd_dll_af53f0
     ptr cookingCategoryStats [[name("Cooking Category Stats Pointer")]]; // @ 0x18C, hd_dll_af5421
     ptr cookingStatTiers [[name("Cooking Stat Tiers Pointer")]]; // @ 0x190, hd_dll_af5427
-    unk_ptr hd_dll_af542d;
+    ptr huntingInfoItems [[name("Hunting Info Items Pointer")]]; // @ 0x194, hd_dll_af542d
     unk_ptr hd_dll_af5455;
     unk_ptr hd_dll_af5491;
     unk_ptr hd_dll_af54d3;      // @ 0x1A0
@@ -382,7 +382,7 @@ struct ptr_table {
     ptr hcSecretBookBonusHagi2Plus [[name("HC Secret Book Bonus HagiLv 2+ Pointer")]]; // @ 0x55C, hd_dll_af664c
     ptr hcSecretBookBonusHagi1 [[name("HC Secret Book Bonus HagiLv 1 Pointer")]]; // @ 0x560, hd_dll_af6652
     ptr hcSecretBookBonusHagi0 [[name("HC Secret Book Bonus HagiLv 0 Pointer")]]; // @ 0x564, hd_dll_af6658
-    unk_ptr hd_dll_af665e;
+    ptr cookingRecipes [[name("Cooking Recipes Pointer")]]; // @ 0x568, hd_dll_af665e
     unk_ptr hd_dll_af6664;
     unk_ptr hd_dll_af666a;      // @ 0x570
     unk_ptr hd_dll_af6670;
@@ -391,7 +391,7 @@ struct ptr_table {
     ptr bowModelMaterialRows [[name("Bow Model Material Rows Pointer")]]; // @ 0x580, hd_dll_af6682
     ptr priorityRequestEntries [[name("Guild Priority Request Entries Pointer")]]; // @ 0x584, hd_dll_af6688
     ptr priorityRequestRotations [[name("Guild Priority Request Rotations Pointer")]]; // @ 0x588, hd_dll_af668e
-    unk_ptr hd_dll_af6694;
+    ptr cookingMenuLayout [[name("Cooking Menu Layout Pointer")]]; // @ 0x58C, hd_dll_af6694
     unk_ptr hd_dll_af669a;      // @ 0x590
     ptr skillEffects [[name("Skill Effects Pointer")]]; // @ 0x594, hd_dll_af66a0
     ptr gArmorFxElementRate [[name("G Armor Fx Element Rate Pointer")]]; // @ 0x598, hd_dll_af66a6

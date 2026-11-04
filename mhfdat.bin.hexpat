@@ -1,6 +1,7 @@
 #pragma pattern_limit 100000000
 
 //#define __DATA_ARENA 1
+//#define __DATA_ARMOR_VISUALS 1
 //#define __DATA_AUTOMATIC_SKILLS 1
 //#define __DATA_CARAVAN 1
 //#define __DATA_CLAN 1
@@ -16,6 +17,7 @@
 //#define __DATA_GUILD_COOKING 1
 //#define __DATA_GUILD_WEEKLY_BONUS 1
 //#define __DATA_HALK 1
+//#define __DATA_HUNTING_INFO 1
 //#define __DATA_ITEMS 1
 //#define __DATA_ITEM_LISTS 1
 //#define __DATA_LEGEND_RASTA 1
@@ -29,9 +31,9 @@
 //#define __DATA_PART_BREAKS 1
 //#define __DATA_PLAYER_SOUNDS 1
 //#define __DATA_PLAYER_UNIQUE_PARAMS 1
+//#define __DATA_PUBLIC_BAR 1
 //#define __DATA_QUESTS 1
 //#define __DATA_RASTA_GUILD 1
-//#define __DATA_PUBLIC_BAR 1
 //#define __DATA_ROAD 1
 //#define __DATA_SEASONAL_EVENTS 1
 //#define __DATA_SECRET_BOOK 1

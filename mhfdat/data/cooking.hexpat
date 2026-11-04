@@ -74,3 +74,42 @@ struct CookedDish {
 };
 
 CookedDish cookedDishes[16] @ header.ptrs.cookedDishes [[name("Special Cooked Dishes")]];
+
+// =======================
+// Cooking recipes (header 0x568). cooking_recipe_find looks the 3 ingredients
+// up in rows 0-15 (any order) and returns 16 when none matches; rows 16-18 have
+// no ingredients. cooking_recipe_effects_get (row < 0x13) decodes the effects
+// shown as pCookingTexts "Health", "Stamina", Atk / Def Up / Down. The
+// ingredients are stored XOR 0xA55A and the effects with small offsets.
+// =======================
+
+struct CookingRecipe {
+    u8 nameGroup [[comment("pCaravanTextGroups group of the dish name")]];
+    u8 taste [[comment("pDishTasteTexts index")]];
+    u16 ingredients[3] [[comment("Item id XOR 0xA55A; 0xA55A: none")]];
+    s8 healthCode [[comment("Health = -7 - healthCode")]];
+    u8 staminaCode [[comment("Stamina = cookingStatTiers[(code ^ 5) & 0xF], negative when (code ^ 0xAF) & 0xF0")]];
+    s8 attackCode [[comment("Attack = attackCode + 3")]];
+    s8 defenseCode [[comment("Defense = defenseCode + 3")]];
+};
+
+CookingRecipe cookingRecipes[19] @ header.ptrs.cookingRecipes [[name("Cooking Recipes")]];
+
+// =======================
+// Cooking menu layout (header 0x58C), read by the dish order / result menus
+// (0x103E6500-0x103EA270). Entry 0 is the panel origin, entries 1 and 2 the y of
+// the two separator bars (cooking_menu_panel_draw), the others text positions
+// drawn by cooking_menu_text_draw (colour | 0xFF000000, font size).
+// =======================
+
+struct CookingMenuLayoutEntry {
+    s16 x;
+    padding[2];
+    s16 y;
+    padding[2];
+    u32 color;
+    u8 fontSize;
+    padding[7];
+};
+
+CookingMenuLayoutEntry cookingMenuLayout[22] @ header.ptrs.cookingMenuLayout [[name("Cooking Menu Layout")]];

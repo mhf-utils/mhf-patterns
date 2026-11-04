@@ -14,6 +14,7 @@
 //#define __DATA_EXTRA_COUNTERS 1
 //#define __DATA_GOOCOO 1
 //#define __DATA_GUILD_COOKING 1
+//#define __DATA_GUILD_WEEKLY_BONUS 1
 //#define __DATA_HALK 1
 //#define __DATA_ITEMS 1
 //#define __DATA_ITEM_LISTS 1
@@ -23,10 +24,10 @@
 //#define __DATA_MONSTERS 1
 //#define __DATA_MONSTER_SOUNDS 1
 //#define __DATA_MYTRA 1
-//#define __DATA_PLAYER_UNIQUE_PARAMS 1
 //#define __DATA_PARTNER 1
 //#define __DATA_PART_BREAKS 1
 //#define __DATA_PLAYER_SOUNDS 1
+//#define __DATA_PLAYER_UNIQUE_PARAMS 1
 //#define __DATA_QUESTS 1
 //#define __DATA_RASTA_GUILD 1
 //#define __DATA_ROAD 1
@@ -41,6 +42,7 @@
 //#define __DATA_SKILLS 1
 //#define __DATA_TOWER 1
 //#define __DATA_TRANSCEND 1
+//#define __DATA_TREASURE_CORP 1
 //#define __DATA_WEAPONS 1
 //#define __DATA_WEAPON_ACTIONS 1
 //#define __DATA_WEAPON_PARAMS 1

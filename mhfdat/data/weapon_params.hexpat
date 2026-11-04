@@ -363,6 +363,14 @@ float armorFlag10000StatusRate[6] @ header.ptrs.armorFlag10000StatusRate [[name(
 s32 armorFlag10000ElementPercent[6] @ header.ptrs.armorFlag10000ElementPercent [[name("Armor Flag 0x10000 Element Percent")]];
 s32 skillSlotId4ElementPercent[6] @ header.ptrs.skillSlotId4ElementPercent [[name("Skill Slot Id 4 Element Percent")]];
 
+// Attack added by the same armor piece counts (gou_armor_combo_attack_add,
+// player_recalc_attack_power_full / calculate_weapon_damage when the Gou combo
+// is on): header 0x5A8 by the G Armor fx piece count (armor flags 0x1, 0x80,
+// 0x4000, 0x8000) plus header 0x978 by the flag 0x10000 piece count + the
+// count of id 3 in the 15 skill context slots. Index 0 = no piece.
+u8 gArmorFxAttackAdd[8] @ header.ptrs.gArmorFxAttackAdd [[name("G Armor Fx Attack Add")]];
+u8 armorFlag10000AttackAdd[8] @ header.ptrs.armorFlag10000AttackAdd [[name("Armor Flag 0x10000 Attack Add")]];
+
 // =======================
 // Bowgun just reload and just shot (header 0x668 / 0x66C; the Wii U client
 // keeps them in code: GetJustReloadActionData, We01_GetJustShotInputData).

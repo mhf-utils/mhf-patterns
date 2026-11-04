@@ -332,7 +332,34 @@ struct ImportantNumbers {
     u16 numSigilCraftValueNamedSkills
         [[name("Number of Sigil Craft Value-Named Skills")]];
 
-    padding[0x2A];
+    padding[0x14];
+
+    // Offset 0x350: Treasure Corp (header 0x8D0-0x8EC)
+    u16 numTreasureCorpAreas
+        [[name("Number of Treasure Corp Areas")]];
+
+    u16 numTreasureCorpResultChances
+        [[name("Number of Treasure Corp Result Chances")]];
+
+    u16 numTreasureCorpDrawRulesKind2
+        [[name("Number of Treasure Corp Draw Rules Kind 2")]];
+
+    u16 numTreasureCorpDrawRulesKind01
+        [[name("Number of Treasure Corp Draw Rules Kind 0 and 1")]];
+
+    u16 numTreasureCorpListsA
+        [[name("Number of Treasure Corp Lists A")]];
+
+    u16 numTreasureCorpListsB
+        [[name("Number of Treasure Corp Lists B")]];
+
+    u16 numTreasureCorpListsC
+        [[name("Number of Treasure Corp Lists C")]];
+
+    u16 numTreasureCorpListsD
+        [[name("Number of Treasure Corp Lists D")]];
+
+    padding[0x6];
 
     // Offset 0x366: Shiten reward rows (header 0x900)
     u16 numShitenRewards

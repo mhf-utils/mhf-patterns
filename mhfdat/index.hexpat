@@ -39,10 +39,6 @@
 #include <mhfdat/data/crafting.hexpat>
 #endif
 
-#ifdef __DATA_EVOLUTION
-#include <mhfdat/data/evolution.hexpat>
-#endif
-
 #ifdef __DATA_DATA_COUNTERS
 #include <mhfdat/data/data_counters.hexpat>
 #endif
@@ -63,6 +59,10 @@
 #include <mhfdat/data/equipment_effects.hexpat>
 #endif
 
+#ifdef __DATA_EVOLUTION
+#include <mhfdat/data/evolution.hexpat>
+#endif
+
 #ifdef __DATA_EXTRA_COUNTERS
 #include <mhfdat/data/extra_counters.hexpat>
 #endif
@@ -73,6 +73,10 @@
 
 #ifdef __DATA_GUILD_COOKING
 #include <mhfdat/data/guild_cooking.hexpat>
+#endif
+
+#ifdef __DATA_GUILD_WEEKLY_BONUS
+#include <mhfdat/data/guild_weekly_bonus.hexpat>
 #endif
 
 #ifdef __DATA_HALK
@@ -111,10 +115,6 @@
 #include <mhfdat/data/mytra.hexpat>
 #endif
 
-#ifdef __DATA_PLAYER_UNIQUE_PARAMS
-#include <mhfdat/data/player_unique_params.hexpat>
-#endif
-
 #ifdef __DATA_PARTNER
 #include <mhfdat/data/partner.hexpat>
 #endif
@@ -125,6 +125,10 @@
 
 #ifdef __DATA_PLAYER_SOUNDS
 #include <mhfdat/data/player_sounds.hexpat>
+#endif
+
+#ifdef __DATA_PLAYER_UNIQUE_PARAMS
+#include <mhfdat/data/player_unique_params.hexpat>
 #endif
 
 #ifdef __DATA_QUESTS
@@ -185,6 +189,10 @@
 
 #ifdef __DATA_TRANSCEND
 #include <mhfdat/data/transcend.hexpat>
+#endif
+
+#ifdef __DATA_TREASURE_CORP
+#include <mhfdat/data/treasure_corp.hexpat>
 #endif
 
 #ifdef __DATA_WEAPONS

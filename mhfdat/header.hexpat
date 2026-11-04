@@ -398,7 +398,7 @@ struct ptr_table {
     ptr gArmorFxStatusRate [[name("G Armor Fx Status Rate Pointer")]]; // @ 0x59C, hd_dll_af66ac
     ptr gArmorFxElementPercent [[name("G Armor Fx Element Percent Pointer")]]; // @ 0x5A0, hd_dll_af66b2
     unk_ptr hd_dll_af66b8;
-    unk_ptr hd_dll_af66be;
+    ptr gArmorFxAttackAdd [[name("G Armor Fx Attack Add Pointer")]]; // @ 0x5A8, hd_dll_af66be
     unk_ptr hd_dll_af66c4;
     ptr hcKaiCritDamage [[name("HC Kai Critical Damage Pointer")]]; // @ 0x5B0, hd_dll_af66ca
     ptr hcKaiDefense [[name("HC Kai Defense Pointer")]]; // @ 0x5B4, hd_dll_af66d0
@@ -577,7 +577,7 @@ struct ptr_table {
     unk_ptr hd_dll_af7b2b;
     ptr partnerTeachFees [[name("Partner Teach Fees Pointer")]]; // @ 0x84C, hd_dll_af7b31
     unk_ptr hd_dll_af7b37;      // @ 0x850
-    unk_ptr hd_dll_af7b3d;
+    ptr partnerWeaponCategoryAttack [[name("Partner Weapon Category Attack Pointer")]]; // @ 0x854, hd_dll_af7b3d
     unk_ptr hd_dll_af7b43;
     ptr partnerSkillPointCaps [[name("Partner Skill Point Caps Pointer")]]; // @ 0x85C, hd_dll_af7b49
     ptr partnerSkillSlotCounts [[name("Partner Skill Slot Counts Pointer")]]; // @ 0x860, hd_dll_af7b4f
@@ -608,20 +608,20 @@ struct ptr_table {
     ptr assistanceTunables [[name("Assistance Tunables Pointer")]]; // @ 0x8C4, hd_dll_af7d67
     unk_ptr hd_dll_af7e55;
     unk_ptr hd_dll_af7e5b;
-    unk_ptr hd_dll_af7e79;      // @ 0x8D0
-    unk_ptr hd_dll_af7e7f;
-    unk_ptr hd_dll_af7e85;
-    unk_ptr hd_dll_af7e8b;
-    unk_ptr hd_dll_af7e91;      // @ 0x8E0
-    unk_ptr hd_dll_af7e97;
-    unk_ptr hd_dll_af7e9d;
-    unk_ptr hd_dll_af7ea3;
+    ptr treasureCorpAreas [[name("Treasure Corp Areas Pointer")]]; // @ 0x8D0, hd_dll_af7e79
+    ptr treasureCorpResultChances [[name("Treasure Corp Result Chances Pointer")]]; // @ 0x8D4, hd_dll_af7e7f
+    ptr treasureCorpDrawRulesKind2 [[name("Treasure Corp Draw Rules Kind 2 Pointer")]]; // @ 0x8D8, hd_dll_af7e85
+    ptr treasureCorpDrawRulesKind01 [[name("Treasure Corp Draw Rules Kind 0 and 1 Pointer")]]; // @ 0x8DC, hd_dll_af7e8b
+    ptr treasureCorpListsA [[name("Treasure Corp Lists A Pointer")]]; // @ 0x8E0, hd_dll_af7e91
+    ptr treasureCorpListsB [[name("Treasure Corp Lists B Pointer")]]; // @ 0x8E4, hd_dll_af7e97
+    ptr treasureCorpListsC [[name("Treasure Corp Lists C Pointer")]]; // @ 0x8E8, hd_dll_af7e9d
+    ptr treasureCorpListsD [[name("Treasure Corp Lists D Pointer")]]; // @ 0x8EC, hd_dll_af7ea3
     unk_ptr hd_dll_af7d73;      // @ 0x8F0
     unk_ptr hd_dll_af7d6d;
     padding[4];
     ptr monsterSoundTables [[name("Monster Sound Tables Pointer")]]; // @ 0x8FC, hd_dll_af530c
     ptr shitenRewards [[name("Shiten Rewards Pointer")]]; // @ 0x900, hd_dll_af8165
-    unk_ptr hd_dll_af8171;
+    ptr guildWeeklyBonusValues [[name("Guild Weekly Bonus Values Pointer")]]; // @ 0x904, hd_dll_af8171
     unk_ptr hd_dll_af5c6c;
     unk_ptr hd_dll_af8177;
     ptr extraCounters [[name("Extra Counters Pointer"), comment("u16 counts: +8 the Hunting Road skills")]]; // @ 0x910, hd_dll_af469d
@@ -631,7 +631,7 @@ struct ptr_table {
     unk_ptr hd_dll_af8183;      // @ 0x920
     unk_ptr hd_dll_af817d;
     ptr towerSkills [[name("Tower Skills Pointer")]]; // @ 0x928, hd_dll_af8189
-    unk_ptr hd_dll_af816b;
+    ptr partnerArmorCategoryDefense [[name("Partner Armor Category Defense Pointer")]]; // @ 0x92C, hd_dll_af816b
     ptr roadSkills [[name("Hunting Road Skills Pointer")]]; // @ 0x930, hd_dll_af82c4
     unk_ptr hd_dll_af82ca;
     ptr towerJewelRecipes [[name("Tower Jewel Recipes Pointer")]]; // @ 0x938, hd_dll_af82d0
@@ -653,7 +653,7 @@ struct ptr_table {
     ptr armorFlag10000StatusRate [[name("Armor Flag 0x10000 Status Rate Pointer")]]; // @ 0x96C, hd_dll_af835c
     ptr armorFlag10000ElementPercent [[name("Armor Flag 0x10000 Element Percent Pointer")]]; // @ 0x970, hd_dll_af8362
     ptr skillSlotId4ElementPercent [[name("Skill Slot Id 4 Element Percent Pointer")]]; // @ 0x974, hd_dll_af8368
-    unk_ptr hd_dll_af836e;
+    ptr armorFlag10000AttackAdd [[name("Armor Flag 0x10000 Attack Add Pointer")]]; // @ 0x978, hd_dll_af836e
     unk_ptr hd_dll_af8374;
     unk_ptr hd_dll_af837a;      // @ 0x980
     unk_ptr hd_dll_af8380;

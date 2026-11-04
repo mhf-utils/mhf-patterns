@@ -1,53 +1,44 @@
 #pragma once
 
-struct SharpnessPointers {
-  u32 great_sword;
-  u32 heavy_bowgun;
-  u32 hammer;
-  u32 lance;
-  u32 sword_and_shield;
-  u32 light_bowgun;
-  u32 dual_blades;
-  u32 long_sword;
-  u32 hunting_horn;
-  u32 gunlance;
-  u32 bow;
-  u32 tonfa;
-  u32 switch_axe;
-  u32 magnet_spike;
+#include <mhfdat/utils/index.pat>
+
+// =======================
+// Sharpness tables (header 0x0AC). One pointer per weapon class (player +0x03,
+// class order of className), several classes share a table. A melee weapon's
+// sharpnessId (weapon row +0x08) is its row in its class table; ex G weapons
+// and G50 / Tower weapons pick another row of the same table
+// (get_ex_g_weapon_sla_type, get_tower_g50_sharpness_id). Each value is where
+// a color ends: weapon_melee_sharpness_color_tier returns the first color whose
+// value is >= the current sharpness (signed compares). 128 rows per table: the
+// 8 distinct tables fill the block exactly on the EN, JP and rain files.
+// =======================
+
+struct SharpnessRow {
+  s16 Red     [[color("FF0000")]];
+  s16 Orange  [[color("FFA500")]];
+  s16 Yellow  [[color("FFFF00")]];
+  s16 Green   [[color("00FF00")]];
+  s16 Blue    [[color("0000FF")]];
+  s16 White   [[color("FFFFFF")]];
+  s16 Purple  [[color("800080")]];
+  s16 SkyBlue [[color("87CEEB")]];
 };
 
-struct SharpnessItem {
-  u16 Red     [[color("FF0000")]];
-  u16 Orange  [[color("FFA500")]];
-  u16 Yellow  [[color("FFFF00")]];
-  u16 Green   [[color("00FF00")]];
-  u16 Blue    [[color("0000FF")]];
-  u16 White   [[color("FFFFFF")]];
-  u16 Purple  [[color("800080")]];
-  u16 SkyBlue [[color("87CEEB")]];
+struct SharpnessTables {
+  SharpnessRow *greatSword[128]     : u32 [[name("Great Sword")]];
+  SharpnessRow *heavyBowgun[128]    : u32 [[name("Heavy Bowgun")]];
+  SharpnessRow *hammer[128]         : u32 [[name("Hammer")]];
+  SharpnessRow *lance[128]          : u32 [[name("Lance")]];
+  SharpnessRow *swordAndShield[128] : u32 [[name("Sword And Shield")]];
+  SharpnessRow *lightBowgun[128]    : u32 [[name("Light Bowgun")]];
+  SharpnessRow *dualBlades[128]     : u32 [[name("Dual Blades")]];
+  SharpnessRow *longSword[128]      : u32 [[name("Long Sword")]];
+  SharpnessRow *huntingHorn[128]    : u32 [[name("Hunting Horn")]];
+  SharpnessRow *gunlance[128]       : u32 [[name("Gunlance")]];
+  SharpnessRow *bow[128]            : u32 [[name("Bow")]];
+  SharpnessRow *tonfa[128]          : u32 [[name("Tonfa")]];
+  SharpnessRow *switchAxe[128]      : u32 [[name("Switch Axe")]];
+  SharpnessRow *magnetSpike[128]    : u32 [[name("Magnet Spike")]];
 };
 
-struct Sharpness {
-  SharpnessItem GreatSword     [128] @ 0x01902D00 [[name("Great Sword")]];
-  SharpnessItem HeavyBowgun    [128] @ 0x01902D00 [[name("Heavy Bowgun")]];
-  SharpnessItem Hammer         [128] @ 0x01902500 [[name("Hammer")]];
-  SharpnessItem Lance          [128] @ 0x01901D00 [[name("Lance")]];
-  SharpnessItem SwordAndShield [128] @ 0x01901500 [[name("Sword And Shield")]];
-  SharpnessItem LightBowgun    [128] @ 0x01902D00 [[name("Light Bowgun")]];
-  SharpnessItem DualBlades     [128] @ 0x01900D00 [[name("Dual Blades")]];
-  SharpnessItem LongSword      [128] @ 0x01902D00 [[name("Long Sword")]];
-  SharpnessItem HuntingHorn    [128] @ 0x01902500 [[name("Hunting Horn")]];
-  SharpnessItem Gunlance       [128] @ 0x01901D00 [[name("Gunlance")]];
-  SharpnessItem Bow            [128] @ 0x01902D00 [[name("Bow")]];
-  SharpnessItem Tonfa          [128] @ 0x01900500 [[name("Tonfa")]];
-  SharpnessItem SwitchAxe      [128] @ 0x018FFD00 [[name("Switch Axe")]];
-  SharpnessItem MagnetSpike    [128] @ 0x018FF500 [[name("Magnet Spike")]];
-};
-
-struct Sharpnesses {
-	SharpnessPointers sharpnessPointers @ 0x018FF4C0 [[name("Pointers")]];
-	Sharpness         data              @ 0x018FF4C0 [[name("Data")]];
-};
-
-Sharpnesses sharpnesses @ 0x01900000 [[name("Sharpnesses")]];
+SharpnessTables sharpnessTables @ header.ptrs.SharpnessIds [[name("Sharpness Tables")]];

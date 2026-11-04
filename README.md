@@ -43,6 +43,9 @@ mhfdat/
     ├── tower.hexpat      # Tower jewel recipes and upgrade costs, tower skills and support bonuses
     ├── shop_guild.hexpat # Shop catalogs and the Guild Shop
     ├── weapon_params.hexpat # Per-class weapon parameters, bullet sets, horn melodies, rapid fire, motion values, random weapon sharpness, reach bodies, gunner shot power, HC Kai bonuses, armor piece element / status rates, Dual Blades blade effects, bow model materials, just reload / shot, gunlance shells, weapon constants by weapon (0x660), Switch Axe F tunables (0xA88), Lance combo rules (0x654), weapon skill modifiers (0xA8C), evade actions (0x8C0), bowgun shot tables (0xA70)
+    ├── sharpness.hexpat  # Sharpness tables by weapon class (where each color ends)
+    ├── treasure_corp.hexpat # Treasure Corp areas, result chances and draw count rules (the items are in mhfgao)
+    ├── guild_weekly_bonus.hexpat # Guild weekly bonus values by level (attack, defense, Partnyaa stats, Treasure Corp)
     ├── evolution.hexpat  # Evolution weapons: weapon series lists, the 16 series level tables (Flash, Shine, Glory, Clear)
     ├── quests.hexpat     # HR, G-rank, Conquest and beginner quest lists, Guild Priority Requests, interception monster G stars
     ├── quest_rewards.hexpat # Quest reward slot chances, capture / break, Secret Book, Shiten and map bonus rewards

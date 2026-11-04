@@ -101,3 +101,33 @@ struct PartnerExtraSkill {
 };
 
 PartnerExtraSkill partnerExtraSkills[header.ptrs.partnerExtraSkillCount] @ header.ptrs.partnerExtraSkills [[name("Partner Extra Skills")]];
+
+// Partner attack (header 0x854, weapons) and defense (0x92C, armor) by the
+// equipped piece's category (partner_category_stat_get, first match in this
+// order: finess ext, Gou GR2, Gou GR3, exotique, Gou GR1, G-K, Gou HR2,
+// HcGousyu, G, exG, hc, evolution kind 1, G evolution kinds 2 / 3, zenith,
+// hcGousyu equip type, SP, else none). Added to the Partner level and class
+// mastery values (partner_attack_total / partner_defense_total).
+struct PartnerCategoryValues {
+    u16 none;
+    u16 sp;
+    u16 hcGousyuEquipType;
+    u16 evolution;
+    u16 hc;
+    u16 exG;
+    u16 gClass;
+    u16 hcGousyu;
+    u16 gouHR2;
+    u16 gClassK;
+    u16 gouGR1;
+    u16 gouGR2;
+    u16 finessExt;
+    u16 gouGR3;
+    u16 exotique;
+    u16 exotiqueRanked [[comment("get_ex_g_weapon_rank() != 0")]];
+    u16 gEvolution;
+    u16 zenith;
+};
+
+PartnerCategoryValues partnerWeaponCategoryAttack @ header.ptrs.partnerWeaponCategoryAttack [[name("Partner Weapon Category Attack")]];
+PartnerCategoryValues partnerArmorCategoryDefense @ header.ptrs.partnerArmorCategoryDefense [[name("Partner Armor Category Defense")]];

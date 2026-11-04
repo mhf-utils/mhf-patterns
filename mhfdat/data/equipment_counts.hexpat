@@ -65,7 +65,11 @@ struct ImportantNumbers {
     u16 numEvoRangedWeapons
         [[name("Number of Evolution Ranged Weapons")]];
 
-    padding[0x24];
+    padding[0x22];
+
+    // Offset 0xDA: inner body models (header 0x31C)
+    u16 numInners
+        [[name("Number of Inners")]];
 
     // Offset 0xDC: Partner faces (header 0x320)
     u16 numPartnerFaces

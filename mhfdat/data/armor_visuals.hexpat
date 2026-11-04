@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mhfdat/utils/index.pat>
+#include <mhfdat/data/equipment_counts.hexpat>
 
 // =======================
 // Armor model id limits (header 0x0E4): one row per gender (player +0x11: 0
@@ -15,7 +16,7 @@
 
 struct ArmorModelIdLimits {
     u16 leg;
-    u16 unk02 [[comment("Slot 1: not checked against the model id")]];
+    u16 face [[comment("Slot 1 (equips[1], the face): not checked against the model id; a preset face is random % face + 1")]];
     u16 head;
     u16 body;
     u16 arm;
@@ -33,3 +34,25 @@ struct ArmorColor {
 };
 
 ArmorColor armorColors[112] @ header.ptrs.armorColors [[name("Armor Colors")]];
+
+// Inner body models (header 0x31C): the body model shown under an empty leg,
+// body or arm slot. inner_body_model_get finds the row whose skin tone 0 model
+// is the resolved model id and returns the model of the player's inner
+// (+0xC4F), gender (+0x11) and skin tone (+0x710, from the face row of header
+// 0x320). One block per inner (important numbers + 0xDA).
+
+struct InnerBodyModelsGender {
+    u16 bySkinTone[4];
+};
+
+struct InnerBodyModelsPart {
+    InnerBodyModelsGender byGender[2];
+};
+
+struct InnerBodyModels {
+    InnerBodyModelsPart leg;
+    InnerBodyModelsPart body;
+    InnerBodyModelsPart arm;
+};
+
+InnerBodyModels innerBodyModels[importantNums.numInners] @ header.ptrs.innerBodyModels [[name("Inner Body Models")]];

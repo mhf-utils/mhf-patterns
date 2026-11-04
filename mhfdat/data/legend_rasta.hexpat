@@ -10,6 +10,8 @@
 */
 
 #include <std/core.pat>
+#include <std/mem.pat>
+#include <std/string.pat>
 #include <mhfdat/utils/index.pat>
 #include <mhfdat/data/equipment_counts.hexpat>
 
@@ -74,3 +76,32 @@ struct RastaItemSet {
 };
 
 RastaItemSet rastaItemSets[6] @ header.ptrs.rastaItemSets [[name("Rasta Item Sets")]];
+
+// =======================
+// Legend Rasta story episodes (header 0x884): the script file of each episode
+// (load/<name>) of the 14 Rasta stories, one 0-terminated list per story.
+// divaStory_load_rasta_story_script / lrastaStory_episode_count take list
+// id - 213 for story ids 213-223 (rows 0-10) and rows 11 / 12 / 13 for ids 35 /
+// 1 / 46 (those three also build the name load/%03d_%02d_%03d.bin).
+// =======================
+
+
+struct LegendRastaStoryScript {
+    std::string::NullString *name : u32;
+} [[inline]];
+
+struct LegendRastaStoryEpisodeList {
+    LegendRastaStoryScript scripts[while(std::mem::read_unsigned($, 4) != 0)];
+    u32 end;
+};
+
+struct LegendRastaStory {
+    LegendRastaStoryEpisodeList *episodes : u32;
+};
+
+struct LegendRastaStoryEpisodes {
+    LegendRastaStory stories[14];
+    u32 end;
+};
+
+LegendRastaStoryEpisodes legendRastaStoryEpisodes @ header.ptrs.legendRastaStoryEpisodes [[name("Legend Rasta Story Episodes")]];

@@ -49,7 +49,7 @@ mhfdat/
     ├── npc_sounds.hexpat # Town NPC motion sounds (sound events by NPC id and motion)
     ├── public_bar.hexpat # Public Bar recruit choices: HR Reqs, Targets (with unlock rules), Messages
     ├── hunting_info.hexpat # Hunting Info page items by area, season and time
-    ├── armor_visuals.hexpat # Armor model id limits by gender, armor colors
+    ├── armor_visuals.hexpat # Armor model id limits by gender, armor colors, inner body models
     ├── evolution.hexpat  # Evolution weapons: weapon series lists, the 16 series level tables (Flash, Shine, Glory, Clear)
     ├── quests.hexpat     # HR, G-rank, Conquest and beginner quest lists, Guild Priority Requests, interception monster G stars
     ├── quest_rewards.hexpat # Quest reward slot chances, capture / break, Secret Book, Shiten and map bonus rewards
@@ -59,7 +59,7 @@ mhfdat/
     ├── goocoo.hexpat     # Goocoo food, house-sitting, remodelling, exchange, pot
     ├── halk.hexpat       # Halk food
     ├── meowka_pot.hexpat # Garden Meowka Pot recipes
-    ├── legend_rasta.hexpat # Legend Rasta loadouts and groups, Rasta item sets
+    ├── legend_rasta.hexpat # Legend Rasta loadouts and groups, Rasta item sets, story episode scripts
     ├── partner.hexpat    # Partner creation, faces, skills and extra skills
     ├── secret_book.hexpat # Secret Book effects and SR levels
     ├── transcend.hexpat  # Transcend depths and quest clear gains

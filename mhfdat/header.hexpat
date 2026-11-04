@@ -233,7 +233,7 @@ struct ptr_table {
     unk_ptr hd_dll_af5c0c;      // @ 0x310
     unk_ptr hd_dll_af5c12;
     ptr secretBookEffects [[name("Secret Book Effects Pointer")]]; // @ 0x318
-    unk_ptr hd_dll_af5c18;
+    ptr innerBodyModels [[name("Inner Body Models Pointer")]]; // @ 0x31C, hd_dll_af5c18
     ptr partnerFaces [[name("Partner Faces Pointer")]]; // @ 0x320, hd_dll_af5c1e
     unk_ptr hd_dll_af5bd0;
     ptr secretBookRewardsHR [[name("Secret Book HR Rewards Pointer")]]; // @ 0x328, hd_dll_af5bd6
@@ -589,7 +589,7 @@ struct ptr_table {
     unk_ptr hd_dll_af7b91;
     unk_ptr hd_dll_af7be3;
     unk_ptr hd_dll_af7c0a;      // @ 0x880
-    unk_ptr hd_dll_af7c10;
+    ptr legendRastaStoryEpisodes [[name("Legend Rasta Story Episodes Pointer")]]; // @ 0x884, hd_dll_af7c10
     ptr Tonfa_Params_pointer [[name("Tonfa Params Pointer")]];
     ptr caravanCpRates [[name("Caravan CP Rates Pointer")]]; // @ 0x88C, hd_dll_af7c9c
     unk_ptr hd_dll_af7b5b;      // @ 0x890

@@ -244,7 +244,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 	};
 	num hd_dll_af52c6 @ (header.ptrs.important_nums + 0x4E);
 	struct_af52db hd_dll_af52db[hd_dll_af52c6 + 1] 
-		@ header.ptrs.recruitRankConditions;
+		@ header.ptrs.publicBarHrReqs;
 
 	// NOTE: Possibly incorrect, double check this
 	u16 hd_dll_af52ff[while(std::mem::read_signed($,2))] 

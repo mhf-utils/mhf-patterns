@@ -36,15 +36,15 @@ struct ImportantNumbers {
     u16 numTutorialEquipSets
         [[name("Number of Tutorial Equipment Sets")]];
 
-    // Offset 0x4A: party recruit filters (header 0x168, 0x1BC, 0x1C0)
-    u16 numRecruitGoals
-        [[name("Number of Recruit Goals")]];
+    // Offset 0x4A: Public Bar recruit HR Reqs / Messages / Targets (header 0x168, 0x1BC, 0x1C0)
+    u16 numPublicBarMessages
+        [[name("Number of Public Bar Messages")]];
 
-    u16 numRecruitQuestTypes
-        [[name("Number of Recruit Quest Types")]];
+    u16 numPublicBarTargets
+        [[name("Number of Public Bar Targets")]];
 
-    u16 numRecruitRankConditions
-        [[name("Number of Recruit Rank Conditions (the default row after them is not counted)")]];
+    u16 numPublicBarHrReqs
+        [[name("Number of Public Bar HR Reqs (the default row after them is not counted)")]];
 
     // Offset 0x50: garden Meowka Pot recipes (header 0x200)
     u16 numMeowkaPotRecipes

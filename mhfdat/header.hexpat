@@ -125,7 +125,7 @@ struct ptr_table {
     ptr machaPotRewards         [[name("Macha Pot Rewards Pointer")]];
 
     ptr machaPotItems [[name("Macha Pot Items Pointer")]]; // @ 0x164, hd_dll_af52c0
-    ptr recruitRankConditions [[name("Recruit Rank Conditions Pointer")]]; // @ 0x168, hd_dll_af52ba
+    ptr publicBarHrReqs [[name("Public Bar HR Reqs Pointer")]]; // @ 0x168, hd_dll_af52ba
     unk_ptr hd_dll_af52f3;
 
     padding[0x10];              // @ 0x170
@@ -145,14 +145,14 @@ struct ptr_table {
     unk_ptr hd_dll_af55d0;      // @ 0x1B0
     unk_ptr hd_dll_af5611;
     ptr beginnerQuests [[name("Beginner Quest IDs Pointer")]]; // @ 0x1B8, hd_dll_af5640
-    ptr recruitGoals [[name("Recruit Goals Pointer")]]; // @ 0x1BC, hd_dll_af5646
-    ptr recruitQuestTypes [[name("Recruit Quest Types Pointer")]]; // @ 0x1C0, hd_dll_af5661
+    ptr publicBarMessages [[name("Public Bar Messages Pointer")]]; // @ 0x1BC, hd_dll_af5646
+    ptr publicBarTargets [[name("Public Bar Targets Pointer")]]; // @ 0x1C0, hd_dll_af5661
     unk_ptr hd_dll_af567c;
     ptr gunnerShotPower [[name("Gunner Shot Power Pointer")]]; // @ 0x1C8, hd_dll_af57f2
     unk_ptr hd_dll_af583d;
     unk_ptr hd_dll_af5843;      // @ 0x1D0
     ptr mytraAdventures [[name("Mytra Adventure Dispatch Pointer")]]; // @ 0x1D4, hd_dll_af56ea
-    unk_ptr hd_dll_af56cc;
+    ptr mytraCatEquipment [[name("Mytra Cat Equipment Pointer")]]; // @ 0x1D8, hd_dll_af56cc
     ptr mytraShopStage0 [[name("Mytra Shop Stock Stage 0 Pointer")]]; // @ 0x1DC, hd_dll_af56d2
     ptr mytraShopStage2 [[name("Mytra Shop Stock Stage 2 Pointer")]]; // @ 0x1E0, hd_dll_af56d8
     ptr mytraShopStage3 [[name("Mytra Shop Stock Stage 3 Pointer")]]; // @ 0x1E4, hd_dll_af56de

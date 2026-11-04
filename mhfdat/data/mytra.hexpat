@@ -53,3 +53,22 @@ MytraCatMixRows mytraCatMixStage0 @ header.ptrs.mytraCatMixStage0 [[name("Mytra 
 MytraCatMixRows mytraCatMixStage2 @ header.ptrs.mytraCatMixStage2 [[name("Mytra Cat Mix (stage 2)")]];
 MytraCatMixRows mytraCatMixStage3 @ header.ptrs.mytraCatMixStage3 [[name("Mytra Cat Mix (stage 3)")]];
 MytraCatMixRows mytraCatMixStage3G @ header.ptrs.mytraCatMixStage3G [[name("Mytra Cat Mix (stage 3, GR 600+)")]];
+
+// =======================
+// Cat equipment shop (header 0x1D8, menu title mhfpac pManagerNames[0x284]
+// "Buy Cat Equipment"). Row n is named pManagerNames[0x346 + n] (row 0
+// "Nothing"); the shop lists rows 1-70 (fixed bound of the reader). A row is
+// listed when it is not the Felyne's current piece, the Mytra stage
+// (mytra +0xBA) is above requiredStage, and, for needsSaveFlag = -1, one of
+// the save bytes +0x23B58 + 0xA4..0xB1 has bit 0x80. Skill names are
+// pManagerNames[0x38E + skill] ("装備スキル一覧").
+// =======================
+
+struct MytraCatEquipment {
+    u16 price [[comment("Zenny; x DAT_117C9EC0 when DAT_1EE2768C is on")]];
+    u8 requiredStage;
+    s8 needsSaveFlag;
+    s16 skills[4] [[comment("-1: none")]];
+};
+
+MytraCatEquipment mytraCatEquipment[71] @ header.ptrs.mytraCatEquipment [[name("Mytra Cat Equipment")]];

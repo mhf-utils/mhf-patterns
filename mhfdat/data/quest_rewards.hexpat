@@ -215,3 +215,31 @@ struct MapBonusChances {
 };
 
 MapBonusChances mapBonusChances @ header.ptrs.mapBonusChances [[name("Map Bonus Chances")]];
+
+// Quest rare rewards (headers 0x7B4 / 0x7B8, quest_rare_reward_roll from
+// quest_generate_reward_item_list): for each finished large-monster target of
+// the quest (not in special, arcade, Road ... quests), a roll % 10000 below
+// the chance of 0x7B4 picks the rows of 0x7B8 for that monster whose rankBand
+// matches the quest (quest_rare_reward_rank_band_ok: 1-9 by G rank, HC and
+// HagiLv) and whose resultKind matches the target's result flags
+// (quest_rare_reward_result_ok: 1 flag 0x1, 2 0x201, 3 0x101, 4 0x8004; 0 never),
+// then gives one of the 3 items by weight.
+u16 questRareRewardChance @ header.ptrs.questRareRewardChance [[name("Quest Rare Reward Chance"), comment("Per 10000; the other 30 bytes of the slot are not read")]];
+
+struct QuestRareRewardItem {
+    u16 item [[format("getItemName")]];
+    u16 count;
+    u32 unk04;
+};
+
+struct QuestRareReward {
+    MonsterID monster;
+    padding[1];
+    u8 rankBand;
+    u8 resultKind;
+    QuestRareRewardItem items[3];
+    u8 weights[3];
+    padding[1];
+};
+
+QuestRareReward questRareRewards[importantNums.numQuestRareRewards] @ header.ptrs.questRareRewards [[name("Quest Rare Rewards")]];

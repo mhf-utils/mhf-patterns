@@ -273,3 +273,39 @@ ZenithRangedSigils zenithRangedSigils @ header.ptrs.zenithRangedSigils [[name("Z
 
 SigilSkill sigilCraftUniqueSkills[importantNums.numSigilCraftUniqueSkills] @ header.ptrs.sigilCraftUniqueSkills [[name("Sigil Craft Unique Skills")]];
 SigilSkill sigilCraftValueNamedSkills[importantNums.numSigilCraftValueNamedSkills] @ header.ptrs.sigilCraftValueNamedSkills [[name("Sigil Craft Value-Named Skills")]];
+
+// Sigil craft material catalog (header 0x634; header 0xB9C when the craft
+// type, work +0x6E24, is 2 / Zenith). The material screen of
+// sigil_craft_recipe_select_input lists the materials of a tab (tab 7 shows
+// all), counts the owned ones (pouch, box, storage, capped at 999, minus those
+// already placed) by category (DLL table 0x1192042C maps it to a display
+// group) and takes fillPercent as the share of a material that is not one of
+// the recipe's key materials (sigil_craft_material_fill_get).
+struct SigilCraftMaterial {
+    u16 item [[format("getItemName")]];
+    u8 category;
+    u8 tab [[comment("1-7")]];
+    u8 fillPercent;
+    padding[3];
+};
+
+SigilCraftMaterial sigilCraftMaterials[importantNums.numSigilCraftMaterials] @ header.ptrs.sigilCraftMaterials [[name("Sigil Craft Materials")]];
+SigilCraftMaterial sigilCraftMaterialsZenith[importantNums.numSigilCraftMaterialsZenith] @ header.ptrs.sigilCraftMaterialsZenith [[name("Sigil Craft Materials: Zenith")]];
+
+// Sigil class and icon by total budget (headers 0x630 / 0x638): the first
+// threshold >= sigil_calc_total_budget gives the class shown as
+// pDistortedWeaponTexts[1][index] (Hunter Sigil, Trial Sigil ... Extreme
+// Sigil; sigil_class_from_budget) and the icon drawn by the sigil screens.
+u8 sigilClassThresholds[importantNums.numSigilClassThresholds] @ header.ptrs.sigilClassThresholds [[name("Sigil Class Thresholds")]];
+u8 sigilIconThresholds[importantNums.numSigilIconThresholds] @ header.ptrs.sigilIconThresholds [[name("Sigil Icon Thresholds")]];
+
+// Header 0x890: sigil skills shown by their name alone when their value is
+// below 2 (FUN_101BFDD0; the others use pSkillValueFormats[2]); the sigil skill
+// merge (FUN_109999A0) also treats them apart (sigil_skill_is_listed_no_value
+// returns 0 for them). 0-terminated.
+struct SigilSkillsNoValueAtOne {
+    SigilSkill skills[while(std::mem::read_unsigned($, 2) != 0)];
+    u16 end;
+};
+
+SigilSkillsNoValueAtOne sigilSkillsNoValueAtOne @ header.ptrs.sigilSkillsNoValueAtOne [[name("Sigil Skills Without Value At 1")]];

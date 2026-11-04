@@ -24,7 +24,14 @@ struct ImportantNumbers {
     u16 numMonsterDesc
         [[name("Number of monster's dsecriptions")]];
 
-    padding[0x18];
+    padding[0x14];
+
+    // Offset 0x38: Instructor tutorial (header 0x1B0, 0x1B4)
+    u16 numTutorialLessons
+        [[name("Number of Tutorial Lessons")]];
+
+    u16 numTutorialLessonGroups
+        [[name("Number of Tutorial Lesson Groups")]];
 
     // Offset 0x3C: beginner quest ids (header 0x1B8)
     u16 numBeginnerQuests
@@ -228,7 +235,11 @@ struct ImportantNumbers {
     u16 numGoocooFarmTimerValues
         [[name("Number of Goocoo Farm Timer Values")]];
 
-    padding[0x1E];
+    padding[0x1C];
+
+    // Offset 0x1BE: entity motion sounds by entity kind (header 0x50C)
+    u16 numEntityMotionSounds
+        [[name("Number of Entity Motion Sound Rows")]];
 
     // Offset 0x1C0: Halk foods (header 0x510)
     u16 numHalkFoods
@@ -271,7 +282,20 @@ struct ImportantNumbers {
     u16 g50RangedWeaponUpgradesCounter
         [[name("g50 ranged weapon updrades counter")]];
 
-    padding[0x1C];
+    padding[0x12];
+
+    // Offset 0x240: sigil class / icon thresholds (header 0x630, 0x638)
+    u16 numSigilClassThresholds
+        [[name("Number of Sigil Class Thresholds")]];
+
+    // Offset 0x242: sigil craft material catalog (header 0x634)
+    u16 numSigilCraftMaterials
+        [[name("Number of Sigil Craft Materials")]];
+
+    u16 numSigilIconThresholds
+        [[name("Number of Sigil Icon Thresholds")]];
+
+    padding[0x4];
 
     // Offset 0x24A: Road floor milestones (header 0x64C)
     u16 numRoadMilestones
@@ -303,13 +327,23 @@ struct ImportantNumbers {
     u16 numGunlanceShells
         [[name("Number of Gunlance Shell Rows")]];
 
-    padding[0x6];
+    padding[0x4];
+
+    // Offset 0x262: carve kind chances by monster (header 0x6AC)
+    u16 numCarveKindChanceMonsters
+        [[name("Number of Carve Kind Chance Monsters")]];
 
     // Offset 0x264: Partner starter weapons (header 0x6B0)
     u16 numPartnerStarterWeapons
         [[name("Number of Partner Starter Weapons")]];
 
-    padding[0x2C];
+    padding[0x28];
+
+    // Offset 0x28E: weapon sound bank by weapon model (header 0x724)
+    u16 numWeaponModelSoundIds
+        [[name("Number of Weapon Model Sound Ids")]];
+
+    padding[0x2];
 
     // Offset 0x292: player unique parameters (header 0x72C, pl_get_unq_prm)
     u16 numPlayerUniqueParams
@@ -327,13 +361,21 @@ struct ImportantNumbers {
     u16 numNpcMotionSounds
         [[name("Number of NPC Motion Sound Rows")]];
 
-    padding[0x12];
+    padding[0x6];
+
+    // Offset 0x2D2: quest rare rewards by monster (header 0x7B8)
+    u16 numQuestRareRewards
+        [[name("Number of Quest Rare Rewards")]];
+
+    padding[0xA];
 
     // Offset 0x2DE: Diva Story gift liking (header 0x7D0): u16 values, so pairs = this / 2
     u16 numDivaStoryGiftLikingValues
         [[name("Number of Diva Story Gift Liking u16 Values")]];
 
-    padding[0x2];
+    // Offset 0x2E0: Hunting Medal milestones by monster (header 0x7D4)
+    u16 numHuntingMedalMonsters
+        [[name("Number of Hunting Medal Monsters")]];
 
     // Offset 0x2E2: Koryo amulets (header 0x7D8)
     u16 numKoryoAmulets
@@ -374,7 +416,11 @@ struct ImportantNumbers {
     u16 numSigilCraftValueNamedSkills
         [[name("Number of Sigil Craft Value-Named Skills")]];
 
-    padding[0x14];
+    padding[0x12];
+
+    // Offset 0x34E: companion stage points (header 0x8C8)
+    u16 numCompanionStagePoints
+        [[name("Number of Companion Stage Points")]];
 
     // Offset 0x350: Treasure Corp (header 0x8D0-0x8EC)
     u16 numTreasureCorpAreas
@@ -450,6 +496,12 @@ struct ImportantNumbers {
     // Offset 0x402: Shiten quest ids (header 0xB34)
     u16 numShitenQuests
         [[name("Number of Shiten Quests")]];
+
+    padding[0x18];
+
+    // Offset 0x41C: Zenith sigil craft material catalog (header 0xB9C)
+    u16 numSigilCraftMaterialsZenith
+        [[name("Number of Zenith Sigil Craft Materials")]];
 
 } [[name("Important Numbers")]];
 

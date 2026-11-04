@@ -14,12 +14,14 @@
 //#define __DATA_EQUIPMENTS 1
 //#define __DATA_EQUIPMENT_EFFECTS 1
 //#define __DATA_EXTRA_COUNTERS 1
+//#define __DATA_GATHERING 1
 //#define __DATA_GOOCOO 1
 //#define __DATA_GUILD_ADVENTURE 1
 //#define __DATA_GUILD_COOKING 1
 //#define __DATA_GUILD_WEEKLY_BONUS 1
 //#define __DATA_HALK 1
 //#define __DATA_HUNTING_INFO 1
+//#define __DATA_HUNTING_MEDALS 1
 //#define __DATA_ITEMS 1
 //#define __DATA_ITEM_LISTS 1
 //#define __DATA_LEGEND_RASTA 1
@@ -32,6 +34,7 @@
 //#define __DATA_NPC_SOUNDS 1
 //#define __DATA_PARTNER 1
 //#define __DATA_PART_BREAKS 1
+//#define __DATA_PLAYER_MOTION_EVENTS 1
 //#define __DATA_PLAYER_SOUNDS 1
 //#define __DATA_PLAYER_UNIQUE_PARAMS 1
 //#define __DATA_POOGIE 1
@@ -48,9 +51,11 @@
 //#define __DATA_SHOP_TOWER_MEDAL 1
 //#define __DATA_SIGILS 1
 //#define __DATA_SKILLS 1
+//#define __DATA_STAGE_OBJECTS 1
 //#define __DATA_TOWER 1
 //#define __DATA_TRANSCEND 1
 //#define __DATA_TREASURE_CORP 1
+//#define __DATA_TUTORIAL 1
 //#define __DATA_WEAPONS 1
 //#define __DATA_WEAPON_ACTIONS 1
 //#define __DATA_WEAPON_PARAMS 1

@@ -75,6 +75,10 @@
 #include <mhfdat/data/extra_counters.hexpat>
 #endif
 
+#ifdef __DATA_GATHERING
+#include <mhfdat/data/gathering.hexpat>
+#endif
+
 #ifdef __DATA_GOOCOO
 #include <mhfdat/data/goocoo.hexpat>
 #endif
@@ -97,6 +101,10 @@
 
 #ifdef __DATA_HUNTING_INFO
 #include <mhfdat/data/hunting_info.hexpat>
+#endif
+
+#ifdef __DATA_HUNTING_MEDALS
+#include <mhfdat/data/hunting_medals.hexpat>
 #endif
 
 #ifdef __DATA_ITEMS
@@ -145,6 +153,10 @@
 
 #ifdef __DATA_PART_BREAKS
 #include <mhfdat/data/part_breaks.hexpat>
+#endif
+
+#ifdef __DATA_PLAYER_MOTION_EVENTS
+#include <mhfdat/data/player_motion_events.hexpat>
 #endif
 
 #ifdef __DATA_PLAYER_SOUNDS
@@ -215,6 +227,10 @@
 #include <mhfdat/data/skills.hexpat>
 #endif
 
+#ifdef __DATA_STAGE_OBJECTS
+#include <mhfdat/data/stage_objects.hexpat>
+#endif
+
 #ifdef __DATA_TOWER
 #include <mhfdat/data/tower.hexpat>
 #endif
@@ -225,6 +241,10 @@
 
 #ifdef __DATA_TREASURE_CORP
 #include <mhfdat/data/treasure_corp.hexpat>
+#endif
+
+#ifdef __DATA_TUTORIAL
+#include <mhfdat/data/tutorial.hexpat>
 #endif
 
 #ifdef __DATA_WEAPONS

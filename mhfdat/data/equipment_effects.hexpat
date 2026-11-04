@@ -276,3 +276,46 @@ struct ModelEffect {
 ModelEffect modelEffects[(nextTable(header.ptrs.modelEffects) - header.ptrs.modelEffects) / 0xB4]
     @ header.ptrs.modelEffects
     [[name("Model Effects")]];
+
+/**
+	Equipment model effects (headers 0xADC / 0xAD8): 10 lists of {model id,
+	effect row}, sorted by model id at load (rd_mhfdat) and searched by
+	equip_model_effect_row_find. List 4 + gender is read with the body model
+	(entity +0x398), 6 + gender with the waist model (+0x39C), 8 with the weapon
+	model; lists 0-3 and 9 have no reader found. An effect row of 0xAD8 holds 4
+	{effect, param}; effect indexes DLL table 0x118DEA08 (0x14-byte rows; above
+	0x70 ends the row) whose kind picks a handler of 0x118DF2DC. 110 rows on
+	the EN / JP files (the highest index used is 109).
+*/
+
+struct EquipModelEffectKey {
+    u16 model;
+    u16 effectRow;
+};
+
+struct EquipModelEffectList {
+    u32 count;
+    EquipModelEffectKey *keys[count] : u32;
+};
+
+struct EquipModelEffectLists {
+    EquipModelEffectList unk0[4];
+    EquipModelEffectList bodyMale;
+    EquipModelEffectList bodyFemale;
+    EquipModelEffectList waistMale;
+    EquipModelEffectList waistFemale;
+    EquipModelEffectList weapon;
+    EquipModelEffectList unk9;
+};
+
+struct EquipModelEffect {
+    s16 effect;
+    u16 param;
+};
+
+struct EquipModelEffectRow {
+    EquipModelEffect effects[4];
+};
+
+EquipModelEffectLists equipModelEffectLists @ header.ptrs.equipModelEffectLists [[name("Equip Model Effect Lists")]];
+EquipModelEffectRow equipModelEffectRows[110] @ header.ptrs.equipModelEffectRows [[name("Equip Model Effect Rows")]];

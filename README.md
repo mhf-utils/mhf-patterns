@@ -35,8 +35,8 @@ mhfdat/
     ├── monsters.hexpat   # Monster crowns and descriptions
     ├── items.hexpat
     ├── equipments.hexpat
-    ├── part_breaks.hexpat # Part break and carve drops, Macha Pot rewards
-    ├── sigils.hexpat     # Random sigils
+    ├── part_breaks.hexpat # Part break and carve drops, Macha Pot rewards, carve kind chances
+    ├── sigils.hexpat     # Random sigils, sigil craft material catalog, sigil class / icon thresholds, name-only skills
     ├── skills.hexpat     # Skill tree, skill effects, Vampirism, Crit Conversion, Rush, Obscurity, Furious, zenith Up skill values, Soul values, Thunder Clad, Status Pursuit, Drawing Arts, Magnet Spike tunables (0xB90)
     ├── caravan.hexpat    # Voyage and ranking routes, levels, gem skills and tiers, CP rates, part break CP, ranking CP rolls
     ├── road.hexpat       # Hunting Road monster points, skills and floor milestones
@@ -46,7 +46,7 @@ mhfdat/
     ├── sharpness.hexpat  # Sharpness tables by weapon class (where each color ends)
     ├── treasure_corp.hexpat # Treasure Corp areas, result chances and draw count rules (the items are in mhfgao)
     ├── guild_weekly_bonus.hexpat # Guild weekly bonus values by level (attack, defense, Partnyaa stats, Treasure Corp)
-    ├── npc_sounds.hexpat # Town NPC motion sounds (sound events by NPC id and motion)
+    ├── npc_sounds.hexpat # Town NPC motion sounds (sound events by NPC id and motion), entity motion sounds by entity kind
     ├── public_bar.hexpat # Public Bar recruit choices: HR Reqs, Targets (with unlock rules), Messages
     ├── hunting_info.hexpat # Hunting Info page items by area, season and time
     ├── armor_visuals.hexpat # Armor model id limits by gender, armor colors, inner body models
@@ -54,9 +54,14 @@ mhfdat/
     ├── diva_story.hexpat # Diva Story gift liking by item
     ├── my_house.hexpat   # My House renovation themes
     ├── poogie.hexpat     # Poogie costumes that take Skill Cuffs
+    ├── player_motion_events.hexpat # Player motion events (effects and state changes by motion frame)
+    ├── stage_objects.hexpat # Stage objects placed at quest start: index, points, weighted picks; companion stage points
+    ├── tutorial.hexpat   # Instructor tutorial lessons and lesson groups
+    ├── gathering.hexpat  # G-rank gathering item overrides by quest star
+    ├── hunting_medals.hexpat # Hunting Medal milestones by monster hunt count
     ├── evolution.hexpat  # Evolution weapons: weapon series lists, the 16 series level tables (Flash, Shine, Glory, Clear)
     ├── quests.hexpat     # HR, G-rank, Conquest and beginner quest lists, Guild Priority Requests, interception monster G stars, Zenith quest counter monsters, G quest party size rates
-    ├── quest_rewards.hexpat # Quest reward slot chances, capture / break, Secret Book, Shiten and map bonus rewards
+    ├── quest_rewards.hexpat # Quest reward slot chances, capture / break, Secret Book, Shiten and map bonus rewards, rare monster rewards
     ├── clan.hexpat       # Clan mission targets and roll weights
     ├── cooking.hexpat    # Kitchen meal ingredients, stat tiers, special dishes, recipes, menu layout
     ├── guild_cooking.hexpat # Guild cooking recipes, ingredients, skill pools
@@ -70,9 +75,9 @@ mhfdat/
     ├── combine.hexpat    # Item combining: pair and triple recipes
     ├── monster_sounds.hexpat # Monster motion sound tables (HD reads them here, not in mhfemd)
     ├── weapon_actions.hexpat # Weapon action scripts: steps, cancels, events
-    ├── equipment_effects.hexpat # Weapon and armor visual effects (sets and rows)
+    ├── equipment_effects.hexpat # Weapon and armor visual effects (sets and rows), equipment model effect lists
     ├── mytra.hexpat      # Mytra Adventure Dispatch, shop stock and cat mixes, cat equipment shop
-    ├── player_sounds.hexpat # Player motion sound banks, sound distance types and curves (0x540-0x548)
+    ├── player_sounds.hexpat # Player motion sound banks, sound distance types and curves (0x540-0x548), weapon sound banks by model
     ├── item_lists.hexpat # Protected items and box search filters
     ├── player_unique_params.hexpat # Player unique parameters (pl_get_unq_prm): tuning rows by mechanic (Vigorous, evade frames, Bomber...)
     ├── rasta_guild.hexpat # Rasta hunt orders, Loyalty and Cred costs and level tables

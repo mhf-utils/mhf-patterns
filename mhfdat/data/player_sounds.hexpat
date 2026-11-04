@@ -75,3 +75,15 @@ struct SoundCurve2 {
 SoundType soundTypes[112] @ header.ptrs.soundTypes [[name("Sound Types")]];
 SoundVolumeCurve soundVolumeCurves[139] @ header.ptrs.soundVolumeCurves [[name("Sound Volume Curves")]];
 SoundCurve2 soundCurves2[importantNums.numSoundCurves2] @ header.ptrs.soundCurves2 [[name("Sound Curves 2")]];
+
+/**
+	Weapon sound banks (header 0x724): the sound bank of each weapon model,
+	loaded as sound/o_we%04d.snd (weapon_model_sound_id_get, FUN_10B482C0;
+	mhfgao pWeaponSoundIds is the Partnyaa copy). -1: the default bank of the
+	weapon class (DLL table 0x11A422A8). player_motion_weapon_sound_cases
+	tests banks 0x1114, 0x112D and 0x11A5 against motion ids for extra sounds.
+	The count is important numbers + 0x28E (7001 on the 3 files, then 2
+	padding bytes).
+*/
+
+s16 weaponModelSoundIds[importantNums.numWeaponModelSoundIds] @ header.ptrs.weaponModelSoundIds [[name("Weapon Model Sound Ids")]];

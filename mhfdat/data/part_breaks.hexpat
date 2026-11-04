@@ -75,3 +75,34 @@ struct HC_Carve {
 };
 
 HC_Carve HCCarves[while(std::mem::read_signed($,2)!=-1)] @ header.ptrs.carveHCItemDrops;
+
+// Carve kind chances (header 0x6AC): per monster and rank, the percent
+// chance of each carve reward kind (carve_kind_roll). The block is picked by
+// HR, Secret Book rank (SbGetRank), G rank or G Secret Book rank (GsbGetRank);
+// in it the entry whose range holds the rank (from minRank to the next
+// entry's minRank - 1, the last range ending at the 999 entry). The rolled
+// kind goes to carve_roll_item_by_rank: 0 / 1 / 2 / 6 carve_roll_item slots
+// 0 / 1 / 3 / 7, 3-5 the HC drops (carveHCItemDrops), 7 the G HC
+// drops, 8 FUN_105DA140; for a locked Zenith (road_spawn_is_locked_zenith)
+// kind 8 is skipped and its chance added to kind 2. All chances 0: the
+// default reward (FUN_105D9E30).
+struct CarveKindEntry {
+    u16 minRank;
+    u16 unk02;
+    u8 chances[16] [[comment("Percent by carve kind")]];
+};
+
+struct CarveKindBlock {
+    CarveKindEntry entries[8];
+};
+
+struct CarveKindChances {
+    MonsterID monster;
+    padding[3];
+    CarveKindBlock hr;
+    CarveKindBlock secretBook;
+    CarveKindBlock gRank;
+    CarveKindBlock gSecretBook;
+};
+
+CarveKindChances carveKindChances[importantNums.numCarveKindChanceMonsters] @ header.ptrs.carveKindChances [[name("Carve Kind Chances")]];

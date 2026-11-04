@@ -47,6 +47,7 @@ mhfdat/
     ├── treasure_corp.hexpat # Treasure Corp areas, result chances and draw count rules (the items are in mhfgao)
     ├── guild_weekly_bonus.hexpat # Guild weekly bonus values by level (attack, defense, Partnyaa stats, Treasure Corp)
     ├── npc_sounds.hexpat # Town NPC motion sounds (sound events by NPC id and motion)
+    ├── recruit_filters.hexpat # Party recruit filters: rank conditions, goals, quest types
     ├── evolution.hexpat  # Evolution weapons: weapon series lists, the 16 series level tables (Flash, Shine, Glory, Clear)
     ├── quests.hexpat     # HR, G-rank, Conquest and beginner quest lists, Guild Priority Requests, interception monster G stars
     ├── quest_rewards.hexpat # Quest reward slot chances, capture / break, Secret Book, Shiten and map bonus rewards

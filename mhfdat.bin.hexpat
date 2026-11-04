@@ -31,6 +31,7 @@
 //#define __DATA_PLAYER_UNIQUE_PARAMS 1
 //#define __DATA_QUESTS 1
 //#define __DATA_RASTA_GUILD 1
+//#define __DATA_RECRUIT_FILTERS 1
 //#define __DATA_ROAD 1
 //#define __DATA_SEASONAL_EVENTS 1
 //#define __DATA_SECRET_BOOK 1

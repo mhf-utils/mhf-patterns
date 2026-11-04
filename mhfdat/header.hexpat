@@ -125,7 +125,7 @@ struct ptr_table {
     ptr machaPotRewards         [[name("Macha Pot Rewards Pointer")]];
 
     ptr machaPotItems [[name("Macha Pot Items Pointer")]]; // @ 0x164, hd_dll_af52c0
-    unk_ptr hd_dll_af52ba;
+    ptr recruitRankConditions [[name("Recruit Rank Conditions Pointer")]]; // @ 0x168, hd_dll_af52ba
     unk_ptr hd_dll_af52f3;
 
     padding[0x10];              // @ 0x170
@@ -145,8 +145,8 @@ struct ptr_table {
     unk_ptr hd_dll_af55d0;      // @ 0x1B0
     unk_ptr hd_dll_af5611;
     ptr beginnerQuests [[name("Beginner Quest IDs Pointer")]]; // @ 0x1B8, hd_dll_af5640
-    unk_ptr hd_dll_af5646;
-    unk_ptr hd_dll_af5661;      // @ 0x1C0
+    ptr recruitGoals [[name("Recruit Goals Pointer")]]; // @ 0x1BC, hd_dll_af5646
+    ptr recruitQuestTypes [[name("Recruit Quest Types Pointer")]]; // @ 0x1C0, hd_dll_af5661
     unk_ptr hd_dll_af567c;
     ptr gunnerShotPower [[name("Gunner Shot Power Pointer")]]; // @ 0x1C8, hd_dll_af57f2
     unk_ptr hd_dll_af583d;

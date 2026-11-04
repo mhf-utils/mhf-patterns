@@ -147,6 +147,10 @@
 #include <mhfdat/data/rasta_guild.hexpat>
 #endif
 
+#ifdef __DATA_RECRUIT_FILTERS
+#include <mhfdat/data/recruit_filters.hexpat>
+#endif
+
 #ifdef __DATA_ROAD
 #include <mhfdat/data/road.hexpat>
 #endif

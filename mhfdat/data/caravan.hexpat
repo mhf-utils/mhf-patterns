@@ -156,3 +156,48 @@ struct CaravanTier {
 CaravanTier caravanTiers[importantNums.numHunterPearlSkillLists + 1]
     @ header.ptrs.caravanTiers
     [[name("Caravan Tiers")]];
+
+// =======================
+// Caravan CP. 0x88C: percents read by caravan_cp_rate_get (index <= 9); index 6
+// is the finess ext weapon CP percent (caravan_grant_item_cp and the other CP
+// grants), indexes 5, 7, 8 scale CP in the lobby caravan menus and quest results.
+// 0x8F8 / 0x8F0: CP for each new part break of a monster in a G caravan quest
+// (caravan_part_break_cp_grant): caravanPartBreakCp[monster id] row [ranking
+// group] [part], x caravanPartBreakCountRates[parts broken so far] / 100.
+// 0x8F4: in a ranking quest the base 500 CP is x percent / 100, percent picked
+// by weight (caravan_ranking_cp_roll).
+// =======================
+
+struct CaravanCpRates {
+    u16 unk00[5];
+    u16 unk0A [[comment("Index 5")]];
+    u16 finessExtCpRate [[comment("Index 6, percent")]];
+    u16 unk0E [[comment("Index 7")]];
+    u16 unk10 [[comment("Index 8")]];
+    u16 unk12;
+};
+
+CaravanCpRates caravanCpRates @ header.ptrs.caravanCpRates [[name("Caravan CP Rates")]];
+
+u16 caravanPartBreakCountRates[importantNums.numCaravanPartBreakCountRates] @ header.ptrs.caravanPartBreakCountRates [[name("Caravan Part Break Count Rates")]];
+
+struct CaravanRankingCpRoll {
+    u16 percent;
+    u16 weight;
+};
+
+CaravanRankingCpRoll caravanRankingCpRolls[importantNums.numCaravanRankingCpRolls] @ header.ptrs.caravanRankingCpRolls [[name("Caravan Ranking CP Rolls")]];
+
+struct CaravanPartBreakCpGroup {
+    u16 byPart[12];
+};
+
+struct CaravanPartBreakCpTable {
+    CaravanPartBreakCpGroup byRankingGroup[11];
+};
+
+struct CaravanPartBreakCpMonster {
+    CaravanPartBreakCpTable *table : u32;
+};
+
+CaravanPartBreakCpMonster caravanPartBreakCp[importantNums.numCaravanPartBreakCpMonsters] @ header.ptrs.caravanPartBreakCp [[name("Caravan Part Break CP")]];

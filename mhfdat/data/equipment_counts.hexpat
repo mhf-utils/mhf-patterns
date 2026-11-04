@@ -365,7 +365,15 @@ struct ImportantNumbers {
     u16 numTreasureCorpListsD
         [[name("Number of Treasure Corp Lists D")]];
 
-    padding[0x6];
+    // Offset 0x360: caravan CP (header 0x8F0-0x8F8)
+    u16 numCaravanPartBreakCountRates
+        [[name("Number of Caravan Part Break Count Rates")]];
+
+    u16 numCaravanRankingCpRolls
+        [[name("Number of Caravan Ranking CP Rolls")]];
+
+    u16 numCaravanPartBreakCpMonsters
+        [[name("Number of Caravan Part Break CP Monsters")]];
 
     // Offset 0x366: Shiten reward rows (header 0x900)
     u16 numShitenRewards

@@ -591,7 +591,7 @@ struct ptr_table {
     unk_ptr hd_dll_af7c0a;      // @ 0x880
     unk_ptr hd_dll_af7c10;
     ptr Tonfa_Params_pointer [[name("Tonfa Params Pointer")]];
-    unk_ptr hd_dll_af7c9c;
+    ptr caravanCpRates [[name("Caravan CP Rates Pointer")]]; // @ 0x88C, hd_dll_af7c9c
     unk_ptr hd_dll_af7b5b;      // @ 0x890
     ptr sigilCraftUniqueSkills [[name("Sigil Craft Unique Skills Pointer")]]; // @ 0x894, hd_dll_af7b61
     ptr sigilCraftValueNamedSkills [[name("Sigil Craft Value-Named Skills Pointer")]]; // @ 0x898, hd_dll_af7b67
@@ -616,9 +616,9 @@ struct ptr_table {
     ptr treasureCorpListsB [[name("Treasure Corp Lists B Pointer")]]; // @ 0x8E4, hd_dll_af7e97
     ptr treasureCorpListsC [[name("Treasure Corp Lists C Pointer")]]; // @ 0x8E8, hd_dll_af7e9d
     ptr treasureCorpListsD [[name("Treasure Corp Lists D Pointer")]]; // @ 0x8EC, hd_dll_af7ea3
-    unk_ptr hd_dll_af7d73;      // @ 0x8F0
-    unk_ptr hd_dll_af7d6d;
-    padding[4];
+    ptr caravanPartBreakCountRates [[name("Caravan Part Break Count Rates Pointer")]]; // @ 0x8F0, hd_dll_af7d73
+    ptr caravanRankingCpRolls [[name("Caravan Ranking CP Rolls Pointer")]]; // @ 0x8F4, hd_dll_af7d6d
+    ptr caravanPartBreakCp [[name("Caravan Part Break CP Pointer")]]; // @ 0x8F8
     ptr monsterSoundTables [[name("Monster Sound Tables Pointer")]]; // @ 0x8FC, hd_dll_af530c
     ptr shitenRewards [[name("Shiten Rewards Pointer")]]; // @ 0x900, hd_dll_af8165
     ptr guildWeeklyBonusValues [[name("Guild Weekly Bonus Values Pointer")]]; // @ 0x904, hd_dll_af8171

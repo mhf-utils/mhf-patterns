@@ -38,7 +38,7 @@ mhfdat/
     ├── part_breaks.hexpat # Part break and carve drops, Macha Pot rewards
     ├── sigils.hexpat     # Random sigils
     ├── skills.hexpat     # Skill tree, skill effects, Vampirism, Crit Conversion, Rush, Obscurity, Furious, zenith Up skill values, Soul values, Thunder Clad, Status Pursuit, Drawing Arts, Magnet Spike tunables (0xB90)
-    ├── caravan.hexpat    # Voyage and ranking routes, levels, gem skills and tiers
+    ├── caravan.hexpat    # Voyage and ranking routes, levels, gem skills and tiers, CP rates, part break CP, ranking CP rolls
     ├── road.hexpat       # Hunting Road monster points, skills and floor milestones
     ├── tower.hexpat      # Tower jewel recipes and upgrade costs, tower skills and support bonuses
     ├── shop_guild.hexpat # Shop catalogs and the Guild Shop

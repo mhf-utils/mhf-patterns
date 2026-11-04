@@ -5,7 +5,7 @@
 	exchange and the Goocoo Pot. Header 0x404 to 0x4C4, one count per table at
 	important numbers + 0x146 to + 0x1A0, in header order. Only the tables the
 	client code reads are shown; the others (header 0x438, 0x474, 0x480 to
-	0x490, 0x4A0 to 0x4B8, 0x4C4) are not.
+	0x490, 0x4A0 to 0x4B8) are not.
 
 	House-sitting roll, in order: the mood item (0x434); the grade, from the
 	trust plus the personality (0x418, by activity) and mood (0x41C)
@@ -15,6 +15,7 @@
 	unlocked band and the rolled rarity (item 8 when none has).
 */
 
+#include <std/string.pat>
 #include <std/core.pat>
 #include <std/mem.pat>
 #include <misc/s32p.pat>
@@ -205,3 +206,29 @@ struct GoocooPotMaterial {
 
 GoocooPotMaterial goocooPotMaterials[importantNums.numGoocooPotMaterials] @ header.ptrs.goocooPotMaterials [[name("Goocoo Pot Materials")]];
 ItemId goocooPotSoups[3] @ header.ptrs.goocooPotSoups [[name("Goocoo Pot Soups"), comment("Thin, Tasty and Rich Gook Soup; the rest of the table is not mapped")]];
+
+// Clothing series names (header 0x400): name 0 then one per clothing series
+// (important numbers + 0x18E, numGoocooClothesCosts). The Goocoo clothing menu (FUN_1064C500) lists
+// name 0 when FUN_1078FA10(0) (a bit of DLL table 0x118E19AC for the farm
+// stage) is set and name i when bit i - 1 of save +0x1FE5C is set, 10 per page.
+struct GoocooClothingSeriesName {
+    std::string::NullString *name : u32;
+} [[inline]];
+
+GoocooClothingSeriesName goocooClothingSeriesNames[importantNums.numGoocooClothesCosts + 1] @ header.ptrs.goocooClothingSeriesNames [[name("Goocoo Clothing Series Names")]];
+
+// Goocoo farm timers (header 0x4C4, important numbers + 0x1A0 u32 values),
+// read by goocoo_farm_timers_update and initialize_npc_data: 4 timers (npc
+// +0x4E8) start at random % interval and fire every interval seconds; each
+// firing raises its counter (npc +0x508..+0x50B) up to counterCap. While a
+// counter is above 0 and its flag (npc +0x4C0..+0x4CC) is set, one is spent to
+// place an object (FUN_1078DD70) with that timer's slot value (stored at npc
+// +0x49C; the values look like colours with alpha 0xFF).
+struct GoocooFarmTimers {
+    u32 interval [[comment("Seconds")]];
+    u32 counterCap;
+    u32 slotValues[4] [[comment("One per timer 0-3")]];
+    u32 unk18;
+};
+
+GoocooFarmTimers goocooFarmTimers @ header.ptrs.goocooFarmTimers [[name("Goocoo Farm Timers")]];

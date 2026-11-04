@@ -102,7 +102,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 
 	struct_af4c11 hd_dll_af4c11[0xE] @ header.ptrs.shopCatalogs
 		[[name("Equipment Description Pointers")]];
-	ptr hd_dll_af4c01[0xE] @ header.ptrs.hd_dll_af4bfb;
+	ptr hd_dll_af4c01[0xE] @ header.ptrs.shopCatalogPageLengths;
 	// [mhfo-hd.dll + 0xaf4ce0]
 
 	struct struct_af4ce0 {

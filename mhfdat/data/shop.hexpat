@@ -27,6 +27,29 @@ struct SpecialShopHeader {
 
 SpecialShopHeader sShopHeader @ header.ptrs.specialShops;
 
+// Header 0x19C and 0x198 point into the same block (+0x4 and +0x18): the
+// NPC shop menu (FUN_104029C0) takes the stock of shop type 1-4 from 0x19C
+// (Hunter Festival, N Cafe, special items or their SR version by
+// FUN_10B386F0, GCP exchange) and the dojo shop (FUN_1072AAF0) from 0x198.
+// The lists themselves are read through sShopHeader below.
+struct SpecialShopsNpcView {
+    ptr ptFestiShop;
+    ptr ptNCafe;
+    ptr ptSpecialItemShop;
+    ptr ptSpecialItemShopSR1;
+    ptr ptGCPExchange;
+};
+
+struct SpecialShopsDojoView {
+    ptr ptDojoGeneral [[comment("Save byte +0x1FA4D < 2")]];
+    ptr ptDojoHR5 [[comment("Save byte +0x1FA4D >= 2")]];
+    ptr ptDojoDoneComps;
+    ptr unk[3] [[comment("Picked by FUN_1072AA70 / quest_flag_condition_special instead of the three above")]];
+};
+
+SpecialShopsNpcView specialShopsNpcView @ header.ptrs.specialShopsNpcView [[name("Special Shops NPC View")]];
+SpecialShopsDojoView specialShopsDojoView @ header.ptrs.specialShopsDojoView [[name("Special Shops Dojo View")]];
+
 // the road shop
 struct RoadShopItem {
 	u16 id [[format("getItemName")]];

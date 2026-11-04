@@ -72,7 +72,7 @@ struct ptr_table {
     ptr rapidFireWeapons [[name("Rapid Fire Weapons Pointer")]]; // @ 0x0C0, hd_dll_af508b
     unk_ptr hd_dll_af4bc6;
     ptr shopCatalogs [[name("Shop Catalogs Pointer"), comment("14 records of 3 list pointers and a count; record 7 is the Guild Shop (shop_guild.hexpat)")]]; // @ 0x0C8, hd_dll_af4bf5
-    unk_ptr hd_dll_af4bfb;
+    ptr shopCatalogPageLengths [[name("Shop Catalog Page Lengths Pointer")]]; // @ 0x0CC, hd_dll_af4bfb
     ptr wswordEfts [[name("Dual Blades Blade Effects Pointer")]]; // @ 0x0D0, hd_dll_af4cd1
     ptr wswordEftReachScale [[name("Dual Blades Effect Reach Scale Pointer")]]; // @ 0x0D4, hd_dll_af4cd7
     ptr weaponReachBodies [[name("Weapon Reach Bodies Pointer")]]; // @ 0x0D8, hd_dll_af4cc5
@@ -136,8 +136,8 @@ struct ptr_table {
     ptr cookingCategoryStats [[name("Cooking Category Stats Pointer")]]; // @ 0x18C, hd_dll_af5421
     ptr cookingStatTiers [[name("Cooking Stat Tiers Pointer")]]; // @ 0x190, hd_dll_af5427
     ptr huntingInfoItems [[name("Hunting Info Items Pointer")]]; // @ 0x194, hd_dll_af542d
-    unk_ptr hd_dll_af5455;
-    unk_ptr hd_dll_af5491;
+    ptr specialShopsDojoView [[name("Special Shops Dojo View Pointer")]]; // @ 0x198, hd_dll_af5455
+    ptr specialShopsNpcView [[name("Special Shops NPC View Pointer")]]; // @ 0x19C, hd_dll_af5491
     unk_ptr hd_dll_af54d3;      // @ 0x1A0
     unk_ptr hd_dll_af5542;
     unk_ptr hd_dll_af5570;
@@ -171,7 +171,7 @@ struct ptr_table {
     unk_ptr hd_dll_af57b9;
     unk_ptr hd_dll_af5849;
     unk_ptr hd_dll_af584f;      // @ 0x220
-    unk_ptr hd_dll_af5855;
+    ptr poogieCostumeSkillCuffs [[name("Poogie Costume Skill Cuffs Pointer")]]; // @ 0x224, hd_dll_af5855
     unk_ptr hd_dll_af584b;
     ptr caravanVoyageRoutes [[name("Caravan Voyage Routes Pointer")]]; // @ 0x22C, hd_dll_af5861
     ptr caravanLevels [[name("Caravan Levels Pointer")]]; // @ 0x230, hd_dll_af5867
@@ -186,7 +186,7 @@ struct ptr_table {
     ptr rastaHuntOrders [[name("Rasta Hunt Orders Pointer")]]; // @ 0x254, hd_dll_af594a
     ptr rastaLoyaltyCosts [[name("Rasta Loyalty Costs Pointer")]]; // @ 0x258, hd_dll_af596a
     ptr rastaCredCosts [[name("Rasta Cred Costs Pointer")]]; // @ 0x25C, hd_dll_af5970
-    unk_ptr hd_dll_af5976;      // @ 0x260
+    ptr myHouseThemes [[name("My House Themes Pointer")]]; // @ 0x260, hd_dll_af5976
     unk_ptr hd_dll_af59a1;
     unk_ptr hd_dll_af59a7;
     unk_ptr hd_dll_af59ad;
@@ -267,7 +267,7 @@ struct ptr_table {
     unk_ptr hd_dll_af5ccc;      // @ 0x390
     unk_ptr hd_dll_af5cd2;
     unk_ptr hd_dll_af5cd8;
-    unk_ptr hd_dll_af5cde;
+    ptr gQuestPartySizeRates [[name("G Quest Party Size Rates Pointer")]]; // @ 0x39C, hd_dll_af5cde
     unk_ptr hd_dll_af5cc0;      // @ 0x3A0
     unk_ptr hd_dll_af5cc6;
     ptr evoSeries4 [[name("Evolution Series 4 Pointer")]]; // @ 0x3A8, hd_dll_af5cea
@@ -292,7 +292,7 @@ struct ptr_table {
     unk_ptr hd_dll_af5e80;
     unk_ptr hd_dll_af5eb0;
     unk_ptr hd_dll_af5ee0;
-    unk_ptr hd_dll_af5f10;      // @ 0x400
+    ptr goocooClothingSeriesNames [[name("Goocoo Clothing Series Names Pointer")]]; // @ 0x400, hd_dll_af5f10
     ptr goocooFoods [[name("Goocoo Foods Pointer")]]; // @ 0x404, hd_dll_af5f40
     ptr goocooFoodTexts [[name("Goocoo Food Texts Pointer")]]; // @ 0x408, hd_dll_af5f46
     ptr goocooSitItems [[name("Goocoo House-Sitting Items Pointer")]]; // @ 0x40C, hd_dll_af5f71
@@ -341,7 +341,7 @@ struct ptr_table {
     unk_ptr hd_dll_af62d4;
     ptr goocooPotMaterials [[name("Goocoo Pot Materials Pointer")]]; // @ 0x4BC, hd_dll_af62c8
     ptr goocooPotSoups [[name("Goocoo Pot Soups Pointer")]]; // @ 0x4C0, hd_dll_af62ce
-    unk_ptr hd_dll_af62da;
+    ptr goocooFarmTimers [[name("Goocoo Farm Timers Pointer")]]; // @ 0x4C4, hd_dll_af62da
     unk_ptr hd_dll_af62e0;
     unk_ptr hd_dll_af629e;
     unk_ptr hd_dll_af62a4;      // @ 0x4D0
@@ -741,7 +741,7 @@ struct ptr_table {
     ptr zenithSkills [[name("Zenith Skills Pointer")]]; // @ 0xAA8, hd_dll_af8d1d
     ptr zenithTreeSkills [[name("Zenith Tree Skills Pointer")]]; // @ 0xAAC, hd_dll_af8d23
     ptr zenithSkillEffects [[name("Zenith Skill Effects Pointer")]]; // @ 0xAB0, hd_dll_af8d29
-    unk_ptr hd_dll_af8d2f;
+    ptr zenithQuestMonsters [[name("Zenith Quest Monsters Pointer")]]; // @ 0xAB4, hd_dll_af8d2f
 
     ptr transmogForging         [[name("Armor Transmog Forging Pointer")]];
 

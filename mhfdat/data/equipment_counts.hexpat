@@ -56,7 +56,13 @@ struct ImportantNumbers {
     u16 numHunterPearlSkillLists
         [[name("Number of Hunter Pearl Skill Lists")]];
 
-    padding[0x54];
+    padding[0x2];
+
+    // Offset 0x62: My House renovation themes (header 0x260)
+    u16 numMyHouseThemes
+        [[name("Number of My House Themes")]];
+
+    padding[0x50];
 
     // Offset 0xB4: evolution weapon series (header 0x2CC melee, 0x2D0 ranged)
     u16 numEvoMeleeWeapons
@@ -100,7 +106,13 @@ struct ImportantNumbers {
     u16 numLegendRastaGroups
         [[name("Number of Legend Rasta Groups")]];
 
-    padding[0x4E];
+    padding[0x1A];
+
+    // Offset 0x112: G quest party size rates (header 0x39C)
+    u16 numGQuestPartySizeRates
+        [[name("Number of G Quest Party Size Rates")]];
+
+    padding[0x32];
 
     // Offset 0x146: Goocoo tables (header 0x404 to 0x4C0), one count per table in header order
     u16 numGoocooFoods
@@ -210,7 +222,13 @@ struct ImportantNumbers {
     u16 numGoocooPotMaterials
         [[name("Number of Goocoo Pot Materials")]];
 
-    padding[0x22];
+    padding[0x2];
+
+    // Offset 0x1A0: Goocoo farm timer values (header 0x4C4), u32
+    u16 numGoocooFarmTimerValues
+        [[name("Number of Goocoo Farm Timer Values")]];
+
+    padding[0x1E];
 
     // Offset 0x1C0: Halk foods (header 0x510)
     u16 numHalkFoods

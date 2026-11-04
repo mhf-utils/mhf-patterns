@@ -131,6 +131,10 @@
 #include <mhfdat/data/mytra.hexpat>
 #endif
 
+#ifdef __DATA_MY_HOUSE
+#include <mhfdat/data/my_house.hexpat>
+#endif
+
 #ifdef __DATA_NPC_SOUNDS
 #include <mhfdat/data/npc_sounds.hexpat>
 #endif
@@ -149,6 +153,10 @@
 
 #ifdef __DATA_PLAYER_UNIQUE_PARAMS
 #include <mhfdat/data/player_unique_params.hexpat>
+#endif
+
+#ifdef __DATA_POOGIE
+#include <mhfdat/data/poogie.hexpat>
 #endif
 
 #ifdef __DATA_PUBLIC_BAR

@@ -28,11 +28,13 @@
 //#define __DATA_MONSTERS 1
 //#define __DATA_MONSTER_SOUNDS 1
 //#define __DATA_MYTRA 1
+//#define __DATA_MY_HOUSE 1
 //#define __DATA_NPC_SOUNDS 1
 //#define __DATA_PARTNER 1
 //#define __DATA_PART_BREAKS 1
 //#define __DATA_PLAYER_SOUNDS 1
 //#define __DATA_PLAYER_UNIQUE_PARAMS 1
+//#define __DATA_POOGIE 1
 //#define __DATA_PUBLIC_BAR 1
 //#define __DATA_QUESTS 1
 //#define __DATA_RASTA_GUILD 1

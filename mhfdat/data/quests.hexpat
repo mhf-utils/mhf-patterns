@@ -161,3 +161,29 @@ struct GreatSlayingQuests {
 };
 
 GreatSlayingQuests greatSlayingQuests @ header.ptrs.greatSlayingQuests [[name("Great Slaying Quests")]];
+
+// Zenith quest counter monsters (header 0xAB4): the 0-terminated monster id
+// list of category 0xD8; quest_counter_build_zenith_monster_rows adds a 0xD9
+// row named pMonsterNames[id] for each monster that has Zenith quests (event
+// type 43 or the mhfinf special hunt list 12).
+fn zenithQuestMonster(auto e) {
+	MonsterID m = u8(e.id);
+	return fmtMonsterID(m);
+};
+
+struct ZenithQuestMonster {
+    u16 id;
+} [[format("zenithQuestMonster")]];
+
+struct ZenithQuestMonsters {
+    ZenithQuestMonster monsters[while(std::mem::read_unsigned($, 2) != 0)];
+    u16 end;
+};
+
+ZenithQuestMonsters zenithQuestMonsters @ header.ptrs.zenithQuestMonsters [[name("Zenith Quest Monsters")]];
+
+// G quest party size rates (header 0x39C, rank_points.md): the reward rate in
+// percent of a G quest (quest variant1 bit 8) by the number of counted
+// players, 1 to important numbers + 0x112 (quest_g_party_size_rate_get; 100
+// when the quest is not a G quest).
+u16 gQuestPartySizeRates[importantNums.numGQuestPartySizeRates] @ header.ptrs.gQuestPartySizeRates [[name("G Quest Party Size Rates")]];

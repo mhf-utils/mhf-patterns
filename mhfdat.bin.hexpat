@@ -6,6 +6,7 @@
 //#define __DATA_CARAVAN 1
 //#define __DATA_CLAN 1
 //#define __DATA_COMBINE 1
+//#define __DATA_COMBINE_SHOP 1
 //#define __DATA_COOKING 1
 //#define __DATA_CRAFTING 1
 //#define __DATA_DATA_COUNTERS 1
@@ -13,6 +14,7 @@
 //#define __DATA_DIVA_STORY 1
 //#define __DATA_EQUIPMENTS 1
 //#define __DATA_EQUIPMENT_EFFECTS 1
+//#define __DATA_EVENT_SCENES 1
 //#define __DATA_EXTRA_COUNTERS 1
 //#define __DATA_GATHERING 1
 //#define __DATA_GOOCOO 1
@@ -40,6 +42,7 @@
 //#define __DATA_POOGIE 1
 //#define __DATA_PUBLIC_BAR 1
 //#define __DATA_QUESTS 1
+//#define __DATA_QUIZ_QUEST 1
 //#define __DATA_RASTA_GUILD 1
 //#define __DATA_ROAD 1
 //#define __DATA_SEASONAL_EVENTS 1
@@ -52,10 +55,12 @@
 //#define __DATA_SIGILS 1
 //#define __DATA_SKILLS 1
 //#define __DATA_STAGE_OBJECTS 1
+//#define __DATA_TALK_CAMERAS 1
 //#define __DATA_TOWER 1
 //#define __DATA_TRANSCEND 1
 //#define __DATA_TREASURE_CORP 1
 //#define __DATA_TUTORIAL 1
+//#define __DATA_VEGGIE_ELDER 1
 //#define __DATA_WEAPONS 1
 //#define __DATA_WEAPON_ACTIONS 1
 //#define __DATA_WEAPON_PARAMS 1

@@ -35,6 +35,10 @@
 #include <mhfdat/data/combine.hexpat>
 #endif
 
+#ifdef __DATA_COMBINE_SHOP
+#include <mhfdat/data/combine_shop.hexpat>
+#endif
+
 #ifdef __DATA_COOKING
 #include <mhfdat/data/cooking.hexpat>
 #endif
@@ -65,6 +69,10 @@
 
 #ifdef __DATA_EQUIPMENT_EFFECTS
 #include <mhfdat/data/equipment_effects.hexpat>
+#endif
+
+#ifdef __DATA_EVENT_SCENES
+#include <mhfdat/data/event_scenes.hexpat>
 #endif
 
 #ifdef __DATA_EVOLUTION
@@ -183,6 +191,10 @@
 #include <mhfdat/data/quest_rewards.hexpat>
 #endif
 
+#ifdef __DATA_QUIZ_QUEST
+#include <mhfdat/data/quiz_quest.hexpat>
+#endif
+
 #ifdef __DATA_RASTA_GUILD
 #include <mhfdat/data/rasta_guild.hexpat>
 #endif
@@ -231,6 +243,10 @@
 #include <mhfdat/data/stage_objects.hexpat>
 #endif
 
+#ifdef __DATA_TALK_CAMERAS
+#include <mhfdat/data/talk_cameras.hexpat>
+#endif
+
 #ifdef __DATA_TOWER
 #include <mhfdat/data/tower.hexpat>
 #endif
@@ -245,6 +261,10 @@
 
 #ifdef __DATA_TUTORIAL
 #include <mhfdat/data/tutorial.hexpat>
+#endif
+
+#ifdef __DATA_VEGGIE_ELDER
+#include <mhfdat/data/veggie_elder.hexpat>
 #endif
 
 #ifdef __DATA_WEAPONS

@@ -59,6 +59,7 @@ mhfdat/
     ├── tutorial.hexpat   # Instructor tutorial lessons and lesson groups
     ├── gathering.hexpat  # G-rank gathering item overrides by quest star
     ├── hunting_medals.hexpat # Hunting Medal milestones by monster hunt count
+    ├── quiz_quest.hexpat # Quiz Quest: header, stage spawns, question sets
     ├── evolution.hexpat  # Evolution weapons: weapon series lists, the 16 series level tables (Flash, Shine, Glory, Clear)
     ├── quests.hexpat     # HR, G-rank, Conquest and beginner quest lists, Guild Priority Requests, interception monster G stars, Zenith quest counter monsters, G quest party size rates
     ├── quest_rewards.hexpat # Quest reward slot chances, capture / break, Secret Book, Shiten and map bonus rewards, rare monster rewards

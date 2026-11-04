@@ -46,6 +46,26 @@ fn getEquipType(u8 n) {
 };
 
 /**
+	@param kind An equipment type (getEquipType)
+	@param id A row of that type's table
+	@return The equipment's name
+*/
+fn getEquipKindName(u8 kind, u16 id) {
+	u32 names = 0;
+	match (kind) {
+		(0x00): names = header.ptrs.legArmorNames;
+		(0x02): names = header.ptrs.headArmorNames;
+		(0x03): names = header.ptrs.bodyArmorNames;
+		(0x04): names = header.ptrs.armArmorNames;
+		(0x05): names = header.ptrs.waistArmorNames;
+		(0x06): names = header.ptrs.meleeWeaponNames;
+		(0x07): names = header.ptrs.rangedWeaponNames;
+	}
+	if (names == 0) return std::format("{:04X}", id);
+	return rIPPS(names, id);
+};
+
+/**
 	A table with no end marker ends where the next table the header points to
 	starts, and some markers lie past it (the JP combine shop runs into the
 	tables after it).

@@ -1,5 +1,6 @@
 #pragma once
 #include <mhfdat/utils/index.pat>
+#include <mhfdat/data/combine_shop.hexpat>
 
 u32 shopInventory; 
 shopInventory = std::mem::find_sequence(0, 0x0F, 01, 01, 00, 00, 00, 00, 00, 03, 01, 01, 00, 00, 00, 00, 00);
@@ -109,99 +110,7 @@ struct CategorizedPrice {
 	padding[1];
 };
 
-struct ComboShop{
-	u16 Itemid [[format("getItemName")]];
-	u16 Combo_fee;
-	u16 Recipe_No;
-	u8 Recipe1_min1 [[
-		name("Recipe 1 Min")
-		]];
-	u8 Recipe1_max2 [[
-		name("Recipe 1 Max")
-	]];
-	u16 Recipe1_Itemid1 [[
-		format("getItemName"),
-		name("Recipe 1 Item ID 1")
-	]];
-	u16 Recipe1_Itemid_Qty1 [[name("Recipe 1 Item Id Qty 1")]];
 
-	u16 Recipe1_Itemid2 [[
-		format("getItemName"),
-		name("Recipe 1 Item ID 2")
-	]];
-	u16 Recipe1_Itemid_Qty2 [[name("Recipe 1 Item Id Qty 2")]];
-
-	u16 Recipe1_Itemid3 [[
-		format("getItemName"),
-		name("Recipe 1 Item ID 3")
-	]];
-	u16 Recipe1_Itemid_Qty3 [[name("Recipe 1 Item Id Qty 3")]];
-
-	u8 Recipe2_min [[
-		name("Recipe 2 Min")
-		]];
-	u8 Recipe2_max [[
-		name("Recipe 2 Max")
-	]];
-	
-	u16 Recipe2_Itemid1 [[
-		format("getItemName"),
-		name("Recipe 2 Item ID 1")
-	]];
-	u16 Recipe2_Itemid_Qty1 [[name("Recipe 2 Item Id Qty 1")]];
-
-	u16 Recipe2_Itemid2 [[
-		format("getItemName"),
-		name("Recipe 2 Item ID 2")
-	]];
-	u16 Recipe2_Itemid_Qty2 [[name("Recipe 2 Item Id Qty 2")]];
-
-	u16 Recipe2_Itemid3 [[
-		format("getItemName"),
-		name("Recipe 2 Item ID 3")
-	]];
-	u16 Recipe2_Itemid_Qty3 [[name("Recipe 2 Item Id Qty 3")]];
-
-	u8 Recipe3_min [[
-		name("Recipe 3 Min")
-		]];
-	u8 Recipe3_max [[
-		name("Recipe 3 Max")
-		]];
-
-	u16 Recipe3_Itemid1 [[
-		format("getItemName"),
-		name("Recipe 3 Item ID 1")
-	]];
-	u16 Recipe3_Itemid_Qty1 [[name("Recipe 3 Item Id Qty 1")]];
-
-	u16 Recipe3_Itemid2 [[
-		format("getItemName"),
-		name("Recipe 3 Item ID 2")
-	]];
-	u16 Recipe3_Itemid_Qty2 [[name("Recipe 3 Item Id Qty 2")]];
-
-	u16 Recipe3_Itemid3 [[
-		format("getItemName"),
-		name("Recipe 3 Item ID 3")
-	]];
-	u16 Recipe3_Itemid_Qty3 [[name("Recipe 3 Item Id Qty 3")]];
-
-};
-
-/**
-	The combine shop ends at an item 0 or at the next table the header points
-	to, whichever comes first (the JP one runs into the tables after it).
-*/
-fn get_combo_shop_count(ptr start_addr) {
-	u32 end = nextTable(start_addr);
-	u32 count = 0;
-	while (start_addr + (count + 1) * sizeof(ComboShop) <= end &&
-	       std::mem::read_unsigned(start_addr + count * sizeof(ComboShop), 2) != 0) {
-		count += 1;
-	}
-	return count;
-};
 
 RoadShopItem roadShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptRoadShop;
 CategorizedPrice festiShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptFestiShop;
@@ -216,4 +125,3 @@ DojoPrice dojoShop2[while(std::mem::read_unsigned($,4))] @ sShopHeader.unk[0];
 DojoPrice dojoShopHR52[while(std::mem::read_unsigned($,4))] @ sShopHeader.unk[1];
 DojoPrice dojoShopDone2[while(std::mem::read_unsigned($,4))] @ sShopHeader.unk[2];
 TowerMedalShop towerShopMedal[while(std::mem::read_unsigned($,2))] @ header.ptrs.towerMedalShop;
-ComboShop hidenCuffCombineShop[get_combo_shop_count(header.ptrs.CombineShop)] @ header.ptrs.CombineShop [[name("Combine Shop")]];

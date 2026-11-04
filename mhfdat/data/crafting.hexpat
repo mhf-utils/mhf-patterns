@@ -290,3 +290,20 @@ DecoShop decoShop[while(std::mem::read_unsigned($, 4))]          @ header.ptrs.D
 DecoShop grankDecoShop[while(std::mem::read_unsigned($, 4))]     @ header.ptrs.GrankDecoShop;
 DecoShop cuffCrafting[while(std::mem::read_unsigned($, 4))]      @ header.ptrs.CuffCrafting;
 DecoShop grankCuffCrafting[while(std::mem::read_unsigned($, 4))] @ header.ptrs.GrankCuffCrafting;
+
+// Forge separate list (header 0x048): equipment that the forge menus split
+// out. The forge menu flag (forge work +0x169, copied by
+// forge_weapon_menu_init from byte +3 of the menu descriptor) picks the side:
+// 0 hides these rows from the weapon (forge_melee_build_weapon_page_a ...) and
+// armor (forge_armor_build_list_page) forge lists, 1 lists only them. Ends with
+// an id of 0. 597 rows on the EN, JP and rain files.
+struct ForgeSeparateEquipment {
+    u32 kind [[format("getEquipType")]];
+    u32 id;
+} [[format("forgeSeparateEquipmentName")]];
+
+fn forgeSeparateEquipmentName(ref auto e) {
+    return std::format("{} | {}", getEquipType(e.kind), getEquipKindName(e.kind, e.id));
+};
+
+ForgeSeparateEquipment forgeSeparateList[while(std::mem::read_unsigned($ + 4, 4) != 0)] @ header.ptrs.forgeSeparateList [[name("Forge Separate List")]];

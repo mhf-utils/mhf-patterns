@@ -25,7 +25,7 @@ struct ptr_table {
     // @ 0x040
     ptr rangedWeaponUpgradePath [[name("Ranged Weapon Upgrade Path Pointer")]];
     ptr DecoShop                [[name("Deco Shop Pointer")]];
-    unk_ptr hd_dll_af47e1;
+    ptr forgeSeparateList [[name("Forge Separate List Pointer")]]; // @ 0x048, hd_dll_af47e1
     ptr armorUpgradeMats        [[name("Armor Upgrade Materials Pointer")]];
 
     // @ 0x050
@@ -176,24 +176,24 @@ struct ptr_table {
     ptr caravanVoyageRoutes [[name("Caravan Voyage Routes Pointer")]]; // @ 0x22C, hd_dll_af5861
     ptr caravanLevels [[name("Caravan Levels Pointer")]]; // @ 0x230, hd_dll_af5867
     ptr caravanTiers [[name("Caravan Tiers Pointer")]]; // @ 0x234, hd_dll_af4da9
-    unk_ptr hd_dll_af586d;
-    unk_ptr hd_dll_af588d;
-    unk_ptr hd_dll_af58ca;      // @ 0x240
-    unk_ptr hd_dll_af58ea;
-    unk_ptr hd_dll_af58aa;
-    unk_ptr hd_dll_af592a;
-    unk_ptr hd_dll_af590a;      // @ 0x250
+    ptr rastaMeleeWeapons [[name("Rasta Melee Weapons Pointer")]]; // @ 0x238, hd_dll_af586d
+    ptr rastaRangedWeapons [[name("Rasta Ranged Weapons Pointer")]]; // @ 0x23C, hd_dll_af588d
+    ptr rastaHeadArmor [[name("Rasta Head Armor Pointer")]]; // @ 0x240, hd_dll_af58ca
+    ptr rastaChestArmor [[name("Rasta Chest Armor Pointer")]]; // @ 0x244, hd_dll_af58ea
+    ptr rastaArmsArmor [[name("Rasta Arms Armor Pointer")]]; // @ 0x248, hd_dll_af58aa
+    ptr rastaWaistArmor [[name("Rasta Waist Armor Pointer")]]; // @ 0x24C, hd_dll_af592a
+    ptr rastaLegsArmor [[name("Rasta Legs Armor Pointer")]]; // @ 0x250, hd_dll_af590a
     ptr rastaHuntOrders [[name("Rasta Hunt Orders Pointer")]]; // @ 0x254, hd_dll_af594a
     ptr rastaLoyaltyCosts [[name("Rasta Loyalty Costs Pointer")]]; // @ 0x258, hd_dll_af596a
     ptr rastaCredCosts [[name("Rasta Cred Costs Pointer")]]; // @ 0x25C, hd_dll_af5970
     ptr myHouseThemes [[name("My House Themes Pointer")]]; // @ 0x260, hd_dll_af5976
-    unk_ptr hd_dll_af59a1;
-    unk_ptr hd_dll_af59a7;
-    unk_ptr hd_dll_af59ad;
-    unk_ptr hd_dll_af59c5;      // @ 0x270
-    unk_ptr hd_dll_af59cb;
-    unk_ptr hd_dll_af5a21;
-    unk_ptr hd_dll_af5a27;
+    ptr combinePointRecipes [[name("Combine Point Recipes Pointer")]]; // @ 0x264, hd_dll_af59a1
+    ptr combineCpRecipes [[name("Combine CP Recipes Pointer")]]; // @ 0x268, hd_dll_af59a7
+    ptr combineZennyRecipes [[name("Combine Zenny Recipes Pointer")]]; // @ 0x26C, hd_dll_af59ad
+    ptr combinePointDailyLineups [[name("Combine Point Daily Lineups Pointer")]]; // @ 0x270, hd_dll_af59c5
+    ptr combineCpDailyLineups [[name("Combine CP Daily Lineups Pointer")]]; // @ 0x274, hd_dll_af59cb
+    ptr combinePointTimedBonuses [[name("Combine Point Timed Bonuses Pointer")]]; // @ 0x278, hd_dll_af5a21
+    ptr combineCpTimedBonuses [[name("Combine CP Timed Bonuses Pointer")]]; // @ 0x27C, hd_dll_af5a27
     ptr weaponEffectSets [[name("Weapon Effect Sets Pointer")]]; // @ 0x280, hd_dll_af5a2d
     ptr weaponEffects [[name("Weapon Effects Pointer")]]; // @ 0x284, hd_dll_af5a33
     unk_ptr hd_dll_af5a39;
@@ -361,13 +361,13 @@ struct ptr_table {
     unk_ptr hd_dll_af6328;
     ptr entityMotionSounds [[name("Entity Motion Sounds Pointer")]]; // @ 0x50C, hd_dll_af6334
     ptr halkFoods [[name("Halk Foods Pointer")]]; // @ 0x510, hd_dll_af6434
-    unk_ptr hd_dll_af643a;
-    unk_ptr hd_dll_af6440;
+    ptr eventSceneScriptSizes [[name("Event Scene Script Sizes Pointer")]]; // @ 0x514, hd_dll_af643a
+    ptr eventSceneScripts [[name("Event Scene Scripts Pointer")]]; // @ 0x518, hd_dll_af6440
     ptr monsterIconIndices [[name("Monster Icon Indices Pointer")]]; // @ 0x51C
     unk_ptr hd_dll_af647d;      // @ 0x520
     ptr my_mission_data         [[name("My Mission Data Pointer")]];
     ptr secretBookEffectValues [[name("Secret Book Effect Values Pointer")]]; // @ 0x528, hd_dll_af658e
-    unk_ptr hd_dll_af659a;
+    ptr myHouseArmorDisplays [[name("My House Armor Displays Pointer")]]; // @ 0x52C, hd_dll_af659a
     unk_ptr hd_dll_af65ea;      // @ 0x530
     unk_ptr hd_dll_af65f0;
     ptr my_mission_objective    [[name("My Mission Objective Pointer")]];
@@ -485,7 +485,7 @@ struct ptr_table {
     ptr gatherStarItems1 [[name("Gather Star Items 1 Pointer")]]; // @ 0x6E4, hd_dll_af738a
     ptr gatherStarItems0 [[name("Gather Star Items 0 Pointer")]]; // @ 0x6E8, hd_dll_af7390
     ptr gatherStarItems2 [[name("Gather Star Items 2 Pointer")]]; // @ 0x6EC, hd_dll_af7396
-    unk_ptr hd_dll_af739c;      // @ 0x6F0
+    ptr veggieElderTradeMaps [[name("Veggie Elder Trade Maps Pointer")]]; // @ 0x6F0, hd_dll_af739c
     unk_ptr hd_dll_af73d7;
     unk_ptr hd_dll_af73dd;
     unk_ptr hd_dll_af73e3;
@@ -760,11 +760,11 @@ struct ptr_table {
     unk_ptr hd_dll_af8e16;      // @ 0xAE0
     unk_ptr hd_dll_af8e5e;
     unk_ptr hd_dll_af7b6d;
-    unk_ptr hd_dll_af59b3;
-    unk_ptr hd_dll_af46e9;      // @ 0xAF0
-    unk_ptr hd_dll_af8eae;
-    unk_ptr hd_dll_af8eb4;
-    unk_ptr hd_dll_af8eba;
+    ptr combineSoulRecipes [[name("Combine Soul Recipes Pointer")]]; // @ 0xAEC, hd_dll_af59b3
+    ptr quizQuestHeader [[name("Quiz Quest Header Pointer")]]; // @ 0xAF0, hd_dll_af46e9
+    ptr quizQuestSpawnsA [[name("Quiz Quest Spawns A Pointer")]]; // @ 0xAF4, hd_dll_af8eae
+    ptr quizQuestSpawnsB [[name("Quiz Quest Spawns B Pointer")]]; // @ 0xAF8, hd_dll_af8eb4
+    ptr quizQuestQuestions [[name("Quiz Quest Questions Pointer")]]; // @ 0xAFC, hd_dll_af8eba
     unk_ptr hd_dll_af8f01;      // @ 0xB00
     ptr dataCounters [[name("Data Counters Pointer"), comment("u16 counts: +4 the Road cat shop, +8 the Road monster points")]]; // @ 0xB04, hd_dll_af4709
     unk_ptr hd_dll_af8f07;
@@ -790,17 +790,17 @@ struct ptr_table {
     unk_ptr hd_dll_af8ff6;      // @ 0xB50
     unk_ptr hd_dll_af903a;
     unk_ptr hd_dll_af9088;
-    unk_ptr hd_dll_af4794;
-    unk_ptr hd_dll_af90cc;      // @ 0xB60
-    unk_ptr hd_dll_af90d2;
-    unk_ptr hd_dll_af90d8;
-    unk_ptr hd_dll_af90de;
+    ptr talkCameraCounts [[name("Talk Camera Counts Pointer")]]; // @ 0xB5C, hd_dll_af4794
+    ptr talkCameraIndex [[name("Talk Camera Index Pointer")]]; // @ 0xB60, hd_dll_af90cc
+    ptr talkCamerasFixed [[name("Talk Cameras Fixed Pointer")]]; // @ 0xB64, hd_dll_af90d2
+    ptr talkCamerasOrbit [[name("Talk Cameras Orbit Pointer")]]; // @ 0xB68, hd_dll_af90d8
+    ptr talkCamerasSide [[name("Talk Cameras Side Pointer")]]; // @ 0xB6C, hd_dll_af90de
     unk_ptr hd_dll_af90e4;      // @ 0xB70
     unk_ptr hd_dll_af90ea;
     ptr obscurityUp [[name("Obscurity UP Pointer")]]; // @ 0xB78, hd_dll_af90f0
     ptr soloRoadMonsterScales [[name("Solo Road Monster Scales Pointer")]]; // @ 0xB7C, hd_dll_af8f37
     unk_ptr hd_dll_af8f3d;      // @ 0xB80
-    unk_ptr hd_dll_af59b9;
+    ptr combineHidenRecipes [[name("Combine Hiden Recipes Pointer")]]; // @ 0xB84, hd_dll_af59b9
     ptr spacingAndSoulValues [[name("Spacing And Soul Values Pointer")]]; // @ 0xB88, hd_dll_af9107
     unk_ptr hd_dll_af91ba;
     ptr magnetSpikeTunables [[name("Magnet Spike Tunables Pointer")]]; // @ 0xB90, hd_dll_af91e4

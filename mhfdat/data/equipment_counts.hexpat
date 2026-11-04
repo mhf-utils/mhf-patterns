@@ -69,7 +69,29 @@ struct ImportantNumbers {
     u16 numMyHouseThemes
         [[name("Number of My House Themes")]];
 
-    padding[0x50];
+    padding[0x4];
+
+    // Offset 0x68: zenny combine recipes (header 0x26C)
+    u16 numCombineZennyRecipes
+        [[name("Number of Combine Zenny Recipes")]];
+
+    // Offset 0x6A: point combine daily lineups (header 0x270)
+    u16 numCombinePointDailyLineups
+        [[name("Number of Combine Point Daily Lineups")]];
+
+    // Offset 0x6C: CP combine daily lineups (header 0x274)
+    u16 numCombineCpDailyLineups
+        [[name("Number of Combine CP Daily Lineups")]];
+
+    // Offset 0x6E: point combine timed bonuses (header 0x278)
+    u16 numCombinePointTimedBonuses
+        [[name("Number of Combine Point Timed Bonuses")]];
+
+    // Offset 0x70: CP combine timed bonuses (header 0x27C)
+    u16 numCombineCpTimedBonuses
+        [[name("Number of Combine CP Timed Bonuses")]];
+
+    padding[0x42];
 
     // Offset 0xB4: evolution weapon series (header 0x2CC melee, 0x2D0 ranged)
     u16 numEvoMeleeWeapons
@@ -487,7 +509,13 @@ struct ImportantNumbers {
     u16 numClanMissionTargets
         [[name("Number of Clan Mission Targets")]];
 
-    padding[0x2E];
+    padding[0x2A];
+
+    // Offset 0x3FC: soul combine recipes (header 0xAEC)
+    u16 numCombineSoulRecipes
+        [[name("Number of Combine Soul Recipes")]];
+
+    padding[0x2];
 
     // Offset 0x400: Conquest quest ids (header 0xB30)
     u16 numConquestQuests
@@ -497,11 +525,23 @@ struct ImportantNumbers {
     u16 numShitenQuests
         [[name("Number of Shiten Quests")]];
 
-    padding[0x18];
+    padding[0x14];
+
+    // Offset 0x418: hiden combine recipes (header 0xB84)
+    u16 numCombineHidenRecipes
+        [[name("Number of Combine Hiden Recipes")]];
+
+    padding[0x2];
 
     // Offset 0x41C: Zenith sigil craft material catalog (header 0xB9C)
     u16 numSigilCraftMaterialsZenith
         [[name("Number of Zenith Sigil Craft Materials")]];
+
+    padding[0x2];
+
+    // Offset 0x420: cuff combine recipes (header 0xBAC)
+    u16 numCombineCuffRecipes
+        [[name("Number of Combine Cuff Recipes")]];
 
 } [[name("Important Numbers")]];
 

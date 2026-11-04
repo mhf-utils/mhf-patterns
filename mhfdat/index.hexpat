@@ -51,6 +51,10 @@
 #include <mhfdat/data/decoID.hexpat>
 #endif
 
+#ifdef __DATA_DIVA_STORY
+#include <mhfdat/data/diva_story.hexpat>
+#endif
+
 #ifdef __DATA_EQUIPMENTS
 #include <mhfdat/data/equipments.hexpat>
 #endif
@@ -73,6 +77,10 @@
 
 #ifdef __DATA_GOOCOO
 #include <mhfdat/data/goocoo.hexpat>
+#endif
+
+#ifdef __DATA_GUILD_ADVENTURE
+#include <mhfdat/data/guild_adventure.hexpat>
 #endif
 
 #ifdef __DATA_GUILD_COOKING

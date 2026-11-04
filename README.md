@@ -50,6 +50,8 @@ mhfdat/
     ├── public_bar.hexpat # Public Bar recruit choices: HR Reqs, Targets (with unlock rules), Messages
     ├── hunting_info.hexpat # Hunting Info page items by area, season and time
     ├── armor_visuals.hexpat # Armor model id limits by gender, armor colors, inner body models
+    ├── guild_adventure.hexpat # Guild adventure (expedition) destinations and reward pools
+    ├── diva_story.hexpat # Diva Story gift liking by item
     ├── evolution.hexpat  # Evolution weapons: weapon series lists, the 16 series level tables (Flash, Shine, Glory, Clear)
     ├── quests.hexpat     # HR, G-rank, Conquest and beginner quest lists, Guild Priority Requests, interception monster G stars
     ├── quest_rewards.hexpat # Quest reward slot chances, capture / break, Secret Book, Shiten and map bonus rewards

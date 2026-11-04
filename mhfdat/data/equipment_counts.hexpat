@@ -309,7 +309,13 @@ struct ImportantNumbers {
     u16 numNpcMotionSounds
         [[name("Number of NPC Motion Sound Rows")]];
 
-    padding[0x16];
+    padding[0x12];
+
+    // Offset 0x2DE: Diva Story gift liking (header 0x7D0): u16 values, so pairs = this / 2
+    u16 numDivaStoryGiftLikingValues
+        [[name("Number of Diva Story Gift Liking u16 Values")]];
+
+    padding[0x2];
 
     // Offset 0x2E2: Koryo amulets (header 0x7D8)
     u16 numKoryoAmulets

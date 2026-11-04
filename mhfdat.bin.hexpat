@@ -10,10 +10,12 @@
 //#define __DATA_CRAFTING 1
 //#define __DATA_DATA_COUNTERS 1
 //#define __DATA_DECOID 1
+//#define __DATA_DIVA_STORY 1
 //#define __DATA_EQUIPMENTS 1
 //#define __DATA_EQUIPMENT_EFFECTS 1
 //#define __DATA_EXTRA_COUNTERS 1
 //#define __DATA_GOOCOO 1
+//#define __DATA_GUILD_ADVENTURE 1
 //#define __DATA_GUILD_COOKING 1
 //#define __DATA_GUILD_WEEKLY_BONUS 1
 //#define __DATA_HALK 1

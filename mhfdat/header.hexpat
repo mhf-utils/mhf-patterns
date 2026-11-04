@@ -544,7 +544,7 @@ struct ptr_table {
     unk_ptr hd_dll_af7a30;
     unk_ptr hd_dll_af7a36;
     unk_ptr hd_dll_af7a3c;
-    unk_ptr hd_dll_af7a42;      // @ 0x7D0
+    ptr divaStoryGiftLiking [[name("Diva Story Gift Liking Pointer")]]; // @ 0x7D0, hd_dll_af7a42
     unk_ptr hd_dll_af7a48;
     ptr koryoAmulets [[name("Koryo Amulets Pointer")]]; // @ 0x7D8, hd_dll_af7a7c
     ptr rewardSlotChancesCapture [[name("Capture Reward Slot Chances Pointer")]]; // @ 0x7DC, hd_dll_af78e0
@@ -587,8 +587,8 @@ struct ptr_table {
     unk_ptr hd_dll_af7b85;      // @ 0x870
     ptr secretBookRewardsGR500 [[name("Secret Book GR 500 Rewards Pointer")]]; // @ 0x874, hd_dll_af7b8b
     unk_ptr hd_dll_af7b91;
-    unk_ptr hd_dll_af7be3;
-    unk_ptr hd_dll_af7c0a;      // @ 0x880
+    ptr guildAdventureDestinations [[name("Guild Adventure Destinations Pointer")]]; // @ 0x87C, hd_dll_af7be3
+    ptr guildAdventureRewards [[name("Guild Adventure Rewards Pointer")]]; // @ 0x880, hd_dll_af7c0a
     ptr legendRastaStoryEpisodes [[name("Legend Rasta Story Episodes Pointer")]]; // @ 0x884, hd_dll_af7c10
     ptr Tonfa_Params_pointer [[name("Tonfa Params Pointer")]];
     ptr caravanCpRates [[name("Caravan CP Rates Pointer")]]; // @ 0x88C, hd_dll_af7c9c

@@ -292,6 +292,19 @@ struct SigilCraftMaterial {
 SigilCraftMaterial sigilCraftMaterials[importantNums.numSigilCraftMaterials] @ header.ptrs.sigilCraftMaterials [[name("Sigil Craft Materials")]];
 SigilCraftMaterial sigilCraftMaterialsZenith[importantNums.numSigilCraftMaterialsZenith] @ header.ptrs.sigilCraftMaterialsZenith [[name("Sigil Craft Materials: Zenith")]];
 
+// Sigil craft recipe material categories (header 0xBA0, important numbers
+// +0x41E rows): sigil_craft_recipe_allows_material_category looks up the recipe
+// under the cursor; a recipe with no row accepts every material category, else
+// only its 3 (0xFF = unused). sigil_craft_material_list_build and the Zenith
+// per-category counts skip the other materials.
+struct SigilCraftRecipeMaterialCategories {
+    u16 recipe [[comment("sigilCraftingRecipes index")]];
+    u8 categories[3] [[comment("Category byte (+2) of the 0x634 / 0xB9C materials")]];
+    padding[3];
+};
+
+SigilCraftRecipeMaterialCategories sigilCraftRecipeMaterialCategories[importantNums.numSigilCraftRecipeMaterialCategories] @ header.ptrs.sigilCraftRecipeMaterialCategories [[name("Sigil Craft Recipe Material Categories")]];
+
 // Sigil class and icon by total budget (headers 0x630 / 0x638): the first
 // threshold >= sigil_calc_total_budget gives the class shown as
 // pDistortedWeaponTexts[1][index] (Hunter Sigil, Trial Sigil ... Extreme

@@ -70,7 +70,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 	]];
 
 	ptu32x10 hd_dll_af4bcc[while(std::mem::read_signed($,4)!=0)] 
-		@ header.ptrs.hd_dll_af4bc6;
+		@ header.ptrs.equipShopTiers;
 	
 	// [mhfo-hd.dll + 0xaf4c01]
 
@@ -296,12 +296,12 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 	num hd_dll_af53a0 @ (header.ptrs.important_nums + 0x26)
 		[[name("Number of Hunting Horn Guide Pages?")]];
 	s32p hd_dll_af53ad[hd_dll_af53a0] 
-		@ header.ptrs.hd_dll_af5397 [[name("Hunting Horn Guide Pages?")]];
+		@ header.ptrs.huntingHornSongPages [[name("Hunting Horn Guide Pages?")]];
 
 	num hd_dll_af53c9 @ (header.ptrs.important_nums + 0x28)
 		[[name("Number of More Hunting Horn Tutorials?")]];
 	s32p hd_dll_af53d6[hd_dll_af53c9] 
-		@ header.ptrs.hd_dll_af53c0 [[name("More Hunting Horn Tutorial?")]];
+		@ header.ptrs.ancientHuntingHornScorePages [[name("More Hunting Horn Tutorial?")]];
 
 	// TODO: Loop at [mhfo-hd.dll + 0xaf53ff]
 

@@ -5,7 +5,7 @@
 	exchange, the Goocoo Pot, skins and stray Goocoos. Header 0x404 to 0x4E0,
 	one count per table at important numbers + 0x146 to + 0x1A8, in header
 	order. Only the tables the client code reads are shown; the others (header
-	0x474, 0x4A4 to 0x4AC, 0x4B4) are not.
+	0x4A8) are not.
 
 	House-sitting roll, in order: the mood item (0x434); the grade, from the
 	trust plus the personality (0x418, by activity) and mood (0x41C)
@@ -211,6 +211,26 @@ s32p goocooPoolTexts[importantNums.numGoocooPoolTexts] @ header.ptrs.goocooPoolT
 s32p goocooGroundTexts[importantNums.numGoocooGroundTexts] @ header.ptrs.goocooGroundTexts [[name("Goocoo Ground Texts")]];
 s32p goocooSeriesNames[importantNums.numGoocooSeriesNames] @ header.ptrs.goocooSeriesNames [[name("Goocoo Series Names")]];
 
+// Goocoo quests (header 0x474, Wii U slot 0x49C): one 0-terminated quest id
+// list per Goocoo quest type (the index). getOpenDuckQuestTypeBit opens type n
+// when bit n is set: 0 egg quests (farm scenario byte 3, 0x17 or 0x1D), 1 the
+// search quest (farm state +0x2D == 2), 2 scenario 6, 3 scenario 0x10, 4 food
+// quests (farm flag 3). getDuckQuestType / lb_duck_quest_chk / IsDuckQuest look
+// a quest id up (the readers loop to a fixed 5); make_duck_quest_list copies the
+// open lists for the quest counter. On clear, duck_quest_clr_chk stores a type 0
+// quest's position in list 0 as the egg type (farm state +0x21, held to 5) and
+// runs setQuestClearDuckLeaveScenario for type 1.
+struct GoocooQuestList {
+    u16 questIds[while(std::mem::read_unsigned($, 2) != 0)];
+    u16 end;
+};
+
+struct GoocooQuestListPtr {
+    GoocooQuestList *list : u32;
+};
+
+GoocooQuestListPtr goocooQuestLists[importantNums.numGoocooQuestLists] @ header.ptrs.goocooQuestLists [[name("Goocoo Quest Lists"), comment("Index = Goocoo quest type")]];
+
 // =======================
 // Exchange and costs. Item 0 in a cost is My Tore points.
 // =======================
@@ -331,7 +351,7 @@ struct GoocooFarmHarvestFarm {
 GoocooFarmHarvestFarm goocooFarmHarvests[4] @ header.ptrs.goocooFarmHarvests [[name("Goocoo Farm Harvests")]];
 
 // Goocoo group gathering (header 0x4A0 / 0x4B0): quest_complete_idle_update
-// sets goocoo_session_state() +0x2E; at the next garden start
+// sets getFarmDuckStaticStruct() +0x2E; at the next garden start
 // init_npc_subsystem_2 rolls n in [2, N] of the Goocoos present (FUN_10792820:
 // profile +4 is 6 or 8-11), gives each a slot 0..n-1, rolls a spot set of
 // 0x4A0 row [n - 2] (count / n sets) and adds a random [min, max] of 0x4B0 to
@@ -358,6 +378,39 @@ struct GoocooGroupGaugeGain {
 
 GoocooGroupSpotList goocooGroupSpots[importantNums.numGoocooGroupSpotLists] @ header.ptrs.goocooGroupSpots [[name("Goocoo Group Spots"), comment("Row i: i + 2 participants")]];
 GoocooGroupGaugeGain goocooGroupGaugeGain @ header.ptrs.goocooGroupGaugeGain [[name("Goocoo Group Gauge Gain")]];
+
+// Goocoo talk items (header 0x4A4 / 0x4AC; Wii U getFarmDuckTalkItem /
+// enableFarmDuckTalkItem, Wii U slots 0x4CC / 0x4D4): a Goocoo whose profile +4
+// is 6-11 has a gift when its group gauge (profile +0x29, raised by the group
+// gathering, 0x4B0) has passed a threshold of 0x4AC above its last paid one
+// (profile +0x2A). moveEventFarmCareCatNoticeGetTalkItem01 runs
+// getFarmDuckTalkItem for the 5 Goocoos: one row of 0x4A4 drawn by weight per
+// threshold passed, the quantity cut to the room left (Lb_getItemStackEx), given
+// by Item_into_any_pouch, and profile +0x2A set to the threshold.
+struct GoocooTalkItem {
+    ItemId item;
+    u16 quantity [[comment("Given: min(quantity, room for the item)")]];
+    u8 weight;
+    u8 unk05 [[comment("no reader")]];
+};
+
+GoocooTalkItem goocooTalkItems[importantNums.numGoocooTalkItems] @ header.ptrs.goocooTalkItems [[name("Goocoo Talk Items")]];
+u8 goocooTalkItemThresholds[importantNums.numGoocooTalkItemThresholds] @ header.ptrs.goocooTalkItemThresholds [[name("Goocoo Talk Item Thresholds"), comment("Group gauge (profile +0x29) values, ascending")]];
+
+// Goocoo emote delays (header 0x4B4; Wii U updateEmote, Wii U slot 0x4DC): one
+// row per mood (0-6, pCostumeShopTexts[6]; getFarmDuckMood, 3 on another
+// hunter's farm). updateEmote shows an emote icon for (rand % 3 + 4) x 30 ticks,
+// draws the next one (drawLotsEmoteIcon, DLL table 0x118E29E0) and waits before
+// showing it (npc work +0x100): 1 tick when rand % 100 < instantChance, else a
+// random [delayMin, delayMax] x 30 ticks.
+struct GoocooEmoteDelay {
+    s16 delayMin [[comment("x 30 ticks")]];
+    s16 delayMax [[comment("x 30 ticks")]];
+    u8 instantChance [[comment("Percent: the next icon shows after 1 tick")]];
+    u8 unk05 [[comment("no reader")]];
+};
+
+GoocooEmoteDelay goocooEmoteDelays[importantNums.numGoocooEmoteDelays] @ header.ptrs.goocooEmoteDelays [[name("Goocoo Emote Delays"), comment("Row = mood")]];
 
 // =======================
 // Goocoo skins and stray Goocoos (header 0x480 to 0x490, 0x4D0 to 0x4E0).

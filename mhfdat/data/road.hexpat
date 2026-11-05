@@ -117,3 +117,24 @@ struct RoadRankStep {
 };
 
 RoadRankStep roadRankCurve[std::mem::read_unsigned(header.ptrs.dataCounters + 6, 2) / 2] @ header.ptrs.roadRankCurve [[name("Road Rank Curve")]];
+
+// Road suspended cameras (header 0xB28): the fixed camera of the local player
+// once road_points_suspended_ck is non zero on a variant2 & 0x80 quest (a
+// player ran out of revives: player_no_more_revives_enter sets 0x1E87FBEC to 1,
+// FUN_10A6B9C0 to 2, then player_structs_array_tick forces faint category 3
+// action 0xE). road_suspended_camera_apply, called each frame by category 3
+// actions 0xE and 0xF, copies the row into active_camera_pos_* /
+// active_camera_target_* and sets camera_control_flags bit 0x20. The row index
+// (0x1E87FBF4) is written by road_quest_area_update: 0 when the player's stage
+// area equals the quest's returnBC_ID (GameWork +0x38), 1 otherwise.
+struct RoadSuspendedCamera {
+    float position[3];
+    float target[3];
+};
+
+struct RoadSuspendedCameras {
+    RoadSuspendedCamera returnStage [[comment("Player stage area == quest returnBC_ID")]];
+    RoadSuspendedCamera otherStage [[comment("Any other stage area")]];
+};
+
+RoadSuspendedCameras roadSuspendedCameras @ header.ptrs.roadSuspendedCameras [[name("Road Suspended Cameras")]];

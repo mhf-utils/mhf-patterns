@@ -45,3 +45,33 @@ u16 boxSearchSigilSkills[importantNums.numBoxSearchSigilSkills] @ header.ptrs.bo
 // pause menu), e.g. roll, draw / sheathe, eating and drinking, sharpening,
 // BBQ, throwing knives.
 u16 shortcutCombineBlockedActions[importantNums.numShortcutCombineBlockedActions] @ header.ptrs.shortcutCombineBlockedActions [[name("Shortcut Combine Blocked Actions"), comment("Player actType (actCategory 0)")]];
+
+// Fishing baits (header 0x780; Wii U esa_ck): which fish a bait attracts.
+// esa_ck takes the float owner's item (work +0xB32): item 0x91 attracts
+// nothing, an item with no row attracts every fish, else the first row with
+// that item decides (no list = every fish, else the fish's kind byte, fish
+// work +0x48, must be in the list). uki_serch makes a fish swim to a float
+// only when esa_ck passes and the float is inside its radius and angle window.
+struct FishingBaitFishList {
+    u16 fishKinds[while(std::mem::read_unsigned($, 2) != 0)];
+    u16 end;
+};
+
+struct FishingBait {
+    u16 item [[format("getItemName")]];
+    u16 unk02 [[comment("no reader, 0")]];
+    if (std::mem::read_unsigned($, 4) != 0)
+        FishingBaitFishList *fishKinds : u32 [[comment("Null = every fish")]];
+    else
+        u32 fishKinds [[comment("Null = every fish")]];
+};
+
+FishingBait fishingBaits[importantNums.numFishingBaits] @ header.ptrs.fishingBaits [[name("Fishing Baits")]];
+
+// Cat Decoration search skill categories (header 0x908): the Skill System A / B
+// choices of the Cat Decoration crafting search (partnyaa_deco_search_disp,
+// pItemBoxSearchTitles 0x1D / 0x1E), mhfgao pSkillCategoryNames ids in display
+// order. 0 = all, 1 = free text, else partnyaa_deco_search_matches keeps a
+// recipe when one of its result item's decoration skills equals the entry.
+// Entries 0 and 1 are placeholders.
+u16 catDecoSearchSkillCategories[importantNums.numCatDecoSearchSkillCategories] @ header.ptrs.catDecoSearchSkillCategories [[name("Cat Decoration Search: Skill Categories")]];

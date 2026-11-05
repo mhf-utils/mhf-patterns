@@ -59,6 +59,10 @@
 #include <mhfdat/data/diva_story.hexpat>
 #endif
 
+#ifdef __DATA_DOJO
+#include <mhfdat/data/dojo.hexpat>
+#endif
+
 #ifdef __DATA_EQUIPMENTS
 #include <mhfdat/data/equipments.hexpat>
 #endif
@@ -207,6 +211,10 @@
 #include <mhfdat/data/player_unique_params.hexpat>
 #endif
 
+#ifdef __DATA_PLAZA
+#include <mhfdat/data/plaza.hexpat>
+#endif
+
 #ifdef __DATA_POOGIE
 #include <mhfdat/data/poogie.hexpat>
 #endif
@@ -229,6 +237,10 @@
 
 #ifdef __DATA_RASTA_GUILD
 #include <mhfdat/data/rasta_guild.hexpat>
+#endif
+
+#ifdef __DATA_RIGHT_EXCHANGE
+#include <mhfdat/data/right_exchange.hexpat>
 #endif
 
 #ifdef __DATA_ROAD

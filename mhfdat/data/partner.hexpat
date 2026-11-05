@@ -102,12 +102,13 @@ struct PartnerExtraSkill {
 
 PartnerExtraSkill partnerExtraSkills[header.ptrs.partnerExtraSkillCount] @ header.ptrs.partnerExtraSkills [[name("Partner Extra Skills")]];
 
-// Partner attack (header 0x854, weapons) and defense (0x92C, armor) by the
-// equipped piece's category (partner_category_stat_get, first match in this
+// Partner attack by the equipped weapon's category (header 0x854, every weapon
+// class but Tonfa; 0x92C, Tonfa: Get_weapon_job2 == 11), from
+// partner_category_stat_get (first match in this
 // order: finess ext, Gou GR2, Gou GR3, exotique, Gou GR1, G-K, Gou HR2,
 // HcGousyu, G, exG, hc, evolution kind 1, G evolution kinds 2 / 3, zenith,
 // hcGousyu equip type, SP, else none). Added to the Partner level and class
-// mastery values (partner_attack_total / partner_defense_total).
+// mastery values (partner_attack_total).
 struct PartnerCategoryValues {
     u16 none;
     u16 sp;
@@ -130,4 +131,75 @@ struct PartnerCategoryValues {
 };
 
 PartnerCategoryValues partnerWeaponCategoryAttack @ header.ptrs.partnerWeaponCategoryAttack [[name("Partner Weapon Category Attack")]];
-PartnerCategoryValues partnerArmorCategoryDefense @ header.ptrs.partnerArmorCategoryDefense [[name("Partner Armor Category Defense")]];
+PartnerCategoryValues partnerTonfaCategoryAttack @ header.ptrs.partnerTonfaCategoryAttack [[name("Partner Tonfa Category Attack")]];
+
+// Partner armor defense by the piece's category (header 0x858).
+// partner_category_stat_get returns the first match in this order:
+// retsusyu, gx_supremacy, exotic (ranked when the piece's gRarity != 0),
+// zenith, gHasyu, hiden groups 6 / 5 / 4 / 3 (each by hidenWildcard, then
+// hidenBit4, then hidenBit3), gClassS, hcKai, supremacy, Grank, hiden groups
+// 1-2 (same three bits), gArmorF, equipableBy bit 7, Gou, SP, else none.
+// partner_defense_total adds the five pieces to the Partner level defense;
+// Get_Armor_adj_eq returns it as the piece's defense in the Partner box.
+struct PartnerArmorCategoryValues {
+    u16 none;
+    u16 gou [[comment("equipableBy bit 6")]];
+    u16 equipableBit7 [[comment("equipableBy bit 7")]];
+    u16 gArmorF;
+    u16 hidenGroup12Bit3 [[comment("armorType bit 1 or 2, with bit 3")]];
+    u16 hidenGroup12Bit4;
+    u16 hidenGroup12Wildcard;
+    u16 gRank;
+    u16 supremacy;
+    u16 hcKai;
+    u16 gClassS;
+    u16 hidenGroup3Bit3;
+    u16 hidenGroup3Bit4;
+    u16 hidenGroup3Wildcard;
+    u16 hidenGroup4Bit3;
+    u16 hidenGroup4Bit4;
+    u16 hidenGroup4Wildcard;
+    u16 hidenGroup5Bit3;
+    u16 hidenGroup5Bit4;
+    u16 hidenGroup5Wildcard;
+    u16 hidenGroup6Bit3;
+    u16 hidenGroup6Bit4;
+    u16 hidenGroup6Wildcard;
+    u16 gHasyu;
+    u16 retsusyu;
+    u16 sp [[comment("equipableBy bit 5")]];
+    u16 gxSupremacy;
+    u16 exotic;
+    u16 exoticRanked [[comment("get_ex_g_armor_rank() != 0")]];
+    u16 zenith;
+    u16 unk3C [[comment("no reader")]];
+    u16 unk3E [[comment("no reader")]];
+};
+
+PartnerArmorCategoryValues partnerArmorCategoryDefense @ header.ptrs.partnerArmorCategoryDefense [[name("Partner Armor Category Defense")]];
+
+// Partner attack, defense and element by level (header 0x83C, 0x840, 0x844,
+// 0x848). partner_level_rate_sum sums (toLevel - previous toLevel) x perLevel
+// over the rows below the level, plus (level - previous toLevel) x perLevel for
+// the row that holds it, then divides by 10000; past the last row the value no
+// longer grows. partner_attack_total adds 0x83C at the Partner level and 0x840
+// at the level of the equipped weapon's class (999 when mastered), plus 5 per
+// mastered class and the weapon category value; partner_defense_total adds
+// 0x844 at the Partner level to the armor category values. 0x848, at the class
+// level, is the weapon element value weapon_element_status_affinity_value uses
+// with Partner equipment.
+struct PartnerLevelRate {
+    s16 toLevel;
+    padding[2];
+    s32 perLevel [[comment("1/10000 per level")]];
+};
+
+struct PartnerLevelRates {
+    PartnerLevelRate rates[while(std::mem::read_signed($, 2) != -1)];
+    PartnerLevelRate end;
+};
+
+PartnerLevelRates partnerLevelAttack @ header.ptrs.partnerLevelAttack [[name("Partner Level Attack")]];
+PartnerLevelRates partnerClassLevelAttack @ header.ptrs.partnerClassLevelAttack [[name("Partner Class Level Attack")]];
+PartnerLevelRates partnerLevelDefense @ header.ptrs.partnerLevelDefense [[name("Partner Level Defense")]];
+PartnerLevelRates partnerClassLevelElement @ header.ptrs.partnerClassLevelElement [[name("Partner Class Level Element")]];

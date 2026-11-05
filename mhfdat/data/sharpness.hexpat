@@ -42,3 +42,27 @@ struct SharpnessTables {
 };
 
 SharpnessTables sharpnessTables @ header.ptrs.SharpnessIds [[name("Sharpness Tables")]];
+
+// Sharpness multipliers (header 0x658; Wii U hit_hit_sub_em, slot 0x670): one
+// row per sharpness colour tier of the attacker (PlayerWork +0xB2F; +1 for the
+// Gunlance under status flag 0x10000000, capped at 7; forced to white when
+// Shell00_shield_attack_check returns 2), read by on_hit_effects_dispatch. Bow
+// skips the table; a Partnyaa uses only bounce.
+struct SharpnessMultiplierRow {
+    float raw [[comment("x the hit column factor and the hitzone, scales the hit's raw value")]];
+    float element [[comment("scales the sum of the five element damages and the sigil 0x34 extra damage")]];
+    float bounce [[comment("x the column factor and the hitzone, compared with 0.23 / 0.45 / 1.0 for the bounce state and hitstop")]];
+};
+
+struct SharpnessMultipliers {
+    SharpnessMultiplierRow red;
+    SharpnessMultiplierRow orange;
+    SharpnessMultiplierRow yellow;
+    SharpnessMultiplierRow green;
+    SharpnessMultiplierRow blue;
+    SharpnessMultiplierRow white;
+    SharpnessMultiplierRow purple;
+    SharpnessMultiplierRow skyBlue;
+};
+
+SharpnessMultipliers sharpnessMultipliers @ header.ptrs.sharpnessMultipliers [[name("Sharpness Multipliers")]];

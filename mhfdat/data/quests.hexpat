@@ -235,6 +235,15 @@ struct QuestSearchMonster {
 
 QuestSearchMonster questSearchMonsters[importantNums.numQuestSearchMonsterValues / 2] @ header.ptrs.questSearchMonsters [[name("Quest Search Monsters")]];
 
+// Quest search fields (header 0x28C normal counter, 0x290 quest counter mode 0xE,
+// work +0x1C == 0xE): the choices of the quest search "Field" condition. Each value
+// is a pStageShortNames index (search_menu_disp); choice n (1-based, 0 = "All")
+// keeps the quests whose map (mhfinf quest +0x24) maps to that value in the client
+// stage table 0x119234D0 (search_list / search_listAll, then search_field).
+// Counts: important numbers +0x78 / +0x7A (quest_counter_menu_init uses count + 1).
+u16 questSearchFields[importantNums.numQuestSearchFields] @ header.ptrs.questSearchFields [[name("Quest Search Fields")]];
+u16 questSearchFieldsG[importantNums.numQuestSearchFieldsG] @ header.ptrs.questSearchFieldsG [[name("Quest Search Fields (G Rank Counter)")]];
+
 // Daily rotation quests (header 0xB50 / 0xB54 / 0xB58): the quest lists of quest
 // counter tab 0xEB (quest_menu_dispatcher case 0x73, the tab's only source), one
 // per JST day % 3 (time_now_days_jst = (server time + 9 h) / 86400: 0 -> 0xB50,
@@ -268,3 +277,34 @@ DailyRotationQuestListPtr dailyRotationQuests2[importantNums.numDailyRotationQue
 // players, 1 to important numbers + 0x112 (quest_g_party_size_rate_get; 100
 // when the quest is not a G quest).
 u16 gQuestPartySizeRates[importantNums.numGQuestPartySizeRates] @ header.ptrs.gQuestPartySizeRates [[name("G Quest Party Size Rates")]];
+
+// G quest difficulty (header 0x798 and 0x79C; Wii U
+// get_g_quest_difficulty_str_sub): the aptitude word of the quest counter
+// detail panel (mhfpac pAptitudeTexts). For a G-rank target quest seen in
+// town, the player's defense (PlayerWork +0x7A8, rebuilt for the selected
+// equipment) minus baseDefenses[G star] (blademaster or gunner column by the
+// weapon class flags bit 1) gives a margin; the first threshold the margin
+// reaches (thresholds go down) is the text index, none gives index 5. Index
+// 18 and above (star 9) clamps to the last s32.
+struct GQuestDifficultyDefense {
+    s32 blademaster;
+    s32 gunner;
+};
+
+s32 gQuestDifficultyThresholds[importantNums.numGQuestDifficultyThresholds] @ header.ptrs.gQuestDifficultyThresholds [[name("G Quest Difficulty Thresholds")]];
+GQuestDifficultyDefense gQuestDifficultyDefenses[importantNums.numGQuestDifficultyDefenses / 2] @ header.ptrs.gQuestDifficultyDefenses [[name("G Quest Difficulty Base Defenses"), comment("Row = G star; row 0 unused")]];
+
+// Experience quests (header 0xA9C; important numbers + 0x3E2): the G Rank and
+// Extreme style experience quests, looked up by the current quest id. A non-zero
+// legendRastaLoadout makes legend_rasta_hunter_card_build use that row of the
+// Legend Rasta loadouts (header 0x35C) instead of the contracted one, and the
+// party count drops by 1; a non-zero weaponStyleOneBased makes player_slots_init
+// set every hunter's weapon style to it - 1. quest_is_experience_quest turns off
+// a few features (ud_prayer_phase_orb_eligible and others) on these quests.
+struct ExperienceQuest {
+    u16 questId;
+    u8 legendRastaLoadout [[comment("Legend Rasta loadout row (header 0x35C), 0 = none")]];
+    u8 weaponStyleOneBased [[comment("Weapon style + 1 (1 Earth, 2 Heaven, 3 Storm, 4 Extreme), 0 = keep")]];
+};
+
+ExperienceQuest experienceQuests[importantNums.numExperienceQuests] @ header.ptrs.experienceQuests [[name("Experience Quests")]];

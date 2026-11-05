@@ -111,3 +111,20 @@ struct PlayerMonsterMotionBank {
 };
 
 PlayerMonsterMotionBank playerMonsterMotionBanks[header.ptrs.playerSoundBankCount] @ header.ptrs.playerMonsterMotionBanks [[name("Player Monster Motion Banks")]];
+
+// Voice face motions (header 0x97C male, 0x980 female; PlayerWork +0x11 picks
+// the table). When the hunter plays a sound (player_sound_play_with_face_motion),
+// player_voice_face_motion_find looks for a row with the hunter's voice
+// (+0xB7B), then one with voice 0, and the sound id; a non-zero faceMotion is
+// played on face channel 1 for duration ticks, blended in over blendFrames + 1
+// steps. Nothing is queued when the PL_FACIAL option is on.
+struct VoiceFaceMotion {
+    u16 voice [[comment("PlayerWork +0xB7B voice to match, 0 = any voice")]];
+    u16 soundId;
+    u16 faceMotion [[comment("Added to the channel 1 base motion (0xD48 male / 0x1130 female); 0 = no change")]];
+    u8 duration;
+    u8 blendFrames [[comment("0 = instant")]];
+};
+
+VoiceFaceMotion voiceFaceMotionsMale[importantNums.numVoiceFaceMotionsMale] @ header.ptrs.voiceFaceMotionsMale [[name("Voice Face Motions (Male)")]];
+VoiceFaceMotion voiceFaceMotionsFemale[importantNums.numVoiceFaceMotionsFemale] @ header.ptrs.voiceFaceMotionsFemale [[name("Voice Face Motions (Female)")]];

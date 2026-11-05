@@ -156,6 +156,13 @@ struct HornMelody {
 
 HornMelody hornMelodies[importantNums.numHornMelodies] @ header.ptrs.hornMelodies [[name("Horn Melodies")]];
 
+// Hunting horn Extreme style melodies (header 0x674). Same rows and matcher as
+// hornMelodies, read by weapon_horn_match_note_buffer_to_extreme_song, which
+// only Extreme style (pw +0xD42 = 3) calls: a match with the style 3 hit counter
+// full picks action 0x3D / 0x41 and stores song at pw +0xB28; hh_ex_event_handler
+// event 0xC then adds hitbox shell 0x7C / 0x7D / 0x7E for song 0x2F / 0x30 / 0x31.
+HornMelody hornExtremeMelodies[importantNums.numHornExtremeMelodies] @ header.ptrs.hornExtremeMelodies [[name("Horn Extreme Melodies")]];
+
 // =======================
 // Length unknown. ezemania2's editor reads 11 bonus slot rows and 23 coating
 // rows; on ZZ the space up to the next table holds 65 rows of the same shape
@@ -299,6 +306,40 @@ struct BowModelMaterials {
 BowModelMaterialRow bowModelMaterialRows[importantNums.numBowModelMaterialRows] @ header.ptrs.bowModelMaterialRows [[name("Bow Model Material Rows")]];
 BowModelMaterials bowModelMaterials[10] @ header.ptrs.bowModelMaterials [[name("Bow Model Materials")]];
 
+// Bow arrow KO values (header 0x2E8; Wii U shell24_piyo_data_calc). The KO
+// (piyo) value written to hit +0x89 of a bow arrow shell is a base byte picked
+// by the shot type (shot work +0x1A, pBowChargeTexts index; 0x12 charge level
+// 4, 0x13 levels 6 / 7) and the arrow index (shell +0xB), x the multiplier of
+// the charge level (work +0xD) x the multiplier of the distance stage (work
+// +1); a result above 0 is raised to 1. Types without a field give 0. The
+// arrays follow the arrow count of each type (DLL table 0x11695990).
+struct BowArrowKoValues {
+    float chargeMultipliers[5] [[comment("by charge level: [0] 0 / 6, [1] 1 / 7, [2] 2, [3] 3, [4] 4; level 5 = x1")]];
+    float stageMultiplier0And4;
+    float stageMultiplier3;
+    float stageMultiplier5;
+    float stageMultiplierOther [[comment("distance stages 1, 2, 6")]];
+    u8 rapid1;
+    u8 rapid2[2] [[comment("by arrow index")]];
+    u8 rapid3[3];
+    u8 rapid4[4];
+    u8 spread1[3];
+    u8 spread2[3];
+    u8 spread3[5];
+    u8 spread4[5];
+    u8 pierce1;
+    u8 unk3F [[comment("no reader")]];
+    u8 pierce2;
+    u8 unk41 [[comment("no reader")]];
+    u8 pierce3;
+    u8 unk43 [[comment("no reader")]];
+    u8 pierce4;
+    u8 unk45 [[comment("no reader")]];
+    u8 chargeLevel4And6 [[comment("shot types 0x12 and 0x13")]];
+};
+
+BowArrowKoValues bowArrowKoValues @ header.ptrs.bowArrowKoValues [[name("Bow Arrow KO Values")]];
+
 // =======================
 // Motion values (header 0x63C, and 0x74C for the alternate bank): one row per
 // action id below 0x35, empty when valid is 0. A hit's key - 1 (0 to 11)
@@ -408,6 +449,31 @@ struct ExGRankChances {
 };
 
 ExGRankChances exGRankChances @ header.ptrs.exGRankChances [[name("Ex G Weapon Rank Chances")]];
+
+// Random (ex G) bow arrow sets (header 0x3A4, Wii U 0x3CC): the ex G twin of
+// header 0xA8. A random bow takes row get_ex_g_weapon_tamalv (get_ex_g_num kind
+// 1) instead of its shotSetId row of 0xA8; column = charge level (pw +0xB28,
+// 0-3; the 4th only with skill 0xBA). The value is a pBowChargeTexts index
+// (0-5 Rapid, 6-11 Spread, 12-17 Pierce, levels 1-6). Readers: shell24_set,
+// getArrowSetType, ui_draw_bow_charge_level_shot_types,
+// skill_activation_is_allowed. 15 rows: the only ex G bow rolls rows 0-14 and
+// they fill the gap to header 0x4F0.
+fn exGArrowType(u16 n) {
+    str kind = "?";
+    if (n < 6) kind = "Rapid";
+    else if (n < 12) kind = "Spread";
+    else if (n < 18) kind = "Pierce";
+    else return std::format("{}", n);
+    return std::format("{} {}", kind, n % 6 + 1);
+};
+
+using ExGArrowType = u16 [[format("exGArrowType")]];
+
+struct ExGArrowSet {
+    ExGArrowType shotByChargeLevel[4];
+};
+
+ExGArrowSet exGArrowSets[15] @ header.ptrs.exGArrowSets [[name("Ex G Bow Arrow Sets")]];
 
 // Random (ex G) weapon roll percents (get_ex_g_param0_per / param1_per /
 // param2_per, called by get_ex_g_num). set_ex_g_srand turns the stored rank
@@ -611,6 +677,28 @@ struct GunlanceShellRow {
 };
 
 GunlanceShellRow gunlanceShells[importantNums.numGunlanceShells] @ header.ptrs.gunlanceShells [[name("Gunlance Shells")]];
+
+// Gunlance shell damage rates (header 0x67C, 0x680, 0x684), per mille, read by
+// weapon_calculate_damage (Wii U shell38_i, the init of the shell kind 0x26 hit
+// spawned by shell_k38_call_shell). The row is the hit's shell type (+0x40,
+// the gunlance attribute % 3), the column its action (+0x42, the 0x688 cost
+// table columns). 0x680 is read on a quest without the G flag (quest +0x97
+// bit 8), 0x684 on a G quest. The rate multiplies the raw, element and five
+// element numerators (denominators x 1000); 0x67C (one s16) multiplies them
+// again when the sharpness colour tier (player +0xB2F) is red or orange.
+struct GunlanceShellDamageRateRow {
+    s16 bomb;
+    s16 attributeBomb;
+    s16 wideBomb;
+    s16 wideAttributeBomb;
+    s16 dragonCannon;
+    s16 exShot;
+    s16 moveStepBomb;
+};
+
+s16 gunlanceShellLowSharpnessDamageRate @ header.ptrs.gunlanceShellLowSharpnessDamageRate [[name("Gunlance Shell Low Sharpness Damage Rate")]];
+GunlanceShellDamageRateRow gunlanceShellDamageRate[3] @ header.ptrs.gunlanceShellDamageRate [[name("Gunlance Shell Damage Rate")]];
+GunlanceShellDamageRateRow gunlanceShellGDamageRate[3] @ header.ptrs.gunlanceShellGDamageRate [[name("Gunlance Shell G Damage Rate")]];
 
 // =======================
 // Gunlance shelling (header 0x688-0x6A0; Wii U we09_bomb, getShell38DamegeRate,
@@ -1065,6 +1153,29 @@ struct TonfaConstants {
 };
 
 TonfaConstants tonfaConstants @ header.ptrs.weaponConstants [[name("Tonfa Constants")]];
+
+// Tonfa per-target hit damage (header 0x958, important numbers + 0x390 rows).
+// Tonfa styles 2 / 3 count the shell hits on each target
+// (tonfa_target_hit_count_add); once the count reaches tonfaTargetHitTier1 a
+// kind 100 shell 0x5B / 0x72 hit spawns kind 101 shell 8 with the count, once
+// per target. When its shell 10 hits, hit_alt_damage_scale replaces the damage
+// with row[min(count, rows - 1)] x the owner's PlayerWork attackPower (+0x898)
+// + 0.5, truncated.
+u16 tonfaTargetHitDamage[importantNums.numTonfaTargetHitDamage] @ header.ptrs.tonfaTargetHitDamage [[name("Tonfa Target Hit Damage"), comment("Row = target hit count")]];
+
+// Tonfa chain shell hit rates (header 0x95C, important numbers + 0x392 rows).
+// Tonfa styles 2 / 3 count the kind 100 shells 79-90 they start (style state
+// +0xD / +0x1F, reset at the start of actions 0x39 / 0x89 / 0x8A). Those shells
+// take row[min(count - 1, rows - 1)] (hit_apply_style_and_crit_multipliers):
+// the hit value is replaced (then crit and style multipliers apply), the
+// element and status values are scaled by the rates x 0.01.
+struct TonfaChainShellRate {
+    u8 hitValue [[comment("Replaces the shell hit value (hit +0x6C)")]];
+    u8 statusRate [[comment("Status value (hit +0x8C) x it x 0.01")]];
+    u8 elementRate [[comment("Element values (hit +0x80, +0x144-0x154) x it x 0.01")]];
+};
+
+TonfaChainShellRate tonfaChainShellRates[importantNums.numTonfaChainShellRates] @ header.ptrs.tonfaChainShellRates [[name("Tonfa Chain Shell Hit Rates"), comment("Row = chain shell count - 1")]];
 
 // =======================
 // Switch Axe F tunables (header 0xA88, Otya unkA88): twelve u16 counts, then

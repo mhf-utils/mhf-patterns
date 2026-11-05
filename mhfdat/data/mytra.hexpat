@@ -16,6 +16,7 @@
 #include <std/core.pat>
 #include <std/mem.pat>
 #include <mhfdat/utils/index.pat>
+#include <misc/MonsterIDs.hexpat>
 
 struct MytraAdventure {
     u16 requiredLevel;
@@ -84,3 +85,23 @@ struct MytraPoogieLevelThresholds {
 };
 
 MytraPoogieLevelThresholds mytraPoogieLevelThresholds @ header.ptrs.mytraPoogieLevelThresholds [[name("Mytra Poogie Level Thresholds")]];
+
+// Mytra guild quests (header 0x1FC, Wii U slot 0x21C): 10 one-monster hunt
+// requests (fixed bound). lb_mytra_npc_girl_update_guild_quest_list lists the
+// rows whose requiredEvent is 0 or set in the Mytra event bits (MytraData
+// +0x04); lb_mytraQuest_Trans prints pManagerNames[0x19D + row] with the item
+// and monster names; Lb_mytra_SendMessage_DieEnemy flags the kill of the
+// target; Lb_mytra_Quest_SetPresent adds the reward. Item, count and monster
+// are stored inverted.
+fn mytraGuildQuestItem(u16 v) { return getItemName(u16(~v)); };
+fn mytraGuildQuestCount(u16 v) { return u16(~v); };
+fn mytraGuildQuestMonster(u16 v) { MonsterID m = u8(~v); return fmtMonsterID(m); };
+
+struct MytraGuildQuest {
+    u16 rewardItem [[format("mytraGuildQuestItem"), comment("Stored as ~item id")]];
+    u16 rewardCount [[format("mytraGuildQuestCount"), comment("Stored as ~count")]];
+    u16 targetMonster [[format("mytraGuildQuestMonster"), comment("Stored as ~monster id")]];
+    u16 requiredEvent [[comment("Mytra event bit; 0: always listed")]];
+};
+
+MytraGuildQuest mytraGuildQuests[10] @ header.ptrs.mytraGuildQuests [[name("Mytra Guild Quests")]];

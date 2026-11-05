@@ -127,6 +127,25 @@ struct ClanConquestSupportConditionList {
 ClanConquestTargetSlayPointList clanConquestTargetSlayPoints @ header.ptrs.clanConquestTargetSlayPoints [[name("Clan Conquest Target Slay Points")]];
 ClanConquestSupportConditionList clanConquestSupportConditions @ header.ptrs.clanConquestSupportConditions [[name("Clan Conquest Support Conditions")]];
 
+// Header 0xA5C: personal points (個人実績pt) for clearing a Clan Conquest target,
+// by the monster's Conquest level after the quest. clan_conquest_level_points_get
+// keeps the points of the last row whose minLevel <= level and stops at the first
+// row above it, so the 0xFFFF row ends every lookup (levels stop at 9999).
+// quest_complete_idle_update passes the result to putPostSeibattle (0x145).
+// clan_conquest_points_help_page_draw shows the same bands from a copy in the
+// exe (page "モンスターのLv実績pt"), not from this table.
+struct ClanConquestMonsterLevelPoints {
+    u16 minLevel;
+    u16 points;
+};
+
+struct ClanConquestMonsterLevelPointList {
+    ClanConquestMonsterLevelPoints rows[while(std::mem::read_unsigned($, 2) != 0xFFFF)];
+    ClanConquestMonsterLevelPoints terminator [[comment("0xFFFF, 0xFFFF")]];
+};
+
+ClanConquestMonsterLevelPointList clanConquestMonsterLevelPoints @ header.ptrs.clanConquestMonsterLevelPoints [[name("Clan Conquest Monster Level Points")]];
+
 // Guild message board post icon animations (header 0xB8C):
 // guild_msg_board_icon_anim_tick gives each of the 10 post rows of a page an
 // idle timer (1/30 a frame); past idleSeconds the row rolls rand % 100 <

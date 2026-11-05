@@ -24,7 +24,29 @@ struct ImportantNumbers {
     u16 numMonsterDesc
         [[name("Number of monster's dsecriptions")]];
 
-    padding[0x14];
+    padding[0x2];
+
+    // Offset 0x26: Hunting Horn melody book pages (header 0x180, 0x184)
+    u16 numHuntingHornSongPages
+        [[name("Number of Hunting Horn Song Pages")]];
+
+    u16 numAncientHuntingHornScorePages
+        [[name("Number of Ancient Hunting Horn Score Pages")]];
+
+    padding[0x2];
+
+    // Offset 0x2C: Hunter Dojo rule pages (header 0x1A8 online, 0x1AC offline)
+    u16 numDojoRulePagesOnline
+        [[name("Number of Dojo Rule Pages (Online)")]];
+
+    u16 numDojoRulePagesOffline
+        [[name("Number of Dojo Rule Pages (Offline)")]];
+
+    // Offset 0x30: Hunter Basics pages (header 0x1A4)
+    u16 numHunterBasicsPages
+        [[name("Number of Hunter Basics Pages")]];
+
+    padding[0x6];
 
     // Offset 0x38: Instructor tutorial (header 0x1B0, 0x1B4)
     u16 numTutorialLessons
@@ -57,7 +79,19 @@ struct ImportantNumbers {
     u16 numMeowkaPotRecipes
         [[name("Number of Meowka Pot Recipes")]];
 
-    padding[0x8];
+    // Offset 0x52: farm cat fail items by HR tier (header 0x204, 0x208, 0x20C,
+    // 0x210); u16 values, 2 per row
+    u16 numFarmCatFailItemsHr1Values
+        [[name("Number of u16 Values in Farm Cat Fail Items HR 1")]];
+
+    u16 numFarmCatFailItemsHr2Values
+        [[name("Number of u16 Values in Farm Cat Fail Items HR 2-30")]];
+
+    u16 numFarmCatFailItemsHr31Values
+        [[name("Number of u16 Values in Farm Cat Fail Items HR 31-50")]];
+
+    u16 numFarmCatFailItemsHr51Values
+        [[name("Number of u16 Values in Farm Cat Fail Items HR 51-99")]];
 
     // Offset 0x5A: lost item reward tiers (header 0x214)
     u16 numLostItemRewardTiers
@@ -105,7 +139,14 @@ struct ImportantNumbers {
     u16 numQuestSearchMonsterValues
         [[name("Number of Quest Search Monster u16 Values")]];
 
-    padding[0x3C];
+    // Offset 0x78: quest search fields (header 0x28C normal counter, 0x290 G rank counter)
+    u16 numQuestSearchFields
+        [[name("Number of Quest Search Fields")]];
+
+    u16 numQuestSearchFieldsG
+        [[name("Number of Quest Search Fields (G Rank Counter)")]];
+
+    padding[0x38];
 
     // Offset 0xB4: evolution weapon series (header 0x2CC melee, 0x2D0 ranged)
     u16 numEvoMeleeWeapons
@@ -171,7 +212,13 @@ struct ImportantNumbers {
     u16 numChequeHrChances
         [[name("Number of 30k Cheque HR Chances")]];
 
-    padding[0x4];
+    // Offset 0x10E: N course bonus item chances (header 0x394)
+    u16 numNBonusItemChances
+        [[name("Number of N Bonus Item Chances")]];
+
+    // Offset 0x110: N course bonus items (header 0x398)
+    u16 numNBonusItems
+        [[name("Number of N Bonus Items")]];
 
     // Offset 0x112: G quest party size rates (header 0x39C)
     u16 numGQuestPartySizeRates
@@ -289,7 +336,9 @@ struct ImportantNumbers {
     u16 numGoocooSeriesNames
         [[name("Number of Goocoo Series Names")]];
 
-    padding[0x2];
+    // Offset 0x17E: Goocoo quest lists (header 0x474)
+    u16 numGoocooQuestLists
+        [[name("Number of Goocoo Quest Lists")]];
 
     u16 numGoocooTrustParams
         [[name("Number of Goocoo Trust Parameters")]];
@@ -326,7 +375,19 @@ struct ImportantNumbers {
     u16 numGoocooGroupSpotLists
         [[name("Number of Goocoo Group Spot Lists")]];
 
-    padding[0x8];
+    // Offset 0x194: Goocoo talk items (header 0x4A4)
+    u16 numGoocooTalkItems
+        [[name("Number of Goocoo Talk Items")]];
+
+    padding[0x2];
+
+    // Offset 0x198: Goocoo talk item thresholds (header 0x4AC)
+    u16 numGoocooTalkItemThresholds
+        [[name("Number of Goocoo Talk Item Thresholds")]];
+
+    // Offset 0x19A: Goocoo emote delays by mood (header 0x4B4)
+    u16 numGoocooEmoteDelays
+        [[name("Number of Goocoo Emote Delay Rows")]];
 
     u16 numGoocooPotMaterials
         [[name("Number of Goocoo Pot Materials")]];
@@ -483,7 +544,9 @@ struct ImportantNumbers {
     u16 numHornMelodies
         [[name("Number of Horn Melodies")]];
 
-    padding[0x2];
+    // Offset 0x25A: hunting horn Extreme style melodies (header 0x674)
+    u16 numHornExtremeMelodies
+        [[name("Number of Horn Extreme Melodies")]];
 
     // Offset 0x25C: gunlance shells (header 0x678)
     u16 numGunlanceShells
@@ -527,13 +590,25 @@ struct ImportantNumbers {
     u16 numPlayerUniqueParams
         [[name("Number of Player Unique Parameter Rows")]];
 
-    padding[0x30];
+    padding[0x26];
+
+    // Offset 0x2BA: fishing baits (header 0x780)
+    u16 numFishingBaits
+        [[name("Number of Fishing Baits")]];
+
+    padding[0x8];
 
     // Offset 0x2C4: super rapid fire power rows (header 0x794)
     u16 numSuperRapidFirePowers
         [[name("Number of Super Rapid Fire Powers")]];
 
-    padding[0x4];
+    // Offset 0x2C6: G quest difficulty thresholds (header 0x798)
+    u16 numGQuestDifficultyThresholds
+        [[name("Number of G Quest Difficulty Thresholds")]];
+
+    // Offset 0x2C8: G quest difficulty base defenses, s32 count = 2 per G star (header 0x79C)
+    u16 numGQuestDifficultyDefenses
+        [[name("Number of G Quest Difficulty Base Defense Values")]];
 
     // Offset 0x2CA: lobby NPC motion sounds (header 0x7A8), the last row is the 0 end row
     u16 numNpcMotionSounds
@@ -663,7 +738,13 @@ struct ImportantNumbers {
     u16 numShitenRewards
         [[name("Number of Shiten Rewards")]];
 
-    padding[0x8];
+    padding[0x2];
+
+    // Offset 0x36A: Cat Decoration search skill categories (header 0x908)
+    u16 numCatDecoSearchSkillCategories
+        [[name("Number of Cat Decoration Search Skill Categories")]];
+
+    padding[0x4];
 
     // Offset 0x370: 11 on ZZ, the Caravan ranking route groups that are used (header 0x91C)
     u16 numRankingGroups
@@ -677,7 +758,24 @@ struct ImportantNumbers {
     u16 numTowerJewelRecipes
         [[name("Number of Tower Jewel Recipes")]];
 
-    padding[0x1A];
+    padding[0x4];
+
+    // Offset 0x390: Tonfa per-target hit damage rows (header 0x958)
+    u16 numTonfaTargetHitDamage
+        [[name("Number of Tonfa Target Hit Damage Rows")]];
+
+    // Offset 0x392: Tonfa chain shell hit rates (header 0x95C)
+    u16 numTonfaChainShellRates
+        [[name("Number of Tonfa Chain Shell Hit Rates")]];
+
+    padding[0xE];
+
+    // Offset 0x3A2: voice face motions, male / female (header 0x97C, 0x980)
+    u16 numVoiceFaceMotionsMale
+        [[name("Number of Voice Face Motions (Male)")]];
+
+    u16 numVoiceFaceMotionsFemale
+        [[name("Number of Voice Face Motions (Female)")]];
 
     // Offset 0x3A6: Storm Style trial G excluded monsters (header 0x98C)
     u16 numNsQuestExcludedMonstersG
@@ -687,13 +785,25 @@ struct ImportantNumbers {
     u16 numTranscendDepths
         [[name("Number of Transcend Depths")]];
 
-    padding[0x26];
+    padding[0x14];
+
+    // Offset 0x3BE: GR800 Exotic bonus materials (header 0x9F8)
+    u16 numExoticBonusMaterials
+        [[name("Number of GR800 Exotic Bonus Materials")]];
+
+    padding[0x10];
 
     // Offset 0x3D0: clan mission part targets (header 0xA28)
     u16 numClanMissionTargets
         [[name("Number of Clan Mission Targets")]];
 
-    padding[0x2A];
+    padding[0x10];
+
+    // Offset 0x3E2: experience quests (header 0xA9C)
+    u16 numExperienceQuests
+        [[name("Number of Experience Quests")]];
+
+    padding[0x18];
 
     // Offset 0x3FC: soul combine recipes (header 0xAEC)
     u16 numCombineSoulRecipes
@@ -749,7 +859,9 @@ struct ImportantNumbers {
     u16 numSigilCraftMaterialsZenith
         [[name("Number of Zenith Sigil Craft Materials")]];
 
-    padding[0x2];
+    // Offset 0x41E: sigil craft recipe material categories (header 0xBA0)
+    u16 numSigilCraftRecipeMaterialCategories
+        [[name("Number of Sigil Craft Recipe Material Categories")]];
 
     // Offset 0x420: cuff combine recipes (header 0xBAC)
     u16 numCombineCuffRecipes

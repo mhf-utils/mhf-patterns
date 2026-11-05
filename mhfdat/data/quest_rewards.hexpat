@@ -158,6 +158,21 @@ struct ChequeHrChance {
 
 ChequeHrChance chequeHrChances[importantNums.numChequeHrChances] @ header.ptrs.chequeHrChances [[name("30k Cheque HR Chances")]];
 
+// N course bonus items (header 0x394 / 0x398, getNBonusItem, called once from
+// quest_generate_reward_item_list in stages 0xC8, 0xCA-0xCC, 0xCE, 0xD2, 0x11A,
+// 0x11E, 0x1BD): with course right 9 (N) or 30, objective slot 0 cleared and a
+// target monster whose crown row (header 0x130) byte +0xC is 1-6 or 10-12, the
+// last row with minPostRank <= the quest's postRankMin (mhfinf +0x4E, binary
+// search) gives the chance; on rand % 100 < chance one item picked at
+// rand % count is added x1 to the reward list.
+struct NBonusItemChance {
+    u16 minPostRank [[comment("Rows sorted ascending")]];
+    s16 chance [[comment("Percent")]];
+};
+
+NBonusItemChance nBonusItemChances[importantNums.numNBonusItemChances] @ header.ptrs.nBonusItemChances [[name("N Bonus Item Chances")]];
+ItemId nBonusItems[importantNums.numNBonusItems] @ header.ptrs.nBonusItems [[name("N Bonus Items"), comment("One picked at random, x1")]];
+
 struct PouchItemRewardItem {
     ItemId item;
     s16 count;
@@ -258,3 +273,38 @@ struct QuestRareReward {
 };
 
 QuestRareReward questRareRewards[importantNums.numQuestRareRewards] @ header.ptrs.questRareRewards [[name("Quest Rare Rewards")]];
+
+// Conquest Crystal rewards (header 0x9A4): rows ended by a weight of 0.
+// quest_reward_conquest_crystal_roll (from quest_generate_reward_item_list, on
+// the quests its two gates allow) needs item 0x2C01 (Conquest Crystal) in the
+// pouch, draws one row by weight (gRandomSeed1 % total), adds it to the first
+// free reward stack among slots 0-23 and then consumes the crystal.
+struct ConquestCrystalReward {
+    u32 weight;
+    u16 item [[format("getItemName")]];
+    u16 count;
+};
+
+ConquestCrystalReward conquestCrystalRewards[while(std::mem::read_unsigned($, 4) != 0)] @ header.ptrs.conquestCrystalRewards [[name("Conquest Crystal Rewards")]];
+ConquestCrystalReward conquestCrystalRewardsEnd @ addressof(conquestCrystalRewards) + sizeof(conquestCrystalRewards) [[name("Conquest Crystal Rewards End")]];
+
+// GR800 Exotic bonus materials (header 0x9F8, important numbers + 0x3BE rows).
+// quest_gr800_exotic_bonus_material_get: on a G rank quest with quest flag
+// +0x98 & 0x200 (quest_flag200_rank_tier_get = 2) and a GR of 800 or more, the
+// first row whose monster is the slain monster (EnemyWork +3) gives its item.
+// Each kill adds 1 of that item to GameWork +0x3E0C / +0x3E16 (5 entries);
+// quest_generate_reward_item_list then adds them to the rewards
+// (quest_reward_add_exotic_bonus_item): all 5 with their count when quest flag
+// +0x98 & 0x2000 is set (stacks 0x50-0x5F), else the first 2, one each (stacks
+// 0x20-0x2F). The last row is 0.
+fn exoticBonusMonster(u16 n) {
+    MonsterID m = u8(n);
+    return fmtMonsterID(m);
+};
+
+struct ExoticBonusMaterial {
+    u16 monster [[format("exoticBonusMonster")]];
+    ItemId item;
+};
+
+ExoticBonusMaterial exoticBonusMaterials[importantNums.numExoticBonusMaterials] @ header.ptrs.exoticBonusMaterials [[name("GR800 Exotic Bonus Materials")]];

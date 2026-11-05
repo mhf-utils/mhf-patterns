@@ -106,3 +106,18 @@ struct CarveKindChances {
 };
 
 CarveKindChances carveKindChances[importantNums.numCarveKindChanceMonsters] @ header.ptrs.carveKindChances [[name("Carve Kind Chances")]];
+
+// Carve normal items (header 0x6C4; Wii U get_normal_item): the fallback carve
+// reward, rolled when the monster's carve list is empty or every item in it is
+// filtered out (carve_roll_item, carve_roll_item_zenith), or when all carve
+// kind chances are 0 (carve_kind_roll). The first row whose running weight is
+// above a % 100 roll is given; the 20 rows of weight 5 sum to 100, so the zero
+// rows after them are never reached. The loop bound is important numbers
+// +0x262 / 2 (numCarveKindChanceMonsters, another table's count): the rows are
+// typed up to the next table instead.
+struct CarveNormalItem {
+    u16 itemID [[format("getItemName")]];
+    u16 weight;
+};
+
+CarveNormalItem carveNormalItems[(nextTable(header.ptrs.carveNormalItems) - header.ptrs.carveNormalItems) / 4] @ header.ptrs.carveNormalItems [[name("Carve Normal Items")]];

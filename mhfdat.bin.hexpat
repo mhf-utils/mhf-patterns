@@ -12,6 +12,7 @@
 //#define __DATA_DATA_COUNTERS 1
 //#define __DATA_DECOID 1
 //#define __DATA_DIVA_STORY 1
+//#define __DATA_DOJO 1
 //#define __DATA_EQUIPMENTS 1
 //#define __DATA_EQUIPMENT_EFFECTS 1
 //#define __DATA_EQUIP_SHOP 1
@@ -47,11 +48,13 @@
 //#define __DATA_PLAYER_MOTION_EVENTS 1
 //#define __DATA_PLAYER_SOUNDS 1
 //#define __DATA_PLAYER_UNIQUE_PARAMS 1
+//#define __DATA_PLAZA 1
 //#define __DATA_POOGIE 1
 //#define __DATA_PUBLIC_BAR 1
 //#define __DATA_QUESTS 1
 //#define __DATA_QUIZ_QUEST 1
 //#define __DATA_RASTA_GUILD 1
+//#define __DATA_RIGHT_EXCHANGE 1
 //#define __DATA_ROAD 1
 //#define __DATA_SEASONAL_EVENTS 1
 //#define __DATA_SECRET_BOOK 1

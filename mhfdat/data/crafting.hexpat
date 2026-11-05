@@ -224,6 +224,15 @@ struct ArmorDefenseCoefRow {
 
 ArmorDefenseCoefRow armorDefenseCoefs[32] @ header.ptrs.armorDefenseCoefs [[name("Armor Defense Upgrade Coefficients")]];
 
+// Armor slot upgrades (header 0xBC; Get_Armor_slot_eq): slots = min(baseSlots +
+// slotsByLevel[min(level, 6)] of row min(slotUpgradeRow, 15), maxSlots). No count:
+// 16 rows (the code clamp; 112 of the 128 bytes before the next table).
+struct ArmorSlotUpgradeRow {
+    u8 slotsByLevel[7];
+};
+
+ArmorSlotUpgradeRow armorSlotUpgrades[16] @ header.ptrs.armorSlotUpgrades [[name("Armor Slot Upgrades")]];
+
 // [mhfo-hd.dll + 0xaf47ed] an armor part's UpgradeID (+0x28) picks a list (ZZ: 4855)
 ptVar<GenericAUpgrade> armorUpgrades[while(std::mem::read_unsigned($,4))] @ header.ptrs.armorUpgradeMats;
 SigilTowerTable sigilTowerTable[while(std::mem::read_unsigned($, 4))]     @ header.ptrs.SigilTowerForging    [[name("Sigil Tower Forging Data")]];
@@ -258,44 +267,54 @@ struct DecoShop {
     u8 ItemUnlockFlag4;
 } [[single_color]];
 
+// Tower / G50 weapon level stats (header 0x5C4-0x5EC, 0x888, 0xA90, 0xB98, one
+// table per weapon class in class order; g50_tower_params_pointers): each table
+// has 130 list pointers, indexed by the weapon's TowerParamId (melee +0x26,
+// ranged +0x2C); the row is the weapon's level - 1 (level 0 also takes row 0),
+// and a list ends at modelId 0xFFFF (count_tower_g50_entries; 50 rows at most on
+// the 3 files). Each getter reads one field: get_tower_g50_model_id /
+// gGetWeaponModelID, get_tower_g50_sharpness_id, get_tower_g50_max_sharpness,
+// get_tower_g50_raw_damage, get_tower_g50_affinity, get_tower_g50_element_value,
+// get_tower_g50_status_value, get_tower_g50_gunlance_shell, get_tower_g50_visual_effect,
+// getGPlateUseSlotMax and get_tower_g50_upgrade_path.
 struct TowerG50WeaponParams {
-    u16 modelId;          
-    u8  sharpness_id;         
-    u8  max_sharpness;          
-    u16 weaponRaw;         
-    u8  elementId;         
-    u8  eleDamage;         
-    u8  ailmentId;         
-    u8  ailDamage;         
-    u16 defense;         
-    u8  chance_rate [[comment("Chance to get upgraded on low cost upgrade?")]];         
-    u8  unk_0d;         
-    u16 upgradePath;      
+    u16 modelId [[comment("0xFFFF ends the list")]];
+    u8  sharpnessId;
+    u8  maxSharpness;
+    u16 weaponRaw;
+    s8  affinity [[comment("get_tower_g50_affinity, from get_weapon_base_affinity")]];
+    u8  elementValue [[comment("get_tower_g50_element_value: the element value of weapon_element_status_affinity_value; the element type comes from the weapon")]];
+    u8  statusValue [[comment("get_tower_g50_status_value: the status value, used when the weapon has a status below Blast; the type comes from the weapon")]];
+    u8  gunlanceShell [[comment("get_tower_g50_gunlance_shell: read from the Gunlance table only, shell type + level x 3 (then + the shell sigil level); no reader in the other tables")]];
+    u16 visualEffect [[comment("get_tower_g50_visual_effect: replaces the weapon's visualEffects for G class weapons (weapon_effect_init), a row of weaponEffectSets (header 0x280)")]];
+    u8  unk0C [[comment("0-100 in steps of 10 on the 3 files; no reader found")]];
+    u8  gPlateUseSlotMax [[comment("getGPlateUseSlotMax: usable G sigil slots (2 or 3)")]];
+    u16 upgradePath;
 };
 
-// a weapon's TowerParamId (melee +0x26, ranged +0x2C) picks one of its class's 130 lists
-struct WeaponTypeParams2 {
-	ptr dataptr [[hidden]];
-    TowerG50WeaponParams g50LevelStats[while(std::mem::read_unsigned($, 2) != 0xFFFF)] @ dataptr;};
-
-struct WeaponTypeParams {
-    WeaponTypeParams2 greatSwordParams [130]      @ header.ptrs.GreatSword_Params_pointer     [[name("Tower/G50 Params - Great Sword")]];
-	WeaponTypeParams2 heavyBowgunParams  [130]    @ header.ptrs.HeavyBowGun_Params_pointer    [[name("Tower/G50 Params - Heavy Bowgun")]];
-	WeaponTypeParams2 hammerParams  [130]         @ header.ptrs.Hammer_Params_pointer         [[name("Tower/G50 Params - Hammer")]];
-	WeaponTypeParams2 lanceParams  [130]          @ header.ptrs.Lance_Params_pointer          [[name("Tower/G50 Params - Lance")]];
-	WeaponTypeParams2 swordAndShieldParams  [130] @ header.ptrs.SwordAndShield_Params_pointer [[name("Tower/G50 Params - Sword and Shield")]];
-	WeaponTypeParams2 lightBowgunParams  [130]    @ header.ptrs.LightBowgun_Params_pointer    [[name("Tower/G50 Params - Light Bowgun")]];
-	WeaponTypeParams2 dualBladesParams  [130]     @ header.ptrs.DualBlades_Params_pointer     [[name("Tower/G50 Params - Dual Blades")]];
-	WeaponTypeParams2 longswordParams  [130]      @ header.ptrs.LongSword_Params_pointer      [[name("Tower/G50 Params - Long Sword")]];
-	WeaponTypeParams2 huntingHornParams  [130]    @ header.ptrs.HuntingHorn_Params_pointer    [[name("Tower/G50 Params - Hunting Horn")]];
-	WeaponTypeParams2 gunlanceParams  [130]       @ header.ptrs.GunLance_Params_pointer       [[name("Tower/G50 Params - Gunlance")]];
-	WeaponTypeParams2 bowParams  [130]            @ header.ptrs.Bow_Params_pointer            [[name("Tower/G50 Params - Bow")]];
-	WeaponTypeParams2 tonfaParams  [130]          @ header.ptrs.Tonfa_Params_pointer          [[name("Tower/G50 Params - Tonfa")]];
-	WeaponTypeParams2 switchAxeParams [130]       @ header.ptrs.SwitchAxe_Params              [[name("Tower/G50 Params - Switch Axe")]];
-	WeaponTypeParams2 magnetspikeParams [130]     @ header.ptrs.Magnetspike_params_pointer    [[name("Tower/G50 Params - Magnet Spike")]];
+struct TowerG50LevelList {
+    TowerG50WeaponParams levels[while(std::mem::read_unsigned($, 2) != 0xFFFF)] [[comment("Row = weapon level - 1")]];
+    u16 end;
 };
 
-WeaponTypeParams motionValues @ header.ptrs.Hammer_Params_pointer [[name("G50/Tower Params")]];
+struct TowerG50LevelListPtr {
+    TowerG50LevelList *list : u32;
+};
+
+TowerG50LevelListPtr towerG50GreatSwordParams[130] @ header.ptrs.GreatSword_Params_pointer [[name("Tower/G50 Params - Great Sword"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50HeavyBowgunParams[130] @ header.ptrs.HeavyBowGun_Params_pointer [[name("Tower/G50 Params - Heavy Bowgun"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50HammerParams[130] @ header.ptrs.Hammer_Params_pointer [[name("Tower/G50 Params - Hammer"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50LanceParams[130] @ header.ptrs.Lance_Params_pointer [[name("Tower/G50 Params - Lance"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50SwordAndShieldParams[130] @ header.ptrs.SwordAndShield_Params_pointer [[name("Tower/G50 Params - Sword and Shield"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50LightBowgunParams[130] @ header.ptrs.LightBowgun_Params_pointer [[name("Tower/G50 Params - Light Bowgun"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50DualBladesParams[130] @ header.ptrs.DualBlades_Params_pointer [[name("Tower/G50 Params - Dual Blades"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50LongSwordParams[130] @ header.ptrs.LongSword_Params_pointer [[name("Tower/G50 Params - Long Sword"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50HuntingHornParams[130] @ header.ptrs.HuntingHorn_Params_pointer [[name("Tower/G50 Params - Hunting Horn"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50GunlanceParams[130] @ header.ptrs.GunLance_Params_pointer [[name("Tower/G50 Params - Gunlance"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50BowParams[130] @ header.ptrs.Bow_Params_pointer [[name("Tower/G50 Params - Bow"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50TonfaParams[130] @ header.ptrs.Tonfa_Params_pointer [[name("Tower/G50 Params - Tonfa"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50SwitchAxeParams[130] @ header.ptrs.SwitchAxe_Params [[name("Tower/G50 Params - Switch Axe F"), comment("Index = TowerParamId")]];
+TowerG50LevelListPtr towerG50MagnetSpikeParams[130] @ header.ptrs.Magnetspike_params_pointer [[name("Tower/G50 Params - Magnet Spike"), comment("Index = TowerParamId")]];
 
 DecoShop decoShop[while(std::mem::read_unsigned($, 4))]          @ header.ptrs.DecoShop;
 DecoShop grankDecoShop[while(std::mem::read_unsigned($, 4))]     @ header.ptrs.GrankDecoShop;

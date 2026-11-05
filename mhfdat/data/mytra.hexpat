@@ -72,3 +72,15 @@ struct MytraCatEquipment {
 };
 
 MytraCatEquipment mytraCatEquipment[71] @ header.ptrs.mytraCatEquipment [[name("Mytra Cat Equipment")]];
+
+// Mytra Poogie level thresholds (header 0x228). The Poogie level printed on its
+// status page (pManagerNames[0x46E] "LV : %d") is the number of thresholds below
+// intelligence + agility + willpower (Lb_mytra_GetPigLv); the quest Poogie
+// level (mytra_GetQuestPigLv) also counts a threshold equal to the sum. Ends at
+// 0: 100 thresholds, then zero padding.
+struct MytraPoogieLevelThresholds {
+    u16 thresholds[while(std::mem::read_unsigned($, 2) != 0)];
+    u16 end;
+};
+
+MytraPoogieLevelThresholds mytraPoogieLevelThresholds @ header.ptrs.mytraPoogieLevelThresholds [[name("Mytra Poogie Level Thresholds")]];

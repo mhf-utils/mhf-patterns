@@ -37,3 +37,19 @@ struct DivaHallCamera {
 };
 
 DivaHallCamera divaHallCameras[49] @ header.ptrs.divaHallCameras [[name("Diva Hall Cameras"), comment("Row 0 is all zeros; from = 0 starts no camera")]];
+
+// Diva Hall actor points (header 0x7C8): where a Diva Story scene puts the
+// player (actor 0) or an NPC, and which way it faces. Indexed by a scenario
+// byte: the script header entries {u16 actor, u8 point, u8 flag}
+// (divaStory_run_scenario warps them on the Diva Hall stage) and the actor block
+// entries of nodes 0x10 / 0x11 (divaStory_actor_block_run_entries: tag 3 warps
+// to the point, tags 4 / 12 turn to it, divaStory_actor_turn_update turning
+// 0x400 a frame from the x / z of the point). No count: 28 rows fit before the
+// next table; rows 0 and 27 are zeros; the 135 local scripts use points 0-26.
+struct DivaHallActorPoint {
+    float pos[3] [[comment("Entity position and pl_destPos (divaStory_actor_set_point_pos)")]];
+    u16 yaw [[comment("pl_targetYaw (+0xE) and rotation (+0xA4)")]];
+    u16 unk0E [[comment("no reader")]];
+};
+
+DivaHallActorPoint divaHallActorPoints[28] @ header.ptrs.divaHallActorPoints [[name("Diva Hall Actor Points")]];

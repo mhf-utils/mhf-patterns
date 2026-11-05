@@ -24,6 +24,7 @@
 //#define __DATA_GUILD_HALL_REWARDS 1
 //#define __DATA_GUILD_WEEKLY_BONUS 1
 //#define __DATA_HALK 1
+//#define __DATA_HELP_CAT 1
 //#define __DATA_HUNTER_GUIDE 1
 //#define __DATA_HUNTING_INFO 1
 //#define __DATA_HUNTING_MEDALS 1
@@ -58,11 +59,13 @@
 //#define __DATA_SHOP 1
 //#define __DATA_SHOP_GUILD 1
 //#define __DATA_SHOP_ROAD_CAT 1
+//#define __DATA_SHOP_ROAD_GM 1
 //#define __DATA_SHOP_TOWER_MEDAL 1
 //#define __DATA_SIGILS 1
 //#define __DATA_SIGIL_GEM_CRAFTING 1
 //#define __DATA_SKILLS 1
 //#define __DATA_STAGE_OBJECTS 1
+//#define __DATA_STAMP_CARD 1
 //#define __DATA_TALK_CAMERAS 1
 //#define __DATA_TITLE_UNLOCKS 1
 //#define __DATA_TOWER 1

@@ -44,7 +44,13 @@ s32p monsterDescriptions[importantNums.numMonsterDesc]
 // (skill 0xC0 adds one), the reach in percent of the monster's size and the
 // point's offset from the monster (from a bone when boneFlag is set). The
 // list ends at a row whose unk1E is 0x8000. HagiLv 9 quests use header 0xAC8
-// instead; some Zenith variants take altCarvePoints.
+// instead (falling back to this table when the monster is missing).
+// The second list is not an alternative carve list but the monster's drop
+// points: monster action and damage handlers spawn row N at the monster as a
+// carve reward entry (monster_drop_point_try_spawn and
+// monster_drop_point_obj_try_spawn roll (rng & 0x1F) <= chance,
+// monster_drop_point_spawn does not roll). At HagiLv 9 both lists take column
+// 1 / 2 / 3 for gGetMonsterStatus 0x41 / 0x42 / 0x43, else 0.
 struct CarvePoint {
     s16 carveTableByRank[12];
     u16 carveCount;
@@ -63,15 +69,71 @@ struct CarvePointList {
     CarvePoint terminator;
 };
 
+struct MonsterDropPoint {
+    s16 carveTableByRank[12] [[comment("Carve table (header 0x120) by HagiLv; 0 or -1: no drop")]];
+    u8 chance [[comment("Spawns when (rng & 0x1F) <= chance (32 always)")]];
+    u8 carveCount;
+};
+
 struct MonsterCarvePoints {
     ptVar<CarvePointList> carvePoints;
-    u32 altCarvePoints;
-    u32 unk08;
+    u32 dropPointCount = std::mem::read_unsigned($ + 4, 4);
+    if (std::mem::read_unsigned($, 4) != 0)
+        MonsterDropPoint *dropPoints[dropPointCount] : u32;
+    else
+        u32 dropPoints;
+    u32 unk08 [[comment("No reader; equals the drop point count on the 3 files")]];
 } [[name(fmtMonsterID(std::core::array_index()))]];
 
 MonsterCarvePoints monsterCarvePoints[MONSTER_NAME_COUNT]
     @ header.ptrs.monsterCarvePoints
     [[name("Monster Carve Points")]];
+
+// Zenith carve points (header 0xAC8): rows walked until monster 0 / 0xFF, no
+// terminator in the block (the rows end where header 0x128 starts). Replace the
+// 0x138 lists at HagiLv 9 (monster_carve_points_get, monster_carve_points_alt_get),
+// for Berserk Raviente 0x95 on the extreme Great Slaying quests
+// (great_slaying_is_berserk_extreme_quest) and variant 0xD (carve_roll_item), and
+// for the drop points of monster 0x50 with em_variation_check(0x50, 0x10) on
+// variant2 & 0x80 quests. carve_roll_item_zenith (carve kind 8) rolls from the
+// first point's column 0.
+fn carveRowsGoOn(u32 addr, u32 end) {
+    u8 m = std::mem::read_unsigned(addr, 1);
+    return m != 0x00 && m != 0xFF && addr < end;
+};
+
+struct MonsterCarvePointsZenith {
+    MonsterID monster;
+    padding[3];
+    if (std::mem::read_unsigned($, 4) != 0)
+        CarvePointList *carvePoints : u32;
+    else
+        u32 carvePoints;
+    u32 dropPointCount = std::mem::read_unsigned($ + 4, 4);
+    if (std::mem::read_unsigned($, 4) != 0)
+        MonsterDropPoint *dropPoints[dropPointCount] : u32;
+    else
+        u32 dropPoints;
+    u32 unk0C [[comment("No reader; equals the drop point count on the 3 files")]];
+} [[name(fmtMonsterID(monster))]];
+
+MonsterCarvePointsZenith monsterCarvePointsZenith[while(carveRowsGoOn($, header.ptrs.captureBreakRewards))] @ header.ptrs.monsterCarvePointsZenith [[name("Monster Carve Points: Zenith")]];
+
+// Berserk Raviente small party carve points (header 0xAD0;
+// monster_carve_points_small_party_find, used by monster_carve_points_get and
+// carve_roll_item for 0x95 on the small party Great Slaying quests,
+// great_slaying_is_berserk_small_party_quest). One row in the 3 files.
+struct MonsterCarvePointsSmallParty {
+    MonsterID monster;
+    u8 unk01 [[comment("Rows with a non-zero value are skipped")]];
+    u16 unk02 [[comment("no reader")]];
+    if (std::mem::read_unsigned($, 4) != 0)
+        CarvePointList *carvePoints : u32;
+    else
+        u32 carvePoints;
+} [[name(fmtMonsterID(monster))]];
+
+MonsterCarvePointsSmallParty monsterCarvePointsSmallParty[while(carveRowsGoOn($, 0xFFFFFFFF))] @ header.ptrs.monsterCarvePointsSmallParty [[name("Monster Carve Points: Berserk Raviente Small Party")]];
 
 // Start actions (header 0xAD4): on quests whose variant has flag 0x2000, a
 // listed monster starts in this action (act, sub) and locomotion state
@@ -116,3 +178,22 @@ struct Felyne2ModeRoll {
 };
 
 Felyne2ModeRoll felyne2ModeRoll @ header.ptrs.felyne2ModeRoll [[name("Felyne2 Mode Roll")]];
+
+// Monster hitzone effect scales (header 0x53C): effect_msg_slot_get_scale, for an
+// effect message whose flags have bit 0x20, calls
+// effect_msg_get_hitzone_radius_scale: a uniform scale = the hitzone radius of
+// the request's index x 0.01 x the scale of the first row whose monster is the
+// entity's (no row: radius x 0.01); without the flag the scale is 1.0.
+struct MonsterHitzoneEffectScale {
+    u16 monster [[format("fmtMonsterHitzoneMonster"), comment("Compared as a u16 with the entity's monster id")]];
+    u16 unk02 [[comment("no reader, 0")]];
+    u32 unk04 [[comment("no reader, 0")]];
+    float scale;
+};
+
+fn fmtMonsterHitzoneMonster(u16 n) {
+    MonsterID m = u8(n);
+    return fmtMonsterID(m);
+};
+
+MonsterHitzoneEffectScale monsterHitzoneEffectScales[importantNums.numMonsterHitzoneEffectScales] @ header.ptrs.monsterHitzoneEffectScales [[name("Monster Hitzone Effect Scales")]];

@@ -29,3 +29,19 @@ u8 boxSearchIcons[importantNums.numBoxSearchIcons] @ header.ptrs.boxSearchIcons 
 ItemId boxSearchDecorations[importantNums.numBoxSearchDecorations] @ header.ptrs.boxSearchDecorations [[name("Box Search: Decorations")]];
 u16 boxSearchSkillTrees[importantNums.numBoxSearchSkillTrees] @ header.ptrs.boxSearchSkillTrees [[name("Box Search: Skill Trees")]];
 u16 boxSearchZenithSkills[importantNums.numBoxSearchZenithSkills] @ header.ptrs.boxSearchZenithSkills [[name("Box Search: Zenith Skills")]];
+
+// Box search sigil skills (header 0x718): the choices of the two Special
+// Effect System filters of the Sigil Search panel (lb_itembox_search_plate_disp,
+// pItemBoxTexts 0x44 / 0x45). A filter holds an index here: 0 = all, 1 = free
+// text, else this entry, a sigil skill id that one of the sigil's skills must
+// equal (lb_itembox_search_eq_plate_skill_chk). Entries 0 and 1 are
+// placeholders.
+u16 boxSearchSigilSkills[importantNums.numBoxSearchSigilSkills] @ header.ptrs.boxSearchSigilSkills [[name("Box Search: Sigil Skills"), comment("Sigil skill ids (mhfpac +0xC44 names), display order")]];
+
+// Shortcut combine blocked actions (header 0x650): sorted category 0 player
+// action types (binary search, shortcut_combine_action_is_blocked); a combine
+// shortcut slot (type 2) is disabled while the player is in one of them
+// (shortcut_combine_slot_is_disabled, from ShortcutMove, the item HUD and the
+// pause menu), e.g. roll, draw / sheathe, eating and drinking, sharpening,
+// BBQ, throwing knives.
+u16 shortcutCombineBlockedActions[importantNums.numShortcutCombineBlockedActions] @ header.ptrs.shortcutCombineBlockedActions [[name("Shortcut Combine Blocked Actions"), comment("Player actType (actCategory 0)")]];

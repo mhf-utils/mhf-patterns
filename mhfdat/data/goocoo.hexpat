@@ -2,10 +2,10 @@
 
 /**
 	Goocoo (My Garden): food, house-sitting, personalities, remodelling, the
-	exchange and the Goocoo Pot. Header 0x404 to 0x4C4, one count per table at
-	important numbers + 0x146 to + 0x1A0, in header order. Only the tables the
-	client code reads are shown; the others (header 0x438, 0x474, 0x480 to
-	0x490, 0x4A0 to 0x4B8) are not.
+	exchange, the Goocoo Pot, skins and stray Goocoos. Header 0x404 to 0x4E0,
+	one count per table at important numbers + 0x146 to + 0x1A8, in header
+	order. Only the tables the client code reads are shown; the others (header
+	0x474, 0x4A4 to 0x4AC, 0x4B4) are not.
 
 	House-sitting roll, in order: the mood item (0x434); the grade, from the
 	trust plus the personality (0x418, by activity) and mood (0x41C)
@@ -98,6 +98,19 @@ GoocooPersonality goocooPersonalities[importantNums.numGoocooPersonalities] @ he
 s32p goocooPersonalityNames[importantNums.numGoocooPersonalityNames] @ header.ptrs.goocooPersonalityNames [[name("Goocoo Personality Names")]];
 s32p goocooCareActions[importantNums.numGoocooCareActions] @ header.ptrs.goocooCareActions [[name("Goocoo Care Actions")]];
 s32p goocooCareStyles[importantNums.numGoocooCareStyles] @ header.ptrs.goocooCareStyles [[name("Goocoo Care Styles")]];
+
+// Egg care (header 0x438): row = action x 3 + style (the 0x440 / 0x444 name
+// lists). moveEventFarmDuckEgg2ndMenu keeps one choice per egg stage 2-5 in
+// profile +0x22 to +0x25; at hatching (setDataDuckBorn) getPersonalityEgg sums
+// the personality points of the 4 rows and the highest total (lowest index on a
+// tie) becomes the personality (profile +0x28, 0x448 order).
+struct GoocooEggCare {
+    u16 unk00 [[comment("The row number + 1; no reader")]];
+    u8 personalityPoints[7] [[comment("By personality (header 0x448 order)")]];
+    padding[3];
+};
+
+GoocooEggCare goocooEggCare[importantNums.numGoocooEggCare] @ header.ptrs.goocooEggCare [[name("Goocoo Egg Care")]];
 
 // [0] min, [1] max, [3] and [4] the meal reaction thresholds; the others are not read
 s16 goocooTrustParams[importantNums.numGoocooTrustParams] @ header.ptrs.goocooTrustParams [[name("Goocoo Trust Parameters")]];
@@ -238,14 +251,32 @@ struct GoocooPotMaterial {
     u8  band;
     u8  quantity                [[comment("Needed")]];
     u8  soups                   [[comment("Count of each of the 3 Gook Soups")]];
-    u16 unk06;
-    u16 unk08;
+    u16 welldoneItem            [[format("getItemName"), comment("Default well-done item (getWelldoneItem)")]];
+    u16 welldoneItemColumn      [[comment("Column of goocooPotWelldoneItems; 12 or more: no swap")]];
     u16 bonusItem               [[format("getItemName")]];
-    u16 unk0C;
+    u8  welldoneQuantity        [[comment("Quantity of welldoneItem")]];
+    u8  secretBookQuantity      [[comment("Quantity of the Secret Book item; 0: no swap")]];
     u16 bonusChance             [[comment("Percent")]];
 };
 
 GoocooPotMaterial goocooPotMaterials[importantNums.numGoocooPotMaterials] @ header.ptrs.goocooPotMaterials [[name("Goocoo Pot Materials")]];
+
+// Goocoo Pot well-done items (header 0x4B8): one row per weapon class
+// (className order, row = PlayerWork hidenBookNo - 1), 14 rows, no count (the
+// rows fill the gap to header 0x4C0). getWelldoneItem swaps a pot material's
+// well-done item (welldoneItem x welldoneQuantity) for item [welldoneItemColumn]
+// of the equipped Secret Book's class (x secretBookQuantity) when the column is
+// below 12, secretBookQuantity is set, a book is equipped and: columns 0-3, the
+// equipped book's SR is at least 1 / 31 / 100 for band 3 / 4 / 5; columns 4-7,
+// GR at least 500; columns 8-11, the book's GSR at least 1. Columns 7 and 11
+// repeat 6 and 10; no material uses them.
+struct GoocooPotWelldoneItems {
+    ItemId soul[4]   [[comment("Columns 0-3, SR bands 3 / 4 / 5")]];
+    ItemId merit[4]  [[comment("Columns 4-7, GR 500")]];
+    ItemId ribbon[4] [[comment("Columns 8-11, book GSR 1")]];
+} [[name(className(std::core::array_index()))]];
+
+GoocooPotWelldoneItems goocooPotWelldoneItems[14] @ header.ptrs.goocooPotWelldoneItems [[name("Goocoo Pot Well-Done Items")]];
 ItemId goocooPotSoups[3] @ header.ptrs.goocooPotSoups [[name("Goocoo Pot Soups"), comment("Thin, Tasty and Rich Gook Soup; the rest of the table is not mapped")]];
 
 // Clothing series names (header 0x400): name 0 then one per clothing series
@@ -298,3 +329,77 @@ struct GoocooFarmHarvestFarm {
 };
 
 GoocooFarmHarvestFarm goocooFarmHarvests[4] @ header.ptrs.goocooFarmHarvests [[name("Goocoo Farm Harvests")]];
+
+// Goocoo group gathering (header 0x4A0 / 0x4B0): quest_complete_idle_update
+// sets goocoo_session_state() +0x2E; at the next garden start
+// init_npc_subsystem_2 rolls n in [2, N] of the Goocoos present (FUN_10792820:
+// profile +4 is 6 or 8-11), gives each a slot 0..n-1, rolls a spot set of
+// 0x4A0 row [n - 2] (count / n sets) and adds a random [min, max] of 0x4B0 to
+// each participant's profile +0x29 (kept in 0-100). Goocoo action 0x1A
+// (FUN_107871D0) places the Goocoo at spot [set x n + slot]. When two or more
+// reach 100, layEgg rolls an egg's skin (header 0x484 to 0x490).
+struct GoocooGroupSpot {
+    float x;
+    float y;
+    float z;
+    u16 rotation;
+    u16 unk0E [[comment("no reader")]];
+};
+
+struct GoocooGroupSpotList {
+    s32 count [[comment("Participants x spot sets")]];
+    GoocooGroupSpot *spots[count] : u32;
+};
+
+struct GoocooGroupGaugeGain {
+    u8 min;
+    u8 max;
+};
+
+GoocooGroupSpotList goocooGroupSpots[importantNums.numGoocooGroupSpotLists] @ header.ptrs.goocooGroupSpots [[name("Goocoo Group Spots"), comment("Row i: i + 2 participants")]];
+GoocooGroupGaugeGain goocooGroupGaugeGain @ header.ptrs.goocooGroupGaugeGain [[name("Goocoo Group Gauge Gain")]];
+
+// =======================
+// Goocoo skins and stray Goocoos (header 0x480 to 0x490, 0x4D0 to 0x4E0).
+// Every table is a list of u8 lot weights drawn by drawLotsSubFunction (roll r
+// in [0, sum), the result is the first index whose running weight passes r).
+// New Goocoo (updateEventFarmCareCatSubFunctionEgg): its skin (profile +5) is
+// drawn from 0x480 row [farm state +0x21]. Egg (layEgg, when two Goocoos reach
+// a group gauge of 100): each parent's skin -> class (0x484) -> score (0x488);
+// row score A + score B of 0x48C (clamped to count - 1) draws a class; row
+// (class A == drawn) + 2 x (class B == drawn) of 0x490 draws whether the egg
+// (npc +0x385) takes parent A's skin, parent B's, or any skin of that class.
+// Stray Goocoos: equipment mesh pair (0x4D0: row 0 My House, rows 1-2 the
+// Workshop, rows 3-6 MyHawk; DLL pairs 0x11998B7C) and first action in My
+// House (0x4D4), the Workshop (0x4D8 / 0x4DC, one weight cleared below HR 100)
+// and the MyHawk area (stage 0x11B: 0x4E0 draws the layout).
+// =======================
+struct GoocooNewSkinLots {
+    u8 skinWeights[5];
+};
+
+struct GoocooEggClassLots {
+    u8 classWeights[6];
+};
+
+struct GoocooEggSkinSourceLots {
+    u8 parentAWeight;
+    u8 parentBWeight;
+    u8 randomSkinWeight [[comment("Any skin of the drawn class, equal weights")]];
+};
+
+struct StrayGoocooEquipMeshLots {
+    u8 meshPairWeights[5] [[comment("Index into the DLL pairs 0x11998B7C")]];
+};
+
+GoocooNewSkinLots goocooNewSkinLots[importantNums.numGoocooNewSkinLots] @ header.ptrs.goocooNewSkinLots [[name("Goocoo New Skin Lots"), comment("Row = farm state +0x21")]];
+u8 goocooSkinClasses[importantNums.numGoocooSkinClasses] @ header.ptrs.goocooSkinClasses [[name("Goocoo Skin Classes"), comment("Class 0-5 of each skin")]];
+u8 goocooSkinClassScores[6] @ header.ptrs.goocooSkinClassScores [[name("Goocoo Skin Class Scores"), comment("Index = class")]];
+GoocooEggClassLots goocooEggClassLots[importantNums.numGoocooEggClassLots] @ header.ptrs.goocooEggClassLots [[name("Goocoo Egg Class Lots"), comment("Row = score A + score B")]];
+GoocooEggSkinSourceLots goocooEggSkinSourceLots[importantNums.numGoocooEggSkinSourceLots] @ header.ptrs.goocooEggSkinSourceLots [[name("Goocoo Egg Skin Source Lots")]];
+
+StrayGoocooEquipMeshLots strayGoocooEquipMeshLots[7] @ header.ptrs.strayGoocooEquipMeshLots [[name("Stray Goocoo Equip Mesh Lots"), comment("No count: rows 0-6 are constants in the readers")]];
+u8 strayGoocooMyHouseActionLots[importantNums.numStrayGoocooMyHouseActions] @ header.ptrs.strayGoocooMyHouseActionLots [[name("Stray Goocoo My House Action Lots"), comment("Actions: DLL 0x11999A80")]];
+u8 strayGoocooWorkshopActionLots0[importantNums.numStrayGoocooWorkshopActions0] @ header.ptrs.strayGoocooWorkshopActionLots0 [[name("Stray Goocoo Workshop Action Lots 0"), comment("Actions: DLL 0x11999C10; [3] is 0 below HR 100")]];
+u8 strayGoocooWorkshopActionLots1[importantNums.numStrayGoocooWorkshopActions1] @ header.ptrs.strayGoocooWorkshopActionLots1 [[name("Stray Goocoo Workshop Action Lots 1"), comment("Actions: DLL 0x11999C38; [1] is 0 below HR 100")]];
+u8 strayGoocooMyHawkLayoutLots[importantNums.numStrayGoocooMyHawkLayouts] @ header.ptrs.strayGoocooMyHawkLayoutLots [[name("Stray Goocoo MyHawk Layout Lots"), comment("Layout L: stray i action DLL 0x11999E30[L x 4 + i]")]];

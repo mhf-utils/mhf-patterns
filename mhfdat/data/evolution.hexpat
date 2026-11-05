@@ -112,3 +112,16 @@ EvoGLevel evoUpgradesFlash[100] @ header.ptrs.evoUpgradesFlash [[name("Evolution
 EvoGLevel evoUpgradesShine[100] @ header.ptrs.evoUpgradesShine [[name("Evolution Series 13 (Shine)")]];
 EvoGLevel evoUpgradesGlory[100] @ header.ptrs.evoUpgradesGlory [[name("Evolution Series 14 (Glory)")]];
 EvoGLevel evoUpgradesClear[100] @ header.ptrs.evoUpgrades [[name("Evolution Series 15 (Clear)")]];
+
+// Evolution bowgun bomb rates (header 0x554, important numbers + 0x1DC rows).
+// get_evo_bowgun_bomb_rate (Wii U name) scans every row and returns the rate of
+// the last row whose weapon is the attacker's ranged weapon row (pw+0x402, only
+// when pw+0x401 == 7), 1.0 when none matches. The rate multiplies (value +
+// evolution level x 0.5, 1 or 0.2, by caller) of element and bomb shell hits.
+struct EvoBowgunBombRate {
+    u16 weapon [[comment("Ranged weapon row (pw+0x402); every row is in evoRangedWeaponSeries")]];
+    u16 unk02 [[comment("no reader, always 0")]];
+    float rate;
+};
+
+EvoBowgunBombRate evoBowgunBombRates[importantNums.numEvoBowgunBombRates] @ header.ptrs.evoBowgunBombRates [[name("Evolution Bowgun Bomb Rates")]];

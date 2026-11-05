@@ -207,6 +207,62 @@ struct LargeMonsterQuestTab {
 
 LargeMonsterQuestTab largeMonsterQuestTabs[importantNums.numLargeMonsterQuestTabs] @ header.ptrs.largeMonsterQuestTabs [[name("Large Monster Quest Tabs")]];
 
+// Quest search target monsters (header 0x288): the "Monster" condition of the
+// quest counter search. quest_search_monster_list_build copies the ids that
+// pass, in file order, into quest counter work +0x4A7C; selection 0 is "Not
+// Specified" (pQuestCounterTextGroups[1][0xA6]), the others print
+// pMonsterNames[id] (FUN_1038C660). With a monster type selected (work +0x4A54;
+// 10 means type 0) only monsters whose mhfemd pSpecies speciesClass is that type
+// are kept (Gore Magala 0xA2 counts as type 0). Work +0x7A9F is the G rank
+// counter flag (counter mode 0xE, NPC 0xF3, or a G My Mission).
+// Rows = important numbers + 0x76 / 2 (that u16 counts u16 values).
+fn questSearchMonster(u16 n) {
+    MonsterID m = u8(n);
+    return fmtMonsterID(m);
+};
+
+bitfield QuestSearchMonsterFlags {
+    gRankOnly : 1 [[comment("Listed only at the G rank counter")]];
+    needsHuntRecord : 1 [[comment("Listed only when the monster's save counters 2 + 3 are not both 0 (Bogabadorumu also adds Musou Bogabadorumu 0xAC); tested when the 3rd argument is set")]];
+    notInGRank : 1 [[comment("Not listed at the G rank counter")]];
+    padding : 13;
+};
+
+struct QuestSearchMonster {
+    u16 monster [[format("questSearchMonster")]];
+    QuestSearchMonsterFlags flags;
+};
+
+QuestSearchMonster questSearchMonsters[importantNums.numQuestSearchMonsterValues / 2] @ header.ptrs.questSearchMonsters [[name("Quest Search Monsters")]];
+
+// Daily rotation quests (header 0xB50 / 0xB54 / 0xB58): the quest lists of quest
+// counter tab 0xEB (quest_menu_dispatcher case 0x73, the tab's only source), one
+// per JST day % 3 (time_now_days_jst = (server time + 9 h) / 86400: 0 -> 0xB50,
+// 1 -> 0xB54, 2 -> 0xB58), list [0] only; nothing when server tune 0x2EA is set.
+// Rows go through build_quest_list_gr_filtered (questNumber 0 becomes 1 on G
+// quests, then the salon type filter). quest_is_daily_rotation_quest also keeps
+// these quests out of the G rank HC / UL toggle id range (23000-23999).
+struct DailyRotationQuestRow {
+    u16 questId [[comment("0 ends the list")]];
+    s16 questNumber;
+    u8 unk04 [[comment("no reader")]];
+    u8 unk05 [[comment("no reader")]];
+    u16 unk06 [[comment("no reader")]];
+};
+
+struct DailyRotationQuestList {
+    DailyRotationQuestRow rows[while(std::mem::read_unsigned($, 2) != 0)];
+    DailyRotationQuestRow end;
+};
+
+struct DailyRotationQuestListPtr {
+    DailyRotationQuestList *list : u32;
+};
+
+DailyRotationQuestListPtr dailyRotationQuests0[importantNums.numDailyRotationQuestLists0] @ header.ptrs.dailyRotationQuests0 [[name("Daily Rotation Quests (day % 3 = 0)")]];
+DailyRotationQuestListPtr dailyRotationQuests1[importantNums.numDailyRotationQuestLists1] @ header.ptrs.dailyRotationQuests1 [[name("Daily Rotation Quests (day % 3 = 1)")]];
+DailyRotationQuestListPtr dailyRotationQuests2[importantNums.numDailyRotationQuestLists2] @ header.ptrs.dailyRotationQuests2 [[name("Daily Rotation Quests (day % 3 = 2)")]];
+
 // G quest party size rates (header 0x39C, rank_points.md): the reward rate in
 // percent of a G quest (quest variant1 bit 8) by the number of counted
 // players, 1 to important numbers + 0x112 (quest_g_party_size_rate_get; 100

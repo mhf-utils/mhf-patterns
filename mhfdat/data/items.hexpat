@@ -59,6 +59,7 @@ fn getItemIconName(u8 icon) {
 		(0x4F): return "sword_crystal";
 		(0x50): return "potion";
 		(0x52): return "fruit";
+		(0x55): return "neko_jewel";
 		(0x56): return "tower_w_sigil";
 		(0x5B): return "tower_a_sigil";
 		(0x5C): return "mantle";
@@ -83,204 +84,110 @@ fn getItemIconColorName(u8 color) {
 	return "white";
 };
 
+// Item row (header 0xFC; important numbers + 0x8 rows, itemData + id * 0x24).
+// Audited 2026-11-05 against every reader found (docs/reverse/item_data.md).
+
+// The weapon class checks refuse ammo outside the bowguns (classes 1 and 5)
+// and coatings outside the bow (0xA); value 1 is named from the data only
+enum ItemInteraction : u8 {
+	None = 0,
+	Carried = 1,
+	BowgunAmmo = 2,
+	BowCoating = 3
+};
+
+bitfield ItemUseFlags {
+	usable : 1 [[comment("Item pouch use (inventory_find_next_owned_item, pause menu)")]];
+	bowgunAmmo : 1 [[comment("Ammo pouch (bowgun_ammo_item_is_usable, AddItemToInventory mask 6)")]];
+	bowCoating : 1 [[comment("Ammo pouch, bow coating (mask 6)")]];
+	swordCrystal : 1 [[comment("sword_crystal_find_next_usable_index")]];
+	needsSigilSkill40 : 1 [[comment("Usable only while weapon sigil skill 0x28 is set (pouch_cursor_next_usable_slot); cooking ingredients")]];
+	unkBit5 : 1;
+	unkBit6 : 1;
+	unkBit7 : 1;
+};
+
+bitfield ItemFlags {
+	iconMark : 1 [[comment("Draws a marker sprite over the icon; meaning unproven")]];
+	soldAtQuestEnd : 1 [[comment("Removed at quest end, count x sellPrice paid in the result (mask 0x42)")]];
+	removedAtQuestEnd : 1 [[comment("quest_complete_consume_temporary_items")]];
+	unkBit3 : 1 [[comment("never set, no tester")]];
+	rarityM : 1 [[comment("Rarity printed RARE-%dM; mailed whatever its rarity")]];
+	unkBit5 : 1 [[comment("86 rows, no tester found")]];
+	towerSoldAtQuestEnd : 1 [[comment("Like soldAtQuestEnd, paid into the Tower result total")]];
+	noDeliveryBox : 1 [[comment("Refused by the Delivery Box unless the rank reaches deliveryBoxMinRank")]];
+};
+
+// item_play_obtain_jingle: music_enqueue_play_task id (0 plays 7, 1 nothing)
+enum ItemObtainJingle : u16 {
+	Default = 0,
+	None = 1,
+	Jingle8 = 2,
+	JingleB7 = 3,
+	Jingle1D6 = 4
+};
+
+// My House item list tabs, labelled with mhfpac pItemCategoryNames
+enum ItemCategory : u8 {
+	None = 0,
+	MonsterMaterial = 1,
+	Biological = 2,
+	Ore = 3,
+	FoodMedicine = 4,
+	Support = 5,
+	BooksTicketsCoins = 6,
+	Decorations = 7,
+	Other = 8
+};
+
+// Names from the item names and the readers (item_poogie_cuff_restricted,
+// tower_weapon_stone_fill_owned_list 5, tower_armor_stone_fill_owned_list 7)
+enum ItemEquipType : u16 {
+	None = 0,
+	CuffSA = 1,
+	CuffPA = 2,
+	NekoJewel = 3,
+	NekoJewelP = 4,
+	TowerWeaponGem = 5,
+	Sigil = 6,
+	TowerArmorSigil = 7,
+	CuffSZ = 8,
+	CuffPZ = 9,
+	ZenithSigil = 10,
+	HidenCuff = 11,
+	Unknown12 = 12
+};
+
 u32 __sizeof_Item = 0x24;
 
-fn equipType (u16 n) {
-str ret = "!!Unknown!!";
-
-match (n) {
-	(0x00): ret = "Normal Cuff";
-	(0x01): ret = "Premium Cuff";
-	(0x02): ret = "Cat Deco";
-	(0x03): ret = "Cat Deco2";
-	(0x04): ret = "Tower Deco";
-	(0x06): ret = "Sigil";
-	(0x07): ret = "Sigil2";
-	(0x08): ret = "Z Cuff";
-	(0x09): ret = "Premium Z Cuff";
-	(0x0A): ret = "Sigil3";
-	(0x0B): ret = "Hidden Cuff";
-}
-
-return ret;
-};
-	
 fn getStructItemName(auto i) {
 	return getItemName(($-header.ptrs.itemData)/__sizeof_Item);
 };
 
-fn getItemInteractionTypeName(u8 n) {
-	match (n) {
-		(0): return "None";
-		(1): return "Carryable";
-		(2): return "Ammo";
-		(3): return "Coating";
-	}
-	return "Unknown";
-};
-
-fn getItemUsabilityFlags(u8 f) {
-	str ret = "";
-	if (f & 0x01) ret += "Usable ";
-	if (f & 0x02) ret += "Quest ";
-	if (f & 0x10) ret += "Eatable ";
-	if (ret == "") ret = "None";
-	return ret;
-};
-
-fn getItemFlags(u8 f) {
-	str ret = "";
-	if (f & 0x20) ret += "Sellable ";
-	if (f & 0x40) ret += "TowerPoints ";
-	if (f & 0x04) ret += "DivaRelated ";
-	if (f & 0x02) ret += "DivaRelated2 ";
-	if (ret == "") ret = "None";
-	return ret;
-};
-
-fn getItemCategory(u16 n) {
-	match (n) {
-		(0x00): return "None";
-		(0x01): return "KeyItem";
-		(0x04): return "Consumable";
-		(0x05): return "Placeable";
-		(0x06): return "Ammo";
-		(0x07): return "Material";
-	}
-	return "UnknownCategory";
-};
-
-fn getItemEffectFromIconColor(u8 icon, u8 color) {
-	str iconName = getItemIconName(icon);
-
-	if (iconName == "meat") {
-		match (color) {
-			(0): return "RawMeat";
-			(1): return "PoisonMeat";
-			(3): return "ParalysisMeat";
-			(5): return "SleepMeat";
-			(4): return "RareMeat";
-		}
-	}
-
-	if (iconName == "ammo" || iconName == "coating") {
-		match (color) {
-			(1): return "Fire";
-			(2): return "Poison";
-			(3): return "Water";
-			(4): return "Thunder";
-			(5): return "Dragon";
-			(7): return "Blast";
-			(8): return "Sleep";
-		}
-	}
-
-	if (iconName == "drink" || iconName == "potion") {
-		match (color) {
-			(2): return "Heal";
-			(3): return "Environment";
-			(1): return "AttackBuff";
-			(5): return "MegaBuff";
-			(4): return "Stamina";
-		}
-	}
-
-	return "None";
-};
-
-fn validateEatableByIconColor(u8 icon, u8 color, u8 flags) {
-	str iconName = getItemIconName(icon);
-
-	if (iconName == "meat") {
-		if (color != 0 && (flags & 0x10))
-			return "⚠ bait meat marked eatable";
-	}
-
-	return "OK";
-};
-
-
-fn validateInteractionByIcon(u8 icon, u8 interactionType) {
-	str iconName = getItemIconName(icon);
-
-	if (iconName == "ammo" && interactionType != 2)
-		return "⚠ icon=ammo but interactionType!=Ammo";
-
-	if (iconName == "coating" && interactionType != 3)
-		return "⚠ icon=coating but interactionType!=Coating";
-
-	return "OK";
-};
-
-fn validateUsabilityByIcon(u8 icon, u8 flags) {
-	str iconName = getItemIconName(icon);
-
-	if (iconName == "meat" && !(flags & 0x10))
-		return "⚠ meat without Eatable flag";
-
-	if ((iconName == "potion" || iconName == "drink") && !(flags & 0x01))
-		return "⚠ consumable not usable";
-
-	return "OK";
-};
-
-fn validateCategoryByIcon(u8 icon, u16 category) {
-	str iconName = getItemIconName(icon);
-
-	if (iconName == "ammo" && category != 0x06)
-		return "⚠ ammo icon but category!=Ammo";
-
-	if (iconName == "trap" && category != 0x05)
-		return "⚠ trap icon but category!=Placeable";
-
-	return "OK";
-};
-
-fn getItemSanity(auto i) {
-	return std::format(
-		"[{}] {} | {} | {} | {}",
-		getStructItemName(i),
-		validateInteractionByIcon(i.icon, i.interactionType),
-		validateUsabilityByIcon(i.icon, i.usabilityFlag),
-		validateCategoryByIcon(i.icon, i.type),
-		getItemEffectFromIconColor(i.icon, i.iconColor)
-	);
-};
-
 struct Item {
-	u8 interactionType [[format("getItemInteractionTypeName")]];
-	u8 usabilityFlag   [[format("getItemUsabilityFlags")]];
-	u8 rarity          [[format("plusone")]];
-	u8 maxStack;
-
-	u8 itemFlags [[format("getItemFlags")]];
-	u8 icon      [[format("getItemIconName")]];
+	ItemInteraction interactionType;
+	ItemUseFlags useFlags;
+	u8 rarity [[format("plusone")]];
+	u8 maxStack [[comment("0xFF: unlimited, the count is pinned at 255 (item_has_unlimited_stack)")]];
+	ItemFlags flags;
+	u8 icon [[format("getItemIconName")]];
 	u8 iconColor [[format("getItemIconColorName")]];
-	u8 unk07;
-
-	u16 bottle;
-	u16 unk0A;
-
+	u8 unk07 [[comment("no reader, always 0")]];
+	u16 subType [[comment("Ammo / coating / crystal kind: bit index into the weapon's usable mask (was bottle)")]];
+	ItemObtainJingle obtainJingle;
 	u32 buyPrice;
 	u32 sellPrice;
-
-	// getItemCategory's names don't match the ZZ data (checked against the items), kept raw
-	u16 type;
+	ItemCategory category;
+	u8 unk15 [[comment("no reader, always 0")]];
 	u16 decoID [[comment("Row of the decorations table (header 0x0F8, decoID.hexpat) for decorations and cuffs, 0 otherwise")]];
-
-	u16 unk18;
-	u8 unk1A;
-	u8 unk1B;
-
-	u16 equipType [[format("equipType")]];
-	u8 isGz;
-	u8 unk1F;
-
-	u16 unk20;
-	u16 unk22;
-} [[format("getItemSanity")]];
-// [[format("getStructItemName")]];
-
+	s16 sortGroup [[comment("Item box sort key = sortGroup x 0x8000 + sortOrder (item_sort_key_compare)")]];
+	s16 sortOrder;
+	ItemEquipType equipType;
+	bool isGRank [[comment("Priced in Gz, kept out of the Delivery Box, compared to the G rank instead of the HR (was isGz)")]];
+	u8 unk1F [[comment("no reader; 2 on 9 Fatalis materials")]];
+	u16 deliveryBoxMinRank [[comment("delivery_box_item_is_rank_locked, with flags.noDeliveryBox; 0 = always refused")]];
+	u16 unk22 [[comment("no reader, always 0")]];
+};
 
 struct ItemName {
 	s32p name;

@@ -44,3 +44,9 @@ struct HalkFood {
 };
 
 HalkFood halkFoods[importantNums.numHalkFoods] @ header.ptrs.halkFoods [[name("Halk Foods")]];
+
+// Halk skill book order (header 0xA78, header 0xA74 ids): the display order of
+// the Halk skill book list. halk_book_list_build keeps the ids whose bit is set
+// in the owned-book save bits (ctx 0x2132C) and that are not one of the Halk's
+// 3 equipped books, 7 per page; each id is printed with pHalkTacticNames.
+u16 halkSkillBookOrder[header.ptrs.halkSkillBookOrderCount] @ header.ptrs.halkSkillBookOrder [[name("Halk Skill Book Order")]];

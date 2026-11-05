@@ -3,60 +3,76 @@
 #include <mhfdat/data/equipment_counts.hexpat>
 
 bitfield equipableBy {
-  isMaleEquip:   1; 
+  isMaleEquip:   1;
   isFemaleEquip: 1;
-  isBladeEquip:  1; 
+  isBladeEquip:  1;
   isGunnerEquip: 1;
-  bool1:         1; 
-  isSPEquip:     1;
-  bool3:         1; 
-  bool4:         1;
+  unkBit4:       1 [[comment("FUN_104fe940 (forge lists; weapon counterpart equipType 0x20); never set")]];
+  isSPEquip:     1 [[comment("hunterNavi_ck_01_09_sp_armor_worn")]];
+  isGouEquip:    1 [[comment("hunterNavi_ck_01_12_gou_equipment, count_armor_equipable_gou")]];
+  unkBit7:       1 [[comment("partner_category_stat_get: category value +0x04")]];
 };
 
 bitfield armorTypes {
-    gArmorF : 1;       // bit 0, Wii U Pl_G_Armor_f_num (was gou)
-    padding : 5;
-    Grank : 1;         // bit 6 (the byte at 0x3F is not the G rank)
-    supremacy : 1;     // bit 7; Wii U Pl_G_Armor_fx_num counts bits 7, 14 and 15 together
-    hcKai : 1;         // bit 8, Wii U Pl_HC_Armor_kai_num (was premium_HR); HC Kai bonuses, header 0x5B0 / 0x5B4
-    gClassS : 1;       // bit 9, Wii U Pl_G_Class_S_Armor_num (was premium_GR)
-    padding : 4;
-    gHasyu : 1;        // bit 14, Wii U Pl_G_Armor_hasyu_num (was g_supremacy)
-    retsusyu : 1;      // bit 15, Wii U Pl_Retsusyu_Armor_num (was gf_supremacy)
-    gx_supremacy : 1;  // bit 16 (GX_SUPREMACY); HD only, header 0x968-0x970 by piece count
-    padding : 1;
-    exotic : 1;        // bit 18
-    zenith : 1;        // bit 19
+    gArmorF : 1;
+    hidenGroup1 : 1 [[comment("armor_get_armor_type_group_1based -> 1")]];
+    hidenGroup2 : 1 [[comment("-> 2")]];
+    hidenBit3 : 1 [[comment("read only as mask 0x18 (armor_check_weap_hiden_type_group_match)")]];
+    hidenBit4 : 1;
+    hidenWildcard : 1 [[comment("with bits 3-4 clear and level > 5: matches the requested hiden group")]];
+    Grank : 1;
+    supremacy : 1;
+    hcKai : 1;
+    gClassS : 1;
+    hidenGroup3 : 1;
+    hidenGroup4 : 1;
+    hidenGroup5 : 1;
+    hidenGroup6 : 1;
+    gHasyu : 1;
+    retsusyu : 1;
+    gx_supremacy : 1;
+    towerStoneCapable : 1 [[comment("is_tower_armor_stone_capable; slot count at +0x39")]];
+    exotic : 1;
+    zenith : 1;
     padding : 12;
 };
 
+bitfield appFlags {
+    appSelectable : 1 [[comment("FUN_1052cef0 (Lb_equip_app_shop_move): clear = cannot be picked as an appearance")]];
+    appPriceInGz : 1 [[comment("Check_equip_app_buy / FUN_10535600: pay appPrice in GZ instead of zenny")]];
+    padding : 6;
+};
+
 struct EquipmentItem {
-  s16 modelIdMale; 
+  s16 modelIdMale;
   s16 modelIdFemale;
   equipableBy bitfld;
-  u8 rarity; 
+  u8 rarity [[comment("Get_equip_rare: & 0xF")]];
   u8 maxLevel;
-  u8 unk07; 
-  u16 unk08; 
-  u16 unk0A; 
+  u8 slotUpgradeRow [[comment("Row of the armor slot upgrades (header 0xBC), max 15")]];
+  u8 armorSoundMale [[comment("sound = 2 x value + random 0/1; 0 = none")]];
+  u8 armorSoundFemale;
+  u8 colorFlagsMale [[comment("bit 0: dyeable (header 0x140); bits 1-2: render part 1 alpha off")]];
+  u8 colorFlagsFemale;
   u32 zennyCost;
-  u16 unk10;
+  u16 sortOrder [[comment("equip_sort_value: box sort key << 20")]];
   u16 baseDefense;
 
-  s8 fireRes; 
+  s8 fireRes;
   s8 waterRes;
-  s8 thunderRes; 
+  s8 thunderRes;
   s8 dragonRes;
   s8 iceRes;
 
-  u8 coefUpgrade; 
+  u8 coefUpgrade [[comment("Row of the armor defense coefficients (header 0xB4)")]];
   u8 upgradeCostRow [[comment("Row of the armor upgrade cost percents (header 0xB8)")]];
 
-  u8 baseSlots; 
+  u8 baseSlots;
   u8 maxSlots;
 
   u8 PostFesti;
-  u16 ShowNextLevel;
+  u8 ShowNextLevel [[comment("Upgrade targets shown when ShowNextLevel <= level + 1")]];
+  u8 unk1F [[comment("no reader")]];
   u16 EquipID [[
     name("Upgrade to Equipment ID 1")
   ]];
@@ -66,8 +82,8 @@ struct EquipmentItem {
   u16 EquipID3 [[
     name("Upgrade to Equipment ID 3")
   ]];
-  u16 Effect_ID; 
-  u16 UpgradeID;
+  u16 Effect_ID [[comment("Row of the weapon effect sets (header 0x280)")]];
+  u16 UpgradeID [[comment("Row of the armor upgrade materials")]];
 
   u8 skillId1; s8 skillPts1;
   u8 skillId2; s8 skillPts2;
@@ -77,13 +93,15 @@ struct EquipmentItem {
 
   armorTypes armorType;
 
-  u32 weapHiden; 
-  u8 towerslots;
-  u16 decoItemID;
-  u8 unk3F [[comment("Not the G rank (armorType bit 6 is): 0x0F on almost every armor")]];
-  u8 ZeroF; 
-  u32 appPrice; 
-  u8 unk44; 
+  u8 weapHiden [[comment("Hiden weapon type + 1, 0 = none")]];
+  u8 towerStoneSlots [[comment("get_tower_armor_stone_slot_count (armorType bit 17)")]];
+  u16 decoItemID [[comment("get_armor_deco_no: decoration from armor conversion")]];
+  u16 gRarity [[comment("get_equip_g_rarity: G rarity of G-class pieces, shown in place of rarity; each piece below the GR tier adds 20 defense per tier")]];
+  u8 unk3E [[comment("no reader")]];
+  u8 modelGroup [[comment("Get_equip_model_grp (was ZeroF): 9 adds -so to the parts file")]];
+  u32 appPrice;
+  appFlags appFlags;
+  u8 unk45 [[comment("no reader")]];
   u16 zenithSkill;
 };
 

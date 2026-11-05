@@ -169,87 +169,74 @@ fn zenithSkill (u16 n){
 	return ret;
 };
 	
+// Equip type bits (melee +0x1A, ranged +0x06), each tested on its own:
+// 1 Weapon_sp_eqtype_ck, 2 WeaponHcGousyuChk_*, 4 get_equiptype_or_ammo_type
+// (evolution), 8 weapon_equip_block_has_flag8, 0x10 chk_ex_g_weapon, 0x20
+// FUN_104FE940, 0x40 Weapon_g_class_check; 0x80 has no tester.
+bitfield MeleeEquipType {
+    sp : 1;
+    hcGousyu : 1;
+    evolution : 1;
+    bit3 : 1;
+    exG : 1;
+    bit5 : 1;
+    gClass : 1;
+    bit7 : 1;
+};
+
+// Weapon category bits (melee +0x20, ranged +0x0C): named after their
+// Weapon_g_class_*_check testers; the other bits are tested by unnamed code.
+bitfield WeaponCategoryBits {
+    bit0 : 1;
+    bit1 : 1;
+    bit2 : 1;
+    bit3 : 1;
+    hasyu : 1 [[comment("0x10 Weapon_g_class_hasyu_check")]];
+    retsusyu : 1 [[comment("0x20 Weapon_g_class_retsusyu_check")]];
+    finessExt : 1 [[comment("0x40 Weapon_g_class_finess_ext_check")]];
+    tower : 1 [[comment("0x80 Weapon_g_class_tower_check")]];
+    gousyuGr3 : 1 [[comment("0x100 Weapon_g_class_gousyu_gr3_check")]];
+    exotique : 1 [[comment("0x200 Weapon_g_class_exotique_check")]];
+    bit10 : 1 [[comment("0x400, tested by 34 functions")]];
+    prayer : 1 [[comment("0x800 Weapon_g_class_prayer_check")]];
+    zenith : 1 [[comment("0x1000 Weapon_g_class_zenith_check")]];
+    unused : 19;
+};
+
 struct MeleeItem {
 	u16 modelId [[color("0088FF")]];
 	u8 rarity [[format("plusone"), color("22FF22")]];
 	u8 classId [[format("className"), color("0088FF")]];
-	
-	u32 zennyCost [[
-		comment("Seems to be twice what Ferias reports"), 
-		color("22FF22")
-	]];
-
-	u8 sharpnessId  [[color("FFFF00")]];
-	u8 sharpnessMax [[color("FFF000")]];
-
-	u16 rawDamage [[
-		comment("In-game attack is raw damage * some multiplier."), 
-		color("22FF22")
-	]]; 
-
-	u16 defense [[color("22FF22")]];
+	u32 zennyCost [[comment("Forge cost and sell price are zennyCost / 2"), color("22FF22")]];
+	u8 sharpnessId [[color("FFFF00"), comment("Row of SharpnessIds[class] (weapon_melee_sharpness_color_tier)")]];
+	u8 sharpnessMax [[color("FFF000"), comment("Max sharpness = (v + 3) x 50 (weapon_max_sharpness_value_compute)")]];
+	u16 rawDamage [[comment("Attack = raw x weaponDamageCoefficients[class] +0xC / 100"), color("22FF22")]];
+	s16 defense [[color("22FF22"), comment("Added to the armor defense sum (WeaponStat_GetPreviewValue); negative on some rows")]];
 	s8 affinity [[color("22FF22")]];
-
 	u8 elementId [[format("elementName"), color("00FF00")]];
 	u8 eleDamage [[format("timesten"), color("00FF00")]];
-
 	u8 ailmentId [[format("ailmentName"), color("00FF00")]];
 	u8 ailDamage [[format("timesten"), color("00FF00")]];
-
-	u8 slots [[color("00FF00")]];
-
-	u8 Weapon_attribute [[
-		name("Weapon Attribute"),
-		comment("Could be secondary weapon attribute, such as Swaxe Phial type?"),
-		color("FF0000")
-	]]; 
-	
-	u8 Unk15 [[
-		color("FF0000")
-	]];
-
-	u16 upgradePath [[
-		comment("Maybe what weapon it upgrades from, how many indecies to look back. 0xFF for none?"), 
-		color("FF0000")
-	]]; 
-
-	u16 otherModel [[
-		comment("Often the same or similar to modelId. Maybe drawn modelId?"), 
-		color("FF0000")
-	]]; 
-
-	u8 Equip_Type [[
-		name("Equip Type"),
-		format("eqType"), 
-		color("FFFF00")
-	]]; 
-
-	u8 unk1B;
-	u32 Length;
-	u32 Weapon_type [[
-		name("Weapon Type"),
-		format("weaponType"),
-		comment("it define if its zenith, prayer, grank, exotic, gou, etc..."), 
-		color("FF0000")
-		]];
-	
-	u16 Visual_effects [[
-		comment("Seems to be related to weapon visual effects"),
-		color("FF0000")
-	]]; 
-	
-	u16 Tower_G50_Param_ID[[
-		name("Tower/G50 Param ID")
-	]];
-	u8 G_rank [[name("G Rank"), color("FF0000")]]; 
-	u8 unk29; 
-	u8 unk2A; 
-	u8 zeroF [[comment("Always 0F?"), color("FF0000")]];
-	u32 Unk2C [[comment("Free Params?"), color("FF0000")]]; 
-	u16 zenithSkill[[
-		name("Zenith Skills"),
-		format("zenithSkill")
-	]];
+	u8 slots [[color("00FF00"), comment("Also the seal slot count of tower weapons (get_tower_seal_slot_count)")]];
+	u8 weaponAttribute [[comment("By class: Switch Axe F phial type (get_switchaxe_phial), horn notes, gunlance shell ...")]];
+	u8 seisanFlag [[comment("Seisan_flag_ck code (equip_ok_ck, the forge upgrade lists)")]];
+	u8 sortOrder [[comment("equip_sort_value rank inside the class; 255 = none")]];
+	u8 unk17 [[comment("No reader, always 0")]];
+	u16 unk18 [[comment("No reader found (full DLL sweep); often the row's own modelId")]];
+	MeleeEquipType equipType;
+	u8 unk1B [[comment("No reader, always 0")]];
+	u8 length [[comment("Reach class 0-5 (get_melee_weapon_length, wpn_apply_reach_mismatch_coef)")]];
+	u8 periodEquipFlag [[comment("equipbox_apply_post_festi_id_shift: 1 = box id + 1, 2 = box id - 1 (Wii U chg_period_equip_arg); all 0")]];
+	u8 unk1E[2] [[comment("No reader, always 0")]];
+	WeaponCategoryBits weaponCategory;
+	u16 visualEffects [[comment("weapon_effect_init: row of weaponEffectSets (header 0x280)")]];
+	u16 Tower_G50_Param_ID [[name("Tower/G50 Param ID"), comment("g50_tower_params_pointers list index")]];
+	u16 gRank [[name("G Rank"), color("FF0000"), comment("Read as a u16 (get_ex_g_weapon_rank)")]];
+	u8 decoSpecialSlot [[comment("Deco_item_check: special decorations need 1, the others 0")]];
+	u8 modelVariant [[comment("pl_weapon_model_init model variant; 9 = the -so model")]];
+	u16 towerMaxCost [[comment("get_tower_weapon_max_cost")]];
+	u16 motionBankType [[comment("get_weapon_motion_bank_path: Switch Axe F motion type A-E")]];
+	u16 zenithSkill [[name("Zenith Skills"), format("zenithSkill")]];
 	padding[2];
 };
 
@@ -282,52 +269,43 @@ fn recoil (u8 n) {
 struct RangedItem {
 	u16 modelId;
 	u8 rarity [[format("plusone")]];
-	u8 maxSlotsMaybe;
+	u8 levelModGroup [[comment("Bowgun level modifier group: header 0xB0 row = levelModGroup x 5 + (equipment level & 0xF) (gunner_load_coating_modifier_row, get_ranged_effective_raw_damage): a raw bonus and shot speed / gravity multipliers. 0 on bows")]];
 	u8 classId [[format("className")]];
-	u8 unk05;
-	u8 eq [[
-		name("Equip Type"),
-		format("eqType"), 
-		color("FFFF00")]];
-	u8 unk07;
-	u8 unk08;
-	u8 unk09;
-	u8 unk11;
-	u8 unk12;
-	u32 Weapon_type[[
-		name("Weapon Type"),
-		format("weaponType"),
-		comment("it define if its zenith, prayer, grank, exotic, gou, etc...")
-	]]; 
-	u32 unk10;
-	u32 zennyCost;
+	u8 unk05 [[comment("No reader, always 0")]];
+	u8 eq [[name("Equip Type"), format("eqType"), color("FFFF00")]];
+	u8 unk07 [[comment("No reader, always 0")]];
+	u16 unk08 [[comment("No reader; always the modelId of some ranged row (like melee otherModelId)")]];
+	u8 postFestiShift [[comment("equipbox_apply_post_festi_id_shift: 1 = box id + 1, 2 = box id - 1; always 0")]];
+	u8 unk0B [[comment("No reader, always 0")]];
+	u32 Weapon_type [[name("Weapon Category"), format("weaponType"), comment("Category bits (zenith 0x1000, prayer 0x800, exotic 0x200, tower 0x80, ...), the bits of melee +0x20")]];
+	u16 visualEffects [[comment("weapon_effect_init: row of weaponEffectSets (header 0x280)")]];
+	u16 unk12 [[comment("No reader, always 0")]];
+	u32 zennyCost [[comment("Create / sell price is zennyCost / 2")]];
 	u16 rawDamage;
-	u16 defense;
-	u8 recoil[[format("recoil")]];
+	s16 defense [[comment("Added to the armor defense sum (WeaponStat_GetPreviewValue); 7 rows are negative")]];
+	u8 recoil [[format("recoil")]];
 	u8 slots;
 	s8 affinity;
-	u8 sortOrderMaybe;
-	u8 Weapon_attribute [[comment("define gunners shot?")]];
+	u8 sortOrder [[comment("equip_sort_value rank (melee +0x16)")]];
+	u8 shotSetId [[comment("Bowgun: BulletSets (header 0xA4) row, the clip size of each ammo; bow: header 0xA8 row, 4 charge level shots (pBowChargeTexts)")]];
 	u8 elementId [[format("elementName")]];
 	u8 eleDamage [[format("timesten")]];
-	u8 reload[[format("reload")]];
-	u16 unk24;
-	u16 unk26;
-	u32 bullet; 
-	u16 Tower_G50_Param_ID[[
-		name("Tower/G50 Param ID?")
-	]];
-	u16 unk2E;
-	u8 G_rank [[name("G Rank"), color("FF0000")]];
-	u8 unk32;
-	u8 unk34;
-	u8 zeroF;
-	u16 unk38;
-	u16 zenithSkill[[
-		name("Zenith Skills"),
-		format("zenithSkill")
-	]];
-	u32 unk42[[hidden]];
+	u8 reload [[format("reload")]];
+	u8 seisanFlag [[comment("Seisan_flag_ck argument (melee +0x15)")]];
+	u8 unk25 [[comment("No reader, always 0")]];
+	u16 towerMaxCost [[comment("get_tower_weapon_max_cost (melee +0x2C)")]];
+	u32 ammoMask [[comment("gunner_usable_ammo_and_coating_mask: usable ammo bits (bowguns) / coating bits (bows)")]];
+	u16 Tower_G50_Param_ID [[name("Tower/G50 Param ID"), comment("get_gcls_param_id: index of the Tower / G50 level stat list")]];
+	u8 arcShotType [[comment("bow_arc_type_get (bows, 0-3)")]];
+	u8 unk2F [[comment("No reader, always 0")]];
+	u8 G_rank [[name("G Rank"), color("FF0000"), comment("Read as a u16 with the next byte (get_ex_g_weapon_rank)")]];
+	u8 unk31 [[comment("High byte of the G rank u16, always 0")]];
+	u8 decoSpecialSlot [[comment("Deco_item_check: special decorations need 1 here, the others 0 (melee +0x2A)")]];
+	u8 modelVariant [[comment("pl_weapon_model_init model variant (melee +0x2B), always 0x0F")]];
+	u8 ailmentId [[format("ailmentName"), comment("get_weapon_ail_damage_if_ailment, weapon_element_status_affinity_value")]];
+	u8 ailDamage [[format("timesten")]];
+	u16 zenithSkill [[name("Zenith Skills"), format("zenithSkill")]];
+	u32 unk38 [[hidden, comment("No reader, always 0")]];
 };
 
 struct WeaponName {

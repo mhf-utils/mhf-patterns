@@ -540,3 +540,24 @@ struct FixedSkillListPtr {
 
 FixedSkillListPtr fixedSkillsByClass[14] @ header.ptrs.fixedSkillsByClass [[name("Fixed Skills by Class"), comment("by weapon class (entity +3); [14] is 0")]];
 FixedSkillListPtr fixedSkillsByClassG[14] @ header.ptrs.fixedSkillsByClassG [[name("Fixed Skills by Class (G)"), comment("same, G / Gou class weapons")]];
+
+// Legend Rasta "Active Skill" lists by weapon class (header 0x9B4, and 0x9BC
+// when the Rasta's weapon is G, G-K, Gou GR1 / GR2 or Gousyu GR3 class;
+// lrasta_get_active_skill_list), indexed by the Rasta's weapon class (pw +3),
+// 14 classes, no bounds check. Shown under 【Active Skill】
+// (pLegendRastaMenuTextGroups[2][8]) in the Legend Rasta status window as
+// pSkillNames[id] (lrasta_status_draw_active_skills); lrasta_fill_active_skill_tree_ptrs
+// also turns each id (1-0x216) into its Skill Tree (header 0xEC) row pointer.
+// Each list starts with the class's Tech skill; the sets match the forced-on
+// entries of 0x9B8 / 0x9C0 in 24 of 28 classes. A list ends at id 0.
+struct RastaActiveSkillList {
+    u16 skills[while (std::mem::read_unsigned($, 2) != 0)] [[comment("Active skill ids (mhfpac pSkillNames)")]];
+    u16 end;
+};
+
+struct RastaActiveSkillListPtr {
+    RastaActiveSkillList *list : u32;
+};
+
+RastaActiveSkillListPtr rastaActiveSkillsByClass[14] @ header.ptrs.rastaActiveSkillsByClass [[name("Legend Rasta Active Skills by Class"), comment("by weapon class (pw +3)")]];
+RastaActiveSkillListPtr rastaActiveSkillsByClassG[14] @ header.ptrs.rastaActiveSkillsByClassG [[name("Legend Rasta Active Skills by Class (G)"), comment("same, G / Gou class weapons")]];

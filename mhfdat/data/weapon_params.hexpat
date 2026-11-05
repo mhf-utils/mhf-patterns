@@ -75,6 +75,25 @@ struct WeaponParams {
 
 WeaponParams weaponParams[14] @ header.ptrs.weaponParams [[name("Weapon Parameters")]];
 
+// Weapon Use Ban free actions (header 0x664): for the ryoudan\rquest.bin
+// mission conditions 0x20 "[Personal] Weapon Use Ban" and 0x21 "[Party] Weapon
+// Use Ban" (pQuestDetailTexts[type + 0x76]). rquest_weapon_use_ban_check runs on
+// every player action in areas 0xCA-0xCC / 0xCE / 0x1BD;
+// rquest_weapon_use_ban_is_violation returns 1 (the mission fails) when the
+// player's actCategory is 1 and its actType is not in the class's list. One row
+// per weapon class (14, fixed); the lists follow in reverse class order.
+struct WeaponUseBanFreeActions {
+    u8 count;
+    padding[3];
+    u8 *actTypes[count] : u32;
+} [[format("weaponUseBanFreeActionsName")]];
+
+fn weaponUseBanFreeActionsName(ref auto r) {
+    return std::format("{} | {} actions", className(std::core::array_index()), r.count);
+};
+
+WeaponUseBanFreeActions weaponUseBanFreeActions[14] @ header.ptrs.weaponUseBanFreeActions [[name("Weapon Use Ban Free Actions")]];
+
 // =======================
 // Bullet sets (header 0xA4): 44 sets of 100 bytes, the magazine size of each
 // ammo type, then 68 bytes of 0/1 (1 almost everywhere, use unknown)
@@ -330,6 +349,107 @@ RandomSharpnessList randomSharpnessGunlance @ header.ptrs.randomSharpnessGunlanc
 // spread). Header 0x4F4: the draw speed the handling skill (or a G finesse
 // weapon) sets when it is faster than the weapon's own.
 u8 randomShellTypes[3] @ header.ptrs.randomShellTypes [[name("Random Gunlance Shell Types")]];
+
+// Random (ex G) weapons (header 0x36C, important numbers + 0xFA rows): a weapon
+// is random when chk_ex_g_weapon passes (type 6 / 7, weapon equipType & 0x10).
+// Crafting rolls an ex G rank into equipment entry +4 & 0x3FF (header 0x3A0,
+// get_ex_g_next_rank): rank 1-16 is the top tier, 17-32 the mid tier, 33-1023
+// the base tier; the crafted id becomes the tier's weapon id (+2 mid, +4 top).
+// get_exgw_dat finds the row by weapon id and equip type; get_ex_g_num rolls a
+// stat in [min, max] of the tier (row + 8 + tier x 0x14), by kind 0-8; for base
+// ranks 33-232 attack and sharpness sometimes use the mid ranges. An unrolled
+// weapon (rank 0) shows ranges from base min to top max; the top id gets a ★.
+struct ExGWeaponTier {
+    u16 attackMin [[comment("Kind 0")]];
+    u16 attackMax;
+    u8 sharpnessOrBowChargeRowMin [[comment("Kind 1: randomSharpness row (melee) or header 0x3A4 row (bow)")]];
+    u8 sharpnessOrBowChargeRowMax;
+    s8 affinityMin [[comment("Kind 2")]];
+    s8 affinityMax;
+    u8 elementMin [[comment("Kind 3")]];
+    u8 elementMax;
+    u8 ailmentMin [[comment("Kind 4")]];
+    u8 ailmentMax;
+    u8 slotsMin [[comment("Kind 5")]];
+    u8 slotsMax;
+    u8 hornNotesRowMin [[comment("Kind 6: header 0x4EC row")]];
+    u8 hornNotesRowMax;
+    u8 shellTypeRowMin [[comment("Kind 7: randomShellTypes row")]];
+    u8 shellTypeRowMax;
+    u8 shellLevelMin [[comment("Kind 8")]];
+    u8 shellLevelMax;
+};
+
+struct ExGWeapon {
+    u16 baseWeaponId;
+    u16 midWeaponId;
+    u16 topWeaponId;
+    u8 equipType [[comment("6 melee, 7 ranged")]];
+    u8 unk07 [[comment("no reader")]];
+    ExGWeaponTier baseTier [[comment("Rank 33-1023")]];
+    ExGWeaponTier midTier [[comment("Rank 17-32")]];
+    ExGWeaponTier topTier [[comment("Rank 1-16")]];
+};
+
+ExGWeapon exGWeapons[importantNums.numExGWeapons] @ header.ptrs.exGWeaponData [[name("Random (ex G) Weapons")]];
+
+// Ex G rank chances (header 0x3A0, get_ex_g_next_rank and the inline copies in
+// forge_weapon_craft_to_box): r = save ctx 0x1FF40 + weapon class x 16, x = save
+// ctx 0x1FF4C; r % topTierPeriod < topTierChance gives rank (x & 15) + 1, else
+// (r - topTierChance) % midTierPeriod < midTierChance gives (x & 15) + 0x11,
+// else x % 991 + 0x21.
+struct ExGRankChances {
+    u32 topTierChance;
+    u32 topTierPeriod;
+    u32 midTierChance;
+    u32 midTierPeriod;
+    u32 unk10 [[comment("no reader")]];
+    u32 unk14 [[comment("no reader")]];
+};
+
+ExGRankChances exGRankChances @ header.ptrs.exGRankChances [[name("Ex G Weapon Rank Chances")]];
+
+// Random (ex G) weapon roll percents (get_ex_g_param0_per / param1_per /
+// param2_per, called by get_ex_g_num). set_ex_g_srand turns the stored rank
+// (equipment entry +4 & 0x3FF) into the roll rank: s = stored rank + weapon
+// class + seed + base weapon id; stored rank < 0x11 gives (s & 15) + 1 (top
+// tier), < 0x21 gives (s & 15) + 0x11 (mid tier), else s % 991 + 0x21. Each
+// byte is a percent p of the tier's [min, max] range of that kind (column =
+// get_ex_g_num kind, the ExGWeaponTier columns): value = min + (max - min + 1)
+// x p / 100 (+ seed % 5 for kinds 0, 2, 3, 4), clamped to max. Gunlances
+// (class 9) use the second table of each pair.
+struct ExGRollPercents {
+    u8 attack [[comment("Kind 0")]];
+    u8 sharpnessOrBowChargeRow [[comment("Kind 1")]];
+    u8 affinity [[comment("Kind 2")]];
+    u8 element [[comment("Kind 3")]];
+    u8 ailment [[comment("Kind 4")]];
+    u8 slots [[comment("Kind 5")]];
+    u8 hornNotesRow [[comment("Kind 6")]];
+    u8 shellTypeRow [[comment("Kind 7")]];
+    u8 shellLevel [[comment("Kind 8")]];
+};
+
+// Top tier (header 0x384, Gunlance 0x500): row = roll rank 1-16, row 0 is
+// never read
+ExGRollPercents exGTopTierRollPercents[17] @ header.ptrs.exGTopTierRollPercents [[name("Ex G Top Tier Roll Percents")]];
+ExGRollPercents exGTopTierRollPercentsGunlance[17] @ header.ptrs.exGTopTierRollPercentsGunlance [[name("Ex G Top Tier Roll Percents: Gunlance")]];
+
+// Mid tier (header 0x388, Gunlance 0x504): row = roll rank - 0x11 (0-15)
+ExGRollPercents exGMidTierRollPercents[16] @ header.ptrs.exGMidTierRollPercents [[name("Ex G Mid Tier Roll Percents")]];
+ExGRollPercents exGMidTierRollPercentsGunlance[16] @ header.ptrs.exGMidTierRollPercentsGunlance [[name("Ex G Mid Tier Roll Percents: Gunlance")]];
+
+// Base tier overrides (header 0x38C, Gunlance 0x508): a row whose stored rank
+// equals the weapon's replaces the default percent (stored rank + kind + seed)
+// % 100; the 0xFFFF row ends the list but is counted
+struct ExGBaseTierOverride {
+    u16 storedRank;
+    ExGRollPercents percents;
+    u8 unk0B [[comment("no reader")]];
+};
+
+ExGBaseTierOverride exGBaseTierRollOverrides[importantNums.numExGBaseTierRollOverrides] @ header.ptrs.exGBaseTierRollOverrides [[name("Ex G Base Tier Roll Overrides")]];
+ExGBaseTierOverride exGBaseTierRollOverridesGunlance[importantNums.numExGBaseTierRollOverridesGunlance] @ header.ptrs.exGBaseTierRollOverridesGunlance [[name("Ex G Base Tier Roll Overrides: Gunlance")]];
 float handlingDrawSpeed @ header.ptrs.handlingDrawSpeed [[name("Handling Draw Speed")]];
 
 // Gunner shot power (header 0x1C8): pointers picked by the hit's ammo +0x1A,
@@ -392,6 +512,29 @@ s32 skillSlotId4ElementPercent[6] @ header.ptrs.skillSlotId4ElementPercent [[nam
 // count of id 3 in the 15 skill context slots. Index 0 = no piece.
 u8 gArmorFxAttackAdd[8] @ header.ptrs.gArmorFxAttackAdd [[name("G Armor Fx Attack Add")]];
 u8 armorFlag10000AttackAdd[8] @ header.ptrs.armorFlag10000AttackAdd [[name("Armor Flag 0x10000 Attack Add")]];
+
+// G armor skill up (Wii U isGouyuSkillUpEnable / Pl_G_Armor_act_ck, header
+// 0x3BC, count important numbers + 0x122): the row whose key matches the worn
+// pieces (Gousyu = equipableBy bit 6 + armor flag 0x1; Gousyu Fx = armor flags
+// 0x80 + 0x4000) gives the HP percent and the max stamina (PlayerWork +0xB2A)
+// the player needs; no matching row = row 0. When it holds, the Wii U
+// Pl_Skill_ck raises the active skills with Pl_G_Armor_skill_get.
+struct GousyuSkillUpCondition {
+    s32 gousyuArmorCount;
+    s32 gousyuFxArmorCount;
+    s32 minHpPercent;
+    s32 minStaminaMax;
+};
+
+GousyuSkillUpCondition gousyuSkillUpConditions[importantNums.numGousyuSkillUpConditions] @ header.ptrs.gousyuSkillUpConditions [[name("Gousyu Skill Up Conditions")]];
+
+// G armor skill up skill types (header 0x3C0, Wii U isGousyuSkillUpSkillType):
+// the skill tree ids (Skill Tree header 0xEC) whose active skill
+// Pl_G_Armor_skill_get raises one level further from zero; ends at 0. Each id
+// is compared with the low byte of the tree id. Important numbers + 0x124
+// (127: the ids + the terminator) has no reader.
+u16 gousyuSkillUpSkillTypes[while(std::mem::read_unsigned($, 2) != 0)] @ header.ptrs.gousyuSkillUpSkillTypes [[name("Gousyu Skill Up Skill Types")]];
+u16 gousyuSkillUpSkillTypesEnd @ addressof(gousyuSkillUpSkillTypes) + sizeof(gousyuSkillUpSkillTypes) [[name("Gousyu Skill Up Skill Types End")]];
 
 // =======================
 // Bowgun just reload and just shot (header 0x668 / 0x66C; the Wii U client
@@ -1258,3 +1401,34 @@ struct BowgunShotTables {
 };
 
 BowgunShotTables bowgunShotTables @ header.ptrs.bowgunShotTables [[name("Bowgun Shot Tables")]];
+
+// HBG shot gauge gains (header 0x640): sorted by ammo type, binary search
+// (hbg_shot_gauge_gain_row_find) on the loaded ammo (PlayerWork +0x6C6).
+// hbg_shot_gauge_gain_apply runs on each bowgun shot of a local Heavy Bowgun
+// with PlayerWork +0x8C3 bit 4 (gou special mode / Heat Cannon sigil 0x32) or the
+// Extreme style. With bit 4 the shot adds heatGaugeGain (Focus-adjusted) to the
+// gauge +0xA12 (cap +0xD0C) and sets +0xD15 to heatDecayDelay, the frames before
+// player_entity_tick_hp_regen drains 1 point every 30 frames; in Extreme style
+// with a large monster in the stage, bowgunGaugeGain fills SkillWork +0x1C0.
+struct HbgShotGaugeGain {
+    u16 ammoType [[format("ammoName")]];
+    s16 heatGaugeGain;
+    u8 heatDecayDelay [[comment("Frames")]];
+    u8 unk05 [[comment("no reader")]];
+    s16 bowgunGaugeGain;
+};
+
+HbgShotGaugeGain hbgShotGaugeGains[importantNums.numHbgShotGaugeGains] @ header.ptrs.hbgShotGaugeGains [[name("HBG Shot Gauge Gains")]];
+
+// Fencing hitstop overrides (header 0x644): fencing_hitstop_frames_get searches
+// them linearly for kind 0 (player melee) hits by attack id (hit +6), else the
+// class default weaponParams +0xBE (or the Switch Axe F override). From
+// on_hit_effects_dispatch, when Fencing+2 applies (melee_attack_bounces_is_active,
+// ratio >= 0.23) on a hit with flag +0x15C & 0x4000, the value becomes the
+// attacker's hitstop (+0x4E6).
+struct FencingHitstopOverride {
+    u16 attackId;
+    u16 hitstopFrames [[comment("Low byte used")]];
+};
+
+FencingHitstopOverride fencingHitstopOverrides[importantNums.numFencingHitstopOverrides] @ header.ptrs.fencingHitstopOverrides [[name("Fencing Hitstop Overrides")]];

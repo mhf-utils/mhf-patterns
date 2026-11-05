@@ -39,3 +39,18 @@ struct CraftRecipeList {
 
 CraftRecipeList sigilCraftRecipes @ header.ptrs.sigilCraftRecipes [[name("Sigil Craft Recipes")]];
 CraftRecipeList gemCraftRecipes @ header.ptrs.gemCraftRecipes [[name("Gem Craft Recipes")]];
+
+// Gem regeneration results (天廊石の再生, header 0x9D0, count = the header u32 at
+// 0x9CC): menu entry 3 of tower_felyne_weapon_deco_dispatch (mhfpac
+// pSmithyMenuTexts 0x6D-0x71). The player puts in 5 owned equipType 5 items
+// (20 % each); tower_weapon_stone_regen_request_roll asks the server for one
+// random u32 (CSync_man::putGet_rand_from_table, opcode 300) and
+// tower_weapon_stone_regen_roll_result returns the row where cumulative weight
+// <= rand % total < cumulative + weight; tower_weapon_stone_regen_execute
+// removes the 5 materials and gives 1 of that item. The last row is {0, 0}.
+struct GemRegenResult {
+    ItemId item;
+    u16 weight [[comment("Chance = weight / sum of all weights (65536 in the 3 files)")]];
+};
+
+GemRegenResult gemRegenResults[header.ptrs.gemRegenResultCount] @ header.ptrs.gemRegenResults [[name("Gem Regeneration Results")]];

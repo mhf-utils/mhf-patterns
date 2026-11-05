@@ -2,6 +2,7 @@
 
 #include <std/mem.pat>
 #include <mhfdat/utils/index.pat>
+#include <mhfdat/data/equipment_counts.hexpat>
 
 // =======================
 // Guild Hall random rewards (header 0x810, guild_hall_reward_give_random):
@@ -41,3 +42,29 @@ struct GuildHallRewardLists {
 };
 
 GuildHallRewardLists guildHallRewardLists @ header.ptrs.guildHallRewardLists [[name("Guild Hall Reward Lists")]];
+
+// The three rollers guild_hall_reward_build_list picks from (1 in 3, called N
+// times: N = HR tier 1-5, x50 on a 1/99 roll or x10 on a 1/7 roll). Item ids
+// are stored inverted (~id, reward_present_add inverts them back).
+// guild_hall_reward_give_random_group (header 0x814): rolls a group in 0 .. the
+// highest group and gives every row of that group once.
+struct GuildHallRewardGroupRow {
+    u16 group;
+    u16 item [[format("guildHallRewardItem"), comment("Stored as ~item id")]];
+};
+
+GuildHallRewardGroupRow guildHallRewardGroups[importantNums.numGuildHallRewardGroupRows] @ header.ptrs.guildHallRewardGroups [[name("Guild Hall Reward Groups")]];
+
+// guild_hall_reward_give_random_stack (header 0x818): one random row, its item
+// given count times
+struct GuildHallRewardStack {
+    u16 count;
+    u16 item [[format("guildHallRewardItem"), comment("Stored as ~item id")]];
+};
+
+GuildHallRewardStack guildHallRewardStacks[importantNums.numGuildHallRewardStacks] @ header.ptrs.guildHallRewardStacks [[name("Guild Hall Reward Stacks")]];
+
+// guild_hall_reward_give_random_item (header 0x81C): one random item
+using GuildHallRewardItemId = u16 [[format("guildHallRewardItem")]];
+
+GuildHallRewardItemId guildHallRewardItems[importantNums.numGuildHallRewardItems] @ header.ptrs.guildHallRewardItems [[name("Guild Hall Reward Items"), comment("Stored as ~item id")]];

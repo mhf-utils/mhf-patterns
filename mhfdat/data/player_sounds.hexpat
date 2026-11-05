@@ -12,6 +12,7 @@
 
 #include <std/core.pat>
 #include <mhfdat/utils/index.pat>
+#include <misc/MonsterIDs.hexpat>
 
 struct PlayerSoundChoice {
     u16 id;
@@ -87,3 +88,26 @@ SoundCurve2 soundCurves2[importantNums.numSoundCurves2] @ header.ptrs.soundCurve
 */
 
 s16 weaponModelSoundIds[importantNums.numWeaponModelSoundIds] @ header.ptrs.weaponModelSoundIds [[name("Weapon Model Sound Ids")]];
+
+// Player monster motion banks (header 0xA60, header 0xA64 rows, then one zero
+// row the code never reads): when a monster puts the hunter in one of its own
+// motions (player_monster_motion_start, player_monster_motion_start_both_layers
+// store the monster id, EnemyWork +3, in SkillWork +0x3DC; every ordinary motion
+// start clears it), the hunter's motion sounds (0x61C) and motion events (0x618)
+// come only from bank 0x12 + row, the first row listing that monster
+// (player_motion_sound_bank_by_monster, player_motion_event_bank_by_monster;
+// bank 0x12 when none does). This is the only way to reach banks 0x12-0x38.
+fn playerMotionMonster(u16 n) {
+    if (n == 0)
+        return "-";
+    MonsterID m = u8(n);
+    return std::format("{} {}", n, fmtMonsterID(m));
+};
+
+using PlayerMotionMonster = u16 [[format("playerMotionMonster")]];
+
+struct PlayerMonsterMotionBank {
+    PlayerMotionMonster monsters[4] [[comment("Monster ids (EnemyWork +3) using this bank, 0 = none")]];
+};
+
+PlayerMonsterMotionBank playerMonsterMotionBanks[header.ptrs.playerSoundBankCount] @ header.ptrs.playerMonsterMotionBanks [[name("Player Monster Motion Banks")]];

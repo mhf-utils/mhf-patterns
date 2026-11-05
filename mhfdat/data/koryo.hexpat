@@ -57,3 +57,18 @@ struct KoryoMonsterPoints {
 };
 
 KoryoMonsterPoints koryoMonsterPoints[importantNums.numKoryoMonsterPoints] @ header.ptrs.koryoMonsterPoints [[name("Koryo Monster Points")]];
+
+// Koryo Porta Card Exchange items (header 0xB3C; Koryo menu entry 6, mhfpac
+// pKoryoRewardTexts[0x15] "Porta Card Exchange"): the pouch items the exchange
+// takes, until 0. koryo_porta_exchange_item_ok (item 1-0x413C) is the only
+// reader: koryo_porta_exchange_pouch_pick refuses an item that is not listed
+// (and the list draw greys it); koryo_porta_exchange_step then swaps the whole
+// stack for the same quantity of item 0x1F28 when the pouch has room
+// (pKoryoRewardTexts [0x1C] / [0x1D]). The list holds the same 224 items as the
+// lottery prize lists above.
+struct KoryoPortaExchangeItems {
+    ItemId items[while(std::mem::read_unsigned($, 2) != 0)];
+    u16 end;
+};
+
+KoryoPortaExchangeItems koryoPortaExchangeItems @ header.ptrs.koryoPortaExchangeItems [[name("Koryo Porta Card Exchange Items")]];

@@ -11,6 +11,8 @@
 #include <std/core.pat>
 #include <std/mem.pat>
 #include <mhfdat/utils/index.pat>
+#include <misc/MonsterIDs.hexpat>
+#include <mhfdat/data/equipment_counts.hexpat>
 
 struct SecretBookEffect {
     s16 srThreshold;
@@ -39,6 +41,24 @@ struct SecretBookSrLevels {
 };
 
 SecretBookSrLevels secretBookSrLevels @ header.ptrs.secretBookSrLevels [[name("Secret Book SR Levels")]];
+
+// GSR attack levels (header 0x754, Wii U gsb_sr500_abi_get): the G-rank side of
+// secretBookSrLevels. With a G Secret Book the Attack level (status page row
+// "Attack") is the secretBookSrLevels level at SR 999 plus the levelGain of
+// every row with gsr <= the book's GSR (0 in restricted quests and arcade);
+// gsb_sr500_abi_lv_get shows one Lv per reached row (Lv.MAX at 96). Ends at a
+// gsr of 1000 or more.
+struct GsrAttackLevel {
+    u16 gsr;
+    u16 levelGain;
+};
+
+struct GsrAttackLevels {
+    GsrAttackLevel entries[while(std::mem::read_unsigned($, 2) < 1000)];
+    GsrAttackLevel end;
+};
+
+GsrAttackLevels gsrAttackLevels @ header.ptrs.gsrAttackLevels [[name("GSR Attack Levels")]];
 
 // =======================
 // Effect values and G (GSR) unlocks. Header 0x528: value of each effect id
@@ -69,3 +89,36 @@ u8 gsrThunderResBonus[8] @ header.ptrs.gsrThunderResBonus [[name("GSR Thunder Re
 u8 gsrIceResBonus[8] @ header.ptrs.gsrIceResBonus [[name("GSR Ice Res Bonus"), comment("family 0x5, type 7 count")]];
 u8 gsrDragonResBonus[8] @ header.ptrs.gsrDragonResBonus [[name("GSR Dragon Res Bonus"), comment("family 0x6, type 8 count")]];
 u8 gsrAllResBonus[8] @ header.ptrs.gsrAllResBonus [[name("GSR All Res Bonus"), comment("family 0x7, type 9 count")]];
+
+// HC monsters (header 0x324 HR, 0x730 G) and the Storm Style trial exclusions
+// (header 0x98C). lb_free_chk_hc_quest lets an HR quest be played in HC when
+// objective 0's monster is in hcMonsters and every target 0-2 is in either HR
+// list; is_em_special_check also lets a monster pass. quest_hc_mons_chk gates
+// the HC carve drops on hcMonsters. The G list plays the same role through
+// lb_quest_hd_g_mons_chk and quest_g_hc_mons_chk (extra gate is_GHC_check).
+// lb_ns_quest_set rolls the Storm Style trial target (pSecretBookTexts 0x7C):
+// HR from hcMonsters plus 11 DLL ids (0x118E8074) passing is_em_special_check,
+// goal 3-6; Tonfa (class 0x0B) from the G list, goal 1-3, rerolled up to 101
+// times while the target is in nsQuestExcludedMonstersG.
+fn hcMonster(u16 n) {
+    MonsterID m = u8(n);
+    return fmtMonsterID(m);
+};
+
+using HcMonsterId = u16 [[format("hcMonster")]];
+
+struct HcMonstersHR {
+    HcMonsterId hcMonsters[while(std::mem::read_unsigned($, 2) != 0xFFFE)] [[comment("HC monsters (Teostra is listed twice)")]];
+    u16 hcMonstersEnd;
+    HcMonsterId otherTargets[while(std::mem::read_unsigned($, 2) != 0xFFFF)] [[comment("lb_free_chk_hc_quest: each quest target 0-2 must be in hcMonsters or here")]];
+    u16 otherTargetsEnd;
+};
+
+struct HcMonstersG {
+    HcMonsterId hcMonsters[while(std::mem::read_unsigned($, 2) != 0xFFFF)];
+    u16 end;
+};
+
+HcMonstersHR hcMonstersHR @ header.ptrs.hcMonstersHR [[name("HC Monsters: HR")]];
+HcMonstersG hcMonstersG @ header.ptrs.hcMonstersG [[name("HC Monsters: G")]];
+HcMonsterId nsQuestExcludedMonstersG[importantNums.numNsQuestExcludedMonstersG] @ header.ptrs.nsQuestExcludedMonstersG [[name("Storm Style Trial: G Excluded Monsters"), comment("lb_ns_quest_set rerolls the G target while it is one of these")]];

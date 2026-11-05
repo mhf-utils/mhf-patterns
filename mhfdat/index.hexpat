@@ -115,6 +115,10 @@
 #include <mhfdat/data/halk.hexpat>
 #endif
 
+#ifdef __DATA_HELP_CAT
+#include <mhfdat/data/help_cat.hexpat>
+#endif
+
 #ifdef __DATA_HUNTER_GUIDE
 #include <mhfdat/data/hunter_guide.hexpat>
 #endif
@@ -255,6 +259,10 @@
 #include <mhfdat/data/shop_road_cat.hexpat>
 #endif
 
+#ifdef __DATA_SHOP_ROAD_GM
+#include <mhfdat/data/shop_road_gm.hexpat>
+#endif
+
 #ifdef __DATA_SHOP_TOWER_MEDAL
 #include <mhfdat/data/shop_tower_medal.hexpat>
 #endif
@@ -273,6 +281,10 @@
 
 #ifdef __DATA_STAGE_OBJECTS
 #include <mhfdat/data/stage_objects.hexpat>
+#endif
+
+#ifdef __DATA_STAMP_CARD
+#include <mhfdat/data/stamp_card.hexpat>
 #endif
 
 #ifdef __DATA_TALK_CAMERAS

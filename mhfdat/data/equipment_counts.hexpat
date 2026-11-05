@@ -63,7 +63,9 @@ struct ImportantNumbers {
     u16 numLostItemRewardTiers
         [[name("Number of Lost Item Reward Tiers")]];
 
-    padding[0x2];
+    // Offset 0x5C: help cat items (header 0x218)
+    u16 numHelpCatItems
+        [[name("Number of Help Cat Items")]];
 
     // Offset 0x5E: Caravan gem skill lists, one per tier (header 0xF4) [mhfo-hd.dll + 0xaf4d91]
     u16 numHunterPearlSkillLists
@@ -97,7 +99,13 @@ struct ImportantNumbers {
     u16 numCombineCpTimedBonuses
         [[name("Number of Combine CP Timed Bonuses")]];
 
-    padding[0x42];
+    padding[0x4];
+
+    // Offset 0x76: quest search target monsters (header 0x288), a count of u16 (rows x 2)
+    u16 numQuestSearchMonsterValues
+        [[name("Number of Quest Search Monster u16 Values")]];
+
+    padding[0x3C];
 
     // Offset 0xB4: evolution weapon series (header 0x2CC melee, 0x2D0 ranged)
     u16 numEvoMeleeWeapons
@@ -147,7 +155,17 @@ struct ImportantNumbers {
     u16 numLegendRastaGroups
         [[name("Number of Legend Rasta Groups")]];
 
-    padding[0x14];
+    padding[0x2];
+
+    // Offset 0xFA: random (ex G) weapons (header 0x36C)
+    u16 numExGWeapons
+        [[name("Number of Random (ex G) Weapons")]];
+
+    padding[0xE];
+
+    // Offset 0x10A: ex G base tier roll overrides (header 0x38C)
+    u16 numExGBaseTierRollOverrides
+        [[name("Number of Ex G Base Tier Roll Overrides")]];
 
     // Offset 0x10C: 30k Cheque HR chances (header 0x390)
     u16 numChequeHrChances
@@ -159,7 +177,13 @@ struct ImportantNumbers {
     u16 numGQuestPartySizeRates
         [[name("Number of G Quest Party Size Rates")]];
 
-    padding[0x12];
+    padding[0xE];
+
+    // Offset 0x122: G armor skill up conditions (header 0x3BC)
+    u16 numGousyuSkillUpConditions
+        [[name("Number of Gousyu Skill Up Conditions")]];
+
+    padding[0x2];
 
     // Offset 0x126: Goocoo accessories by slot (header 0x3C4 to 0x3FC)
     u16 numGoocooHats
@@ -219,7 +243,9 @@ struct ImportantNumbers {
     u16 numGoocooSitMoodItems
         [[name("Number of Goocoo House-Sitting Mood Items")]];
 
-    padding[0x2];
+    // Offset 0x160: Goocoo egg care rows (header 0x438)
+    u16 numGoocooEggCare
+        [[name("Number of Goocoo Egg Care Rows")]];
 
     u16 numGoocooPersonalities
         [[name("Number of Goocoo Personalities")]];
@@ -271,7 +297,21 @@ struct ImportantNumbers {
     u16 numGoocooTrustDecay
         [[name("Number of Goocoo Trust Decay Steps")]];
 
-    padding[0x8];
+    // Offset 0x184: Goocoo new skin lots (header 0x480)
+    u16 numGoocooNewSkinLots
+        [[name("Number of Goocoo New Skin Lot Rows")]];
+
+    // Offset 0x186: Goocoo skin classes (header 0x484)
+    u16 numGoocooSkinClasses
+        [[name("Number of Goocoo Skins")]];
+
+    // Offset 0x188: Goocoo egg class lots (header 0x48C)
+    u16 numGoocooEggClassLots
+        [[name("Number of Goocoo Egg Class Lot Rows")]];
+
+    // Offset 0x18A: Goocoo egg skin source lots (header 0x490)
+    u16 numGoocooEggSkinSourceLots
+        [[name("Number of Goocoo Egg Skin Source Lot Rows")]];
 
     u16 numGoocooExchanges
         [[name("Number of Goocoo Exchanges")]];
@@ -282,7 +322,11 @@ struct ImportantNumbers {
     u16 numGoocooRemodelCosts
         [[name("Number of Goocoo Remodel Costs")]];
 
-    padding[0xA];
+    // Offset 0x192: Goocoo group spot lists (header 0x4A0)
+    u16 numGoocooGroupSpotLists
+        [[name("Number of Goocoo Group Spot Lists")]];
+
+    padding[0x8];
 
     u16 numGoocooPotMaterials
         [[name("Number of Goocoo Pot Materials")]];
@@ -293,7 +337,27 @@ struct ImportantNumbers {
     u16 numGoocooFarmTimerValues
         [[name("Number of Goocoo Farm Timer Values")]];
 
-    padding[0x1C];
+    // Offset 0x1A2: stray Goocoo My House actions (header 0x4D4)
+    u16 numStrayGoocooMyHouseActions
+        [[name("Number of Stray Goocoo My House Actions")]];
+
+    // Offset 0x1A4: stray Goocoo Workshop actions 0 (header 0x4D8)
+    u16 numStrayGoocooWorkshopActions0
+        [[name("Number of Stray Goocoo Workshop Actions 0")]];
+
+    // Offset 0x1A6: stray Goocoo Workshop actions 1 (header 0x4DC)
+    u16 numStrayGoocooWorkshopActions1
+        [[name("Number of Stray Goocoo Workshop Actions 1")]];
+
+    // Offset 0x1A8: stray Goocoo MyHawk layouts (header 0x4E0)
+    u16 numStrayGoocooMyHawkLayouts
+        [[name("Number of Stray Goocoo MyHawk Layouts")]];
+
+    padding[0x12];
+
+    // Offset 0x1BC: ex G base tier roll overrides, Gunlance (header 0x508)
+    u16 numExGBaseTierRollOverridesGunlance
+        [[name("Number of Ex G Base Tier Roll Overrides: Gunlance")]];
 
     // Offset 0x1BE: entity motion sounds by entity kind (header 0x50C)
     u16 numEntityMotionSounds
@@ -309,7 +373,13 @@ struct ImportantNumbers {
     u16 numEvolutionGunAmmo
         [[name("Number of Evolution Gun Extra Ammo Rows")]];
 
-    padding[0x10];
+    padding[0xC];
+
+    // Offset 0x1D4: monster hitzone effect scales (header 0x53C)
+    u16 numMonsterHitzoneEffectScales
+        [[name("Number of Monster Hitzone Effect Scales")]];
+
+    padding[0x2];
 
     // Offset 0x1D8: sound distance curves 2 (header 0x544, apply_sound_and_shake)
     u16 numSoundCurves2
@@ -319,7 +389,11 @@ struct ImportantNumbers {
     u16 numSeasonalEvents
         [[name("Number of Seasonal Events")]];
 
-    padding[0xC];
+    // Offset 0x1DC: evolution bowgun bomb rates (header 0x554)
+    u16 numEvoBowgunBombRates
+        [[name("Number of Evolution Bowgun Bomb Rates")]];
+
+    padding[0xA];
 
     // Offset 0x1E8: NPC hunters (header 0x56C)
     u16 numNpcHunters
@@ -373,13 +447,23 @@ struct ImportantNumbers {
     u16 numSigilIconThresholds
         [[name("Number of Sigil Icon Thresholds")]];
 
-    padding[0x4];
+    // Offset 0x246: HBG shot gauge gains (header 0x640)
+    u16 numHbgShotGaugeGains
+        [[name("Number of HBG Shot Gauge Gains")]];
+
+    // Offset 0x248: Fencing hitstop overrides (header 0x644)
+    u16 numFencingHitstopOverrides
+        [[name("Number of Fencing Hitstop Overrides")]];
 
     // Offset 0x24A: Road floor milestones (header 0x64C)
     u16 numRoadMilestones
         [[name("Number of Road Floor Milestones")]];
 
-    padding[0x4];
+    // Offset 0x24C: shortcut combine blocked actions (header 0x650)
+    u16 numShortcutCombineBlockedActions
+        [[name("Number of Shortcut Combine Blocked Actions")]];
+
+    padding[0x2];
 
     // Offset 0x250: just reload rows per list (header 0x668)
     u16 numJustReloadRows
@@ -405,7 +489,11 @@ struct ImportantNumbers {
     u16 numGunlanceShells
         [[name("Number of Gunlance Shell Rows")]];
 
-    padding[0x4];
+    // Offset 0x25E: guild icon monster icon rows (header 0x6A4)
+    u16 numGuildIconMonsterIconRows
+        [[name("Number of Guild Icon Monster Icon Rows")]];
+
+    padding[0x2];
 
     // Offset 0x262: carve kind chances by monster (header 0x6AC)
     u16 numCarveKindChanceMonsters
@@ -421,7 +509,13 @@ struct ImportantNumbers {
     u16 numMonsterPriceBoardRows
         [[name("Number of Monster Price Board Rows")]];
 
-    padding[0x20];
+    padding[0x1A];
+
+    // Offset 0x288: box search sigil skills (header 0x718)
+    u16 numBoxSearchSigilSkills
+        [[name("Number of Box Search Sigil Skills")]];
+
+    padding[0x4];
 
     // Offset 0x28E: weapon sound bank by weapon model (header 0x724)
     u16 numWeaponModelSoundIds
@@ -476,7 +570,21 @@ struct ImportantNumbers {
     u16 numAutoSkills
         [[name("Number of Auto Skills")]];
 
-    padding[0x12];
+    padding[0x4];
+
+    // Offset 0x2FE: Guild Hall reward groups (header 0x814)
+    u16 numGuildHallRewardGroupRows
+        [[name("Number of Guild Hall Reward Group Rows")]];
+
+    // Offset 0x300: Guild Hall reward stacks (header 0x818)
+    u16 numGuildHallRewardStacks
+        [[name("Number of Guild Hall Reward Stacks")]];
+
+    // Offset 0x302: Guild Hall reward items (header 0x81C)
+    u16 numGuildHallRewardItems
+        [[name("Number of Guild Hall Reward Items")]];
+
+    padding[0x8];
 
     // Offset 0x30C: Partner skills (header 0x838)
     u16 numPartnerSkills
@@ -569,7 +677,11 @@ struct ImportantNumbers {
     u16 numTowerJewelRecipes
         [[name("Number of Tower Jewel Recipes")]];
 
-    padding[0x1C];
+    padding[0x1A];
+
+    // Offset 0x3A6: Storm Style trial G excluded monsters (header 0x98C)
+    u16 numNsQuestExcludedMonstersG
+        [[name("Number of Storm Style Trial G Excluded Monsters")]];
 
     // Offset 0x3A8: Transcend depths (header 0x990)
     u16 numTranscendDepths
@@ -607,13 +719,25 @@ struct ImportantNumbers {
     u16 numKoryoMonsterPoints
         [[name("Number of Koryo Monster Points")]];
 
-    padding[0xA];
+    padding[0x4];
+
+    // Offset 0x40E: daily rotation quest lists, JST day % 3 = 0 / 1 / 2 (header 0xB50, 0xB54, 0xB58)
+    u16 numDailyRotationQuestLists0
+        [[name("Number of Daily Rotation Quest Lists 0")]];
+
+    u16 numDailyRotationQuestLists1
+        [[name("Number of Daily Rotation Quest Lists 1")]];
+
+    u16 numDailyRotationQuestLists2
+        [[name("Number of Daily Rotation Quest Lists 2")]];
 
     // Offset 0x414: Caravan monster prices (header 0xB70)
     u16 numCaravanMonsterPrices
         [[name("Number of Caravan Monster Prices")]];
 
-    padding[0x2];
+    // Offset 0x416: stamp card rewards (header 0xB74)
+    u16 numStampCardRewards
+        [[name("Number of Stamp Card Rewards")]];
 
     // Offset 0x418: hiden combine recipes (header 0xB84)
     u16 numCombineHidenRecipes

@@ -68,7 +68,7 @@ struct ptr_table {
     ptr coatingModifiers [[name("Coating Modifiers Pointer"), comment("Rows of 0x18 bytes; how many is unchecked (weapon_params.hexpat)")]]; // @ 0x0B0, hd_dll_af5073
     ptr armorDefenseCoefs [[name("Armor Defense Upgrade Coefficients Pointer"), comment("32 rows of 7 floats, row = armor coefUpgrade (crafting.hexpat)")]]; // @ 0x0B4, hd_dll_af5079
     ptr armorUpgradeCostPercent [[name("Armor Upgrade Cost Percent Pointer")]]; // @ 0x0B8, hd_dll_af507f
-    unk_ptr hd_dll_af5085;
+    ptr armorSlotUpgrades [[name("Armor Slot Upgrades Pointer"), comment("16 rows of 7 bytes, row = armor slotUpgradeRow (crafting.hexpat)")]]; // @ 0x0BC, hd_dll_af5085
     ptr rapidFireWeapons [[name("Rapid Fire Weapons Pointer")]]; // @ 0x0C0, hd_dll_af508b
     ptr equipShopTiers [[name("Equipment Shop Tiers Pointer")]]; // @ 0x0C4, hd_dll_af4bc6
     ptr shopCatalogs [[name("Shop Catalogs Pointer"), comment("14 records of 3 list pointers and a count; record 7 is the Guild Shop (shop_guild.hexpat)")]]; // @ 0x0C8, hd_dll_af4bf5
@@ -168,11 +168,11 @@ struct ptr_table {
     unk_ptr hd_dll_af577e;
     unk_ptr hd_dll_af5784;      // @ 0x210
     ptr lostItemRewardTiers [[name("Lost Item Reward Tiers Pointer")]]; // @ 0x214, hd_dll_af578a
-    unk_ptr hd_dll_af57b9;
+    ptr helpCatItems [[name("Help Cat Items Pointer")]]; // @ 0x218, hd_dll_af57b9
     unk_ptr hd_dll_af5849;
     unk_ptr hd_dll_af584f;      // @ 0x220
     ptr poogieCostumeSkillCuffs [[name("Poogie Costume Skill Cuffs Pointer")]]; // @ 0x224, hd_dll_af5855
-    unk_ptr hd_dll_af584b;
+    ptr mytraPoogieLevelThresholds [[name("Mytra Poogie Level Thresholds Pointer")]]; // @ 0x228, hd_dll_af584b
     ptr caravanVoyageRoutes [[name("Caravan Voyage Routes Pointer")]]; // @ 0x22C, hd_dll_af5861
     ptr caravanLevels [[name("Caravan Levels Pointer")]]; // @ 0x230, hd_dll_af5867
     ptr caravanTiers [[name("Caravan Tiers Pointer")]]; // @ 0x234, hd_dll_af4da9
@@ -196,7 +196,7 @@ struct ptr_table {
     ptr combineCpTimedBonuses [[name("Combine CP Timed Bonuses Pointer")]]; // @ 0x27C, hd_dll_af5a27
     ptr weaponEffectSets [[name("Weapon Effect Sets Pointer")]]; // @ 0x280, hd_dll_af5a2d
     ptr weaponEffects [[name("Weapon Effects Pointer")]]; // @ 0x284, hd_dll_af5a33
-    unk_ptr hd_dll_af5a39;
+    ptr questSearchMonsters [[name("Quest Search Monsters Pointer")]]; // @ 0x288, hd_dll_af5a39
     unk_ptr hd_dll_af5a3f;
     unk_ptr hd_dll_af5a45;      // @ 0x290
     ptr modelEffectSets [[name("Model Effect Sets Pointer")]]; // @ 0x294, hd_dll_af5a4b
@@ -235,7 +235,7 @@ struct ptr_table {
     ptr secretBookEffects [[name("Secret Book Effects Pointer")]]; // @ 0x318
     ptr innerBodyModels [[name("Inner Body Models Pointer")]]; // @ 0x31C, hd_dll_af5c18
     ptr partnerFaces [[name("Partner Faces Pointer")]]; // @ 0x320, hd_dll_af5c1e
-    unk_ptr hd_dll_af5bd0;
+    ptr hcMonstersHR [[name("HC Monsters HR Pointer")]]; // @ 0x324, hd_dll_af5bd0
     ptr secretBookRewardsHR [[name("Secret Book HR Rewards Pointer")]]; // @ 0x328, hd_dll_af5bd6
 
     ptr carveHCItemDrops        [[name("HC Carve Drop Data Pointer")]];
@@ -255,28 +255,28 @@ struct ptr_table {
     ptr legendRastaGroups [[name("Legend Rasta Groups Pointer")]]; // @ 0x360, hd_dll_af5c78
     unk_ptr hd_dll_af5c7e;
     ptr trapSkillCombineResults [[name("Trap Skill Combine Results Pointer")]]; // @ 0x368, hd_dll_af5c84
-    ptr exGWeaponData [[name("Ex G Weapon Data Pointer")]]; // @ 0x36C, hd_dll_af5c8a
+    ptr exGWeaponData [[name("Random (ex G) Weapons Pointer")]]; // @ 0x36C, hd_dll_af5c8a
     ptr randomSharpnessSwordAndShield [[name("Random Sharpness Sword and Shield Pointer")]]; // @ 0x370, hd_dll_af5c90
     ptr randomSharpnessDualBlades [[name("Random Sharpness Dual Blades Pointer")]]; // @ 0x374, hd_dll_af5c96
     ptr randomSharpnessGreatSwordLongSword [[name("Random Sharpness Great Sword and Long Sword Pointer")]]; // @ 0x378, hd_dll_af5c9c
     ptr randomSharpnessLance [[name("Random Sharpness Lance Pointer")]]; // @ 0x37C, hd_dll_af5ca2
     ptr randomSharpnessHammerHorn [[name("Random Sharpness Hammer and Hunting Horn Pointer")]]; // @ 0x380
-    unk_ptr hd_dll_af5cae;
-    unk_ptr hd_dll_af5cb4;
-    unk_ptr hd_dll_af5cba;
+    ptr exGTopTierRollPercents [[name("Ex G Top Tier Roll Percents Pointer")]]; // @ 0x384, hd_dll_af5cae
+    ptr exGMidTierRollPercents [[name("Ex G Mid Tier Roll Percents Pointer")]]; // @ 0x388, hd_dll_af5cb4
+    ptr exGBaseTierRollOverrides [[name("Ex G Base Tier Roll Overrides Pointer")]]; // @ 0x38C, hd_dll_af5cba
     ptr chequeHrChances [[name("30k Cheque HR Chances Pointer")]]; // @ 0x390, hd_dll_af5ccc
     unk_ptr hd_dll_af5cd2;
     unk_ptr hd_dll_af5cd8;
     ptr gQuestPartySizeRates [[name("G Quest Party Size Rates Pointer")]]; // @ 0x39C, hd_dll_af5cde
-    unk_ptr hd_dll_af5cc0;      // @ 0x3A0
+    ptr exGRankChances [[name("Ex G Weapon Rank Chances Pointer")]]; // @ 0x3A0, hd_dll_af5cc0
     unk_ptr hd_dll_af5cc6;
     ptr evoSeries4 [[name("Evolution Series 4 Pointer")]]; // @ 0x3A8, hd_dll_af5cea
     ptr evoSeries5 [[name("Evolution Series 5 Pointer")]]; // @ 0x3AC, hd_dll_af5cf0
     ptr evoSeries6 [[name("Evolution Series 6 Pointer")]]; // @ 0x3B0, hd_dll_af5cf6
     ptr evoSeries7 [[name("Evolution Series 7 Pointer")]]; // @ 0x3B4, hd_dll_af5cfc
     unk_ptr hd_dll_af5d02;
-    unk_ptr hd_dll_af5d08;
-    unk_ptr hd_dll_af5d0e;      // @ 0x3C0
+    ptr gousyuSkillUpConditions [[name("Gousyu Skill Up Conditions Pointer")]]; // @ 0x3BC, hd_dll_af5d08
+    ptr gousyuSkillUpSkillTypes [[name("Gousyu Skill Up Skill Types Pointer")]]; // @ 0x3C0, hd_dll_af5d0e
     ptr goocooHats [[name("Goocoo Hats Pointer")]]; // @ 0x3C4, hd_dll_af5d14
     ptr goocooClothes [[name("Goocoo Clothes Pointer")]]; // @ 0x3C8, hd_dll_af5d1a
     ptr goocooMasks [[name("Goocoo Masks Pointer")]]; // @ 0x3CC, hd_dll_af5d20
@@ -306,7 +306,7 @@ struct ptr_table {
     ptr goocooSitBargainsRarity [[name("Goocoo House-Sitting Bargains Rarity Pointer")]]; // @ 0x42C, hd_dll_af5fa1
     ptr goocooSitGrades [[name("Goocoo House-Sitting Grades Pointer")]]; // @ 0x430, hd_dll_af5fa7
     ptr goocooSitMoodItems [[name("Goocoo House-Sitting Mood Items Pointer")]]; // @ 0x434, hd_dll_af5fad
-    unk_ptr hd_dll_af5fb3;
+    ptr goocooEggCare [[name("Goocoo Egg Care Pointer")]]; // @ 0x438, hd_dll_af5fb3
     ptr goocooPersonalities [[name("Goocoo Personalities Pointer")]]; // @ 0x43C, hd_dll_af5fb9
     ptr goocooCareActions [[name("Goocoo Care Actions Pointer")]]; // @ 0x440, hd_dll_af5fbf
     ptr goocooCareStyles [[name("Goocoo Care Styles Pointer")]]; // @ 0x444, hd_dll_af5ff0
@@ -324,31 +324,31 @@ struct ptr_table {
     unk_ptr hd_dll_af61b0;
     ptr goocooTrustParams [[name("Goocoo Trust Parameters Pointer")]]; // @ 0x478, hd_dll_af61e0
     ptr goocooTrustDecay [[name("Goocoo Trust Decay Pointer")]]; // @ 0x47C, hd_dll_af61e6
-    unk_ptr hd_dll_af61ec;      // @ 0x480
-    unk_ptr hd_dll_af61f2;
-    unk_ptr hd_dll_af61f8;
-    unk_ptr hd_dll_af61fe;
-    unk_ptr hd_dll_af6204;      // @ 0x490
+    ptr goocooNewSkinLots [[name("Goocoo New Skin Lots Pointer")]]; // @ 0x480, hd_dll_af61ec
+    ptr goocooSkinClasses [[name("Goocoo Skin Classes Pointer")]]; // @ 0x484, hd_dll_af61f2
+    ptr goocooSkinClassScores [[name("Goocoo Skin Class Scores Pointer")]]; // @ 0x488, hd_dll_af61f8
+    ptr goocooEggClassLots [[name("Goocoo Egg Class Lots Pointer")]]; // @ 0x48C, hd_dll_af61fe
+    ptr goocooEggSkinSourceLots [[name("Goocoo Egg Skin Source Lots Pointer")]]; // @ 0x490, hd_dll_af6204
     ptr goocooExchanges [[name("Goocoo Exchanges Pointer")]]; // @ 0x494, hd_dll_af620a
     ptr goocooClothesCosts [[name("Goocoo Clothes Costs Pointer")]]; // @ 0x498, hd_dll_af623d
     ptr goocooRemodelCosts [[name("Goocoo Remodel Costs Pointer")]]; // @ 0x49C, hd_dll_af6243
-    unk_ptr hd_dll_af6249;      // @ 0x4A0
+    ptr goocooGroupSpots [[name("Goocoo Group Spots Pointer")]]; // @ 0x4A0, hd_dll_af6249
     unk_ptr hd_dll_af6280;
     unk_ptr hd_dll_af6286;
     unk_ptr hd_dll_af628C;
-    unk_ptr hd_dll_af6292;      // @ 0x4B0
+    ptr goocooGroupGaugeGain [[name("Goocoo Group Gauge Gain Pointer")]]; // @ 0x4B0, hd_dll_af6292
     unk_ptr hd_dll_af6298;
-    unk_ptr hd_dll_af62d4;
+    ptr goocooPotWelldoneItems [[name("Goocoo Pot Well-Done Items Pointer"), comment("Secret Book swap of a pot material's well-done item: 12 items per weapon class")]]; // @ 0x4B8, hd_dll_af62d4
     ptr goocooPotMaterials [[name("Goocoo Pot Materials Pointer")]]; // @ 0x4BC, hd_dll_af62c8
     ptr goocooPotSoups [[name("Goocoo Pot Soups Pointer")]]; // @ 0x4C0, hd_dll_af62ce
     ptr goocooFarmTimers [[name("Goocoo Farm Timers Pointer")]]; // @ 0x4C4, hd_dll_af62da
     ptr goocooFarmHarvests [[name("Goocoo Farm Harvests Pointer")]]; // @ 0x4C8, hd_dll_af62e0
     unk_ptr hd_dll_af629e;
-    unk_ptr hd_dll_af62a4;      // @ 0x4D0
-    unk_ptr hd_dll_af62aa;
-    unk_ptr hd_dll_af62b0;
-    unk_ptr hd_dll_af62b6;
-    unk_ptr hd_dll_af62bc;      // @ 0x4E0
+    ptr strayGoocooEquipMeshLots [[name("Stray Goocoo Equip Mesh Lots Pointer")]]; // @ 0x4D0, hd_dll_af62a4
+    ptr strayGoocooMyHouseActionLots [[name("Stray Goocoo My House Action Lots Pointer")]]; // @ 0x4D4, hd_dll_af62aa
+    ptr strayGoocooWorkshopActionLots0 [[name("Stray Goocoo Workshop Action Lots 0 Pointer")]]; // @ 0x4D8, hd_dll_af62b0
+    ptr strayGoocooWorkshopActionLots1 [[name("Stray Goocoo Workshop Action Lots 1 Pointer")]]; // @ 0x4DC, hd_dll_af62b6
+    ptr strayGoocooMyHawkLayoutLots [[name("Stray Goocoo MyHawk Layout Lots Pointer")]]; // @ 0x4E0, hd_dll_af62bc
     unk_ptr hd_dll_af62c2;
     ptr greatSlayingQuests [[name("Great Slaying Quests Pointer")]]; // @ 0x4E8, hd_dll_af6304
     unk_ptr hd_dll_af630a;
@@ -356,9 +356,9 @@ struct ptr_table {
     ptr handlingDrawSpeed [[name("Handling Draw Speed Pointer")]]; // @ 0x4F4, hd_dll_af632e
     ptr randomSharpnessGunlance [[name("Random Sharpness Gunlance Pointer")]]; // @ 0x4F8, hd_dll_af6316
     unk_ptr hd_dll_af5ce4;
-    unk_ptr hd_dll_af631c;      // @ 0x500
-    unk_ptr hd_dll_af6322;
-    unk_ptr hd_dll_af6328;
+    ptr exGTopTierRollPercentsGunlance [[name("Ex G Top Tier Roll Percents Gunlance Pointer")]]; // @ 0x500, hd_dll_af631c
+    ptr exGMidTierRollPercentsGunlance [[name("Ex G Mid Tier Roll Percents Gunlance Pointer")]]; // @ 0x504, hd_dll_af6322
+    ptr exGBaseTierRollOverridesGunlance [[name("Ex G Base Tier Roll Overrides Gunlance Pointer")]]; // @ 0x508, hd_dll_af6328
     ptr entityMotionSounds [[name("Entity Motion Sounds Pointer")]]; // @ 0x50C, hd_dll_af6334
     ptr halkFoods [[name("Halk Foods Pointer")]]; // @ 0x510, hd_dll_af6434
     ptr eventSceneScriptSizes [[name("Event Scene Script Sizes Pointer")]]; // @ 0x514, hd_dll_af643a
@@ -371,13 +371,13 @@ struct ptr_table {
     unk_ptr hd_dll_af65ea;      // @ 0x530
     ptr myMissionSetObjectives [[name("My Mission Set Objectives Pointer")]]; // @ 0x534, hd_dll_af65f0
     ptr my_mission_objective    [[name("My Mission Objective Pointer")]];
-    unk_ptr hd_dll_af65fc;
+    ptr monsterHitzoneEffectScales [[name("Monster Hitzone Effect Scales Pointer")]]; // @ 0x53C, hd_dll_af65fc
     ptr soundVolumeCurves [[name("Sound Volume Curves Pointer")]]; // @ 0x540, hd_dll_af6602
     ptr soundCurves2 [[name("Sound Curves 2 Pointer")]]; // @ 0x544, hd_dll_af6608
     ptr soundTypes [[name("Sound Types Pointer")]]; // @ 0x548, hd_dll_af660e
     ptr seasonalEventTiming     [[name("Seasonal Event Timing Table Pointer")]];
     ptr titleCategories [[name("Title Categories Pointer")]]; // @ 0x550, hd_dll_af661a
-    unk_ptr hd_dll_af6640;
+    ptr evoBowgunBombRates [[name("Evolution Bowgun Bomb Rates Pointer")]]; // @ 0x554, hd_dll_af6640
     ptr cookedDishes [[name("Cooked Dishes Pointer")]]; // @ 0x558, hd_dll_af6646
     ptr hcSecretBookBonusHagi2Plus [[name("HC Secret Book Bonus HagiLv 2+ Pointer")]]; // @ 0x55C, hd_dll_af664c
     ptr hcSecretBookBonusHagi1 [[name("HC Secret Book Bonus HagiLv 1 Pointer")]]; // @ 0x560, hd_dll_af6652
@@ -427,7 +427,7 @@ struct ptr_table {
     ptr rastaLoyaltyElementPercent [[name("Rasta Loyalty Element Percent Pointer")]]; // @ 0x604, hd_dll_af6c1a
     ptr rastaCredDefensePercent [[name("Rasta Cred Defense Percent Pointer")]]; // @ 0x608, hd_dll_af6c20
     ptr rastaCredSkillSlots [[name("Rasta Cred Skill Slots Pointer")]]; // @ 0x60C, hd_dll_af6c26
-    unk_ptr hd_dll_af6c2c;      // @ 0x610
+    ptr stageMapBackgroundColors [[name("Stage Map Background Colors Pointer")]]; // @ 0x610, hd_dll_af6c2c
     ptr weaponActions [[name("Weapon Action Scripts Pointer")]]; // @ 0x614, hd_dll_af6c32
     ptr playerMotionEventBanks [[name("Player Motion Event Banks Pointer")]]; // @ 0x618, hd_dll_af6c98
     ptr playerSoundBanks [[name("Player Sound Banks Pointer")]]; // @ 0x61C, hd_dll_af6d00
@@ -440,16 +440,16 @@ struct ptr_table {
     ptr sigilCraftMaterials [[name("Sigil Craft Materials Pointer")]]; // @ 0x634, hd_dll_af6dac
     ptr sigilIconThresholds [[name("Sigil Icon Thresholds Pointer")]]; // @ 0x638, hd_dll_af6db2
     ptr motionValues [[name("Motion Values Pointer")]]; // @ 0x63C, hd_dll_af6db8
-    unk_ptr hd_dll_af6dbe;      // @ 0x640
-    unk_ptr hd_dll_af6e7c;
+    ptr hbgShotGaugeGains [[name("HBG Shot Gauge Gains Pointer")]]; // @ 0x640, hd_dll_af6dbe
+    ptr fencingHitstopOverrides [[name("Fencing Hitstop Overrides Pointer")]]; // @ 0x644, hd_dll_af6e7c
     ptr skillParams [[name("Skill Parameters Pointer"), comment("Rush gauge thresholds at +0x64; the rest is shared with other skills")]]; // @ 0x648, hd_dll_af6eab
     ptr roadMilestones [[name("Road Floor Milestones Pointer")]]; // @ 0x64C, hd_dll_af6eb1
-    unk_ptr hd_dll_af6eb7;      // @ 0x650
+    ptr shortcutCombineBlockedActions [[name("Shortcut Combine Blocked Actions Pointer")]]; // @ 0x650, hd_dll_af6eb7
     ptr lanceComboRules [[name("Lance Combo Rules Pointer")]]; // @ 0x654, hd_dll_af6e82
     unk_ptr hd_dll_af6f6f;
     ptr weaponParams [[name("Weapon Parameters Pointer")]]; // @ 0x65C, hd_dll_af6f75
     ptr weaponConstants [[name("Weapon Constants Pointer")]]; // @ 0x660, hd_dll_af6f7b
-    unk_ptr hd_dll_af6f81;
+    ptr weaponUseBanFreeActions [[name("Weapon Use Ban Free Actions Pointer")]]; // @ 0x664, hd_dll_af6f81
     ptr justReloadLists [[name("Just Reload Lists Pointer")]]; // @ 0x668, hd_dll_af6fa8
     ptr justShotLists [[name("Just Shot Lists Pointer")]]; // @ 0x66C, hd_dll_af6fca
     ptr hornMelodies [[name("Horn Melodies Pointer")]]; // @ 0x670, hd_dll_af6fec
@@ -465,7 +465,7 @@ struct ptr_table {
     ptr gunlanceExShotDamageRate [[name("Gunlance Extreme Shot Damage Rate Pointer")]]; // @ 0x698, hd_dll_af7028
     ptr gunlanceExShotTimerRate [[name("Gunlance Extreme Shot Timer Rate Pointer")]]; // @ 0x69C, hd_dll_af702e
     ptr gunlanceExShotSharpnessCost [[name("Gunlance Extreme Shot Sharpness Cost Pointer")]]; // @ 0x6A0, hd_dll_af7034
-    unk_ptr hd_dll_af7052;
+    ptr guildIconMonsterIcons [[name("Guild Icon Monster Icons Pointer")]]; // @ 0x6A4, hd_dll_af7052
     ptr compoundElements [[name("Compound Elements Pointer")]]; // @ 0x6A8, hd_dll_af7040
     ptr carveKindChances [[name("Carve Kind Chances Pointer")]]; // @ 0x6AC, hd_dll_af7046
     ptr partnerStarterWeapons [[name("Partner Starter Weapons Pointer")]]; // @ 0x6B0, hd_dll_af7058
@@ -494,13 +494,13 @@ struct ptr_table {
     padding[0x8];
     padding[0x4];               // @ 0x710
     unk_ptr hd_dll_af771d;
-    unk_ptr hd_dll_af5c66;
+    ptr boxSearchSigilSkills [[name("Box Search Sigil Skills Pointer")]]; // @ 0x718, hd_dll_af5c66
     unk_ptr hd_dll_af7723;
     unk_ptr hd_dll_af7729;      // @ 0x720
     ptr weaponModelSoundIds [[name("Weapon Model Sound Ids Pointer")]]; // @ 0x724, hd_dll_af772f
     unk_ptr hd_dll_af7735;
     ptr playerUniqueParams [[name("Player Unique Parameters Pointer")]]; // @ 0x72C, hd_dll_af773b
-    unk_ptr hd_dll_af7741;      // @ 0x730
+    ptr hcMonstersG [[name("HC Monsters G Pointer")]]; // @ 0x730, hd_dll_af7741
     ptr secretBookRewardsG [[name("Secret Book G Rewards Pointer")]]; // @ 0x734, hd_dll_af7747
 
     ptr carveGRHCItemDrops      [[name("Carve GR HC Drop Data Pointer")]];
@@ -511,7 +511,7 @@ struct ptr_table {
     ptr GRankQuestG10 [[name("G10 Quests Pointer")]]; // @ 0x748, hd_dll_af733a
     ptr motionValuesAlt [[name("Motion Values Alternate Bank Pointer")]]; // @ 0x74C, hd_dll_af7759
     ptr GrankCuffCrafting        [[name("G-Rank Cuff Crafting Pointer")]];      // @ 0x750
-    unk_ptr hd_dll_af7765;
+    ptr gsrAttackLevels [[name("GSR Attack Levels Pointer")]]; // @ 0x754, hd_dll_af7765
     ptr gsrUnlocks [[name("GSR Unlocks Pointer")]]; // @ 0x758
     ptr gsrExtremeAttack [[name("GSR Extreme Attack Pointer")]]; // @ 0x75C, hd_dll_af7771
     ptr gsrExtremeDefense [[name("GSR Extreme Defense Pointer")]]; // @ 0x760, hd_dll_af7777
@@ -542,7 +542,7 @@ struct ptr_table {
     ptr rewardSlotChancesBasicB [[name("Basic B Reward Slot Chances Pointer")]]; // @ 0x7BC, hd_dll_af7887
     ptr rewardSlotChancesSub [[name("Sub Target Reward Slot Chances Pointer")]]; // @ 0x7C0, hd_dll_af78b2
     unk_ptr hd_dll_af7a30;
-    unk_ptr hd_dll_af7a36;
+    ptr divaHallActorPoints [[name("Diva Hall Actor Points Pointer")]]; // @ 0x7C8, hd_dll_af7a36
     ptr divaHallCameras [[name("Diva Hall Cameras Pointer")]]; // @ 0x7CC, hd_dll_af7a3c
     ptr divaStoryGiftLiking [[name("Diva Story Gift Liking Pointer")]]; // @ 0x7D0, hd_dll_af7a42
     ptr huntingMedalMilestones [[name("Hunting Medal Milestones Pointer")]]; // @ 0x7D4, hd_dll_af7a48
@@ -561,9 +561,9 @@ struct ptr_table {
     unk_ptr hd_dll_af7a9a;
     ptr incitementTunables [[name("Incitement Tunables Pointer")]]; // @ 0x80C, hd_dll_af7aa0
     ptr guildHallRewardLists [[name("Guild Hall Reward Lists Pointer")]]; // @ 0x810, hd_dll_af7aa6
-    unk_ptr hd_dll_af7ae3;
-    unk_ptr hd_dll_af7ae9;
-    unk_ptr hd_dll_af7aef;
+    ptr guildHallRewardGroups [[name("Guild Hall Reward Groups Pointer")]]; // @ 0x814, hd_dll_af7ae3
+    ptr guildHallRewardStacks [[name("Guild Hall Reward Stacks Pointer")]]; // @ 0x818, hd_dll_af7ae9
+    ptr guildHallRewardItems [[name("Guild Hall Reward Items Pointer")]]; // @ 0x81C, hd_dll_af7aef
     unk_ptr hd_dll_af7af5;      // @ 0x820
     unk_ptr hd_dll_af7afb;
     unk_ptr hd_dll_af7b01;
@@ -596,7 +596,7 @@ struct ptr_table {
     ptr sigilCraftUniqueSkills [[name("Sigil Craft Unique Skills Pointer")]]; // @ 0x894, hd_dll_af7b61
     ptr sigilCraftValueNamedSkills [[name("Sigil Craft Value-Named Skills Pointer")]]; // @ 0x898, hd_dll_af7b67
     ptr guildCookingSkillPools [[name("Guild Cooking Skill Pools Pointer")]]; // @ 0x89C, hd_dll_af7ca2
-    unk_ptr hd_dll_af7cc8;      // @ 0x8A0
+    ptr rarityChangeAttackCaps [[name("Rarity Change Attack Caps Pointer")]]; // @ 0x8A0, hd_dll_af7cc8
     ptr rarityChangeElementRates [[name("Rarity Change Element Rates Pointer")]]; // @ 0x8A4, hd_dll_af7cce
     ptr rarityChangeStatusRates [[name("Rarity Change Status Rates Pointer")]]; // @ 0x8A8, hd_dll_af7cd4
     ptr rarityChangeAffinityRates [[name("Rarity Change Affinity Rates Pointer")]]; // @ 0x8AC, hd_dll_af7cda
@@ -607,7 +607,7 @@ struct ptr_table {
     ptr evadeActions [[name("Evade Actions Pointer")]]; // @ 0x8C0, hd_dll_af7d34
     ptr assistanceTunables [[name("Assistance Tunables Pointer")]]; // @ 0x8C4, hd_dll_af7d67
     ptr companionStagePoints [[name("Companion Stage Points Pointer")]]; // @ 0x8C8, hd_dll_af7e55
-    unk_ptr hd_dll_af7e5b;
+    ptr baseCampNpcPoints [[name("Base Camp NPC Points Pointer")]]; // @ 0x8CC, hd_dll_af7e5b
     ptr treasureCorpAreas [[name("Treasure Corp Areas Pointer")]]; // @ 0x8D0, hd_dll_af7e79
     ptr treasureCorpResultChances [[name("Treasure Corp Result Chances Pointer")]]; // @ 0x8D4, hd_dll_af7e7f
     ptr treasureCorpDrawRulesKind2 [[name("Treasure Corp Draw Rules Kind 2 Pointer")]]; // @ 0x8D8, hd_dll_af7e85
@@ -623,13 +623,13 @@ struct ptr_table {
     ptr shitenRewards [[name("Shiten Rewards Pointer")]]; // @ 0x900, hd_dll_af8165
     ptr guildWeeklyBonusValues [[name("Guild Weekly Bonus Values Pointer")]]; // @ 0x904, hd_dll_af8171
     unk_ptr hd_dll_af5c6c;
-    unk_ptr hd_dll_af8177;
-    ptr extraCounters [[name("Extra Counters Pointer"), comment("u16 counts: +8 the Hunting Road skills")]]; // @ 0x910, hd_dll_af469d
+    ptr felyneGmShop [[name("Felyne Gm Shop Pointer")]]; // @ 0x90C, hd_dll_af8177
+    ptr extraCounters [[name("Extra Counters Pointer"), comment("u16 counts: +0 the Felyne Gm shop (0x90C), +4 the Blue NPC Gm shop (0x924), +8 the Hunting Road skills")]]; // @ 0x910, hd_dll_af469d
     unk_ptr hd_dll_af818f;
     unk_ptr hd_dll_af81cc;
     ptr caravanRankingRoutes [[name("Caravan Ranking Routes Pointer")]]; // @ 0x91C, hd_dll_af821c
-    unk_ptr hd_dll_af8183;      // @ 0x920
-    unk_ptr hd_dll_af817d;
+    ptr felyneGmShopStockRolls [[name("Felyne Gm Shop Stock Rolls Pointer")]]; // @ 0x920, hd_dll_af8183
+    ptr blueNpcGmShop [[name("Blue NPC Gm Shop Pointer")]]; // @ 0x924, hd_dll_af817d
     ptr towerSkills [[name("Tower Skills Pointer")]]; // @ 0x928, hd_dll_af8189
     ptr partnerArmorCategoryDefense [[name("Partner Armor Category Defense Pointer")]]; // @ 0x92C, hd_dll_af816b
     ptr roadSkills [[name("Hunting Road Skills Pointer")]]; // @ 0x930, hd_dll_af82c4
@@ -658,7 +658,7 @@ struct ptr_table {
     unk_ptr hd_dll_af837a;      // @ 0x980
     unk_ptr hd_dll_af8380;
     ptr skillCounts [[name("Skill Counts Pointer"), comment("u16 counts: +2 the skill effects, +4 the vampirism rows, +0x14 / +0x16 / +0x18 the zenith skills, trees and effects, +0x1A the trap skill combine results")]]; // @ 0x988, hd_dll_af46c9
-    unk_ptr hd_dll_af839f;
+    ptr nsQuestExcludedMonstersG [[name("Storm Style Trial G Excluded Monsters Pointer")]]; // @ 0x98C, hd_dll_af839f
     ptr transcendDepths [[name("Transcend Depths Pointer")]]; // @ 0x990, hd_dll_af83a5
     ptr transcendQuestGains [[name("Transcend Quest Gains Pointer")]]; // @ 0x994, hd_dll_af83ab
 
@@ -670,14 +670,14 @@ struct ptr_table {
     padding[4];
     unk_ptr hd_dll_af83c3;
     ptr thunderCladPursuitDrawingArts [[name("Thunder Clad, Status Pursuit, Drawing Arts Pointer")]]; // @ 0x9B0
-    unk_ptr hd_dll_af84a9;
+    ptr rastaActiveSkillsByClass [[name("Legend Rasta Active Skills by Class Pointer")]]; // @ 0x9B4, hd_dll_af84a9
     ptr fixedSkillsByClass [[name("Fixed Skills by Class Pointer")]]; // @ 0x9B8, hd_dll_af8536
-    unk_ptr hd_dll_af84f4;
+    ptr rastaActiveSkillsByClassG [[name("Legend Rasta Active Skills by Class (G) Pointer")]]; // @ 0x9BC, hd_dll_af84f4
     ptr fixedSkillsByClassG [[name("Fixed Skills by Class (G) Pointer")]]; // @ 0x9C0, hd_dll_af8581
     padding[4];
     ptr gemCraftRecipes [[name("Gem Craft Recipes Pointer")]]; // @ 0x9C8, hd_dll_af85c4
-    padding[4];
-    unk_ptr hd_dll_af85ca;      // @ 0x9D0 Tower/G50 Params ID?
+    u32 gemRegenResultCount [[name("Gem Regeneration Result Count")]]; // @ 0x9CC, a value (not relocated)
+    ptr gemRegenResults [[name("Gem Regeneration Results Pointer")]]; // @ 0x9D0, hd_dll_af85ca
     u32 partnerExtraSkillCount [[name("Partner Extra Skill Count")]]; // @ 0x9D4
     ptr partnerExtraSkills [[name("Partner Extra Skills Pointer")]]; // @ 0x9D8, hd_dll_af85d0
     ptr specialSlotChancesBasicHR [[name("Special Basic HR Reward Slot Chances Pointer")]]; // @ 0x9DC, hd_dll_af85d6
@@ -714,17 +714,17 @@ struct ptr_table {
     unk_ptr hd_dll_af8774;
     ptr towerSupportBonuses [[name("Tower Support Bonuses Pointer")]]; // @ 0xA48, hd_dll_af877a
     u32 towerSupportBonusCount [[name("Tower Support Bonus Count")]]; // @ 0xA4C
-    unk_ptr hd_dll_af8780;      // @ 0xA50
-    unk_ptr hd_dll_af87bb;
-    unk_ptr hd_dll_af87c1;
+    ptr towerSupportLevelThresholds [[name("Tower Support Level Thresholds Pointer")]]; // @ 0xA50, hd_dll_af8780
+    ptr clanConquestTargetSlayPoints [[name("Clan Conquest Target Slay Points Pointer")]]; // @ 0xA54, hd_dll_af87bb
+    ptr clanConquestSupportConditions [[name("Clan Conquest Support Conditions Pointer")]]; // @ 0xA58, hd_dll_af87c1
     unk_ptr hd_dll_af87f2;
-    unk_ptr hd_dll_af87f8;      // @ 0xA60
+    ptr playerMonsterMotionBanks [[name("Player Monster Motion Banks Pointer")]]; // @ 0xA60, hd_dll_af87f8
     u32 playerSoundBankCount [[name("Player Sound Bank Count")]]; // @ 0xA64, + 0x12 banks
     unk_ptr hd_dll_af87fe;
     ptr titleUnlocks [[name("Title Unlocks Pointer")]]; // @ 0xA6C, hd_dll_af8804
     ptr bowgunShotTables [[name("Bowgun Shot Tables Pointer")]]; // @ 0xA70, hd_dll_af8819
-    padding[4];
-    unk_ptr hd_dll_af8886;
+    u32 halkSkillBookOrderCount [[name("Halk Skill Book Order Count")]]; // @ 0xA74
+    ptr halkSkillBookOrder [[name("Halk Skill Book Order Pointer")]]; // @ 0xA78, hd_dll_af8886
     padding[4];
     ptr mapBonusPools [[name("Map Bonus Pools Pointer")]]; // @ 0xA80, hd_dll_af888c
     ptr mapBonusChances [[name("Map Bonus Chances Pointer")]]; // @ 0xA84, hd_dll_af88c7
@@ -751,9 +751,9 @@ struct ptr_table {
     ptr zenithWeaponForging     [[name("Zenith Weapon Forging Pointer")]];
     ptr armorZenithForging     [[name("Zenith Armor Forging")]];
 
-    unk_ptr hd_dll_af8d66;
+    ptr monsterCarvePointsZenith [[name("Zenith Monster Carve Points Pointer")]]; // @ 0xAC8, hd_dll_af8d66
     ptr captureBreakRewardsZenith [[name("Zenith Capture and Break Rewards Pointer")]]; // @ 0xACC, hd_dll_af8dc1
-    unk_ptr hd_dll_af8dc7;      // @ 0xAD0
+    ptr monsterCarvePointsSmallParty [[name("Berserk Raviente Small Party Carve Points Pointer")]]; // @ 0xAD0, hd_dll_af8dc7
     ptr monsterStartActions [[name("Monster Start Actions Pointer")]]; // @ 0xAD4, hd_dll_af8d60
     ptr equipModelEffectRows [[name("Equip Model Effect Rows Pointer")]]; // @ 0xAD8, hd_dll_af7da4
     ptr equipModelEffectLists [[name("Equip Model Effect Lists Pointer")]]; // @ 0xADC, hd_dll_af7daa
@@ -782,27 +782,27 @@ struct ptr_table {
     ptr conquestQuests [[name("Conquest Quests Pointer")]]; // @ 0xB30, hd_dll_af4749
     ptr shitenQuests [[name("Shiten Quests Pointer")]]; // @ 0xB34, hd_dll_af4772
     ptr koryoLotteryPrizes [[name("Koryo Lottery Prizes Pointer")]]; // @ 0xB38, hd_dll_af8f80
-    unk_ptr hd_dll_af8fca;
+    ptr koryoPortaExchangeItems [[name("Koryo Porta Card Exchange Items Pointer")]]; // @ 0xB3C, hd_dll_af8fca
     ptr koryoMonsterPoints [[name("Koryo Monster Points Pointer")]]; // @ 0xB40, hd_dll_af8fd0
     unk_ptr hd_dll_af8fd6;
     ptr GrankDecoShop          [[name("Grank Deco Shop Pointer")]];
     ptr pointBreakthroughTunables [[name("Point Breakthrough Tunables Pointer")]]; // @ 0xB4C, hd_dll_af8fdc
-    unk_ptr hd_dll_af8ff6;      // @ 0xB50
-    unk_ptr hd_dll_af903a;
-    unk_ptr hd_dll_af9088;
+    ptr dailyRotationQuests0 [[name("Daily Rotation Quests 0 Pointer")]]; // @ 0xB50, hd_dll_af8ff6
+    ptr dailyRotationQuests1 [[name("Daily Rotation Quests 1 Pointer")]]; // @ 0xB54, hd_dll_af903a
+    ptr dailyRotationQuests2 [[name("Daily Rotation Quests 2 Pointer")]]; // @ 0xB58, hd_dll_af9088
     ptr talkCameraCounts [[name("Talk Camera Counts Pointer")]]; // @ 0xB5C, hd_dll_af4794
     ptr talkCameraIndex [[name("Talk Camera Index Pointer")]]; // @ 0xB60, hd_dll_af90cc
     ptr talkCamerasFixed [[name("Talk Cameras Fixed Pointer")]]; // @ 0xB64, hd_dll_af90d2
     ptr talkCamerasOrbit [[name("Talk Cameras Orbit Pointer")]]; // @ 0xB68, hd_dll_af90d8
     ptr talkCamerasSide [[name("Talk Cameras Side Pointer")]]; // @ 0xB6C, hd_dll_af90de
     ptr caravanMonsterPrices [[name("Caravan Monster Prices Pointer")]]; // @ 0xB70, hd_dll_af90e4
-    unk_ptr hd_dll_af90ea;
+    ptr stampCardRewards [[name("Stamp Card Rewards Pointer")]]; // @ 0xB74, hd_dll_af90ea
     ptr obscurityUp [[name("Obscurity UP Pointer")]]; // @ 0xB78, hd_dll_af90f0
     ptr soloRoadMonsterScales [[name("Solo Road Monster Scales Pointer")]]; // @ 0xB7C, hd_dll_af8f37
     unk_ptr hd_dll_af8f3d;      // @ 0xB80
     ptr combineHidenRecipes [[name("Combine Hiden Recipes Pointer")]]; // @ 0xB84, hd_dll_af59b9
     ptr spacingAndSoulValues [[name("Spacing And Soul Values Pointer")]]; // @ 0xB88, hd_dll_af9107
-    unk_ptr hd_dll_af91ba;
+    ptr guildMsgBoardIconAnims [[name("Guild Message Board Icon Animations Pointer"), comment("Post icon idle animations + board update poll delays (clan.hexpat)")]]; // @ 0xB8C, hd_dll_af91ba
     ptr magnetSpikeTunables [[name("Magnet Spike Tunables Pointer")]]; // @ 0xB90, hd_dll_af91e4
     ptr skillCells [[name("Skill Cells Pointer"), comment("+4: the Rush UP stage 3 block")]]; // @ 0xB94, hd_dll_af9323
     ptr Magnetspike_params_pointer [[name("Magnetspike Params Pointer")]];

@@ -127,9 +127,9 @@ TowerSkill towerSkills[36] @ header.ptrs.towerSkills [[name("Tower Skills")]];
 // (+0x708, CalculatePlayerBonuses), 2 Defense (+0x709, FUN_10A858A0), 12
 // 砲撃手 (+0x70A, FUN_111C5370, FUN_111C6390), 13 破壊王 (+0x70C,
 // FUN_111BCDC0), 6 Flame Protection (+0x70D, rate, FUN_111BCAB0,
-// FUN_111BC4F0), 14 Care (+0x70E, FUN_109F5680): value x 0.01 or rate. Kinds 7,
-// 8 and 9 (the other protections) have no reader. What sets the support
-// levels is not found yet.
+// FUN_111BC4F0), 7, 8 and 9 (the other protections, +0x70D, FUN_111BC4F0), 14
+// Care (+0x70B, copied by FUN_10A4C5F0 to the word read by FUN_109F5680):
+// value x 0.01 or rate. The support levels come from header 0xA50 (below).
 struct TowerSupportBonus {
     s32 kind                    [[format("towerSkillName")]];
     s32 valueByLevel[5];
@@ -137,3 +137,33 @@ struct TowerSupportBonus {
 };
 
 TowerSupportBonus towerSupportBonuses[header.ptrs.towerSupportBonusCount] @ header.ptrs.towerSupportBonuses [[name("Tower Support Bonuses")]];
+
+// Tower support level thresholds (header 0xA50): 6 pointers, one per support
+// category in the order of pTowerSupportTexts [5..10] (Attack, Defense, 砲撃手,
+// 気つけ術, 破壊王, 保護系), each to 5 s32 point thresholds.
+// tower_request_support_points_sum adds the six u8 support points (bytes 6-11)
+// of the Tower request rows already cleared; tower_support_level_calc counts
+// the thresholds at or below a category's sum (level 0-5). At quest start the
+// 6 levels go in the player data packet (+0x1C5) and SetMiniDataToPl copies
+// them to SkillWork +0x708 to +0x70D, the levels towerSupportBonuses uses.
+fn towerSupportCategoryName(u32 i) {
+    match (i) {
+        (0): return "Attack";
+        (1): return "Defense";
+        (2): return "砲撃手";
+        (3): return "気つけ術";
+        (4): return "破壊王";
+        (5): return "保護系";
+    }
+    return "?";
+};
+
+struct TowerSupportLevelThresholds {
+    s32 pointsForLevel[5];
+};
+
+struct ptTowerSupportLevelThresholds {
+    TowerSupportLevelThresholds *thresholds : u32 [[inline]];
+} [[name(towerSupportCategoryName(std::core::array_index()))]];
+
+ptTowerSupportLevelThresholds towerSupportLevelThresholds[6] @ header.ptrs.towerSupportLevelThresholds [[name("Tower Support Level Thresholds")]];

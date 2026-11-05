@@ -119,4 +119,43 @@ struct CompanionStagePoint {
 };
 
 CompanionStagePoint companionStagePoints[importantNums.numCompanionStagePoints] @ header.ptrs.companionStagePoints [[name("Companion Stage Points")]];
+
+// Base camp NPC points (header 0x8CC): where the quest host's base camp NPC
+// (entity types 0xE-0x10, model npc\npc_14 / 15 / 16 by the host's per-player
+// block byte +5) stands. base_camp_npc_spawn (from FUN_10AC62B0 at quest start)
+// spawns it only when base_camp_npc_is_disabled is 0 (not a sleep, arcade,
+// tutorial, weapon-restriction or special quest), the current stage has a row
+// and that byte is set; base_camp_npc_init (npc_entity_init_state, types
+// 0xE-0x10) copies the row's position and rotation, scale 1.0 / 0.94 / 0.88 by
+// kind. It is unloaded on the first area change (FUN_10AC6480). Every listed
+// stage is a base camp. Which NPC it is in game is not traced. Ends at stage -1.
+struct BaseCampNpcPoint {
+    s16 stage [[comment("Compared with GameWork +0x14 (current stage)")]];
+    u16 rotation [[comment("Copied to entity +0xA4")]];
+    float position[3] [[comment("Copied to entity +0xAC / +0xB0 / +0xB4")]];
+};
+
+struct BaseCampNpcPoints {
+    BaseCampNpcPoint points[while(std::mem::read_signed($, 2) >= 0)];
+    s16 end;
+    padding[14];
+};
+
+BaseCampNpcPoints baseCampNpcPoints @ header.ptrs.baseCampNpcPoints [[name("Base Camp NPC Points")]];
 StageObjectKinds stageObjectKinds @ header.ptrs.stageObjectKinds [[name("Stage Object Kinds")]];
+
+// Stage map background colours (header 0x610): one D3DCOLOR per map id
+// (GameWork +0x34, no bounds check). quest_stage_map_screen_draw (from
+// quest_update) passes [slot + mapId x 4] to stage_map_draw_background, which
+// fills the screen with 512 x 512 quads of that vertex colour, then draws a
+// white centred quad; stage_map_draw_markers then draws the monster, player and
+// object markers. No count: 98 rows (map ids 0-97) are non-zero, then 0x18 zero
+// bytes. Which in-game screen this is was not proven.
+struct StageMapBackgroundColor {
+    u8 blue;
+    u8 green;
+    u8 red;
+    u8 alpha [[comment("0xFF in every row")]];
+};
+
+StageMapBackgroundColor stageMapBackgroundColors[98] @ header.ptrs.stageMapBackgroundColors [[name("Stage Map Background Colors"), comment("Index = map id")]];

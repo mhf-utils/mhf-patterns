@@ -340,3 +340,13 @@ struct RarityChangeRates {
 RarityChangeRates rarityChangeElementRates @ header.ptrs.rarityChangeElementRates [[name("Rarity Change Element Rates")]];
 RarityChangeRates rarityChangeStatusRates @ header.ptrs.rarityChangeStatusRates [[name("Rarity Change Status Rates")]];
 RarityChangeRates rarityChangeAffinityRates @ header.ptrs.rarityChangeAffinityRates [[name("Rarity Change Affinity Rates")]];
+
+// Rarity Change attack caps (header 0x8A0): same [14 classes][16] shape, but a
+// cap, not a percent: the weapon attack becomes min(attack, cap[class][v]) for
+// sigil 80 value v (1-12; columns 0 and 13-15 are not read).
+// rarity_change_attack_cap (from player_recalc_attack_power_full),
+// shooting_rampage_attack_bonus, FUN_10A85580 (from myset_pl_init) and
+// calculate_weapon_damage (G / Gou class, ex G rank > 0, equip type 2 / 3 or
+// Zenith weapons, the same gate as the rates above) read it.
+using RarityChangeAttackCaps = RarityChangeRates;
+RarityChangeAttackCaps rarityChangeAttackCaps @ header.ptrs.rarityChangeAttackCaps [[name("Rarity Change Attack Caps")]];

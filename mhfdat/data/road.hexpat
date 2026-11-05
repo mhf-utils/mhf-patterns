@@ -51,6 +51,16 @@ RoadSkill roadSkills[std::mem::read_unsigned(header.ptrs.extraCounters + 8, 2)]
     @ header.ptrs.roadSkills
     [[name("Road Skills")]];
 
+// Second Road skill table (header 0x934, count header 0x910 block +0x0A): read
+// only by road_skills_result_cost_sum, which the Road result
+// (road_result_update) uses: the cost of every level learned in the run (game
+// work +0x3354, 64 skills) is added to game work +0x3350 into the result, then
+// the levels are cleared. Same row layout as roadSkills; 77 rows on ZZ (66 in
+// 0x930), the same cost for the skill levels both tables hold.
+RoadSkill roadSkillsResultCosts[std::mem::read_unsigned(header.ptrs.extraCounters + 0x0A, 2)]
+    @ header.ptrs.roadSkillsResultCosts
+    [[name("Road Skills (Result Costs)")]];
+
 struct RoadMilestone {
     u16 threshold;
     u16 add;

@@ -309,3 +309,34 @@ struct SigilSkillsNoValueAtOne {
 };
 
 SigilSkillsNoValueAtOne sigilSkillsNoValueAtOne @ header.ptrs.sigilSkillsNoValueAtOne [[name("Sigil Skills Without Value At 1")]];
+
+// Rarity Change sigil (sigil 80, RarityChange; header 0x8A4 / 0x8A8 / 0x8AC):
+// for a G or Gou weapon, an ex G weapon of rank > 0, a weapon of equip type 2
+// or 3, or a Zenith weapon (weapon_element_status_affinity_value),
+// the sigil's value v (1-12, weapon_slot_get_skill_value_entity(0x50)) scales
+// the weapon's element by element[class][v] / 100 (at least 1 when the element
+// is not 0), its status by status[class][v] / 100 (same rule) and a positive
+// affinity by affinity[class][v] / 100 (rarity_change_*_scale). class =
+// Get_weapon_job2 (className order). Column 0 is not used. The affinity table
+// is all 0 on the EN, JP and rain files (positive affinity drops to 0), and
+// its block is zeros up to the next table.
+struct RarityChangeRates {
+    u16 greatSword[16];
+    u16 heavyBowgun[16];
+    u16 hammer[16];
+    u16 lance[16];
+    u16 swordAndShield[16];
+    u16 lightBowgun[16];
+    u16 dualBlades[16];
+    u16 longSword[16];
+    u16 huntingHorn[16];
+    u16 gunlance[16];
+    u16 bow[16];
+    u16 tonfa[16];
+    u16 switchAxe[16];
+    u16 magnetSpike[16];
+};
+
+RarityChangeRates rarityChangeElementRates @ header.ptrs.rarityChangeElementRates [[name("Rarity Change Element Rates")]];
+RarityChangeRates rarityChangeStatusRates @ header.ptrs.rarityChangeStatusRates [[name("Rarity Change Status Rates")]];
+RarityChangeRates rarityChangeAffinityRates @ header.ptrs.rarityChangeAffinityRates [[name("Rarity Change Affinity Rates")]];

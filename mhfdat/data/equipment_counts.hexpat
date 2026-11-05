@@ -277,7 +277,21 @@ struct ImportantNumbers {
     u16 numSeasonalEvents
         [[name("Number of Seasonal Events")]];
 
-    padding[0x14];
+    padding[0xC];
+
+    // Offset 0x1E8: NPC hunters (header 0x56C)
+    u16 numNpcHunters
+        [[name("Number of NPC Hunters")]];
+
+    // Offset 0x1EA: NPC hunter weapons (header 0x570)
+    u16 numNpcHunterWeapons
+        [[name("Number of NPC Hunter Weapons")]];
+
+    // Offset 0x1EC: NPC hunter armor sets (header 0x574)
+    u16 numNpcHunterArmorSets
+        [[name("Number of NPC Hunter Armor Sets")]];
+
+    padding[0x2];
 
     // Offset 0x1F0: bow model material rows (header 0x580)
     u16 numBowModelMaterialRows
@@ -525,7 +539,11 @@ struct ImportantNumbers {
     u16 numShitenQuests
         [[name("Number of Shiten Quests")]];
 
-    padding[0x14];
+    // Offset 0x404: last Koryo lottery prize list index (header 0xB38, lists 0 to this)
+    u16 lastKoryoLotteryList
+        [[name("Last Koryo Lottery List")]];
+
+    padding[0x12];
 
     // Offset 0x418: hiden combine recipes (header 0xB84)
     u16 numCombineHidenRecipes

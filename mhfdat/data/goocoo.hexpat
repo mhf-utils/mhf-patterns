@@ -232,3 +232,28 @@ struct GoocooFarmTimers {
 };
 
 GoocooFarmTimers goocooFarmTimers @ header.ptrs.goocooFarmTimers [[name("Goocoo Farm Timers")]];
+
+// Goocoo farm harvests (header 0x4C8, goocoo_farm_harvest_roll): what a farm
+// timer firing places (goocoo_farm_timers_update -> FUN_1078DD70). 4 farms
+// (timers 0-3; the items are fish, mushrooms, honey and husks, bugs) x 5 rank
+// bands: from the HR thresholds (hr_rank_threshold_table) bands 1-2 -> 0,
+// 3-4 -> 1, 5 -> 2, 6-7 -> 3; G rank -> 4. A row is drawn by weight; an item
+// or quantity of 0 gives nothing. The row lists start on 0x20 boundaries.
+// Identical on the EN, JP and rain files.
+struct GoocooFarmHarvestRow {
+    ItemId item;
+    u16 quantity;
+    u8 weight;
+    u8 unk05;
+};
+
+struct GoocooFarmHarvestBand {
+    u32 count;
+    GoocooFarmHarvestRow *rows[count] : u32;
+};
+
+struct GoocooFarmHarvestFarm {
+    GoocooFarmHarvestBand bands[5] [[comment("HR bands 1-2, 3-4, 5, 6-7, then G rank")]];
+};
+
+GoocooFarmHarvestFarm goocooFarmHarvests[4] @ header.ptrs.goocooFarmHarvests [[name("Goocoo Farm Harvests")]];

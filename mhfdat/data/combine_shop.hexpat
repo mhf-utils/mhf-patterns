@@ -117,6 +117,10 @@ struct CombineDailyLineup<auto Kind> {
     s16 end;
 };
 
+struct CombineDailyLineupPtr<auto Kind> {
+    CombineDailyLineup<Kind> *lineup : u32;
+};
+
 struct CombineTimedBonus<auto Kind> {
     u8 month;
     u8 day;
@@ -137,7 +141,7 @@ ComboShop combineZennyRecipes[importantNums.numCombineZennyRecipes] @ header.ptr
 ComboShop combineSoulRecipes[importantNums.numCombineSoulRecipes] @ header.ptrs.combineSoulRecipes [[name("Combine Soul Recipes")]];
 ComboShop combineHidenRecipes[importantNums.numCombineHidenRecipes] @ header.ptrs.combineHidenRecipes [[name("Combine Hiden Recipes")]];
 ComboShop hidenCuffCombineShop[importantNums.numCombineCuffRecipes] @ header.ptrs.CombineShop [[name("Combine Shop")]];
-CombineDailyLineup<0> *combinePointDailyLineups[importantNums.numCombinePointDailyLineups] : u32 @ header.ptrs.combinePointDailyLineups [[name("Combine Point Daily Lineups")]];
-CombineDailyLineup<1> *combineCpDailyLineups[importantNums.numCombineCpDailyLineups] : u32 @ header.ptrs.combineCpDailyLineups [[name("Combine CP Daily Lineups")]];
+CombineDailyLineupPtr<0> combinePointDailyLineups[importantNums.numCombinePointDailyLineups] @ header.ptrs.combinePointDailyLineups [[name("Combine Point Daily Lineups")]];
+CombineDailyLineupPtr<1> combineCpDailyLineups[importantNums.numCombineCpDailyLineups] @ header.ptrs.combineCpDailyLineups [[name("Combine CP Daily Lineups")]];
 CombineTimedBonus<0> combinePointTimedBonuses[importantNums.numCombinePointTimedBonuses] @ header.ptrs.combinePointTimedBonuses [[name("Combine Point Timed Bonuses")]];
 CombineTimedBonus<1> combineCpTimedBonuses[importantNums.numCombineCpTimedBonuses] @ header.ptrs.combineCpTimedBonuses [[name("Combine CP Timed Bonuses")]];

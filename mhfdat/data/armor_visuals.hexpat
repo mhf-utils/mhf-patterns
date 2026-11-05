@@ -1,5 +1,7 @@
 #pragma once
 
+#include <std/mem.pat>
+
 #include <mhfdat/utils/index.pat>
 #include <mhfdat/data/equipment_counts.hexpat>
 
@@ -56,3 +58,25 @@ struct InnerBodyModels {
 };
 
 InnerBodyModels innerBodyModels[importantNums.numInners] @ header.ptrs.innerBodyModels [[name("Inner Body Models")]];
+
+// Equipment without a preview (header 0x7E0): equip_has_preview returns 0 for
+// a listed (kind, id). The forge previews (forge_armor_preview_update ...) and
+// the equipment shop (Lb_equip_app_shop_move) then do not load the model and
+// the forge shows mhfpac pKakoTexts[65] "There is no preview" (the same as for
+// a head piece with no model for its genders). Ends at a kind or id of 0;
+// 522 rows, all waist pieces, on the EN, JP and rain files.
+struct NoPreviewEquipment {
+    u16 kind [[format("getEquipType")]];
+    u16 id;
+} [[format("noPreviewEquipmentName")]];
+
+fn noPreviewEquipmentName(ref auto e) {
+    return std::format("{} | {}", getEquipType(e.kind), getEquipKindName(e.kind, e.id));
+};
+
+struct NoPreviewEquipmentList {
+    NoPreviewEquipment items[while(std::mem::read_unsigned($, 2) != 0 && std::mem::read_unsigned($ + 2, 2) != 0)];
+    u32 end;
+};
+
+NoPreviewEquipmentList noPreviewEquipment @ header.ptrs.noPreviewEquipment [[name("No Preview Equipment")]];

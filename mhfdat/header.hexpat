@@ -70,7 +70,7 @@ struct ptr_table {
     ptr armorUpgradeCostPercent [[name("Armor Upgrade Cost Percent Pointer")]]; // @ 0x0B8, hd_dll_af507f
     unk_ptr hd_dll_af5085;
     ptr rapidFireWeapons [[name("Rapid Fire Weapons Pointer")]]; // @ 0x0C0, hd_dll_af508b
-    unk_ptr hd_dll_af4bc6;
+    ptr equipShopTiers [[name("Equipment Shop Tiers Pointer")]]; // @ 0x0C4, hd_dll_af4bc6
     ptr shopCatalogs [[name("Shop Catalogs Pointer"), comment("14 records of 3 list pointers and a count; record 7 is the Guild Shop (shop_guild.hexpat)")]]; // @ 0x0C8, hd_dll_af4bf5
     ptr shopCatalogPageLengths [[name("Shop Catalog Page Lengths Pointer")]]; // @ 0x0CC, hd_dll_af4bfb
     ptr wswordEfts [[name("Dual Blades Blade Effects Pointer")]]; // @ 0x0D0, hd_dll_af4cd1
@@ -203,16 +203,16 @@ struct ptr_table {
     ptr modelEffects [[name("Model Effects Pointer")]]; // @ 0x298, hd_dll_af5a51
     ptr rastaItemSets [[name("Rasta Item Sets Pointer")]]; // @ 0x29C, hd_dll_af5a57
     unk_ptr hd_dll_af5a5d;      // @ 0x2A0
-    unk_ptr hd_dll_af5ae0;
-    unk_ptr hd_dll_af5ab1;
-    unk_ptr hd_dll_af5ae6;
+    ptr instructorChallengeTasks [[name("Instructor Challenge Tasks Pointer")]]; // @ 0x2A4, hd_dll_af5ae0
+    ptr instructorChallengePicks [[name("Instructor Challenge Picks Pointer")]]; // @ 0x2A8, hd_dll_af5ab1
+    ptr instructorChallengeRewards [[name("Instructor Challenge Rewards Pointer")]]; // @ 0x2AC, hd_dll_af5ae6
     ptr stageObjectPoints [[name("Stage Object Points Pointer")]]; // @ 0x2B0, hd_dll_af5a63
-    unk_ptr hd_dll_af5a69;
+    ptr stageObjectKinds [[name("Stage Object Kinds Pointer")]]; // @ 0x2B4, hd_dll_af5a69
     ptr stageObjectPicks [[name("Stage Object Picks Pointer")]]; // @ 0x2B8, hd_dll_af5a6f
     ptr stageObjectIndex [[name("Stage Object Index Pointer")]]; // @ 0x2BC, hd_dll_af5a75
     ptr CuffCrafting            [[name("Cuff Crafting Pointer")]];      // @ 0x2C0
-    unk_ptr hd_dll_af5b21;
-    unk_ptr hd_dll_af5b27;
+    ptr pioneerQuestItems [[name("Pioneer Quest Items Pointer")]]; // @ 0x2C4, hd_dll_af5b21
+    ptr pioneerQuests [[name("Pioneer Quests Pointer")]]; // @ 0x2C8, hd_dll_af5b27
     ptr evoMeleeWeaponSeries [[name("Evolution Melee Weapon Series Pointer")]]; // @ 0x2CC, hd_dll_af5a7b
     ptr evoRangedWeaponSeries [[name("Evolution Ranged Weapon Series Pointer")]]; // @ 0x2D0, hd_dll_af5a81
     ptr evoSeries0 [[name("Evolution Series 0 Pointer")]]; // @ 0x2D4, hd_dll_af5a87
@@ -342,7 +342,7 @@ struct ptr_table {
     ptr goocooPotMaterials [[name("Goocoo Pot Materials Pointer")]]; // @ 0x4BC, hd_dll_af62c8
     ptr goocooPotSoups [[name("Goocoo Pot Soups Pointer")]]; // @ 0x4C0, hd_dll_af62ce
     ptr goocooFarmTimers [[name("Goocoo Farm Timers Pointer")]]; // @ 0x4C4, hd_dll_af62da
-    unk_ptr hd_dll_af62e0;
+    ptr goocooFarmHarvests [[name("Goocoo Farm Harvests Pointer")]]; // @ 0x4C8, hd_dll_af62e0
     unk_ptr hd_dll_af629e;
     unk_ptr hd_dll_af62a4;      // @ 0x4D0
     unk_ptr hd_dll_af62aa;
@@ -383,9 +383,9 @@ struct ptr_table {
     ptr hcSecretBookBonusHagi1 [[name("HC Secret Book Bonus HagiLv 1 Pointer")]]; // @ 0x560, hd_dll_af6652
     ptr hcSecretBookBonusHagi0 [[name("HC Secret Book Bonus HagiLv 0 Pointer")]]; // @ 0x564, hd_dll_af6658
     ptr cookingRecipes [[name("Cooking Recipes Pointer")]]; // @ 0x568, hd_dll_af665e
-    unk_ptr hd_dll_af6664;
-    unk_ptr hd_dll_af666a;      // @ 0x570
-    unk_ptr hd_dll_af6670;
+    ptr npcHunters [[name("NPC Hunters Pointer")]]; // @ 0x56C, hd_dll_af6664
+    ptr npcHunterWeapons [[name("NPC Hunter Weapons Pointer")]]; // @ 0x570, hd_dll_af666a
+    ptr npcHunterArmorSets [[name("NPC Hunter Armor Sets Pointer")]]; // @ 0x574, hd_dll_af6670
     unk_ptr hd_dll_af6676;
     ptr bowModelMaterials [[name("Bow Model Materials Pointer")]]; // @ 0x57C, hd_dll_af667c
     ptr bowModelMaterialRows [[name("Bow Model Material Rows Pointer")]]; // @ 0x580, hd_dll_af6682
@@ -548,7 +548,7 @@ struct ptr_table {
     ptr huntingMedalMilestones [[name("Hunting Medal Milestones Pointer")]]; // @ 0x7D4, hd_dll_af7a48
     ptr koryoAmulets [[name("Koryo Amulets Pointer")]]; // @ 0x7D8, hd_dll_af7a7c
     ptr rewardSlotChancesCapture [[name("Capture Reward Slot Chances Pointer")]]; // @ 0x7DC, hd_dll_af78e0
-    unk_ptr hd_dll_af7a82;      // @ 0x7E0
+    ptr noPreviewEquipment [[name("No Preview Equipment Pointer")]]; // @ 0x7E0, hd_dll_af7a82
     ptr rewardRateExemptItems [[name("Reward Rate Exempt Items Pointer")]]; // @ 0x7E4, hd_dll_af7a88
     ptr rewardSlotChancesBasicBStOther [[name("Basic B S/T Other Reward Slot Chances Pointer")]]; // @ 0x7E8, hd_dll_af7910
     ptr rewardSlotChancesBasicBSt5 [[name("Basic B S/T 5 Reward Slot Chances Pointer")]]; // @ 0x7EC, hd_dll_af7940
@@ -560,7 +560,7 @@ struct ptr_table {
     ptr AutomaticSkillsTable    [[name("Automatic Skills Table Pointer")]];
     unk_ptr hd_dll_af7a9a;
     ptr incitementTunables [[name("Incitement Tunables Pointer")]]; // @ 0x80C, hd_dll_af7aa0
-    unk_ptr hd_dll_af7aa6;      // @ 0x810
+    ptr guildHallRewardLists [[name("Guild Hall Reward Lists Pointer")]]; // @ 0x810, hd_dll_af7aa6
     unk_ptr hd_dll_af7ae3;
     unk_ptr hd_dll_af7ae9;
     unk_ptr hd_dll_af7aef;
@@ -597,9 +597,9 @@ struct ptr_table {
     ptr sigilCraftValueNamedSkills [[name("Sigil Craft Value-Named Skills Pointer")]]; // @ 0x898, hd_dll_af7b67
     ptr guildCookingSkillPools [[name("Guild Cooking Skill Pools Pointer")]]; // @ 0x89C, hd_dll_af7ca2
     unk_ptr hd_dll_af7cc8;      // @ 0x8A0
-    unk_ptr hd_dll_af7cce;
-    unk_ptr hd_dll_af7cd4;
-    unk_ptr hd_dll_af7cda;
+    ptr rarityChangeElementRates [[name("Rarity Change Element Rates Pointer")]]; // @ 0x8A4, hd_dll_af7cce
+    ptr rarityChangeStatusRates [[name("Rarity Change Status Rates Pointer")]]; // @ 0x8A8, hd_dll_af7cd4
+    ptr rarityChangeAffinityRates [[name("Rarity Change Affinity Rates Pointer")]]; // @ 0x8AC, hd_dll_af7cda
     unk_ptr hd_dll_af7b55;      // @ 0x8B0
     unk_ptr hd_dll_af7ce0;
     unk_ptr hd_dll_af7ce6;
@@ -633,7 +633,7 @@ struct ptr_table {
     ptr towerSkills [[name("Tower Skills Pointer")]]; // @ 0x928, hd_dll_af8189
     ptr partnerArmorCategoryDefense [[name("Partner Armor Category Defense Pointer")]]; // @ 0x92C, hd_dll_af816b
     ptr roadSkills [[name("Hunting Road Skills Pointer")]]; // @ 0x930, hd_dll_af82c4
-    unk_ptr hd_dll_af82ca;
+    ptr roadSkillsResultCosts [[name("Road Skills Result Costs Pointer")]]; // @ 0x934, hd_dll_af82ca
     ptr towerJewelRecipes [[name("Tower Jewel Recipes Pointer")]]; // @ 0x938, hd_dll_af82d0
     ptr towerUpgradeCosts [[name("Tower Weapon Upgrade Costs Pointer")]]; // @ 0x93C, hd_dll_af82d6
 
@@ -664,7 +664,7 @@ struct ptr_table {
 
     ptr armorTowerForging       [[name("Tower Armor Forging Pointer")]];
 
-    unk_ptr hd_dll_af83b7;
+    ptr sigilCraftRecipes [[name("Sigil Craft Recipes Pointer")]]; // @ 0x99C, hd_dll_af83b7
     padding[4];                 // @ 0x9A0
     unk_ptr hd_dll_af83bd;
     padding[4];
@@ -675,7 +675,7 @@ struct ptr_table {
     unk_ptr hd_dll_af84f4;
     ptr fixedSkillsByClassG [[name("Fixed Skills by Class (G) Pointer")]]; // @ 0x9C0, hd_dll_af8581
     padding[4];
-    unk_ptr hd_dll_af85c4;
+    ptr gemCraftRecipes [[name("Gem Craft Recipes Pointer")]]; // @ 0x9C8, hd_dll_af85c4
     padding[4];
     unk_ptr hd_dll_af85ca;      // @ 0x9D0 Tower/G50 Params ID?
     u32 partnerExtraSkillCount [[name("Partner Extra Skill Count")]]; // @ 0x9D4
@@ -721,7 +721,7 @@ struct ptr_table {
     unk_ptr hd_dll_af87f8;      // @ 0xA60
     u32 playerSoundBankCount [[name("Player Sound Bank Count")]]; // @ 0xA64, + 0x12 banks
     unk_ptr hd_dll_af87fe;
-    unk_ptr hd_dll_af8804;
+    ptr titleUnlocks [[name("Title Unlocks Pointer")]]; // @ 0xA6C, hd_dll_af8804
     ptr bowgunShotTables [[name("Bowgun Shot Tables Pointer")]]; // @ 0xA70, hd_dll_af8819
     padding[4];
     unk_ptr hd_dll_af8886;
@@ -781,7 +781,7 @@ struct ptr_table {
 
     ptr conquestQuests [[name("Conquest Quests Pointer")]]; // @ 0xB30, hd_dll_af4749
     ptr shitenQuests [[name("Shiten Quests Pointer")]]; // @ 0xB34, hd_dll_af4772
-    unk_ptr hd_dll_af8f80;
+    ptr koryoLotteryPrizes [[name("Koryo Lottery Prizes Pointer")]]; // @ 0xB38, hd_dll_af8f80
     unk_ptr hd_dll_af8fca;
     unk_ptr hd_dll_af8fd0;      // @ 0xB40
     unk_ptr hd_dll_af8fd6;

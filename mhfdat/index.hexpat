@@ -71,6 +71,10 @@
 #include <mhfdat/data/equipment_effects.hexpat>
 #endif
 
+#ifdef __DATA_EQUIP_SHOP
+#include <mhfdat/data/equip_shop.hexpat>
+#endif
+
 #ifdef __DATA_EVENT_SCENES
 #include <mhfdat/data/event_scenes.hexpat>
 #endif
@@ -99,6 +103,10 @@
 #include <mhfdat/data/guild_cooking.hexpat>
 #endif
 
+#ifdef __DATA_GUILD_HALL_REWARDS
+#include <mhfdat/data/guild_hall_rewards.hexpat>
+#endif
+
 #ifdef __DATA_GUILD_WEEKLY_BONUS
 #include <mhfdat/data/guild_weekly_bonus.hexpat>
 #endif
@@ -121,6 +129,10 @@
 
 #ifdef __DATA_ITEM_LISTS
 #include <mhfdat/data/item_lists.hexpat>
+#endif
+
+#ifdef __DATA_KORYO_LOTTERY
+#include <mhfdat/data/koryo_lottery.hexpat>
 #endif
 
 #ifdef __DATA_LEGEND_RASTA
@@ -151,6 +163,10 @@
 #include <mhfdat/data/my_house.hexpat>
 #endif
 
+#ifdef __DATA_NPC_HUNTERS
+#include <mhfdat/data/npc_hunters.hexpat>
+#endif
+
 #ifdef __DATA_NPC_SOUNDS
 #include <mhfdat/data/npc_sounds.hexpat>
 #endif
@@ -161,6 +177,10 @@
 
 #ifdef __DATA_PART_BREAKS
 #include <mhfdat/data/part_breaks.hexpat>
+#endif
+
+#ifdef __DATA_PIONEER
+#include <mhfdat/data/pioneer.hexpat>
 #endif
 
 #ifdef __DATA_PLAYER_MOTION_EVENTS
@@ -235,6 +255,10 @@
 #include <mhfdat/data/sigils.hexpat>
 #endif
 
+#ifdef __DATA_SIGIL_GEM_CRAFTING
+#include <mhfdat/data/sigil_gem_crafting.hexpat>
+#endif
+
 #ifdef __DATA_SKILLS
 #include <mhfdat/data/skills.hexpat>
 #endif
@@ -245,6 +269,10 @@
 
 #ifdef __DATA_TALK_CAMERAS
 #include <mhfdat/data/talk_cameras.hexpat>
+#endif
+
+#ifdef __DATA_TITLE_UNLOCKS
+#include <mhfdat/data/title_unlocks.hexpat>
 #endif
 
 #ifdef __DATA_TOWER

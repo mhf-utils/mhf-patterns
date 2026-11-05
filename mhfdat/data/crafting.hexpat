@@ -213,6 +213,17 @@ struct ArmorUpgradeCostRow {
 
 ArmorUpgradeCostRow armorUpgradeCostPercent[16] @ header.ptrs.armorUpgradeCostPercent [[name("Armor Upgrade Cost Percent")]];
 
+// Armor defense upgrade coefficients (header 0xB4; Get_Armor_adj_eq, and
+// Get_Gao_Armor_adj_eq for Partnyaa armor from mhfgao): defense = baseDefense,
+// then for each upgrade level i = 1..level, defense = ceil(defense x
+// levelCoef[i]) of row min(coefUpgrade, 31). No count: 32 rows (the code clamp
+// and the gap to the next table); rows 23-31 are all 1.0.
+struct ArmorDefenseCoefRow {
+    float levelCoef[7] [[comment("[0] is never read (1.0 everywhere); [i] applies at upgrade level i")]];
+};
+
+ArmorDefenseCoefRow armorDefenseCoefs[32] @ header.ptrs.armorDefenseCoefs [[name("Armor Defense Upgrade Coefficients")]];
+
 // [mhfo-hd.dll + 0xaf47ed] an armor part's UpgradeID (+0x28) picks a list (ZZ: 4855)
 ptVar<GenericAUpgrade> armorUpgrades[while(std::mem::read_unsigned($,4))] @ header.ptrs.armorUpgradeMats;
 SigilTowerTable sigilTowerTable[while(std::mem::read_unsigned($, 4))]     @ header.ptrs.SigilTowerForging    [[name("Sigil Tower Forging Data")]];
@@ -307,3 +318,42 @@ fn forgeSeparateEquipmentName(ref auto e) {
 };
 
 ForgeSeparateEquipment forgeSeparateList[while(std::mem::read_unsigned($ + 4, 4) != 0)] @ header.ptrs.forgeSeparateList [[name("Forge Separate List")]];
+
+// =======================
+// Forge rank lists (header 0xAE0 weapons, 0xAE4 armor; forge_rank_list_has_equip):
+// 8 lists each. The player's rank picks which lists count (forge_rank_lists_get):
+// in G rank list 7; else the HR band of DLL table 0x11858BEC (HR up to 1, 30,
+// 50, 99, 299, 998, 999 and more) picks lists [0], [0, 1], [1, 2], [2, 3],
+// [3, 4], [4, 5] or [4, 5, 6] (DLL table 0x11925000).
+// In the forge lists (forge_armor_build_list_page, upgrade_tree_build_list_c,
+// forge_melee_check_rarity_match, Check_equipOnList) a row whose u16 +0x2C
+// (CraftMatReq.previewAble) is 0 shows only when its equipment is on a list
+// that counts, or seisan_row_is_available; when forge work +0xB57 is set (no
+// writer found), only listed equipment shows. forge_list_draw_rank_icons draws
+// icon 0x1C5 on listed equipment, 0x1C9 on the server's trend weapons
+// (GetTrendWeapon, forge_trend_weapon_check), 0x1C4 for both with flag 4.
+// A list ends at an entry whose kind is -1.
+// =======================
+
+struct ForgeRankEquip {
+    u16 id;
+    s8 kind [[format("getEquipType")]];
+    u8 unk03;
+} [[format("forgeRankEquipName")]];
+
+fn forgeRankEquipName(ref auto e) {
+    if (e.kind < 0) return "end";
+    return getEquipKindName(e.kind, e.id);
+};
+
+struct ForgeRankList {
+    ForgeRankEquip equipment[while(std::mem::read_signed($ + 2, 1) != -1)];
+    ForgeRankEquip end;
+};
+
+struct ForgeRankListPtr {
+    ForgeRankList *list : u32;
+};
+
+ForgeRankListPtr forgeRankWeaponLists[8] @ header.ptrs.forgeRankWeaponLists [[name("Forge Rank Weapon Lists")]];
+ForgeRankListPtr forgeRankArmorLists[8] @ header.ptrs.forgeRankArmorLists [[name("Forge Rank Armor Lists")]];

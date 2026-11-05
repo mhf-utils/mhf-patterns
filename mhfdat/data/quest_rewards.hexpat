@@ -143,6 +143,21 @@ RookieQuestReward rookieQuestRewards[while (std::mem::read_unsigned($, 2) != 0xF
 s8 chequeGateByPlayers[5] @ header.ptrs.chequeGateByPlayers [[name("Cheque Gate by Players"), comment("by the number of non-mercenary players; only tested != 0, then FUN_10ABE0B0 gates a 30k Cheque (0x5C0) x get_tune_rate(0x18)")]];
 s8 chequeGateByPlayersRasta[5] @ header.ptrs.chequeGateByPlayersRasta [[name("Cheque Gate by Players: Rasta"), comment("added to it with save +0xA0 & 0x200 and the Rasta notice globals DAT_1E62F204 / 208 / 2B8 / 2BC set")]];
 
+// 30k Cheque HR chances (header 0x390, quest_reward_cheque_roll, called once from
+// quest_generate_reward_item_list): quests of the mhfinf premium quest lists
+// always get the cheque; else it needs the Premium course right (CHECK_RIGHT_6)
+// and quest flags (+0x16C & 0x30, not 0x40 without 0x400). The last row with
+// minHrUd <= gGetHunterRankUd() (binary search) gives the chance; on
+// random % 100 < chance the caller adds item 0x5C0 (30k Cheque) x get_tune_rate.
+// The caller also needs HR > 30, the cheque gates above and a target monster
+// whose crown row (header 0x130) byte +0xC is not 7-9.
+struct ChequeHrChance {
+    u16 minHrUd [[comment("Rows sorted ascending")]];
+    s16 chance [[comment("Percent")]];
+};
+
+ChequeHrChance chequeHrChances[importantNums.numChequeHrChances] @ header.ptrs.chequeHrChances [[name("30k Cheque HR Chances")]];
+
 struct PouchItemRewardItem {
     ItemId item;
     s16 count;

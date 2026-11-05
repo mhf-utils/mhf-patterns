@@ -115,6 +115,10 @@
 #include <mhfdat/data/halk.hexpat>
 #endif
 
+#ifdef __DATA_HUNTER_GUIDE
+#include <mhfdat/data/hunter_guide.hexpat>
+#endif
+
 #ifdef __DATA_HUNTING_INFO
 #include <mhfdat/data/hunting_info.hexpat>
 #endif
@@ -131,12 +135,16 @@
 #include <mhfdat/data/item_lists.hexpat>
 #endif
 
-#ifdef __DATA_KORYO_LOTTERY
-#include <mhfdat/data/koryo_lottery.hexpat>
+#ifdef __DATA_KORYO
+#include <mhfdat/data/koryo.hexpat>
 #endif
 
 #ifdef __DATA_LEGEND_RASTA
 #include <mhfdat/data/legend_rasta.hexpat>
+#endif
+
+#ifdef __DATA_LOST_ITEM_REWARDS
+#include <mhfdat/data/lost_item_rewards.hexpat>
 #endif
 
 #ifdef __DATA_MEOWKA_POT
@@ -285,6 +293,10 @@
 
 #ifdef __DATA_TREASURE_CORP
 #include <mhfdat/data/treasure_corp.hexpat>
+#endif
+
+#ifdef __DATA_TREASURE_HUNT
+#include <mhfdat/data/treasure_hunt.hexpat>
 #endif
 
 #ifdef __DATA_TUTORIAL

@@ -4,7 +4,7 @@ struct Counters {
   u16 unk1;
   u16 numRoadMonsterScales; // header 0xB0C
   u16 catShopItemCounter;
-  u16 unk4;
+  u16 roadRankCurveDwords; // header 0xB14, a count of u32 (rows x 2)
   u16 roadEntries;
   u16 unkA;
   u16 unkC;

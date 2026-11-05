@@ -61,3 +61,25 @@ struct TitleUnlocks {
 };
 
 TitleUnlocks titleUnlocks @ header.ptrs.titleUnlocks [[name("Title Unlocks")]];
+
+// =======================
+// Title categories (header 0x550): the title setting screen of the Hunter Info
+// menu (title_select_update, from my_house_menu_update). 8 rows, one per
+// category, named by mhfpac pHuntingLogCategoryNames: Hunter Rank, Lifestyle,
+// Monster, Equipment, Quest; rows 5-7 are empty. title_list_page_build lists,
+// 8 a page, the titles of the category whose bit is set in the menu's title
+// bits (work +0xD0); title_list_draw prints mhfpac pTitleTexts[title * 2] (name)
+// and [title * 2 + 1] (description), or pHuntingLogCategoryNames[6] for a
+// locked title. The chosen title goes to save ctx 0x22FC2, which the room
+// packet sends to the other players.
+// =======================
+
+struct TitleCategory {
+    s16 count;
+    padding[2];
+    if (count > 0)
+        u16 titles[count] @ std::mem::read_unsigned($, 4) [[comment("Title ids (mhfpac pTitleTexts[id * 2])")]];
+    u32 titlesPtr [[comment("Pointer to the title ids")]];
+};
+
+TitleCategory titleCategories[8] @ header.ptrs.titleCategories [[name("Title Categories"), comment("Hunter Rank, Lifestyle, Monster, Equipment, Quest, then 3 empty rows")]];

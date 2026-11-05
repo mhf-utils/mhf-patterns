@@ -182,6 +182,31 @@ struct ZenithQuestMonsters {
 
 ZenithQuestMonsters zenithQuestMonsters @ header.ptrs.zenithQuestMonsters [[name("Zenith Quest Monsters")]];
 
+// Large Monster quest tabs (header 0x864): one quest counter tab 0x7E
+// ("Large Monsters", pQuestCounterTextGroups) per row, under Hunter Quests
+// (0x7B) or Low Rank / High Rank / High Skill (0xA5-0xA7).
+// mhfinf_populate_quest_category_menu adds the tab when the hunter rank
+// (gGetHunterRankUd) is at least minHr (with locale on, only when its quest
+// list is not empty), labelled pMonsterNames[monsters[0]]; quest_menu_dispatcher
+// (case 0x41) finds the row by monsters[0] (row 0 when none) and passes
+// monsters to build_quest_list_with_monster_filter, which keeps the HR1 / HR31 /
+// HR100 mhfinf quests whose target is one of them. At most 3 ids are used.
+fn largeMonsterQuestTabMonster(auto e) {
+    MonsterID m = u8(e.id);
+    return fmtMonsterID(m);
+};
+
+struct LargeMonsterQuestTabMonster {
+    u16 id;
+} [[format("largeMonsterQuestTabMonster")]];
+
+struct LargeMonsterQuestTab {
+    u16 minHr;
+    LargeMonsterQuestTabMonster monsters[5] [[comment("0-terminated; [0] is the tab's monster")]];
+};
+
+LargeMonsterQuestTab largeMonsterQuestTabs[importantNums.numLargeMonsterQuestTabs] @ header.ptrs.largeMonsterQuestTabs [[name("Large Monster Quest Tabs")]];
+
 // G quest party size rates (header 0x39C, rank_points.md): the reward rate in
 // percent of a G quest (quest variant1 bit 8) by the number of counted
 // players, 1 to important numbers + 0x112 (quest_g_party_size_rate_get; 100

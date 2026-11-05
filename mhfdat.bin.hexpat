@@ -24,12 +24,14 @@
 //#define __DATA_GUILD_HALL_REWARDS 1
 //#define __DATA_GUILD_WEEKLY_BONUS 1
 //#define __DATA_HALK 1
+//#define __DATA_HUNTER_GUIDE 1
 //#define __DATA_HUNTING_INFO 1
 //#define __DATA_HUNTING_MEDALS 1
 //#define __DATA_ITEMS 1
 //#define __DATA_ITEM_LISTS 1
-//#define __DATA_KORYO_LOTTERY 1
+//#define __DATA_KORYO 1
 //#define __DATA_LEGEND_RASTA 1
+//#define __DATA_LOST_ITEM_REWARDS 1
 //#define __DATA_MEOWKA_POT 1
 //#define __DATA_MISSIONS 1
 //#define __DATA_MONSTERS 1
@@ -66,6 +68,7 @@
 //#define __DATA_TOWER 1
 //#define __DATA_TRANSCEND 1
 //#define __DATA_TREASURE_CORP 1
+//#define __DATA_TREASURE_HUNT 1
 //#define __DATA_TUTORIAL 1
 //#define __DATA_VEGGIE_ELDER 1
 //#define __DATA_WEAPONS 1

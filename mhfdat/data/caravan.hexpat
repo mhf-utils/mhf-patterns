@@ -15,6 +15,7 @@
 #include <std/core.pat>
 #include <std/mem.pat>
 #include <misc/s32p.pat>
+#include <misc/MonsterIDs.hexpat>
 #include <mhfdat/utils/index.pat>
 #include <mhfdat/data/equipment_counts.hexpat>
 
@@ -201,3 +202,44 @@ struct CaravanPartBreakCpMonster {
 };
 
 CaravanPartBreakCpMonster caravanPartBreakCp[importantNums.numCaravanPartBreakCpMonsters] @ header.ptrs.caravanPartBreakCp [[name("Caravan Part Break CP")]];
+
+// Caravan monster prices (header 0xB70, importantNums.numCaravanMonsterPrices
+// rows): the CP a hunted monster gives (mhfpac pQuestResultTexts[122]
+// ≪現在のモンスター取引価格≫, [123] ×%2d：%dCP). caravan_monster_prices_load
+// (after a server reply) copies them into the 128-row price list (0x1E63952C;
+// kind 1, or 3 when rate > 100) and into the price by monster (0x1ED6BCA4,
+// caravan_monster_price_get), which quest_complete_build_monster_hunt_count_rewards
+// uses on a quest with variant1 bit 8 (else the table at 0x1ED6B8A0). The quest
+// result shows hunts x price x caravan_cp_rate_get / 100. Identical on the EN,
+// JP and rain files.
+fn caravanMonster(u16 n) {
+    MonsterID m = u8(n);
+    return fmtMonsterID(m);
+};
+
+struct CaravanMonsterPrice {
+    u16 monster [[format("caravanMonster")]];
+    u16 unk02;
+    u32 price [[comment("CP per hunt (slain or captured)")]];
+    u16 rate [[comment("100 on ZZ; > 100 makes the list row kind 3")]];
+    u16 unk0A;
+};
+
+CaravanMonsterPrice caravanMonsterPrices[importantNums.numCaravanMonsterPrices] @ header.ptrs.caravanMonsterPrices [[name("Caravan Monster Prices")]];
+
+// Monster price board (header 0x6C0): the monsters of the G rank monster
+// pricing board (mhfpac pBountyListTexts[10] / [16] / [19]).
+// monster_price_board_build (after the server reply that runs
+// caravan_monster_prices_load; from quest_counter_menu_tick and
+// monster_price_board_menu_tick) keeps, in file order, each row whose
+// requiredLevel is at most the quest-list tune value 1030 (default 10) and
+// whose monster is in the caravan price list, and pages them 10 a page;
+// monster_price_board_page_draw prints the monster name and its price.
+// Fatalis, Crimson Fatalis, Disufiroa and Shantien are priced but not listed.
+struct MonsterPriceBoardRow {
+    u32 requiredLevel [[comment("Listed when <= quest-list tune value 1030 (default 10); 1-8, ascending")]];
+    u16 monster [[format("caravanMonster"), comment("Looked up in the caravan price list")]];
+    u16 unk06 [[comment("0; no reader")]];
+};
+
+MonsterPriceBoardRow monsterPriceBoard[importantNums.numMonsterPriceBoardRows] @ header.ptrs.monsterPriceBoard [[name("Monster Price Board")]];

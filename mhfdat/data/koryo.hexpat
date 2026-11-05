@@ -1,11 +1,13 @@
 #pragma once
 
 #include <std/mem.pat>
+#include <misc/MonsterIDs.hexpat>
 #include <mhfdat/utils/index.pat>
 #include <mhfdat/data/equipment_counts.hexpat>
 
 // =======================
-// Koryo (功猟) point lottery prizes (header 0xB38; mhfpac pKoryoRewardTexts:
+// Koryo (功猟) points: monster points (header 0xB40, below) and lottery prizes
+// (header 0xB38; mhfpac pKoryoRewardTexts:
 // White Lot, Draw Lot (%dP), Prize List). One pointer per lottery, lists 0 to
 // importantNums.lastKoryoLotteryList (koryo_lottery_prize_list_get); a list
 // ends at an item of 0 (koryo_lottery_prize_count). koryo_lottery_draw_step
@@ -35,3 +37,23 @@ struct KoryoLotteryPrizesPtr {
 };
 
 KoryoLotteryPrizesPtr koryoLotteryPrizes[importantNums.lastKoryoLotteryList + 1] @ header.ptrs.koryoLotteryPrizes [[name("Koryo Lottery Prizes")]];
+
+// Koryo points by monster (header 0xB40, importantNums.numKoryoMonsterPoints
+// rows; koryo_monster_points_get): at quest end koryo_quest_points_sum adds,
+// for every large monster, (slain + captured, quest work +0x228 / +0x38A) x
+// its points; the quest result lists them by monster. The first row of a
+// monster wins (monster 145 has two rows, 500 and 800). The points are doubled
+// in UL mode (g_quest_ul_mode).
+fn koryoMonster(s16 n) {
+    MonsterID m = u8(n);
+    return fmtMonsterID(m);
+};
+
+struct KoryoMonsterPoints {
+    s16 monster [[format("koryoMonster")]];
+    u16 points [[comment("In town, or on a G rank field quest")]];
+    u16 pointsLowRank [[comment("On a field quest that is not G rank")]];
+    u16 pointsZenith[4] [[comment("HagiLv 9 (Zenith), by quest_get_zenith_star_tier 0-3")]];
+};
+
+KoryoMonsterPoints koryoMonsterPoints[importantNums.numKoryoMonsterPoints] @ header.ptrs.koryoMonsterPoints [[name("Koryo Monster Points")]];

@@ -101,3 +101,18 @@ struct MonsterIcon {
 MonsterIcon monsterIconIndices[MONSTER_NAME_COUNT]
     @ header.ptrs.monsterIconIndices
     [[name("Monster Icon Indices")]];
+
+// Felyne2 mode roll (header 0x94C): em134_mode_roll draws 1-100 from the quest
+// LCG at gMazeTower +0x118 and returns 0 when outcome0Chance >= the roll, else
+// 1; em134_init stores it in EnemyWork +0xDC0, and when any Felyne2 (0x86) has
+// +0xDC0 set, em134_any_mode_set_ck makes FUN_10DDB6E0 set +0x53B to 1, which
+// changes its action states (+0x510). The roll cannot run on HD: em134_init is
+// only entry 134 (0x86) of the init table 0x118C3350 and rolls only on the
+// branch where the monster is not 0x86 or +0xDC0 is already set. The 6 bytes
+// after it (30, 25, 15, 15, 10, 5) have no reader.
+struct Felyne2ModeRoll {
+    u8 outcome0Chance [[comment("Percent; 0 in the 3 files")]];
+    u8 unk01 [[comment("no reader")]];
+};
+
+Felyne2ModeRoll felyne2ModeRoll @ header.ptrs.felyne2ModeRoll [[name("Felyne2 Mode Roll")]];

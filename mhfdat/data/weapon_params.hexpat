@@ -105,6 +105,28 @@ struct BulletSet {
 BulletSet bulletSets[44] @ header.ptrs.BulletSets [[name("Bullet Sets")]];
 
 // =======================
+// Evolution gun extra ammo (header 0x520, gun_extra_ammo_allowed): for a
+// light or heavy bowgun, an item listed on the row of the equipped gun can be
+// loaded whatever the gun's ammo table says (gunner_find_next_usable_ammo_or_coating_index,
+// bowgun_ammo_item_is_usable, FUN_106FD260). The check runs only when
+// get_equiptype_or_ammo_type(1) is set: the gun has equip type bit 4 or
+// weapon type bit 0x400, and byte +5 of the equipment entry is 1-100.
+// Rows are found by a binary search on gun; the rows are not sorted, so on
+// the 3 files only 15 of the 76 rows can be found.
+// =======================
+
+fn evolutionGunName(u16 id) {
+    return getEquipKindName(7, id);
+};
+
+struct EvolutionGunAmmo {
+    u16 gun [[format("evolutionGunName"), comment("Ranged weapon id, the binary search key")]];
+    ItemId items[7] [[comment("0: none")]];
+};
+
+EvolutionGunAmmo evolutionGunAmmo[importantNums.numEvolutionGunAmmo] @ header.ptrs.evolutionGunAmmo [[name("Evolution Gun Extra Ammo")]];
+
+// =======================
 // Hunting horn melodies (header 0x670): important numbers + 0x258 of them
 // =======================
 

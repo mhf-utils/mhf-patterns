@@ -103,3 +103,17 @@ struct SoloRoadMonsterScale {
 
 RoadMonsterScale roadMonsterScales[std::mem::read_unsigned(header.ptrs.dataCounters + 0x02, 2)] @ header.ptrs.roadMonsterScales [[name("Road Monster Scales"), comment("no HP field: em_hp_vital_set multiplies by 0.0 when a row matches (XORPS at 0x1085992C) and by 1.0 when none does")]];
 SoloRoadMonsterScale soloRoadMonsterScales[std::mem::read_unsigned(header.ptrs.dataCounters + 0x0E, 2)] @ header.ptrs.soloRoadMonsterScales [[name("Solo Road Monster Scales")]];
+
+// Road rank curve (header 0xB14): turns the saved Road Rank Points (ctx [1] +
+// 0xAE, "Rd RP") into the Road Rank 1-999 ("RdP"). road_rank_points_needed(N)
+// sums pointsPerRank over the rank steps 1..N-1, moving to the next row when
+// the step reaches untilRank (last row kept); road_rank_from_points gives 1 for
+// 0 points and caps at 999. The row count is dataCounters + 6 / 2 (that u16
+// counts u32: every reader shifts it right by 1). Used by the Road Basic Info
+// page, road_skill_can_unlock (skill +0x10) and the end-of-run rank-up.
+struct RoadRankStep {
+    s32 untilRank;
+    s32 pointsPerRank;
+};
+
+RoadRankStep roadRankCurve[std::mem::read_unsigned(header.ptrs.dataCounters + 6, 2) / 2] @ header.ptrs.roadRankCurve [[name("Road Rank Curve")]];

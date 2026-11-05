@@ -57,7 +57,13 @@ struct ImportantNumbers {
     u16 numMeowkaPotRecipes
         [[name("Number of Meowka Pot Recipes")]];
 
-    padding[0xC];
+    padding[0x8];
+
+    // Offset 0x5A: lost item reward tiers (header 0x214)
+    u16 numLostItemRewardTiers
+        [[name("Number of Lost Item Reward Tiers")]];
+
+    padding[0x2];
 
     // Offset 0x5E: Caravan gem skill lists, one per tier (header 0xF4) [mhfo-hd.dll + 0xaf4d91]
     u16 numHunterPearlSkillLists
@@ -100,7 +106,13 @@ struct ImportantNumbers {
     u16 numEvoRangedWeapons
         [[name("Number of Evolution Ranged Weapons")]];
 
-    padding[0x22];
+    padding[0xC];
+
+    // Offset 0xC4: Pioneer quest bonus rewards (header 0x2F0)
+    u16 numPioneerQuestBonusRewards
+        [[name("Number of Pioneer Quest Bonus Rewards")]];
+
+    padding[0x14];
 
     // Offset 0xDA: inner body models (header 0x31C)
     u16 numInners
@@ -135,13 +147,37 @@ struct ImportantNumbers {
     u16 numLegendRastaGroups
         [[name("Number of Legend Rasta Groups")]];
 
-    padding[0x1A];
+    padding[0x14];
+
+    // Offset 0x10C: 30k Cheque HR chances (header 0x390)
+    u16 numChequeHrChances
+        [[name("Number of 30k Cheque HR Chances")]];
+
+    padding[0x4];
 
     // Offset 0x112: G quest party size rates (header 0x39C)
     u16 numGQuestPartySizeRates
         [[name("Number of G Quest Party Size Rates")]];
 
-    padding[0x32];
+    padding[0x12];
+
+    // Offset 0x126: Goocoo accessories by slot (header 0x3C4 to 0x3FC)
+    u16 numGoocooHats
+        [[name("Number of Goocoo Hats")]];
+
+    u16 numGoocooClothes
+        [[name("Number of Goocoo Clothes")]];
+
+    u16 numGoocooMasks
+        [[name("Number of Goocoo Masks")]];
+
+    u16 numGoocooBags
+        [[name("Number of Goocoo Bags")]];
+
+    u16 numGoocooTails
+        [[name("Number of Goocoo Tail Accessories")]];
+
+    padding[0x16];
 
     // Offset 0x146: Goocoo tables (header 0x404 to 0x4C0), one count per table in header order
     u16 numGoocooFoods
@@ -267,7 +303,13 @@ struct ImportantNumbers {
     u16 numHalkFoods
         [[name("Number of Halk Foods")]];
 
-    padding[0x16];
+    padding[0x4];
+
+    // Offset 0x1C6: evolution gun extra ammo (header 0x520)
+    u16 numEvolutionGunAmmo
+        [[name("Number of Evolution Gun Extra Ammo Rows")]];
+
+    padding[0x10];
 
     // Offset 0x1D8: sound distance curves 2 (header 0x544, apply_sound_and_shake)
     u16 numSoundCurves2
@@ -373,7 +415,13 @@ struct ImportantNumbers {
     u16 numPartnerStarterWeapons
         [[name("Number of Partner Starter Weapons")]];
 
-    padding[0x28];
+    padding[0x6];
+
+    // Offset 0x26C: monster price board rows (header 0x6C0)
+    u16 numMonsterPriceBoardRows
+        [[name("Number of Monster Price Board Rows")]];
+
+    padding[0x20];
 
     // Offset 0x28E: weapon sound bank by weapon model (header 0x724)
     u16 numWeaponModelSoundIds
@@ -434,7 +482,11 @@ struct ImportantNumbers {
     u16 numPartnerSkills
         [[name("Number of Partner Skills")]];
 
-    padding[0x16];
+    padding[0x14];
+
+    // Offset 0x322: Large Monster quest tabs (header 0x864)
+    u16 numLargeMonsterQuestTabs
+        [[name("Number of Large Monster Quest Tabs")]];
 
     // Offset 0x324: guild cooking recipes and ingredients (header 0x868, 0x86C)
     u16 numGuildCookingRecipes
@@ -452,7 +504,13 @@ struct ImportantNumbers {
     u16 numSigilCraftValueNamedSkills
         [[name("Number of Sigil Craft Value-Named Skills")]];
 
-    padding[0x12];
+    padding[0xA];
+
+    // Offset 0x346: treasure hunt spots (header 0x8B0)
+    u16 numTreasureHuntSpots
+        [[name("Number of Treasure Hunt Spots")]];
+
+    padding[0x6];
 
     // Offset 0x34E: companion stage points (header 0x8C8)
     u16 numCompanionStagePoints
@@ -543,7 +601,19 @@ struct ImportantNumbers {
     u16 lastKoryoLotteryList
         [[name("Last Koryo Lottery List")]];
 
-    padding[0x12];
+    padding[0x2];
+
+    // Offset 0x408: Koryo points by monster (header 0xB40)
+    u16 numKoryoMonsterPoints
+        [[name("Number of Koryo Monster Points")]];
+
+    padding[0xA];
+
+    // Offset 0x414: Caravan monster prices (header 0xB70)
+    u16 numCaravanMonsterPrices
+        [[name("Number of Caravan Monster Prices")]];
+
+    padding[0x2];
 
     // Offset 0x418: hiden combine recipes (header 0xB84)
     u16 numCombineHidenRecipes

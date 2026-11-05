@@ -27,6 +27,47 @@
 // =======================
 
 // Ferias' columns: trust, weight, intelligence, strength, patience, kindness
+// =======================
+// Goocoo accessories (header 0x3C4 to 0x3FC): one table of rows, one of names
+// and one of descriptions per slot, important numbers + 0x126 to + 0x12E rows
+// each. The clothing menu tabs (DLL u32 table 0x118E1500: 2, 3, 4, 0, 5) are
+// hats, masks, bags, clothes, tails; goocoo_accessory_tab_update copies the
+// slot's count and three tables into the menu work and
+// goocoo_accessory_list_build lists, 8 a page, the rows whose series is 0 or
+// is unlocked (bit series - 1 of save ctx 0x1FE5C, the series of header
+// 0x400). The Goocoo's profile holds one row index per slot (+6 clothes, +8
+// hat, +0xA mask, +0xC bag, +0xE tail); process_npc_entry resets an index past
+// the count to 0 and, when the row's model is not -1, loads
+// npc\n37<b|h|f|n|t><model>.bin (DLL table 0x118E18F8).
+// Row 0 of each slot is "はずす" (take off), model -1.
+// =======================
+
+struct GoocooAccessory {
+    u16 unk00 [[comment("The row number; no reader")]];
+    s16 model [[comment("npc\\n37<slot letter><model>.bin; -1: none")]];
+    u8 unk04 [[comment("1 clothes, 0 hat, 2 mask, 3 bag, 4 tail on every row; no reader")]];
+    u8 unk05 [[comment("0-10; no reader")]];
+    u8 series [[comment("0: always listed; n: listed when clothing series n is unlocked (header 0x400); 255 on one hat: never")]];
+    u8 hatDrawFlag [[comment("Hats only: goocoo_hat_draw_flag returns it != 0 for the model setup FUN_10658530")]];
+    u32 unk08 [[comment("1 on 4 rows of each slot; no reader")]];
+};
+
+GoocooAccessory goocooHats[importantNums.numGoocooHats] @ header.ptrs.goocooHats [[name("Goocoo Hats")]];
+GoocooAccessory goocooClothes[importantNums.numGoocooClothes] @ header.ptrs.goocooClothes [[name("Goocoo Clothes")]];
+GoocooAccessory goocooMasks[importantNums.numGoocooMasks] @ header.ptrs.goocooMasks [[name("Goocoo Masks")]];
+GoocooAccessory goocooBags[importantNums.numGoocooBags] @ header.ptrs.goocooBags [[name("Goocoo Bags")]];
+GoocooAccessory goocooTails[importantNums.numGoocooTails] @ header.ptrs.goocooTails [[name("Goocoo Tail Accessories")]];
+s32p goocooHatNames[importantNums.numGoocooHats] @ header.ptrs.goocooHatNames [[name("Goocoo Hat Names")]];
+s32p goocooClothesNames[importantNums.numGoocooClothes] @ header.ptrs.goocooClothesNames [[name("Goocoo Clothes Names")]];
+s32p goocooMaskNames[importantNums.numGoocooMasks] @ header.ptrs.goocooMaskNames [[name("Goocoo Mask Names")]];
+s32p goocooBagNames[importantNums.numGoocooBags] @ header.ptrs.goocooBagNames [[name("Goocoo Bag Names")]];
+s32p goocooTailNames[importantNums.numGoocooTails] @ header.ptrs.goocooTailNames [[name("Goocoo Tail Accessory Names")]];
+s32p goocooHatDescs[importantNums.numGoocooHats] @ header.ptrs.goocooHatDescs [[name("Goocoo Hat Descriptions")]];
+s32p goocooClothesDescs[importantNums.numGoocooClothes] @ header.ptrs.goocooClothesDescs [[name("Goocoo Clothes Descriptions")]];
+s32p goocooMaskDescs[importantNums.numGoocooMasks] @ header.ptrs.goocooMaskDescs [[name("Goocoo Mask Descriptions")]];
+s32p goocooBagDescs[importantNums.numGoocooBags] @ header.ptrs.goocooBagDescs [[name("Goocoo Bag Descriptions")]];
+s32p goocooTailDescs[importantNums.numGoocooTails] @ header.ptrs.goocooTailDescs [[name("Goocoo Tail Accessory Descriptions")]];
+
 struct GoocooFood {
     u16 item                    [[format("getItemName")]];
     s16 trust;

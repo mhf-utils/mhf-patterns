@@ -164,6 +164,19 @@ MonsterIcon monsterIconIndices[MONSTER_NAME_COUNT]
     @ header.ptrs.monsterIconIndices
     [[name("Monster Icon Indices")]];
 
+// Rescued Felyne Tower Medal counts (header 0x950): one row per value of the
+// Felyne2 (em134) EnemyWork +0xDC0 byte, which initialize_monster_entity copies
+// from the spawn block (+0x3C; the Tower spawn FUN_10AAA900 fills it, other
+// spawns leave 0 = guide Felyne). em134_rescue_medal_count_roll returns
+// min + rand % (max - min + 1) (min when max <= min); em134 action 6 gives that
+// many item 0x2B9F. No bound in the code: 8 rows fill the gap to header 0x94C.
+struct RescuedFelyneMedalCount {
+    u8 min;
+    u8 max;
+};
+
+RescuedFelyneMedalCount rescuedFelyneMedalCounts[8] @ header.ptrs.rescuedFelyneMedalCounts [[name("Rescued Felyne Medal Counts")]];
+
 // Felyne2 mode roll (header 0x94C): em134_mode_roll draws 1-100 from the quest
 // LCG at gMazeTower +0x118 and returns 0 when outcome0Chance >= the roll, else
 // 1; em134_init stores it in EnemyWork +0xDC0, and when any Felyne2 (0x86) has

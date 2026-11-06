@@ -38,6 +38,14 @@ struct CarveDropTable {
 ptVar<PartBreakDropTable> ptPartBreakDTs[importantNums.numPartBreakDTs] @ header.ptrs.partBreakItemDrops;
 ptVar<CarveDropTable> ptCarveDTs[importantNums.numCarveDTs] @ header.ptrs.carveItemDrops;
 
+// Carve fail chances (header 0x7C4). ext_item_get_ck (Wii U name) reads
+// [quest star - DAT_1E774CAF] on a G rank quest in the field that is not a G
+// Dragon or series quest, for a large monster or a carve point with flag
+// +0x1A & 2, when the star is above DAT_1E774CAF: the carve gives nothing
+// (0xFFFF) when random % 100 < value. Index 0 is never read; an index at or
+// above the count gives 0.
+u8 carveFailChances[importantNums.numCarveFailChances] @ header.ptrs.carveFailChances [[name("Carve Fail Chances")]];
+
 struct MachaPotReward {
     u16 itemID [[format("getItemName")]];
     u16 number;

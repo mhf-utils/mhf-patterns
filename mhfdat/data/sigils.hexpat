@@ -314,7 +314,7 @@ u8 sigilIconThresholds[importantNums.numSigilIconThresholds] @ header.ptrs.sigil
 
 // Header 0x890: sigil skills shown by their name alone when their value is
 // below 2 (FUN_101BFDD0; the others use pSkillValueFormats[2]); the sigil skill
-// merge (FUN_109999A0) also treats them apart (sigil_skill_is_listed_no_value
+// merge (sigil_skills_merge) also treats them apart (sigil_skill_is_listed_no_value
 // returns 0 for them). 0-terminated.
 struct SigilSkillsNoValueAtOne {
     SigilSkill skills[while(std::mem::read_unsigned($, 2) != 0)];
@@ -322,6 +322,25 @@ struct SigilSkillsNoValueAtOne {
 };
 
 SigilSkillsNoValueAtOne sigilSkillsNoValueAtOne @ header.ptrs.sigilSkillsNoValueAtOne [[name("Sigil Skills Without Value At 1")]];
+
+// Header 0xAE8: sigil skills the sigil skill merge (sigil_skills_merge) counts
+// instead of adding their values. sigil_counted_skill_bump maps (skill, value)
+// to its sigil text index (sigil_text_index_get) and looks it up; when listed,
+// the merged row's counter (starts at 1) goes up, capped at maxCount when > 0.
+// The sigil screens (FUN_101BFDD0, FUN_109963F0) then print the counter with
+// pSkillValueFormats[2] instead of the value when it is 2 or more. 0-terminated.
+struct SigilCountedSkill {
+    u16 textIndex [[comment("Sigil text index (pac 0xC44)")]];
+    s8  maxCount [[comment("Counter cap when > 0")]];
+    u8  unk03 [[comment("no reader")]];
+};
+
+struct SigilCountedSkills {
+    SigilCountedSkill skills[while(std::mem::read_unsigned($, 2) != 0)];
+    u16 end;
+};
+
+SigilCountedSkills sigilCountedSkills @ header.ptrs.sigilCountedSkills [[name("Sigil Counted Skills")]];
 
 // Rarity Change sigil (sigil 80, RarityChange; header 0x8A4 / 0x8A8 / 0x8AC):
 // for a G or Gou weapon, an ex G weapon of rank > 0, a weapon of equip type 2
@@ -363,3 +382,26 @@ RarityChangeRates rarityChangeAffinityRates @ header.ptrs.rarityChangeAffinityRa
 // Zenith weapons, the same gate as the rates above) read it.
 using RarityChangeAttackCaps = RarityChangeRates;
 RarityChangeAttackCaps rarityChangeAttackCaps @ header.ptrs.rarityChangeAttackCaps [[name("Rarity Change Attack Caps")]];
+
+// Sigil recovery items (header 0x728; Wii U plate_item_data_set, Wii U slot
+// 0x724): the items offered when a sigil is taken back from a G weapon into the
+// Sigil box (pDistortedWeaponTexts[2] [0x2E] "Recovery Sigil"). plate_item_data_set
+// copies every row whose G level range holds the weapon's G level
+// (get_equip_weapon_class; 0 lists all rows) into the menu (8 slots);
+// kako04_plate_get_item_sel_disp shows name and "%3d x" and greys rows the
+// player cannot afford. No row and not a Weapon_g_class_k_check weapon:
+// pSystemMessageTexts[120] "no recovery recipe". The list ends at item 0.
+struct SigilRecoveryItem {
+    ItemId item [[comment("0 ends the list")]];
+    u16 count [[comment("Shown (%3d x) and compared with the owned count")]];
+    u8 minGLevel [[comment("Listed when minGLevel <= weapon G level <= maxGLevel")]];
+    u8 maxGLevel;
+    u16 unk06 [[comment("no reader")]];
+};
+
+struct SigilRecoveryItemList {
+    SigilRecoveryItem rows[while(std::mem::read_unsigned($, 2) != 0)];
+    SigilRecoveryItem end;
+};
+
+SigilRecoveryItemList sigilRecoveryItems @ header.ptrs.sigilRecoveryItems [[name("Sigil Recovery Items")]];

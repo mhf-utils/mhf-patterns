@@ -105,3 +105,11 @@ struct LegendRastaStoryEpisodes {
 };
 
 LegendRastaStoryEpisodes legendRastaStoryEpisodes @ header.ptrs.legendRastaStoryEpisodes [[name("Legend Rasta Story Episodes")]];
+
+// Legend Rasta daily rotation (header 0x870): one Legend Rasta NPC id per day.
+// lrasta_is_on_duty_today returns rotation[day % count] == id (day changes at
+// t mod 86400 = 10800), unless the server's legend dispatch schedule
+// (putLoad_legend_dispatch_guild) sends a non-zero Rasta mask for that day. Only
+// the on-duty Rasta is placed in the Guild Hall stages; at the day change
+// lrasta_remove_off_duty_npcs removes the others.
+u16 legendRastaDailyRotation[importantNums.numLegendRastaDailyRotation] @ header.ptrs.legendRastaDailyRotation [[name("Legend Rasta Daily Rotation"), comment("Legend Rasta NPC ids (g_lrastaStoryNpcIds)")]];

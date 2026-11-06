@@ -101,8 +101,25 @@ struct SoloRoadMonsterScale {
     float pitfallTime [[comment("em_ana_loop_timer_set")]];
 };
 
-RoadMonsterScale roadMonsterScales[std::mem::read_unsigned(header.ptrs.dataCounters + 0x02, 2)] @ header.ptrs.roadMonsterScales [[name("Road Monster Scales"), comment("no HP field: em_hp_vital_set multiplies by 0.0 when a row matches (XORPS at 0x1085992C) and by 1.0 when none does")]];
+RoadMonsterScale roadMonsterScales[std::mem::read_unsigned(header.ptrs.dataCounters + 0x02, 2)] @ header.ptrs.roadMonsterScales [[name("Road Monster Scales"), comment("no HP field: em_hp_vital_set scales HP only in the solo Road quest 0x5C4C (0xB7C); its 0xB0C fallback is unreachable")]];
 SoloRoadMonsterScale soloRoadMonsterScales[std::mem::read_unsigned(header.ptrs.dataCounters + 0x0E, 2)] @ header.ptrs.soloRoadMonsterScales [[name("Solo Road Monster Scales")]];
+
+// Zenith monster scale on Road (header 0xB80: the solo Road quest 0x5C4C;
+// header 0xB24: any other Road quest), returned by
+// road_zenith_monster_scale_get. The six readers apply it after the floor scale
+// (0xB0C / 0xB7C) when the quest is a Road quest (variant2 & 0x80, not Musou
+// Dure, not 0x54E3 / 0x54F2-0x54F8) and em_variation_check(monster, 0x10) is 1.
+struct RoadZenithMonsterScale {
+    float hp [[comment("em_hp_vital_set")]];
+    float attack [[comment("em_calc_attack_mult")]];
+    float defense [[comment("em_calc_defense_mult")]];
+    float flinch [[comment("em_calc_flinch_value")]];
+    float trapTime [[comment("em_torabasami_dmg_timer_set")]];
+    float pitfallTime [[comment("em_ana_loop_timer_set")]];
+};
+
+RoadZenithMonsterScale soloRoadZenithMonsterScale @ header.ptrs.soloRoadZenithMonsterScale [[name("Solo Road Zenith Monster Scale")]];
+RoadZenithMonsterScale roadZenithMonsterScale @ header.ptrs.roadZenithMonsterScale [[name("Road Zenith Monster Scale")]];
 
 // Road rank curve (header 0xB14): turns the saved Road Rank Points (ctx [1] +
 // 0xAE, "Rd RP") into the Road Rank 1-999 ("RdP"). road_rank_points_needed(N)

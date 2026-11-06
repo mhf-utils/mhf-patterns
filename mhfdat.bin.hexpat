@@ -3,6 +3,7 @@
 //#define __DATA_ARENA 1
 //#define __DATA_ARMOR_VISUALS 1
 //#define __DATA_AUTOMATIC_SKILLS 1
+//#define __DATA_BOND_BONUS 1
 //#define __DATA_CARAVAN 1
 //#define __DATA_CLAN 1
 //#define __DATA_COMBINE 1
@@ -18,6 +19,7 @@
 //#define __DATA_EQUIP_SHOP 1
 //#define __DATA_EVENT_SCENES 1
 //#define __DATA_EXTRA_COUNTERS 1
+//#define __DATA_EXTRA_STAGES 1
 //#define __DATA_GATHERING 1
 //#define __DATA_GOOCOO 1
 //#define __DATA_GUILD_ADVENTURE 1
@@ -40,6 +42,7 @@
 //#define __DATA_MONSTER_SOUNDS 1
 //#define __DATA_MYTRA 1
 //#define __DATA_MY_HOUSE 1
+//#define __DATA_NAME_DISPLAY_SIZES 1
 //#define __DATA_NPC_HUNTERS 1
 //#define __DATA_NPC_SOUNDS 1
 //#define __DATA_PARTNER 1

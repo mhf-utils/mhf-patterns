@@ -203,3 +203,29 @@ PartnerLevelRates partnerLevelAttack @ header.ptrs.partnerLevelAttack [[name("Pa
 PartnerLevelRates partnerClassLevelAttack @ header.ptrs.partnerClassLevelAttack [[name("Partner Class Level Attack")]];
 PartnerLevelRates partnerLevelDefense @ header.ptrs.partnerLevelDefense [[name("Partner Level Defense")]];
 PartnerLevelRates partnerClassLevelElement @ header.ptrs.partnerClassLevelElement [[name("Partner Class Level Element")]];
+
+// Partner point rates (header 0x850): percent rates that turn a quest's HRP
+// total (quest result +0xFF0) and GRP total (+0x1098) into Partner Rank Points
+// (partner_rank_points_gain_calc), Partner weapon proficiency
+// (partner_weapon_rank_points_gain_calc, no Premium part) and Partnyaa rank
+// points (partnyaa_rank_points_gain_calc); the Premium parts need the Premium
+// course (result +0x1B48 bit 0, "Premium Bonus!"). Each sum then goes through
+// quest_result_bonus_rate_apply and the 99999999 cap. tonfaStatusPercent: with
+// Partner equipment and a Tonfa, the weapon status value is scaled by it
+// (partner_tonfa_status_scale).
+struct PartnerPointRates {
+    u16 partnerRankHrpPercent [[comment("PRP = HRP total x this / 100")]];
+    u16 weaponRankHrpPercent [[comment("Weapon proficiency = HRP total x this / 100")]];
+    u16 partnerRankGrpPercent [[comment("PRP += GRP total x this / 100")]];
+    u16 weaponRankGrpPercent [[comment("Weapon proficiency += GRP total x this / 100")]];
+    u16 partnerRankPremiumHrpPercent [[comment("Premium: extra PRP = HRP total x this / 100")]];
+    u16 partnerRankPremiumGrpPercent [[comment("Premium: extra PRP += GRP total x this / 100")]];
+    u16 partnyaaRankHrpPercent [[comment("Partnyaa points = HRP total x this / 100")]];
+    u16 partnyaaRankGrpPercent [[comment("Partnyaa points += GRP total x this / 100")]];
+    u16 partnyaaRankPremiumHrpPercent [[comment("Premium: extra Partnyaa points = HRP total x this / 100")]];
+    u16 partnyaaRankPremiumGrpPercent [[comment("Premium: extra Partnyaa points += GRP total x this / 100")]];
+    u16 tonfaStatusPercent [[comment("Partner equipment, Tonfa: status value x this / 100")]];
+    u16 unk16 [[comment("no reader")]];
+};
+
+PartnerPointRates partnerPointRates @ header.ptrs.partnerPointRates [[name("Partner Point Rates")]];

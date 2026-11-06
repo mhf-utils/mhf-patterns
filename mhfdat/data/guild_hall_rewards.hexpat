@@ -68,3 +68,13 @@ GuildHallRewardStack guildHallRewardStacks[importantNums.numGuildHallRewardStack
 using GuildHallRewardItemId = u16 [[format("guildHallRewardItem")]];
 
 GuildHallRewardItemId guildHallRewardItems[importantNums.numGuildHallRewardItems] @ header.ptrs.guildHallRewardItems [[name("Guild Hall Reward Items"), comment("Stored as ~item id")]];
+
+// Extra items (header 0x820 / 0x824 / 0x828): after the main roll,
+// guild_hall_reward_build_list rolls once more at 1/20 (1/10 on stage 0xCB, 1/5 on
+// 0xCC and 0x1BD; always after the 1/99 x50 roll) and gives 1 uniformly drawn
+// entry (5 on the x50 roll) through reward_present_add, from the list of the HR
+// band: below 31, below 101, else. Header 0x82C points to a fourth list that
+// rd_mhfdat does not relocate and no code reads.
+GuildHallRewardItemId guildHallRewardExtraItemsHrLow[importantNums.numGuildHallRewardExtraItemsHrLow] @ header.ptrs.guildHallRewardExtraItemsHrLow [[name("Guild Hall Reward Extra Items (HR 1-30)"), comment("Stored as ~item id")]];
+GuildHallRewardItemId guildHallRewardExtraItemsHrMid[importantNums.numGuildHallRewardExtraItemsHrMid] @ header.ptrs.guildHallRewardExtraItemsHrMid [[name("Guild Hall Reward Extra Items (HR 31-100)"), comment("Stored as ~item id")]];
+GuildHallRewardItemId guildHallRewardExtraItemsHrHigh[importantNums.numGuildHallRewardExtraItemsHrHigh] @ header.ptrs.guildHallRewardExtraItemsHrHigh [[name("Guild Hall Reward Extra Items (HR 101+)"), comment("Stored as ~item id")]];

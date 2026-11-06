@@ -4,8 +4,7 @@
 	Goocoo (My Garden): food, house-sitting, personalities, remodelling, the
 	exchange, the Goocoo Pot, skins and stray Goocoos. Header 0x404 to 0x4E0,
 	one count per table at important numbers + 0x146 to + 0x1A8, in header
-	order. Only the tables the client code reads are shown; the others (header
-	0x4A8) are not.
+	order. Only the tables the client code reads are shown.
 
 	House-sitting roll, in order: the mood item (0x434); the grade, from the
 	trust plus the personality (0x418, by activity) and mood (0x41C)
@@ -397,6 +396,23 @@ struct GoocooTalkItem {
 GoocooTalkItem goocooTalkItems[importantNums.numGoocooTalkItems] @ header.ptrs.goocooTalkItems [[name("Goocoo Talk Items")]];
 u8 goocooTalkItemThresholds[importantNums.numGoocooTalkItemThresholds] @ header.ptrs.goocooTalkItemThresholds [[name("Goocoo Talk Item Thresholds"), comment("Group gauge (profile +0x29) values, ascending")]];
 
+// Goocoo talk drop items (header 0x4A8; Wii U setTalkDropItem, Wii U slot
+// 0x4D0): when the Goocoo talk at the group spots ends (executeTalk step 6,
+// waitTalkEmoteIconFinish), the host Goocoo (talk role 0) that has left its
+// spot action 0x1A rolls one row by weight; a row whose item and quantity are
+// both not 0 is dropped on the ground at the host's position
+// (setTalkDropItemAutoSlot: farm item slots 4-8, sparkle colour 0xFFBFBFFF).
+// Taking it (moveEventFarmTakeDropItem) gives min(quantity, room for the
+// item); the rest stays on the ground.
+struct GoocooTalkDropItem {
+    ItemId item [[comment("0: nothing dropped")]];
+    u16 quantity;
+    u8 weight;
+    u8 unk05 [[comment("no reader")]];
+};
+
+GoocooTalkDropItem goocooTalkDropItems[importantNums.numGoocooTalkDropItems] @ header.ptrs.goocooTalkDropItems [[name("Goocoo Talk Drop Items")]];
+
 // Goocoo emote delays (header 0x4B4; Wii U updateEmote, Wii U slot 0x4DC): one
 // row per mood (0-6, pCostumeShopTexts[6]; getFarmDuckMood, 3 on another
 // hunter's farm). updateEmote shows an emote icon for (rand % 3 + 4) x 30 ticks,
@@ -413,7 +429,7 @@ struct GoocooEmoteDelay {
 GoocooEmoteDelay goocooEmoteDelays[importantNums.numGoocooEmoteDelays] @ header.ptrs.goocooEmoteDelays [[name("Goocoo Emote Delays"), comment("Row = mood")]];
 
 // =======================
-// Goocoo skins and stray Goocoos (header 0x480 to 0x490, 0x4D0 to 0x4E0).
+// Goocoo skins and stray Goocoos (header 0x480 to 0x490, 0x4CC to 0x4E0).
 // Every table is a list of u8 lot weights drawn by drawLotsSubFunction (roll r
 // in [0, sum), the result is the first index whose running weight passes r).
 // New Goocoo (updateEventFarmCareCatSubFunctionEgg): its skin (profile +5) is
@@ -426,6 +442,13 @@ GoocooEmoteDelay goocooEmoteDelays[importantNums.numGoocooEmoteDelays] @ header.
 // Workshop, rows 3-6 MyHawk; DLL pairs 0x11998B7C) and first action in My
 // House (0x4D4), the Workshop (0x4D8 / 0x4DC, one weight cleared below HR 100)
 // and the MyHawk area (stage 0x11B: 0x4E0 draws the layout).
+// Stray Goocoo in Mezeporta (0x4CC; Wii U moveStrayDuckProgram, Wii U slot
+// 0x4F4): moveStrayDuckLobby runs a 190-step program (DLL 0x11998BA8, 0x14
+// bytes a step, loop of 1440 server time units); each frame
+// moveStrayDuckProgram takes mesh code
+// [(loop number % (count / 2)) x 2 + step byte +0x13] % count into the same
+// skin / equipment mesh globals that 0x4D0 fills elsewhere (high nibble = skin
+// mesh part 0, 1 or 5; low nibble = equipment mesh part 2-4, 0 = none).
 // =======================
 struct GoocooNewSkinLots {
     u8 skinWeights[5];
@@ -451,6 +474,12 @@ u8 goocooSkinClassScores[6] @ header.ptrs.goocooSkinClassScores [[name("Goocoo S
 GoocooEggClassLots goocooEggClassLots[importantNums.numGoocooEggClassLots] @ header.ptrs.goocooEggClassLots [[name("Goocoo Egg Class Lots"), comment("Row = score A + score B")]];
 GoocooEggSkinSourceLots goocooEggSkinSourceLots[importantNums.numGoocooEggSkinSourceLots] @ header.ptrs.goocooEggSkinSourceLots [[name("Goocoo Egg Skin Source Lots")]];
 
+bitfield StrayGoocooLobbyMesh {
+    equipMesh : 4 [[comment("Equipment mesh part drawn; 0 = none")]];
+    skinMesh : 4 [[comment("Skin mesh part drawn (0, 1 or 5)")]];
+};
+
+StrayGoocooLobbyMesh strayGoocooLobbyMeshes[importantNums.numStrayGoocooLobbyMeshes] @ header.ptrs.strayGoocooLobbyMeshes [[name("Stray Goocoo Lobby Meshes"), comment("Index = (loop % (count / 2)) x 2 + program step byte +0x13, mod count")]];
 StrayGoocooEquipMeshLots strayGoocooEquipMeshLots[7] @ header.ptrs.strayGoocooEquipMeshLots [[name("Stray Goocoo Equip Mesh Lots"), comment("No count: rows 0-6 are constants in the readers")]];
 u8 strayGoocooMyHouseActionLots[importantNums.numStrayGoocooMyHouseActions] @ header.ptrs.strayGoocooMyHouseActionLots [[name("Stray Goocoo My House Action Lots"), comment("Actions: DLL 0x11999A80")]];
 u8 strayGoocooWorkshopActionLots0[importantNums.numStrayGoocooWorkshopActions0] @ header.ptrs.strayGoocooWorkshopActionLots0 [[name("Stray Goocoo Workshop Action Lots 0"), comment("Actions: DLL 0x11999C10; [3] is 0 below HR 100")]];

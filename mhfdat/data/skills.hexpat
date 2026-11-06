@@ -477,7 +477,7 @@ struct ZenithSkillEffect {
 ZenithSkillEffect zenithSkillEffects[std::mem::read_unsigned(header.ptrs.skillCounts + 0x18, 2)] @ header.ptrs.zenithSkillEffects [[name("Zenith Skill Effects")]];
 
 // =======================
-// Taunt, Sneak and Incitement (header 0x80C, 0x830)
+// Taunt, Sneak and Incitement (header 0x80C, 0x830, 0x834)
 // =======================
 
 struct IncitementTunables {
@@ -486,10 +486,24 @@ struct IncitementTunables {
     u16 enmityCutPercentSneak [[comment("monster_aggro_apply_taunt_and_incitement: % of incitementEnmityCut taken from the other players with Sneak (0x13); 100 without Sneak or Taunt")]];
     u16 enmityCutPercentTaunt [[comment("same with Taunt (0x14)")]];
     u16 targetLockSeconds [[comment("monster_func: Incitement target lock timer = this x 60 frames")]];
-    u16 playerAggroTimer [[comment("monster_func / monster_aggro_tick_decay_and_target_lock: per-player aggro timer = this x 30 frames")]];
+    u16 playerAggroTimer [[comment("monster_func / Em_Hate_Ck: per-player aggro timer = this x 30 frames")]];
 };
 
 IncitementTunables incitementTunables @ header.ptrs.incitementTunables [[name("Incitement Tunables")]];
+// Incitement unreachable release (header 0x834; HD only, the Wii U Em_Hate_Ck
+// has no Incitement code): while the Incitement target is more than
+// heightGapMin above or below the monster and within horizontalRangeMax on the
+// XZ plane, Em_Hate_Ck adds 1 to the counter at monster +0xD80 block +6 each
+// call; at releaseTime x 2 the monster drops the target (hate and lock cleared,
+// player cooldown = playerAggroTimer x 30).
+struct IncitementUnreachableRelease {
+    u16 heightGapMin;
+    u16 horizontalRangeMax;
+    u16 releaseTime;
+    u16 unk06 [[comment("no reader")]];
+};
+
+IncitementUnreachableRelease incitementUnreachableRelease @ header.ptrs.incitementUnreachableRelease [[name("Incitement Unreachable Release")]];
 u16 incitementEnmityCut[14] @ header.ptrs.incitementEnmityCut [[name("Incitement Enmity Cut"), comment("by weapon class: enmity taken from the other players on an Incitement hit (x enmityCutPercent / 100)")]];
 
 // =======================

@@ -180,3 +180,28 @@ struct GuildMsgBoardIconAnims {
 };
 
 GuildMsgBoardIconAnims guildMsgBoardIconAnims @ header.ptrs.guildMsgBoardIconAnims [[name("Guild Message Board Icon Animations")]];
+
+// Clan Hunter Gem points (header 0xA3C): after a quest with
+// g_quest_special_type_flag set, clan_hunter_gem_quest_points_calc sums the 7
+// Hunter Gem color points the quest gave (quest result +0x1AF0 ... +0x1AFC),
+// multiplies the sum by pointMultiplier (truncated), applies the rate blocks
+// quest_result_bonus_rates_init filled (Clan Hunter Boost, priority clan member,
+// clan mission Hunter Gem reward), clamps at 99999999, then adds
+// priorityColorPoints. The total (+0x6EEC) is shown as "猟団狩人珠ポイント：%d"
+// and posted with MSG_MHF_POST_RYOUDAMA (0x147). The rates and the flat bonus
+// need GameWork +0x23FE = 3 or 4.
+struct ClanHunterGemPointRates {
+    float pointMultiplier [[comment("Times the sum of the 7 Hunter Gem color points of the quest")]];
+    u32 unk04 [[comment("no reader")]];
+    u32 unk08 [[comment("no reader")]];
+    u32 unk0C [[comment("no reader")]];
+    u32 unk10 [[comment("no reader")]];
+    u32 unk14 [[comment("no reader")]];
+    u32 unk18 [[comment("no reader")]];
+    u8 hunterBoostRate [[comment("x rate while the clan Hunter Boost is on (猟団狩人ブーストボーナス)")]];
+    u8 priorityColorPoints [[comment("Added when the priority clan hunter color matches (優先猟団狩人色ボーナス)")]];
+    u8 priorityMemberRate [[comment("x rate for a priority clan member (優先猟団員ボーナス)")]];
+    u8 unk1F [[comment("no reader")]];
+};
+
+ClanHunterGemPointRates clanHunterGemPointRates @ header.ptrs.clanHunterGemPointRates [[name("Clan Hunter Gem Point Rates")]];

@@ -95,7 +95,7 @@ ItemId secretBookRewardsGR500[while (std::mem::read_signed($, 2) != -1)] @ heade
 struct WeightedReward {
     s16 chance [[comment("percent, cumulative (random % 100)")]];
     ItemId item;
-    u16 count [[comment("+ the course right 10 bonus for items in code table 0x1187C01A")]];
+    u16 count [[comment("0x73C only: + the course right 10 bonus for items in code table 0x1187C01A")]];
 };
 
 WeightedReward secretBookGBonusItems[while (std::mem::read_signed($, 2) != -1)] @ header.ptrs.secretBookGBonusItems [[name("Secret Book G Bonus Items"), comment("G rank field with the book's G save bit (save +0x23B58 + 100 + (hidenBookNo - 1) * 4, bit 31), not HC: one roll")]];
@@ -308,3 +308,17 @@ struct ExoticBonusMaterial {
 };
 
 ExoticBonusMaterial exoticBonusMaterials[importantNums.numExoticBonusMaterials] @ header.ptrs.exoticBonusMaterials [[name("GR800 Exotic Bonus Materials")]];
+
+// Course bonus item (headers 0x8B4 / 0x8B8, quest_reward_course_bonus_item_roll,
+// from quest_reward_course_bonus_add / quest_reward_course_bonus_rebuild called by
+// quest_complete_idle_update when course right 8 is set or a party gate passes):
+// on a G rank field quest (GR != 0) whose first target (QuestWork +0x16C) is
+// cleared and a large monster, one roll random % 100 against the cumulative
+// chances adds the item to the first free reward stack from 0x80 (0xA8 with quest
+// flag +0x98 & 0x2000) to 0xDF, and the result screen prints "Rewards added due
+// to active course!" (mhfpac +0x6F0 [237]). 0x8B8 replaces 0x8B4 when course
+// rights 8 (0x100) and 10 (0x400) are both set.
+WeightedReward courseBonusItems[while (std::mem::read_signed($, 2) != -1)] @ header.ptrs.courseBonusItems [[name("Course Bonus Items")]];
+s16 courseBonusItemsEnd @ addressof(courseBonusItems) + sizeof(courseBonusItems) [[name("Course Bonus Items End")]];
+WeightedReward courseBonusItemsRight10[while (std::mem::read_signed($, 2) != -1)] @ header.ptrs.courseBonusItemsRight10 [[name("Course Bonus Items (Rights 8 + 10)")]];
+s16 courseBonusItemsRight10End @ addressof(courseBonusItemsRight10) + sizeof(courseBonusItemsRight10) [[name("Course Bonus Items (Rights 8 + 10) End")]];

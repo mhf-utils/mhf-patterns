@@ -62,3 +62,16 @@ struct QuizQuestionSet {
 };
 
 QuizQuestionSet quizQuestQuestions[5] @ header.ptrs.quizQuestQuestions [[name("Quiz Quest Questions")]];
+
+// Quiz Quest time limits (header 0xB00): the answer time of question set
+// QuestWork +0xD10. quest_work_init loads row 0 and quiz_quest_msg_set_start
+// the row of the new set into the countdown QuestWork +0xD14, which
+// quiz_quest_timer_tick decrements (quest PeakOfKnowledge only) and
+// quiz_quest_hud_draw prints as frames / 30; at 0 the quest state goes to 5.
+// No bound in the code: 6 rows fill the gap to the 0xAFC table.
+struct QuizQuestTimeLimit {
+    u16 frames;
+    u16 unk02 [[comment("no reader")]];
+};
+
+QuizQuestTimeLimit quizQuestTimeLimits[6] @ header.ptrs.quizQuestTimeLimits [[name("Quiz Quest Time Limits"), comment("Row = question set")]];

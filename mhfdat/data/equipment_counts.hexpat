@@ -196,7 +196,9 @@ struct ImportantNumbers {
     u16 numLegendRastaGroups
         [[name("Number of Legend Rasta Groups")]];
 
-    padding[0x2];
+    // Offset 0xF8: name display sizes (header 0x364)
+    u16 numNameDisplaySizes
+        [[name("Number of Name Display Sizes")]];
 
     // Offset 0xFA: random (ex G) weapons (header 0x36C)
     u16 numExGWeapons
@@ -379,7 +381,9 @@ struct ImportantNumbers {
     u16 numGoocooTalkItems
         [[name("Number of Goocoo Talk Items")]];
 
-    padding[0x2];
+    // Offset 0x196: Goocoo talk drop items (header 0x4A8)
+    u16 numGoocooTalkDropItems
+        [[name("Number of Goocoo Talk Drop Items")]];
 
     // Offset 0x198: Goocoo talk item thresholds (header 0x4AC)
     u16 numGoocooTalkItemThresholds
@@ -392,7 +396,9 @@ struct ImportantNumbers {
     u16 numGoocooPotMaterials
         [[name("Number of Goocoo Pot Materials")]];
 
-    padding[0x2];
+    // Offset 0x19E: stray Goocoo Mezeporta mesh codes (header 0x4CC)
+    u16 numStrayGoocooLobbyMeshes
+        [[name("Number of Stray Goocoo Lobby Meshes")]];
 
     // Offset 0x1A0: Goocoo farm timer values (header 0x4C4), u32
     u16 numGoocooFarmTimerValues
@@ -414,7 +420,11 @@ struct ImportantNumbers {
     u16 numStrayGoocooMyHawkLayouts
         [[name("Number of Stray Goocoo MyHawk Layouts")]];
 
-    padding[0x12];
+    // Offset 0x1AA: extra stages (header 0x4E4)
+    u16 numExtraStages
+        [[name("Number of Extra Stages")]];
+
+    padding[0x10];
 
     // Offset 0x1BC: ex G base tier roll overrides, Gunlance (header 0x508)
     u16 numExGBaseTierRollOverridesGunlance
@@ -620,7 +630,13 @@ struct ImportantNumbers {
     u16 numQuestRareRewards
         [[name("Number of Quest Rare Rewards")]];
 
-    padding[0xA];
+    padding[0x4];
+
+    // Offset 0x2D8: carve fail chances by G star offset (header 0x7C4)
+    u16 numCarveFailChances
+        [[name("Number of Carve Fail Chances")]];
+
+    padding[0x4];
 
     // Offset 0x2DE: Diva Story gift liking (header 0x7D0): u16 values, so pairs = this / 2
     u16 numDivaStoryGiftLikingValues
@@ -659,7 +675,17 @@ struct ImportantNumbers {
     u16 numGuildHallRewardItems
         [[name("Number of Guild Hall Reward Items")]];
 
-    padding[0x8];
+    // Offset 0x304: Guild Hall reward extra items by HR band (header 0x820 / 0x824 / 0x828)
+    u16 numGuildHallRewardExtraItemsHrLow
+        [[name("Number of Guild Hall Reward Extra Items HR 1-30")]];
+
+    u16 numGuildHallRewardExtraItemsHrMid
+        [[name("Number of Guild Hall Reward Extra Items HR 31-100")]];
+
+    u16 numGuildHallRewardExtraItemsHrHigh
+        [[name("Number of Guild Hall Reward Extra Items HR 101+")]];
+
+    padding[0x2];
 
     // Offset 0x30C: Partner skills (header 0x838)
     u16 numPartnerSkills
@@ -678,7 +704,11 @@ struct ImportantNumbers {
     u16 numGuildCookingIngredients
         [[name("Number of Guild Cooking Ingredients")]];
 
-    padding[0x10];
+    // Offset 0x328: Legend Rasta daily rotation (header 0x870)
+    u16 numLegendRastaDailyRotation
+        [[name("Number of Legend Rasta Daily Rotation Days")]];
+
+    padding[0xE];
 
     // Offset 0x338: sigil crafting skill lists (header 0x894, 0x898)
     u16 numSigilCraftUniqueSkills
@@ -768,7 +798,14 @@ struct ImportantNumbers {
     u16 numTonfaChainShellRates
         [[name("Number of Tonfa Chain Shell Hit Rates")]];
 
-    padding[0xE];
+    // Offset 0x394: Tonfa style 1 / style 3 gauge gain rates (header 0x960 / 0x964)
+    u16 numTonfaStyle1GaugeGainRates
+        [[name("Number of Tonfa Style 1 Gauge Gain Rates")]];
+
+    u16 numTonfaStyle3GaugeGainRates
+        [[name("Number of Tonfa Style 3 Gauge Gain Rates")]];
+
+    padding[0xA];
 
     // Offset 0x3A2: voice face motions, male / female (header 0x97C, 0x980)
     u16 numVoiceFaceMotionsMale

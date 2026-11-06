@@ -23,6 +23,10 @@
 #include <mhfdat/data/automatic_skills.hexpat>
 #endif
 
+#ifdef __DATA_BOND_BONUS
+#include <mhfdat/data/bond_bonus.hexpat>
+#endif
+
 #ifdef __DATA_CARAVAN
 #include <mhfdat/data/caravan.hexpat>
 #endif
@@ -89,6 +93,10 @@
 
 #ifdef __DATA_EXTRA_COUNTERS
 #include <mhfdat/data/extra_counters.hexpat>
+#endif
+
+#ifdef __DATA_EXTRA_STAGES
+#include <mhfdat/data/extra_stages.hexpat>
 #endif
 
 #ifdef __DATA_GATHERING
@@ -177,6 +185,10 @@
 
 #ifdef __DATA_MY_HOUSE
 #include <mhfdat/data/my_house.hexpat>
+#endif
+
+#ifdef __DATA_NAME_DISPLAY_SIZES
+#include <mhfdat/data/name_display_sizes.hexpat>
 #endif
 
 #ifdef __DATA_NPC_HUNTERS

@@ -35,8 +35,9 @@ struct WeaponParams {
     u8    classFlags;
     u8    chargeHudSeed;
     u8    adaptationGaugeSeed;
-    u8    unk04[4];
-    float onHitMultiplier;
+    s16   guardAngle            [[comment("Degrees each side of the front (player_guard_angle_check); only for classes weapon_class_can_guard accepts, dead on Hammer, LBG, Dual Blades, Hunting Horn, Bow")]];
+    s16   guardAngleSkillBonus  [[comment("Added to guardAngle when skill 0x14 is active")]];
+    float hitstopMultiplier     [[comment("Not damage: hitstop request = hit +0x85 x this, when the hit factor is >= 1.0 and melee_attack_bounces_is_active is false (on_hit_effects_dispatch)")]];
     u32   classMultiplier       [[comment("Bloat x 100")]];
     Pose  poses[4]              [[comment("3 variants, then sheathing and drawing")]];
     float hudViewDefaultZ;
@@ -54,7 +55,7 @@ struct WeaponParams {
     DrawMotion sheatheAlt;
     u8    hitstopFrames;
     u8    hitstopReduction;
-    u8    unkBE;
+    u8    fencingHitstopFrames  [[comment("fencing_hitstop_frames_get, when header 0x644 has no override")]];
     u8    fencingHitSound;
     u16   redSoulGaugeThreshold;
     u16   redSoulTierBonus;
@@ -62,10 +63,8 @@ struct WeaponParams {
     s16   categorySwitchPenalty;
     s16   thunderCladGaugeDecay;
     u32   rushOnHitGaugeMultiplier;
-    u8    rushGaugeIncrement;
-    padding[1];
-    u16   rushTier0;
-    s16   rushTier1Bonus;
+    u32   rushGaugeGain         [[comment("player_rush_gauge_add, from player_update_per_frame_status_effects")]];
+    s16   rushTier1Bonus        [[comment("row +0xD2 + tier x 2, tier 1-3 (player_rush_gauge_tier)")]];
     s16   rushTier2Bonus;
     u8    rushTier3OrSlayer[2]  [[comment("Rush tier 3 (s16) or Consumption Slayer (2 u8)")]];
     u16   ceaselessTimer;
@@ -550,6 +549,13 @@ ptVar<ShotPowerList> gunnerShotPowerLists[shotPowerPointerCount()] @ header.ptrs
 float hcKaiCritDamage[6] @ header.ptrs.hcKaiCritDamage [[name("HC Kai Critical Damage Bonus")]];
 s16 hcKaiDefense[6] @ header.ptrs.hcKaiDefense [[name("HC Kai Defense Bonus")]];
 
+// Damage cut (header 0x5BC; Wii U pl_vital_calc_sp, slot 0x5E8): in HC quests
+// or G-rank fields, when Pl_HC_Armor_kai_act_ck or Pl_G_Class_S_act_ck passes,
+// damage taken x (100 - v) / 100 (minimum 1). Index = worn HC Kai pieces
+// (armor flag 0x100) + G Class S pieces (0x200); HD also adds pieces with 0x200
+// and 0x80000 and the count of id 8 in the 15 skill context slots (+0x50A).
+u16 hcKaiGClassSDamageReduction[6] @ header.ptrs.hcKaiGClassSDamageReduction [[name("HC Kai / G Class S Damage Reduction Percent")]];
+
 // =======================
 // Element and status multipliers by worn armor pieces (0-5), applied to the
 // weapon's element (rate 0) or status (rate 1) in qualifying quests.
@@ -821,6 +827,14 @@ struct SuperRapidFirePower {
 
 SuperRapidFirePower superRapidFirePower[importantNums.numSuperRapidFirePowers] @ header.ptrs.superRapidFirePower [[name("Super Rapid Fire Power")]];
 
+// Heat Cannon sigil power (header 0x790; Wii U slot 0x78C): one float. When the
+// Heavy Bowgun heat cannon (shot kind 0x20) comes from sigil 0x32 "Heat Cannon
+// Add" and not from the weapon (check_ranged_gou_special_mode == 0), we01_atk_013
+// passes it to BootShell as the shot power multiplier (1.0 otherwise), and
+// shell06_hainetsu_plate_chk scales the hit +0x80 value by it. The bytes up to
+// the next table are zero padding.
+float heatCannonSigilPower @ header.ptrs.heatCannonSigilPower [[name("Heat Cannon Sigil Power")]];
+
 // =======================
 // Weapon constants (header 0x660, Otya unk660): one block of constants read
 // one by one by the code of each weapon class, split here by weapon: each
@@ -1090,7 +1104,7 @@ struct TonfaConstants {
     s16 tonfaGaugeMaxLevelTech4 @ weaponConstantsBase + 0x590 [[comment("+0x590 same with weapon_tech_get_tier(0xB) >= 4 (FUN_11335290)")]];
     s16 tonfaStyle1Tech4GainRate @ weaponConstantsBase + 0x592 [[comment("+0x592 FUN_11325A10: style 1 main gauge gain x it with weapon_tech_get_tier(0xB) >= 4")]];
     s16 tonfaStyle1GainRate @ weaponConstantsBase + 0x594 [[comment("+0x594 FUN_11325A10 (from tonfa_gauge_gain_dispatch, param_2 = 0: on_hit_effects_dispatch hits): style 1 gauge gain = it x the hit gain")]];
-    s16 tonfaStyle1GainRateParam2 @ weaponConstantsBase + 0x596 [[comment("+0x596 same when param_2 != 0")]];
+    s16 tonfaStyle1EvadeGainRate @ weaponConstantsBase + 0x596 [[comment("+0x596 same for evades (param_2 = 1: hit iframe flag 0x1)")]];
     s16 tonfaStyle1SubGaugeLevelSize @ weaponConstantsBase + 0x598 [[comment("+0x598 style 1 sub-gauge per level (FUN_11335100, FUN_11335250, FUN_11326930, FUN_11326DF0, HUD FUN_11343970 / FUN_11344B50)")]];
     s16 tonfaStyle1SubGaugeMaxLevel @ weaponConstantsBase + 0x59a [[comment("+0x59a FUN_11335310: style 1 sub-gauge max level")]];
     s16 tonfaStyle1SubGaugeMaxLevelTech4 @ weaponConstantsBase + 0x59c [[comment("+0x59c FUN_11335290: same with weapon_tech_get_tier(0xB) >= 4")]];
@@ -1124,7 +1138,7 @@ struct TonfaConstants {
     u8 gap5DA[2] @ weaponConstantsBase + 0x5da [[comment("+0x5da no direct reader found")]];
     u32 tonfaStyle2HudColor @ weaponConstantsBase + 0x5dc [[comment("+0x5dc FUN_11344210 (style 2 gauge HUD): colour of one quad (ARGB 0xFF89DFEC)")]];
     s16 tonfaStyle3GainRate @ weaponConstantsBase + 0x5e0 [[comment("+0x5e0 FUN_11325D70: style 3 sub-gauge gain = it x the hit gain (param_2 = 0)")]];
-    s16 tonfaStyle3GainRateParam2 @ weaponConstantsBase + 0x5e2 [[comment("+0x5e2 same when param_2 != 0")]];
+    s16 tonfaStyle3EvadeGainRate @ weaponConstantsBase + 0x5e2 [[comment("+0x5e2 same for evades (param_2 = 1: hit iframe flag 0x1)")]];
     u8 gap5E4[4] @ weaponConstantsBase + 0x5e4 [[comment("+0x5e4 no direct reader found")]];
     s16 tonfaStyle3SubGaugeFrames @ weaponConstantsBase + 0x5e8 [[comment("+0x5e8 FUN_11325D70: sub-gauge duration at level 0 (style 3 state +0xC / +0x10, <<12), lerped to tonfaStyle3SubGaugeFramesMaxLevel")]];
     s16 tonfaStyle3SubGaugeFramesMaxLevel @ weaponConstantsBase + 0x5ea [[comment("+0x5ea same, at the max level")]];
@@ -1176,6 +1190,20 @@ struct TonfaChainShellRate {
 };
 
 TonfaChainShellRate tonfaChainShellRates[importantNums.numTonfaChainShellRates] @ header.ptrs.tonfaChainShellRates [[name("Tonfa Chain Shell Hit Rates"), comment("Row = chain shell count - 1")]];
+
+// Tonfa gauge gain rates (header 0x960 style 1, 0x964 style 3; per mille). A
+// style 1 / 3 hit (on_hit_effects_dispatch) or evade (hit iframe flag 0x1) first
+// fills the sub-gauge; tonfa_gauge_gain_rate_by_sub_level then takes
+// row[min(sub-gauge level, rows - 1)] (level = sub-gauge / weapon constants
+// +0x598 for style 1, +0x58C for style 3) and the gauge grows by the gain x the
+// rate x 0.001.
+struct TonfaGaugeGainRate {
+    s16 hitGainRate;
+    s16 evadeGainRate;
+};
+
+TonfaGaugeGainRate tonfaStyle1GaugeGainRates[importantNums.numTonfaStyle1GaugeGainRates] @ header.ptrs.tonfaStyle1GaugeGainRates [[name("Tonfa Style 1 Gauge Gain Rates"), comment("Row = sub-gauge level")]];
+TonfaGaugeGainRate tonfaStyle3GaugeGainRates[importantNums.numTonfaStyle3GaugeGainRates] @ header.ptrs.tonfaStyle3GaugeGainRates [[name("Tonfa Style 3 Gauge Gain Rates"), comment("Row = sub-gauge level")]];
 
 // =======================
 // Switch Axe F tunables (header 0xA88, Otya unkA88): twelve u16 counts, then

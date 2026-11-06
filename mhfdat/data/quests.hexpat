@@ -162,6 +162,16 @@ struct GreatSlayingQuests {
 
 GreatSlayingQuests greatSlayingQuests @ header.ptrs.greatSlayingQuests [[name("Great Slaying Quests")]];
 
+// AI hunter no-carve quests (header 0xA94; HD only): ai_carve_quest_allowed_ck
+// returns 0 when the current quest id is listed, and CheckHagiPoint (Wii U twin,
+// which has no list) then picks no carve point. 0-terminated.
+struct AiNoCarveQuests {
+    u16 questIds[while(std::mem::read_unsigned($, 2) != 0)];
+    u16 end;
+};
+
+AiNoCarveQuests aiNoCarveQuests @ header.ptrs.aiNoCarveQuests [[name("AI No Carve Quests")]];
+
 // Zenith quest counter monsters (header 0xAB4): the 0-terminated monster id
 // list of category 0xD8; quest_counter_build_zenith_monster_rows adds a 0xD9
 // row named pMonsterNames[id] for each monster that has Zenith quests (event

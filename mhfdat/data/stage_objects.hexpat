@@ -15,7 +15,7 @@
 // corner, its yaw is yawDegrees +/- 20 degrees (-1: any yaw). Its pickGroup
 // draws a result and a variant by weight in header 0x2B8 among the rows that
 // pass stage_object_pick_condition; stage_object_position_is_free then checks
-// the position, and stage_object_add adds the object (result, variant, shape,
+// the position, and SetSom adds the object (result, variant, shape,
 // category, yaw, position). Header 0x2B4 says how each (result, variant) object
 // is spawned. Objects whose kind has clearance > 0.99 are capped at 2 a stage
 // (4 when more than one category 1 object of results 300-303 is placed).
@@ -143,6 +143,19 @@ struct BaseCampNpcPoints {
 
 BaseCampNpcPoints baseCampNpcPoints @ header.ptrs.baseCampNpcPoints [[name("Base Camp NPC Points")]];
 StageObjectKinds stageObjectKinds @ header.ptrs.stageObjectKinds [[name("Stage Object Kinds")]];
+
+// Stage object level 3 chances (header 0xA24; HD only, the Wii U SetSom tests
+// quest bytes instead): SetSom gives a pick point the level GetSomLv returns;
+// a level 2 point becomes level 3 when the Pioneer map level ((total base
+// level - 1) / 10, / 8 on map 3) is 5 or more and the quest random % oneIn is
+// 0. Row = quest info +0x97 bit 8 (G quest). The level picks the point's row
+// in the per-map DLL tables of GetSomPickItem.
+struct StageObjectLevel3Chance {
+    u8 oneIn;
+    u8 unk01 [[comment("no reader")]];
+};
+
+StageObjectLevel3Chance stageObjectLevel3Chances[2] @ header.ptrs.stageObjectLevel3Chances [[name("Stage Object Level 3 Chances"), comment("[0] not G, [1] G")]];
 
 // Stage map background colours (header 0x610): one D3DCOLOR per map id
 // (GameWork +0x34, no bounds check). quest_stage_map_screen_draw (from

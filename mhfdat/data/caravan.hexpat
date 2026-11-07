@@ -8,7 +8,7 @@
 	Japanese in the EN file; the bytes after them belong to the tables header
 	0x16C and 0x1D4-0x228 point to, some with a non-zero byte where a title
 	would be: an empty title alone would read 115), 15 levels, 11 ranking
-	groups of up to 12 routes,
+	groups of 5 to 42 routes (important numbers +0x372),
 	108 gem skills, 9 tiers. The levels and tiers end at zero padding.
 */
 
@@ -20,8 +20,9 @@
 #include <mhfdat/data/equipment_counts.hexpat>
 
 // =======================
-// Voyage routes (header 0x22C): 0xA1C bytes each, until an empty title or the
-// next table
+// Voyage routes (header 0x22C): 0xA1C bytes each; the code reaches them only
+// through caravanLevels (s32 indexes, -1 = none), so the count is the highest
+// index there + 1 (111 on ZZ)
 // =======================
 
 struct VoyageLeg {
@@ -32,28 +33,35 @@ struct VoyageLeg {
 };
 
 struct VoyageRoute {
-    u32   fee;
+    s32   fee                   [[comment("Compared signed (JLE) with the player's money")]];
     u32   rewardMoney;
     u32   rewardPoints          [[comment("Caravan points")]];
     u16   rewardItem            [[format("getItemName")]];
     u16   rewardQuantity;
-    u16   reputation;
-    u16   unk12;
+    u32   reputation            [[comment("Fame payout; no HD reader, the Wii U twin get_quest_data_fw_famous reads this dword")]];
     u16   hrToPost;
     u16   hrToJoin;
     float pointBonus;
     float monsterHp;
     float monsterAttack;
     float monsterDefense;
-    u16   finalTrial;
-    u16   unk2A;
+    u32   finalTrial            [[comment("Read as a dword (caravan_voyage_route_is_available): non-zero = final trial of its level, gated on the level's other routes")]];
     char  title[64];
     char  success[64];
     char  failure[64];
     VoyageLeg legs[12];
 };
 
-VoyageRoute caravanVoyageRoutes[while(std::mem::read_unsigned($ + 0x2C, 1) != 0 && $ + 0xA1C <= nextTable(header.ptrs.caravanVoyageRoutes))]
+fn voyageRouteCount() {
+    s32 m = -1;
+    for (u32 i = 0, i < 15 * 12, i += 1) {
+        s32 v = std::mem::read_signed(header.ptrs.caravanLevels + i * 4, 4);
+        if (v > m) m = v;
+    }
+    return m + 1;
+};
+
+VoyageRoute caravanVoyageRoutes[voyageRouteCount()]
     @ header.ptrs.caravanVoyageRoutes
     [[name("Caravan Voyage Routes")]];
 
@@ -66,7 +74,8 @@ CaravanLevel caravanLevels[15] @ header.ptrs.caravanLevels [[name("Caravan Level
 
 // =======================
 // Ranking routes (header 0x91C): 16 group pointers (important numbers + 0x370
-// of them used), each to up to 12 routes of 0x10C bytes ending at a null title
+// of them used), group g to important numbers +0x372 [g] routes of 0x10C bytes
+// (rd_mhfdat relocates that many rows; ZZ: 7, 5, 6, 36, 32, 39, 40, 32, 42, 12, 28)
 // =======================
 
 struct RankingLeg {
@@ -104,17 +113,16 @@ struct RankingRoute {
     RankingLeg legs[12];
 };
 
-fn rankingRouteCount(u32 at) {
-    u32 n = 0;
-    while (n < 12 && std::mem::read_unsigned(at + n * 0x10C, 4) != 0) n += 1;
-    return n;
-};
-
 struct RankingGroup {
-    RankingRoute routes[rankingRouteCount($)];
+    u32 index = std::core::array_index();
+    if (std::mem::read_unsigned($, 4) != 0) {
+        RankingRoute *routes[importantNums.rankingGroupRouteCounts[index]] : u32;
+    } else {
+        padding[4];
+    }
 };
 
-ptVar<RankingGroup> caravanRankingGroups[16]
+RankingGroup caravanRankingGroups[16]
     @ header.ptrs.caravanRankingRoutes
     [[name("Caravan Ranking Routes")]];
 
@@ -132,7 +140,9 @@ struct GemSkill {
     s16 supersededBy            [[comment("Hidden once this skill is offered and unlocked")]];
     u8  unk06[2];
     u16 points[8]               [[comment("Points needed per color: pink, brown, yellow, green, white, purple, cyan; the 8th is 0")]];
-    u8  effectValues[24]        [[comment("Read by the skill's own code")]];
+    float effectFloats[2]       [[comment("Float parameters read by the skill's own code (e.g. skills 0x4C, 0x4F and 0x53 read both)")]];
+    u8  unk20[8]                [[comment("0 on the 3 files; no reader")]];
+    s16 effectValues[4]         [[comment("Integer parameters read by the skill's own code (movsx on [0] / [1], e.g. skill 0x53 [0] = chance in %); [3] has no reader")]];
 };
 
 GemSkill gemSkills[while(std::mem::read_signed($, 2) != -1)]
@@ -148,7 +158,7 @@ ptVar<GemSkillList> gemSkillLists[importantNums.numHunterPearlSkillLists]
     [[name("Gem Skill Lists")]];
 
 struct CaravanTier {
-    u32 cpCost                  [[comment("To upgrade from this tier; halved with course 3 or 7")]];
+    s32 cpCost                  [[comment("To upgrade from this tier; halved with course 3 or 7 (CDQ / SAR), compared signed with the CP balance")]];
     u16 pointCap                [[comment("Per color")]];
     u8  percent                 [[comment("Of the cap every color needs to upgrade")]];
     u8  previousTierUnlock      [[comment("The fame points the tier before this row's needs to upgrade")]];
@@ -159,7 +169,8 @@ CaravanTier caravanTiers[importantNums.numHunterPearlSkillLists + 1]
     [[name("Caravan Tiers")]];
 
 // =======================
-// Caravan CP. 0x88C: percents read by caravan_cp_rate_get (index <= 9); index 6
+// Caravan CP. 0x88C: percents read by caravan_cp_rate_get (index <= 9); index 0
+// is the Pallone Festival score percent (quest_complete_idle_update); index 6
 // is the finess ext weapon CP percent (caravan_grant_item_cp and the other CP
 // grants), indexes 5, 7, 8 scale CP in the lobby caravan menus and quest results.
 // 0x8F8 / 0x8F0: CP for each new part break of a monster in a G caravan quest
@@ -170,7 +181,8 @@ CaravanTier caravanTiers[importantNums.numHunterPearlSkillLists + 1]
 // =======================
 
 struct CaravanCpRates {
-    u16 unk00[5];
+    u16 festivalScoreRate [[comment("Index 0, percent: quest result totals +0x1AC4 + +0x1B14 + +0x1B24 x this / 100 = the Pallone Festival score (mhfpac pQuestResultTexts[303])")]];
+    u16 unk02[4];
     u16 unk0A [[comment("Index 5")]];
     u16 finessExtCpRate [[comment("Index 6, percent")]];
     u16 unk0E [[comment("Index 7")]];
@@ -237,7 +249,7 @@ CaravanMonsterPrice caravanMonsterPrices[importantNums.numCaravanMonsterPrices] 
 // monster_price_board_page_draw prints the monster name and its price.
 // Fatalis, Crimson Fatalis, Disufiroa and Shantien are priced but not listed.
 struct MonsterPriceBoardRow {
-    u32 requiredLevel [[comment("Listed when <= quest-list tune value 1030 (default 10); 1-8, ascending")]];
+    s32 requiredLevel [[comment("Listed when <= quest-list tune value 1030 (default 10), signed compare (JLE); 1-8, ascending")]];
     u16 monster [[format("caravanMonster"), comment("Looked up in the caravan price list")]];
     u16 unk06 [[comment("0; no reader")]];
 };

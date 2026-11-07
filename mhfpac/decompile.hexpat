@@ -2,6 +2,7 @@
 
 #include <std/mem.pat>
 #include <misc/types.pat>
+#include <misc/s32p.pat>
 
 struct s32pxT<auto Size> {
     s_s32p data[Size] [[inline]];

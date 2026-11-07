@@ -29,7 +29,10 @@
 // =======================
 // Goocoo accessories (header 0x3C4 to 0x3FC): one table of rows, one of names
 // and one of descriptions per slot, important numbers + 0x126 to + 0x12E rows
-// each. The clothing menu tabs (DLL u32 table 0x118E1500: 2, 3, 4, 0, 5) are
+// each (the name and description lists have their own counts, + 0x130 to + 0x142,
+// the same values). The list draw (goocoo_accessory_list_draw) prints name [row]
+// and sends description [row] to the description box (FUN_10B70CF0).
+// The clothing menu tabs (DLL u32 table 0x118E1500: 2, 3, 4, 0, 5) are
 // hats, masks, bags, clothes, tails; goocoo_accessory_tab_update copies the
 // slot's count and three tables into the menu work and
 // goocoo_accessory_list_build lists, 8 a page, the rows whose series is 0 or
@@ -38,16 +41,16 @@
 // hat, +0xA mask, +0xC bag, +0xE tail); process_npc_entry resets an index past
 // the count to 0 and, when the row's model is not -1, loads
 // npc\n37<b|h|f|n|t><model>.bin (DLL table 0x118E18F8).
-// Row 0 of each slot is "はずす" (take off), model -1.
+// Row 0 of each slot is "はずす" (take off), model -1 (clothes: model 0).
 // =======================
 
 struct GoocooAccessory {
     u16 unk00 [[comment("The row number; no reader")]];
     s16 model [[comment("npc\\n37<slot letter><model>.bin; -1: none")]];
     u8 unk04 [[comment("1 clothes, 0 hat, 2 mask, 3 bag, 4 tail on every row; no reader")]];
-    u8 unk05 [[comment("0-10; no reader")]];
+    u8 iconColor [[comment("List icon colour (FUN_1079B800): index of the DLL colour table 0x11882C60, the item iconColor palette")]];
     u8 series [[comment("0: always listed; n: listed when clothing series n is unlocked (header 0x400); 255 on one hat: never")]];
-    u8 hatDrawFlag [[comment("Hats only: goocoo_hat_draw_flag returns it != 0 for the model setup FUN_10658530")]];
+    u8 drawHair [[comment("Hats only: enableDrawDuckHair (Wii U twin) returns it != 0 for the model setup FUN_10658530")]];
     u32 unk08 [[comment("1 on 4 rows of each slot; no reader")]];
 };
 
@@ -56,25 +59,27 @@ GoocooAccessory goocooClothes[importantNums.numGoocooClothes] @ header.ptrs.gooc
 GoocooAccessory goocooMasks[importantNums.numGoocooMasks] @ header.ptrs.goocooMasks [[name("Goocoo Masks")]];
 GoocooAccessory goocooBags[importantNums.numGoocooBags] @ header.ptrs.goocooBags [[name("Goocoo Bags")]];
 GoocooAccessory goocooTails[importantNums.numGoocooTails] @ header.ptrs.goocooTails [[name("Goocoo Tail Accessories")]];
-s32p goocooHatNames[importantNums.numGoocooHats] @ header.ptrs.goocooHatNames [[name("Goocoo Hat Names")]];
-s32p goocooClothesNames[importantNums.numGoocooClothes] @ header.ptrs.goocooClothesNames [[name("Goocoo Clothes Names")]];
-s32p goocooMaskNames[importantNums.numGoocooMasks] @ header.ptrs.goocooMaskNames [[name("Goocoo Mask Names")]];
-s32p goocooBagNames[importantNums.numGoocooBags] @ header.ptrs.goocooBagNames [[name("Goocoo Bag Names")]];
-s32p goocooTailNames[importantNums.numGoocooTails] @ header.ptrs.goocooTailNames [[name("Goocoo Tail Accessory Names")]];
-s32p goocooHatDescs[importantNums.numGoocooHats] @ header.ptrs.goocooHatDescs [[name("Goocoo Hat Descriptions")]];
-s32p goocooClothesDescs[importantNums.numGoocooClothes] @ header.ptrs.goocooClothesDescs [[name("Goocoo Clothes Descriptions")]];
-s32p goocooMaskDescs[importantNums.numGoocooMasks] @ header.ptrs.goocooMaskDescs [[name("Goocoo Mask Descriptions")]];
-s32p goocooBagDescs[importantNums.numGoocooBags] @ header.ptrs.goocooBagDescs [[name("Goocoo Bag Descriptions")]];
-s32p goocooTailDescs[importantNums.numGoocooTails] @ header.ptrs.goocooTailDescs [[name("Goocoo Tail Accessory Descriptions")]];
+s32p goocooHatNames[importantNums.numGoocooHatNames] @ header.ptrs.goocooHatNames [[name("Goocoo Hat Names")]];
+s32p goocooClothesNames[importantNums.numGoocooClothesNames] @ header.ptrs.goocooClothesNames [[name("Goocoo Clothes Names")]];
+s32p goocooMaskNames[importantNums.numGoocooMaskNames] @ header.ptrs.goocooMaskNames [[name("Goocoo Mask Names")]];
+s32p goocooBagNames[importantNums.numGoocooBagNames] @ header.ptrs.goocooBagNames [[name("Goocoo Bag Names")]];
+s32p goocooTailNames[importantNums.numGoocooTailNames] @ header.ptrs.goocooTailNames [[name("Goocoo Tail Accessory Names")]];
+s32p goocooHatDescs[importantNums.numGoocooHatDescs] @ header.ptrs.goocooHatDescs [[name("Goocoo Hat Descriptions")]];
+s32p goocooClothesDescs[importantNums.numGoocooClothesDescs] @ header.ptrs.goocooClothesDescs [[name("Goocoo Clothes Descriptions")]];
+s32p goocooMaskDescs[importantNums.numGoocooMaskDescs] @ header.ptrs.goocooMaskDescs [[name("Goocoo Mask Descriptions")]];
+s32p goocooBagDescs[importantNums.numGoocooBagDescs] @ header.ptrs.goocooBagDescs [[name("Goocoo Bag Descriptions")]];
+s32p goocooTailDescs[importantNums.numGoocooTailDescs] @ header.ptrs.goocooTailDescs [[name("Goocoo Tail Accessory Descriptions")]];
 
+// moveEventFarmDuckFeedCheck (Wii U moveEventFarmDuckFeedCheck): the high byte of weight and the
+// four stats is not read (it is the sign extension on the 3 files)
 struct GoocooFood {
-    u16 item                    [[format("getItemName")]];
-    s16 trust;
-    s16 weight;
-    s16 stat0;
-    s16 stat3;
-    s16 stat1;
-    s16 stat2;
+    u16 item                    [[format("getItemName"), comment("Used up by the meal")]];
+    s16 trust                   [[comment("Added to the trust, profile +0x26 (updateDuckFriendly, Wii U updateDuckFriendly)")]];
+    s16 weight                  [[comment("Low byte, s8: added to the weight, profile +0x2B, held to 0-255 (Wii U updateDuckSize)")]];
+    s16 stat0                   [[comment("Low byte, s8: added to profile +0x22 (updateDuckPersonalityParameter, Wii U updateDuckPersonalityParameter)")]];
+    s16 stat1                   [[comment("Low byte, s8: added to profile +0x23")]];
+    s16 stat2                   [[comment("Low byte, s8: added to profile +0x24")]];
+    s16 stat3                   [[comment("Low byte, s8: added to profile +0x25")]];
     padding[2];
 };
 
@@ -86,15 +91,20 @@ struct GoocooStatRange {
     s16 b;
 };
 
-// The client takes the min and the max of each pair
+// updateDuckPersonalityParameter walks 7 rows (hard-coded: the count is not read)
+// and the first row whose 4 ranges hold the 4 stats gives the personality (the
+// row index). Each pair is compared as s16; the low bytes (s8) are kept as min / max.
 struct GoocooPersonality {
-    s16 id;
+    s16 unk00 [[comment("The personality + 1 (1-7); no reader")]];
     GoocooStatRange stats[4];
     padding[2];
 };
 
 GoocooPersonality goocooPersonalities[importantNums.numGoocooPersonalities] @ header.ptrs.goocooPersonalities [[name("Goocoo Personalities")]];
 s32p goocooPersonalityNames[importantNums.numGoocooPersonalityNames] @ header.ptrs.goocooPersonalityNames [[name("Goocoo Personality Names")]];
+// 0x440: one action name per egg care row (each action 3 times);
+// drawEventFarmDuckEgg1stMenu reads [0], [3], [6], [9], [12]. 0x444: the style
+// texts; drawEventFarmDuckEgg2ndMenu reads [action x 3 + 0 .. 2].
 s32p goocooCareActions[importantNums.numGoocooCareActions] @ header.ptrs.goocooCareActions [[name("Goocoo Care Actions")]];
 s32p goocooCareStyles[importantNums.numGoocooCareStyles] @ header.ptrs.goocooCareStyles [[name("Goocoo Care Styles")]];
 
@@ -111,10 +121,34 @@ struct GoocooEggCare {
 
 GoocooEggCare goocooEggCare[importantNums.numGoocooEggCare] @ header.ptrs.goocooEggCare [[name("Goocoo Egg Care")]];
 
-// [0] min, [1] max, [3] and [4] the meal reaction thresholds; the others are not read
-s16 goocooTrustParams[importantNums.numGoocooTrustParams] @ header.ptrs.goocooTrustParams [[name("Goocoo Trust Parameters")]];
-// [0]: the trust change per day without food; the others are not read
-s16 goocooTrustDecay[importantNums.numGoocooTrustDecay] @ header.ptrs.goocooTrustDecay [[name("Goocoo Trust Decay")]];
+// Trust parameters (header 0x478, important numbers + 0x180 = 7 s16, one
+// struct; Wii U slot 0x4A0). Trust is profile +0x26; every reader compares
+// signed. getDuckFriendlyNow (FUN_10791960) is the trust with the pending
+// daily change applied, held to [trustMin, trustMax], not stored.
+struct GoocooTrustParams {
+    s16 trustMin [[comment("updateDuckFriendly, getDuckFriendlyNow, Wii U addFriendly")]];
+    s16 trustMax [[comment("Same readers; updateDuckFriendly calls FUN_108F2320(0xB7) when the trust reaches it")]];
+    s16 leaveTrust [[comment("No HD reader. Wii U checkDuckStateLeave: the Goocoo can leave when getDuckFriendlyNow <= this")]];
+    s16 feedReactLow [[comment("moveEventFarmDuckFeedCheck: food trust <= this, event step 0x1C")]];
+    s16 feedReactHigh [[comment("Food trust above feedReactLow: below this step 0x1E, else step 0x1D")]];
+    s16 potReactTrust0 [[comment("Goocoo Pot game (moveEventFarmCareCatDuckStewGame, Wii U moveEventFarmCareCatDuckStewGame): getDuckFriendlyNow >= this, the Goocoo plays action 9 for 60 ticks")]];
+    s16 potReactTrust1 [[comment("Same game, another step: action 6 for 90 ticks")]];
+};
+
+GoocooTrustParams goocooTrustParams @ header.ptrs.goocooTrustParams [[name("Goocoo Trust Parameters")]];
+
+// Care trust (header 0x47C, Wii U slot 0x4A4; Wii U updateDuckCare /
+// updateDuckDay / updateDuckFriendly / getDuckFriendlyNow). Index = care code,
+// profile +0x2D: 1 feed (moveEventFarmDuckFeedCheck), 2 put down after a carry
+// (FUN_10795B00), 3 house-sitting choice set (moveEventFarmDuckBoardSetStay), 4 item from the
+// Goocoo (FUN_10794310, FUN_10775BF0), 5 FUN_10797E40 (Wii U
+// moveEventFarmDuckAway2ndNoEvent); no code sets 6. A new code replaces the kept
+// one when none is kept or its value is higher (updateDuckCare, updateDuckCare,
+// or inline). At the first day change (updateDuckDay, updateDuckDay) the kept
+// code's value is added to the trust and the code cleared (7 or more: cleared
+// unpaid). [0] (code 0 = none) is the trust change per day without food, x
+// (days since last fed - 1).
+s16 goocooTrustDecay[importantNums.numGoocooTrustDecay] @ header.ptrs.goocooTrustDecay [[name("Goocoo Trust Decay"), comment("Index = care code (profile +0x2D); [0] per day without food")]];
 
 // =======================
 // House-sitting
@@ -122,8 +156,7 @@ s16 goocooTrustDecay[importantNums.numGoocooTrustDecay] @ header.ptrs.goocooTrus
 
 struct GoocooSitItem {
     u16 item                    [[format("getItemName")]];
-    u8  band                    [[comment("1 always, 2-5 by HR tier, 6 G rank")]];
-    padding[1];
+    u16 band                    [[comment("checkStayItemRank: 1 always, 2-5 by HR tier, 6 G rank, other values never")]];
     u8  fish;
     u8  bugs;
     u8  junk;
@@ -133,8 +166,8 @@ struct GoocooSitItem {
 
 struct GoocooSitGradeChance {
     u16 grade;
-    u8  chance                  [[comment("Percent")]];
-    padding[1];
+    u8  chance                  [[comment("Percent: anything is found when chance > rand % 100")]];
+    u8  unk03                   [[comment("100 - chance on every row; no reader")]];
 };
 
 struct GoocooSitCount {
@@ -154,17 +187,22 @@ struct GoocooSitModifier {
 
 struct GoocooSitRarity {
     u16 grade;
-    u8  weights[7];
+    s8  weights[7]              [[comment("Rarity 0 to 6; read signed (movsx)")]];
     padding[3];
 };
 
+// The Goocoo friendly level of a trust score (Wii U getDuckFriendlyLevel; the
+// first row with scoreMin <= score <= scoreMax, else 0). Also read by
+// checkDuckLiftUp and moveEventFarmDuckLiftDownInitialize, not only house-sitting.
 struct GoocooSitGrade {
-    u16 grade;
+    u16 grade                   [[comment("Friendly level")]];
     s16 scoreMin;
     s16 scoreMax;
     padding[2];
 };
 
+// Kept only when the 0x410 roll finds nothing: otherwise the count and item rolls
+// overwrite it.
 struct GoocooSitMoodItem {
     u16 moodPlus1;
     u16 item                    [[format("getItemName")]];
@@ -186,17 +224,24 @@ GoocooSitGrade goocooSitGrades[importantNums.numGoocooSitGrades] @ header.ptrs.g
 GoocooSitMoodItem goocooSitMoodItems[importantNums.numGoocooSitMoodItems] @ header.ptrs.goocooSitMoodItems [[name("Goocoo House-Sitting Mood Items")]];
 
 // =======================
-// Remodelling: the pieces of kind 0 / 1 / 2 (bed / pool / ground), their
-// names and texts, the series names and the cost of each series
+// Remodelling: the beds, pools and grounds (Wii U "Mat"), their names and
+// texts, the series names and the cost of each series. The chosen row of
+// area part 0 ground / 1 bed / 2 pool is save pad_0x21327[0x190D + part] (Wii U
+// getFarmDuckAreaSetIndex, HD FUN_10783F10). The menu (FUN_1079BE70) copies
+// the part's count, rows, names and texts into the menu work +0x30 ... +0x3C
+// like the accessory menu; FUN_1079BCF0 lists, 8 a page, the rows whose
+// series is 0 or whose bit series - 1 of save ctx 0x1FE59 is set (the
+// convention of the accessories' 0x1FE5C).
 // =======================
 
 struct GoocooRemodelPiece {
-    u16 index;
-    u16 unk02;
-    u8  kind;
-    u8  unk05;
-    u16 unk06;
-    u32 unk08;
+    u16 unk00 [[comment("The row number; no reader")]];
+    u16 nsoId [[comment("Farm object NSO id - 1000 (Wii U getFarmDuckNsoId); getStateFarmAreaBed / Pool / Mat and executeAreaPartGimmick test fixed values")]];
+    u8  unk04 [[comment("0 bed, 1 pool, 2 ground on every row; no reader")]];
+    u8  iconColor [[comment("List icon colour (FUN_1079C7D0): index of the DLL colour table 0x11882C60, the item iconColor palette")]];
+    u8  series [[comment("0: always listed; n: listed when bit n - 1 of save ctx 0x1FE59 is set (n < 25)")]];
+    u8  unk07 [[comment("0 on every row; no reader")]];
+    u32 unk08 [[comment("0 on every row; no reader")]];
 };
 
 GoocooRemodelPiece goocooRemodelBeds[importantNums.numGoocooRemodelBeds] @ header.ptrs.goocooRemodelBeds [[name("Goocoo Remodel Beds")]];
@@ -208,7 +253,16 @@ s32p goocooGroundNames[importantNums.numGoocooGroundNames] @ header.ptrs.goocooG
 s32p goocooBedTexts[importantNums.numGoocooBedTexts] @ header.ptrs.goocooBedTexts [[name("Goocoo Bed Texts")]];
 s32p goocooPoolTexts[importantNums.numGoocooPoolTexts] @ header.ptrs.goocooPoolTexts [[name("Goocoo Pool Texts")]];
 s32p goocooGroundTexts[importantNums.numGoocooGroundTexts] @ header.ptrs.goocooGroundTexts [[name("Goocoo Ground Texts")]];
-s32p goocooSeriesNames[importantNums.numGoocooSeriesNames] @ header.ptrs.goocooSeriesNames [[name("Goocoo Series Names")]];
+// Remodel series names (header 0x470): name n = remodel series n (the pieces'
+// series byte; 0 = the basic series), cost row n - 1 of header 0x49C.
+// goocoo_clothing_series_list_build (FUN_1064C500), remodel mode (work +0xB3A
+// = 1), lists name 0 when goocoo_farm_flag_test(0) and name n (n up to
+// important numbers + 0x190) when bit n - 1 (below 24) of save ctx 0x1FE59 is
+// set, 10 a page. FUN_10782750 / moveEventFarmCareCatPointMakeAreaPartInitialize (Wii U
+// moveEventFarmCareCatItemMakeAreaPartInitialize / PointMakeAreaPartInitialize)
+// list name n + 1 for each series n not yet owned whose cost is an item / Tore
+// points.
+s32p goocooSeriesNames[importantNums.numGoocooSeriesNames] @ header.ptrs.goocooSeriesNames [[name("Goocoo Remodel Series Names")]];
 
 // Goocoo quests (header 0x474, Wii U slot 0x49C): one 0-terminated quest id
 // list per Goocoo quest type (the index). getOpenDuckQuestTypeBit opens type n
@@ -231,7 +285,10 @@ struct GoocooQuestListPtr {
 GoocooQuestListPtr goocooQuestLists[importantNums.numGoocooQuestLists] @ header.ptrs.goocooQuestLists [[name("Goocoo Quest Lists"), comment("Index = Goocoo quest type")]];
 
 // =======================
-// Exchange and costs. Item 0 in a cost is My Tore points.
+// Exchange (0x494) and the clothing / remodel series costs (0x498 / 0x49C).
+// Exchange: a slot with item 0 or count 0 is empty. Series costs: item 0 means
+// count My Tore points (moveEventFarmCareCatPointMake*), else item x count
+// (moveEventFarmCareCatItemMake*).
 // =======================
 
 struct GoocooItemCount {
@@ -242,7 +299,7 @@ struct GoocooItemCount {
 struct GoocooExchangeCost {
     u16 item                    [[format("getItemName")]];
     u16 count;
-    u16 flags                   [[comment("Bit 0: must be owned")]];
+    u16 flags                   [[comment("Bit 0: the exchange is listed only while you own at least one (checkOpenTradeItem)")]];
 };
 
 fn goocooLabel(u32 p) {
@@ -251,14 +308,14 @@ fn goocooLabel(u32 p) {
 };
 
 struct GoocooExchange {
-    u32 label                   [[format("goocooLabel")]];
+    u32 label                   [[format("goocooLabel"), comment("Set name of a row that gives several items; 0: the name of received[0], with x count when count > 1")]];
     GoocooItemCount received[6];
     GoocooExchangeCost costs[6];
 };
 
 GoocooExchange goocooExchanges[importantNums.numGoocooExchanges] @ header.ptrs.goocooExchanges [[name("Goocoo Exchanges")]];
-GoocooItemCount goocooClothesCosts[importantNums.numGoocooClothesCosts] @ header.ptrs.goocooClothesCosts [[name("Goocoo Clothes Costs"), comment("Per clothing series")]];
-GoocooItemCount goocooRemodelCosts[importantNums.numGoocooRemodelCosts] @ header.ptrs.goocooRemodelCosts [[name("Goocoo Remodel Costs"), comment("Per remodel set")]];
+GoocooItemCount goocooClothesCosts[importantNums.numGoocooClothesCosts] @ header.ptrs.goocooClothesCosts [[name("Goocoo Clothes Costs"), comment("Row i: clothing series i + 1 (0x400 name i + 1), listed while bit i of save ctx 0x1FE5C is clear")]];
+GoocooItemCount goocooRemodelCosts[importantNums.numGoocooRemodelCosts] @ header.ptrs.goocooRemodelCosts [[name("Goocoo Remodel Costs"), comment("Row i: remodel series i + 1 (0x470 name i + 1), listed while bit i of save ctx 0x1FE59 is clear")]];
 
 // =======================
 // Goocoo Pot
@@ -266,16 +323,17 @@ GoocooItemCount goocooRemodelCosts[importantNums.numGoocooRemodelCosts] @ header
 
 struct GoocooPotMaterial {
     u16 item                    [[format("getItemName")]];
-    u8  type                    [[comment("Category filter")]];
-    u8  band;
+    u8  type                    [[comment("Species filter (Wii U makeDuckStewSelectSpeciesList): equal to DLL 0x11921DE8[filter], filter 13 = all")]];
+    u8  band                    [[comment("Rank zone (Wii U checkOpenDuckStewRankZone, HD 0x10779960): unlock test; filter 9 = all")]];
     u8  quantity                [[comment("Needed")]];
-    u8  soups                   [[comment("Count of each of the 3 Gook Soups")]];
+    u8  soups                   [[comment("Soups per pot: the one soup of goocooPotSoups the pot result gives, x pots")]];
     u16 welldoneItem            [[format("getItemName"), comment("Default well-done item (getWelldoneItem)")]];
     u16 welldoneItemColumn      [[comment("Column of goocooPotWelldoneItems; 12 or more: no swap")]];
     u16 bonusItem               [[format("getItemName")]];
     u8  welldoneQuantity        [[comment("Quantity of welldoneItem")]];
     u8  secretBookQuantity      [[comment("Quantity of the Secret Book item; 0: no swap")]];
-    u16 bonusChance             [[comment("Percent")]];
+    u8  bonusChance             [[comment("Percent: rand % 100 below it adds bonusItem x 1; 100 or more is drawn as sure")]];
+    u8  unk0F                   [[comment("no reader")]];
 };
 
 GoocooPotMaterial goocooPotMaterials[importantNums.numGoocooPotMaterials] @ header.ptrs.goocooPotMaterials [[name("Goocoo Pot Materials")]];
@@ -296,36 +354,44 @@ struct GoocooPotWelldoneItems {
 } [[name(className(std::core::array_index()))]];
 
 GoocooPotWelldoneItems goocooPotWelldoneItems[14] @ header.ptrs.goocooPotWelldoneItems [[name("Goocoo Pot Well-Done Items")]];
-ItemId goocooPotSoups[3] @ header.ptrs.goocooPotSoups [[name("Goocoo Pot Soups"), comment("Thin, Tasty and Rich Gook Soup; the rest of the table is not mapped")]];
+ItemId goocooPotSoups[3] @ header.ptrs.goocooPotSoups [[name("Goocoo Pot Soups"), comment("Thin, Tasty and Rich Gook Soup: [0] / [1] / [2] for pot state 0x6D / 0x6E / 0x6F (0x6E also gives the well-done and bonus items); then 2 zero bytes")]];
 
-// Clothing series names (header 0x400): name 0 then one per clothing series
-// (important numbers + 0x18E, numGoocooClothesCosts). The Goocoo clothing menu (FUN_1064C500) lists
+// Clothing series names (header 0x400): name n = clothing series n of the
+// accessory rows (0 = ギザギザシリーズ, whose rows are always listed); important
+// numbers + 0x144
+// names (= + 0x18E numGoocooClothesCosts + 1, the readers' bound; cost row i is
+// series i + 1). Get_prize_name (Get_prize_name) case 0x12 returns name [id].
+// The Goocoo clothing menu (FUN_1064C500) lists
 // name 0 when FUN_1078FA10(0) (a bit of DLL table 0x118E19AC for the farm
 // stage) is set and name i when bit i - 1 of save +0x1FE5C is set, 10 per page.
 struct GoocooClothingSeriesName {
     std::string::NullString *name : u32;
 } [[inline]];
 
-GoocooClothingSeriesName goocooClothingSeriesNames[importantNums.numGoocooClothesCosts + 1] @ header.ptrs.goocooClothingSeriesNames [[name("Goocoo Clothing Series Names")]];
+GoocooClothingSeriesName goocooClothingSeriesNames[importantNums.numGoocooClothingSeriesNames] @ header.ptrs.goocooClothingSeriesNames [[name("Goocoo Clothing Series Names")]];
 
-// Goocoo farm timers (header 0x4C4, important numbers + 0x1A0 u32 values),
-// read by goocoo_farm_timers_update and initialize_npc_data: 4 timers (npc
-// +0x4E8) start at random % interval and fire every interval seconds; each
-// firing raises its counter (npc +0x508..+0x50B) up to counterCap. While a
-// counter is above 0 and its flag (npc +0x4C0..+0x4CC) is set, one is spent to
-// place an object (FUN_1078DD70) with that timer's slot value (stored at npc
-// +0x49C; the values look like colours with alpha 0xFF).
+// Goocoo farm timers (header 0x4C4, important numbers + 0x1A0 = 7 u32
+// values; Wii U slot 0x4EC), read by executeAreaPartGimmick (Wii U
+// executeAreaPartGimmick) and initializeAreaDuck (Wii U initializeAreaDuck):
+// a period timer (npc +0x4E0) moves on by interval each time it passes; each
+// of the 4 farm timers (npc +0x4E8) that passes is re-armed to period + random
+// % interval and raises its counter (npc +0x508..+0x50B, one byte each) while
+// below counterCap. While a counter is above 0 and its flag (npc +0x4C0..+0x4CC)
+// is set, one is spent: lotsAreaDropItem (Wii U lotsAreaDropItem) draws
+// the farm's item, dropped at fixed farm item slot i (setTalkDropItemFixSlot,
+// 0x1078DD70) with that farm's colour.
 struct GoocooFarmTimers {
     u32 interval [[comment("Seconds")]];
-    u32 counterCap;
-    u32 slotValues[4] [[comment("One per timer 0-3")]];
-    u32 unk18;
+    u8  counterCap [[comment("Read as a byte (CMP AL, byte ptr [+4]; Wii U too)")]];
+    padding[3];
+    u32 dropColors[4] [[comment("Farm i drop sparkle colour (npc +0x49C; talk drops use 0xFFBFBFFF)")]];
+    u32 unk18 [[comment("no reader")]];
 };
 
 GoocooFarmTimers goocooFarmTimers @ header.ptrs.goocooFarmTimers [[name("Goocoo Farm Timers")]];
 
-// Goocoo farm harvests (header 0x4C8, goocoo_farm_harvest_roll): what a farm
-// timer firing places (goocoo_farm_timers_update -> FUN_1078DD70). 4 farms
+// Goocoo farm harvests (header 0x4C8, lotsAreaDropItem): what a farm
+// timer firing places (executeAreaPartGimmick -> FUN_1078DD70). 4 farms
 // (timers 0-3; the items are fish, mushrooms, honey and husks, bugs) x 5 rank
 // bands: from the HR thresholds (hr_rank_threshold_table) bands 1-2 -> 0,
 // 3-4 -> 1, 5 -> 2, 6-7 -> 3; G rank -> 4. A row is drawn by weight; an item
@@ -351,12 +417,14 @@ GoocooFarmHarvestFarm goocooFarmHarvests[4] @ header.ptrs.goocooFarmHarvests [[n
 
 // Goocoo group gathering (header 0x4A0 / 0x4B0): quest_complete_idle_update
 // sets getFarmDuckStaticStruct() +0x2E; at the next garden start
-// init_npc_subsystem_2 rolls n in [2, N] of the Goocoos present (FUN_10792820:
-// profile +4 is 6 or 8-11), gives each a slot 0..n-1, rolls a spot set of
-// 0x4A0 row [n - 2] (count / n sets) and adds a random [min, max] of 0x4B0 to
-// each participant's profile +0x29 (kept in 0-100). Goocoo action 0x1A
-// (FUN_107871D0) places the Goocoo at spot [set x n + slot]. When two or more
-// reach 100, layEgg rolls an egg's skin (header 0x484 to 0x490).
+// updateDuckState (Wii U twin, HD 0x107920D0) rolls n in [2, N] of the Goocoos
+// present (getDuckNumberActive, HD 0x10792820: profile +4 is 6 or 8-11), gives
+// each a slot 0..n-1, rolls a spot set of 0x4A0 row [n - 2] (count / n sets),
+// runs layEgg (egg skin roll, header 0x484 to 0x490: the slot 0 Goocoo and one
+// other participant whose group gauge is already 100 or more), then adds a
+// random [min, max] of 0x4B0 to each participant's profile +0x29 (kept in
+// 0-100). Goocoo action 0x1A (moveDuckTalk, HD 0x107871D0) places the Goocoo
+// at spot [set x n + slot].
 struct GoocooGroupSpot {
     float x;
     float y;
@@ -366,7 +434,7 @@ struct GoocooGroupSpot {
 };
 
 struct GoocooGroupSpotList {
-    s32 count [[comment("Participants x spot sets")]];
+    u32 count [[comment("Participants x spot sets")]];
     GoocooGroupSpot *spots[count] : u32;
 };
 
@@ -469,7 +537,7 @@ struct StrayGoocooEquipMeshLots {
 };
 
 GoocooNewSkinLots goocooNewSkinLots[importantNums.numGoocooNewSkinLots] @ header.ptrs.goocooNewSkinLots [[name("Goocoo New Skin Lots"), comment("Row = farm state +0x21")]];
-u8 goocooSkinClasses[importantNums.numGoocooSkinClasses] @ header.ptrs.goocooSkinClasses [[name("Goocoo Skin Classes"), comment("Class 0-5 of each skin")]];
+u8 goocooSkinClasses[importantNums.numGoocooSkinClasses] @ header.ptrs.goocooSkinClasses [[name("Goocoo Skin Classes"), comment("Index = skin (profile +5): class 0-5; layEgg's any-skin draw loops a fixed 25")]];
 u8 goocooSkinClassScores[6] @ header.ptrs.goocooSkinClassScores [[name("Goocoo Skin Class Scores"), comment("Index = class")]];
 GoocooEggClassLots goocooEggClassLots[importantNums.numGoocooEggClassLots] @ header.ptrs.goocooEggClassLots [[name("Goocoo Egg Class Lots"), comment("Row = score A + score B")]];
 GoocooEggSkinSourceLots goocooEggSkinSourceLots[importantNums.numGoocooEggSkinSourceLots] @ header.ptrs.goocooEggSkinSourceLots [[name("Goocoo Egg Skin Source Lots")]];

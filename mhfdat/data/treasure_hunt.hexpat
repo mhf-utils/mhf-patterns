@@ -15,7 +15,7 @@
 // the spot taken (+0xB3A). Identical on the EN, JP and rain files.
 // =======================
 
-enum TreasureHuntReveal : u16 {
+enum TreasureHuntReveal : u8 {
     Always = 0,
     MainObjective1 = 1, // quest objective 1 met (quest_objective_is_met(1))
     MainObjectives1And2 = 2,
@@ -29,7 +29,8 @@ struct TreasureHuntSpot {
     u16 stage;
     float position[3];
     ItemId item [[comment("What gathering the spot gives")]];
-    TreasureHuntReveal reveal;
+    TreasureHuntReveal reveal [[comment("Byte read (treasure_hunt_spot_reveal: movzx byte quest work +0xB36)")]];
+    padding[1];
 };
 
 TreasureHuntSpot treasureHuntSpots[importantNums.numTreasureHuntSpots] @ header.ptrs.treasureHuntSpots [[name("Treasure Hunt Spots")]];

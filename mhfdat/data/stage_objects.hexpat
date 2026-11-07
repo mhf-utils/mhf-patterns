@@ -5,7 +5,7 @@
 #include <mhfdat/data/equipment_counts.hexpat>
 
 // =======================
-// Stage objects placed at quest start (stage_objects_place, from gGame11 through
+// Stage objects placed at quest start (ExcuteLayoutCreate, from gGame11 through
 // FUN_1139B6E0 / FUN_1139B750). Header 0x2BC gives each stage its object budget
 // and its range of points in header 0x2B0. Categories are placed in the order
 // 1, 2, 0: category 1 places 2 objects (6 tries each, its own random seed),
@@ -14,20 +14,21 @@
 // (FixedPoint: once per run), its position is random in the box or the min
 // corner, its yaw is yawDegrees +/- 20 degrees (-1: any yaw). Its pickGroup
 // draws a result and a variant by weight in header 0x2B8 among the rows that
-// pass stage_object_pick_condition; stage_object_position_is_free then checks
+// pass CheckSom; CheckLayout then checks
 // the position, and SetSom adds the object (result, variant, shape,
 // category, yaw, position). Header 0x2B4 says how each (result, variant) object
-// is spawned. Objects whose kind has clearance > 0.99 are capped at 2 a stage
-// (4 when more than one category 1 object of results 300-303 is placed).
-// What the objects are in game is not traced (results 300-310 depend on server
-// values of the stage).
+// is spawned. Kinds with pickRange > 0.99 are gather points (Wii U
+// CheckSomPick): at most 2 a stage (4 when more than one balloon, results
+// 300-303, is placed: Wii U GetSomPickPointMax / GetPickBalloonCount); results
+// 300-304 are balloons (Wii U IsBalloonId). Wii U twins (class CMapEdit): 0x2B0
+// GetSomLayout, 0x2B4 GetSomCommon, 0x2B8 GetSomPreset, 0x2BC GetStageCommon.
 // =======================
 
 struct StageObjectIndexEntry {
     s16 stage;
     s16 budget [[comment("Category 1 takes 2, category 2 takes 1, category 0 a random share of the rest")]];
-    s16 firstPoint;
-    s16 pointCount;
+    u16 firstPoint;
+    u16 pointCount;
 };
 
 struct StageObjectIndex {
@@ -44,15 +45,15 @@ enum StageObjectPointShape : s16 {
 
 enum StageObjectCategory : u16 {
     Common = 0, // results 400-409, 1200 and 1208 are checked against the objects already placed (stage_objects_count_result counts)
-    StageState = 1, // results 300-304: allowed when the stage's server value (FUN_108E4650) is 1-5
-    ScoreLevel = 2 // results 305-310: allowed when FUN_108E4800 (a score / 8 or 10) is 0-5
+    StageState = 1, // balloons: result 299 + v allowed when the stage's server value v (FUN_108E4650) is 1-5
+    ScoreLevel = 2 // result 305 + s allowed when s = FUN_108E4800 (a score / 8 or 10) is 0-5
 };
 
 struct StageObjectPoint {
     StageObjectPointShape shape;
     StageObjectCategory category;
-    s16 yawDegrees [[comment("-1: any yaw; else +/- 20 degrees (stage_object_yaw_roll)")]];
-    s16 pickGroup;
+    u16 yawDegrees [[comment("0xFFFF: any yaw; else read unsigned, +/- 20 degrees (GetDataToDir)")]];
+    u16 pickGroup;
     float min[3];
     float max[3];
 };
@@ -70,14 +71,16 @@ struct StageObjectPicks {
 };
 
 // How each (result, variant) object is spawned (header 0x2B4,
-// stage_object_kind_find); ends at a negative result. stage_objects_spawn: a
-// random yaw, a random color (each channel in its range, then scaled by the
-// stage light color when there is one) and a random scale. 
-// stage_object_position_is_free rejects a position closer than radius + the
-// other object's radius to a placed object, closer than clearance + 200 when
-// clearance > 0, inside an exclusion box (+ radius) or a quest file area.
+// GetSomCommon, Wii U GetSomCommon); ends at a negative result.
+// ExcuteLayoutLoad (Wii U ExcuteLayoutLoad): a tilt to the ground slope
+// (alignToGround), a random color (each channel in its range, then scaled by
+// the stage light color when there is one) and a random scale.
+// CheckLayout rejects a position (x / z distance) closer
+// than radius + the other object's radius to a placed object, closer than
+// pickRange + 200 when pickRange > 1.0, inside an exclusion box (+ radius) or a
+// quest file area.
 bitfield StageObjectKindFlags {
-    randomYaw : 1;
+    alignToGround : 1 [[comment("Rotations from the ground normal at the point (acos of its y, atan2 of x / z)")]];
     randomColor : 1;
     randomColorAlt : 1 [[comment("Tested with randomColor (mask 6); not set in the data")]];
     padding : 5;
@@ -87,7 +90,7 @@ struct StageObjectKind {
     s16 result;
     StageObjectKindFlags flags;
     u8 variant;
-    float clearance [[comment("> 0.99: a large object (capped per stage)")]];
+    float pickRange [[comment("Gather reach in x / z (player_find_nearby_gather_interact); > 0.99: a gather point, capped per stage")]];
     float radius;
     s16 red[2] [[comment("min, max; -1: none")]];
     s16 green[2];
@@ -157,13 +160,13 @@ struct StageObjectLevel3Chance {
 
 StageObjectLevel3Chance stageObjectLevel3Chances[2] @ header.ptrs.stageObjectLevel3Chances [[name("Stage Object Level 3 Chances"), comment("[0] not G, [1] G")]];
 
-// Stage map background colours (header 0x610): one D3DCOLOR per map id
-// (GameWork +0x34, no bounds check). quest_stage_map_screen_draw (from
-// quest_update) passes [slot + mapId x 4] to stage_map_draw_background, which
-// fills the screen with 512 x 512 quads of that vertex colour, then draws a
-// white centred quad; stage_map_draw_markers then draws the monster, player and
-// object markers. No count: 98 rows (map ids 0-97) are non-zero, then 0x18 zero
-// bytes. Which in-game screen this is was not proven.
+// Loading screen wallpaper colours (header 0x610): one D3DCOLOR per map id
+// (GameWork +0x34, no bounds check). DispWholeMap (Wii U
+// DispWholeMap, from quest_update) passes [slot + mapId x 4] to
+// DispLoadingWallPaper (Wii U DispLoadingWallPaper), which fills the
+// screen with 512 x 512 quads of that vertex colour, then draws a white centred
+// quad; disp_whole_map2 (Wii U disp_whole_map2) then draws the whole map.
+// No count: 98 rows (map ids 0-97) are non-zero, then 0x18 zero bytes.
 struct StageMapBackgroundColor {
     u8 blue;
     u8 green;
@@ -171,4 +174,4 @@ struct StageMapBackgroundColor {
     u8 alpha [[comment("0xFF in every row")]];
 };
 
-StageMapBackgroundColor stageMapBackgroundColors[98] @ header.ptrs.stageMapBackgroundColors [[name("Stage Map Background Colors"), comment("Index = map id")]];
+StageMapBackgroundColor stageMapBackgroundColors[98] @ header.ptrs.stageMapBackgroundColors [[name("Loading Wallpaper Colors"), comment("Index = map id")]];

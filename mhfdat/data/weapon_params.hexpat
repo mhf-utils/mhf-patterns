@@ -163,25 +163,28 @@ HornMelody hornMelodies[importantNums.numHornMelodies] @ header.ptrs.hornMelodie
 HornMelody hornExtremeMelodies[importantNums.numHornExtremeMelodies] @ header.ptrs.hornExtremeMelodies [[name("Horn Extreme Melodies")]];
 
 // =======================
-// Length unknown. ezemania2's editor reads 11 bonus slot rows and 23 coating
-// rows; on ZZ the space up to the next table holds 65 rows of the same shape
-// (values 0 to 15, then zeros) and 28 (an s16 and 5 floats each). Only the
-// rows that editor reads are shown.
+// Bowgun level modifiers (header 0xB0; Wii U Get_equip_atk_eq, get_evo_atk,
+// shell06_*), rows of 0x18 bytes up to the next table (30 on ZZ).
+// gunner_load_bowgun_level_modifier_row copies the row of the equipped ranged
+// weapon to the shot work +0x20: row levelModGroup x 5 + (equipment level &
+// 0xF) (rows 0-19), or 25 + get_tower_working_stat_value for a Tower weapon
+// (rows 25-28); an evolution gun takes the floats of its evolution row
+// instead. Rows 20 / 21 (21 for a Heavy Bowgun) are added when the shot flags
+// (work +0x38) have 0x20, row 22 when they have 0x10. Rows 23, 24, 29: zeros,
+// no reader.
 // =======================
 
-struct BonusSlotRow {
-    s16 slots[4];
-};
-
-BonusSlotRow weaponBonusSlots[11] @ header.ptrs.weaponBonusSlots [[name("Weapon Upgrade Bonus Slots (length unchecked)")]];
-
-struct CoatingModifier {
-    s16   delta;
+struct BowgunLevelModifier {
+    s16   attackBonus       [[comment("added to the ranged weapon's attack (WeaponStat_CalculateEffectiveAttack, get_ranged_effective_raw_damage, WeaponStat_GetPreviewValue, calculate_special_weapon_bonus)")]];
     padding[2];
-    float values[5];
+    float shotSpeedMult       [[comment("gunner_shot_hitbox_init: x the shot table base speed; hit +0x50 / +0x54 / +0x58 = base + random x the next field")]];
+    float shotSpeedRandomMult [[comment("gunner_shot_hitbox_init: x the shot table random speed range (x2 with shot flag 0x10, x a Hunter pearl skill value)")]];
+    float shotHit60RandomMult [[comment("gunner_shot_hitbox_init: x the shot table random term of hit +0x60, same scalings")]];
+    float flight1CMult        [[comment("gunner_shot_flight_update (0x111E2CB0): x shot table +0x1C, same scalings as shotSpeedRandomMult")]];
+    float critDistanceScale   [[comment("gunner_shot_critical_distance_band_update: the shot's distance band thresholds x it")]];
 };
 
-CoatingModifier coatingModifiers[23] @ header.ptrs.coatingModifiers [[name("Coating Modifiers (length unchecked)")]];
+BowgunLevelModifier bowgunLevelModifiers[(nextTable(header.ptrs.bowgunLevelModifiers) - header.ptrs.bowgunLevelModifiers) / 0x18] @ header.ptrs.bowgunLevelModifiers [[name("Bowgun Level Modifiers")]];
 
 // =======================
 // Weapon reach bodies (header 0xD8; Wii U getWeaponReachBodyPtr): rows of 8
@@ -273,7 +276,7 @@ struct WeaponPos {
 
 WswordEftModelRanges wswordEftModelRanges @ header.ptrs.wswordEftModelRanges [[name("Dual Blades Effect Model Ranges")]];
 WswordEftRow wswordEfts[wswordEftCount()] @ header.ptrs.wswordEfts [[name("Dual Blades Blade Effects")]];
-float wswordEftReachScale[8] @ header.ptrs.wswordEftReachScale [[name("Dual Blades Effect 05 Scale By Reach")]];
+float eft05ReachScale[8] @ header.ptrs.eft05ReachScale [[name("Effect 05 Scale By Reach"), comment("Every weapon: eft05_mat_calc scales the effect matrix by it at the weapon reach (the Dual Blades branch eft05_wsword_mat_calc too); Wii U eft05_mat_calc reads slot 0xD8")]];
 WeaponPos weaponPosByReach[8] @ header.ptrs.weaponPosByReach [[name("Weapon Position By Reach")]];
 
 // =======================
@@ -285,7 +288,8 @@ WeaponPos weaponPosByReach[8] @ header.ptrs.weaponPosByReach [[name("Weapon Posi
 // of the common render resource (DAT_1ED7D6A0 + 0x30), picked by the reader:
 // column 0 by the arrow shell (kind 24) draw FUN_11266EE0, columns 1 and 2 by
 // the two FUN_10B7FA70 draws (FUN_10B7F510), column 3 by
-// shell_atk_tbl_1162AFA8_i_b (shell work + 0x2C4). Column 4 has no reader.
+// shell_atk_tbl_1162AFA8_i_b (shell work + 0x2C4), column 4 by
+// shell_atk_tbl_1162AFA8_i_c (replaces shell work + 0x2C4 when not 0).
 // Rows 0 to 9: 9 is the largest row of 0x580.
 // =======================
 
@@ -299,7 +303,7 @@ struct BowModelMaterials {
     u16 fxMaterial1;
     u16 fxMaterial2;
     u16 atkTbl1162AFA8Material;
-    u16 unk08;
+    u16 atkTbl1162AFA8ChildMaterial [[comment("shell_atk_tbl_1162AFA8_i_c: row = shell work +0x2CE (copied from the parent shell); not 0 replaces work +0x2C4")]];
 };
 
 BowModelMaterialRow bowModelMaterialRows[importantNums.numBowModelMaterialRows] @ header.ptrs.bowModelMaterialRows [[name("Bow Model Material Rows")]];
@@ -340,25 +344,30 @@ struct BowArrowKoValues {
 BowArrowKoValues bowArrowKoValues @ header.ptrs.bowArrowKoValues [[name("Bow Arrow KO Values")]];
 
 // =======================
-// Motion values (header 0x63C, and 0x74C for the alternate bank): one row per
-// action id below 0x35, empty when valid is 0. A hit's key - 1 (0 to 11)
-// picks the column: the raw motion value goes to the hit, the element one
-// too, the status power when it is not 0.
+// Bowgun compressed shot tables (Wii U GetShellCompressTable: header 0x63C,
+// or 0x74C when the shot is "perfect"; Wii U slots 0x664 / 0x748). One row per
+// bowgun ammo type (the shot kind, hit +6, below 0x35; same index as 0xA0),
+// used only when the 0x63C row is valid (Wii U IsShellCompress; the 0x74C
+// valid byte is never read). The column is the compress level - 1, capped to
+// 11 (shot work +0x3E; Wii U GetShellCompressCount). 0x74C is taken when shot
+// work +0x40 is set: shell06_set_sub copies PlayerWork pl_statusFlags bit 24
+// (byte +0x61F bit 0; Wii U isShellPerfect = chkPlayerSts(0, 0x1000000)).
+// Only gunner shot code reads them: they are not melee motion values.
 // =======================
 
-struct MotionValueRow {
-    u8    valid;
+struct ShellCompressRow {
+    u8    valid [[comment("Wii U IsShellCompress; only the 0x63C row is tested")]];
     padding[3];
-    u16   raw[12];
-    u8    element[12];
-    u8    unk28[12];
-    u8    statusPower[12];
-    float scale[12];
-    u16   rawSecondary[12];
+    u16   raw[12]             [[comment("Wii U GetShellCompressDamage: replaces the hit value (hit +0x6C)")]];
+    u8    element[12]         [[comment("Wii U GetShellCompressStan: hit +0x89 (the hit's element / KO byte)")]];
+    u8    recoilAdd[12]       [[comment("Wii U GetShellCompressBackPower, only from Get_shell_backpower (Wii U Get_shell_backpower): added to the ammo recoil (header 0xA0 +0) when pw +0xDF6 (column + 1) is set")]];
+    u8    statusPower[12]     [[comment("Wii U GetShellCompressEffect: replaces the hit +0x80 value when not 0")]];
+    float hitValueRate[12]    [[comment("Wii U GetShellCompressHitValueRate: hit +0x80 x it (shot kinds 0x16-0x1C first go through 0x1081F730, Wii U calcJoutaiIjouValue)")]];
+    u16   explosionDamage[12] [[comment("Wii U GetShellCompressExploseDamage, only in shell09_i (kind 9 shell init): replaces the hit value when not 0 (Crag S rows 9-11)")]];
 };
 
-MotionValueRow motionValues[0x35] @ header.ptrs.motionValues [[name("Motion Values")]];
-MotionValueRow motionValuesAlt[0x35] @ header.ptrs.motionValuesAlt [[name("Motion Values (alternate bank)")]];
+ShellCompressRow shellCompress[0x35] @ header.ptrs.shellCompress [[name("Shell Compress")]];
+ShellCompressRow shellCompressPerfect[0x35] @ header.ptrs.shellCompressPerfect [[name("Shell Compress (perfect shot)")]];
 
 // =======================
 // Random (ex G) melee weapons: the sharpness a rolled value gives, per weapon
@@ -385,10 +394,27 @@ RandomSharpnessList randomSharpnessLance @ header.ptrs.randomSharpnessLance [[na
 RandomSharpnessList randomSharpnessHammerHorn @ header.ptrs.randomSharpnessHammerHorn [[name("Random Sharpness: Hammer, Hunting Horn")]];
 RandomSharpnessList randomSharpnessGunlance @ header.ptrs.randomSharpnessGunlance [[name("Random Sharpness: Gunlance")]];
 
-// Random gunlances roll their shell type in header 0x4F0 (normal, long,
-// spread). Header 0x4F4: the draw speed the handling skill (or a G finesse
-// weapon) sets when it is faster than the weapon's own.
+// Random gunlances roll their shell type in header 0x4F0: row = get_ex_g_num
+// kind 7 (0-2), value = shell type (0 Normal, 1 Spread, 2 Long: the mhfpac
+// +0x998 text ui_draw_gunlance_shelling shows; get_melee_weapon_attribute_resolved
+// returns shelling level x 3 + this). Header 0x4F4: the weapon draw /
+// sheathe speed set by a G finesse weapon (always) or Weapon Handling (skill
+// 0x161, only when larger): x 2.0 into the motion speeds PlayerWork +0x1E0 /
+// +0x230 (player_weapon_draw_sheathe_action_update, Wii U pl_mv004) and as is
+// into PlayerWork +0xC24 (weapon_draw_speed_apply_handling_skill). The float
+// after it (1.0) has no reader.
 u8 randomShellTypes[3] @ header.ptrs.randomShellTypes [[name("Random Gunlance Shell Types")]];
+
+// Random hunting horns take their 3 note colours from header 0x4EC: row =
+// get_ex_g_num kind 6 (get_ex_g_weapon_music; the ex G rows roll 0-9 on the 3
+// files), note n = row x 3 + n; normal horns use the DLL sets at 0x11880F68
+// instead. Readers: Fue_color_get (Fue_color_get, Wii U twin reads slot 0x518),
+// weapon_horn_append_note_and_try_song, ui_draw_huntinghorn_notes and FUN_1098B480.
+struct ExGHornNoteSet {
+    u8 notes[3];
+};
+
+ExGHornNoteSet exGHornNoteSets[10] @ header.ptrs.exGHornNoteSets [[name("Ex G Horn Note Sets")]];
 
 // Random (ex G) weapons (header 0x36C, important numbers + 0xFA rows): a weapon
 // is random when chk_ex_g_weapon passes (type 6 / 7, weapon equipType & 0x10).
@@ -396,8 +422,11 @@ u8 randomShellTypes[3] @ header.ptrs.randomShellTypes [[name("Random Gunlance Sh
 // get_ex_g_next_rank): rank 1-16 is the top tier, 17-32 the mid tier, 33-1023
 // the base tier; the crafted id becomes the tier's weapon id (+2 mid, +4 top).
 // get_exgw_dat finds the row by weapon id and equip type; get_ex_g_num rolls a
-// stat in [min, max] of the tier (row + 8 + tier x 0x14), by kind 0-8; for base
-// ranks 33-232 attack and sharpness sometimes use the mid ranges. An unrolled
+// stat in [min, max] of the tier (row + 8 + tier x 0x14), by kind 0-8. For roll
+// ranks 33-232, kind 0 takes the base attack range when stored rank % 100 < 50,
+// else the mid one, at percent (stored rank + seed) % 100; kind 1 takes the mid
+// range at (stored rank + 1 + seed) % 100 when stored rank % 100 < 50, else the
+// row is roll rank & 7 (ranges ignored); neither reads header 0x38C. An unrolled
 // weapon (rank 0) shows ranges from base min to top max; the top id gets a ★.
 struct ExGWeaponTier {
     u16 attackMin [[comment("Kind 0")]];
@@ -474,6 +503,15 @@ struct ExGArrowSet {
 
 ExGArrowSet exGArrowSets[15] @ header.ptrs.exGArrowSets [[name("Ex G Bow Arrow Sets")]];
 
+// Bow arrow sets (header 0xA8; Wii U getArrowSetType, shell24_set,
+// Skill_valid_chk): the row of a non-random bow is its shotSetId (ranged
+// weapon +0x20), the same shape as header 0x3A4. Also read by the Tower type
+// change menu (tower_type_change_validate_materials, tower_jewel_apply_upgrade,
+// tower_type_change_draw_labels): column + get_tower_working_stat_value, /6
+// and %6 give the shot kind and level. Rows up to the next table (68 on ZZ;
+// bows use rows 0-62, 0-66 on the JP file).
+ExGArrowSet bowArrowSets[(nextTable(header.ptrs.bowArrowSets) - header.ptrs.bowArrowSets) / 8] @ header.ptrs.bowArrowSets [[name("Bow Arrow Sets")]];
+
 // Random (ex G) weapon roll percents (get_ex_g_param0_per / param1_per /
 // param2_per, called by get_ex_g_num). set_ex_g_srand turns the stored rank
 // (equipment entry +4 & 0x3FF) into the roll rank: s = stored rank + weapon
@@ -504,9 +542,12 @@ ExGRollPercents exGTopTierRollPercentsGunlance[17] @ header.ptrs.exGTopTierRollP
 ExGRollPercents exGMidTierRollPercents[16] @ header.ptrs.exGMidTierRollPercents [[name("Ex G Mid Tier Roll Percents")]];
 ExGRollPercents exGMidTierRollPercentsGunlance[16] @ header.ptrs.exGMidTierRollPercentsGunlance [[name("Ex G Mid Tier Roll Percents: Gunlance")]];
 
-// Base tier overrides (header 0x38C, Gunlance 0x508): a row whose stored rank
-// equals the weapon's replaces the default percent (stored rank + kind + seed)
-// % 100; the 0xFFFF row ends the list but is counted
+// Base tier overrides (header 0x38C, Gunlance 0x508; get_ex_g_param2_per): from
+// roll rank 33 (kinds 0 and 1: from roll rank 233) the percent defaults to
+// (stored rank + c + seed) % 100, c = 0, 1, 2, 3, 0x13, 4, 6, 7, 8 by kind (kind
+// 5: 49 becomes 50); every row whose storedRank equals the weapon's stored rank
+// replaces it with its column (all rows scanned, last match wins). The 0xFFFF
+// row is counted and never matches.
 struct ExGBaseTierOverride {
     u16 storedRank;
     ExGRollPercents percents;
@@ -517,35 +558,29 @@ ExGBaseTierOverride exGBaseTierRollOverrides[importantNums.numExGBaseTierRollOve
 ExGBaseTierOverride exGBaseTierRollOverridesGunlance[importantNums.numExGBaseTierRollOverridesGunlance] @ header.ptrs.exGBaseTierRollOverridesGunlance [[name("Ex G Base Tier Roll Overrides: Gunlance")]];
 float handlingDrawSpeed @ header.ptrs.handlingDrawSpeed [[name("Handling Draw Speed")]];
 
-// Gunner shot power (header 0x1C8): pointers picked by the hit's ammo +0x1A,
-// each to a u16 list indexed by the hit's byte +0x0B; the value is the
-// shot's power (hit +0x6C). The lists follow the pointers in the same block
-// (several pointers share one), each ending at 0xFFFF and padded to 4 bytes,
-// so the pointers stop where the first list starts: 20 pointers to 14 lists
-// on the ZZ EN file, and the block ends at the next header table.
-struct ShotPowerList {
-    u16 power[while(std::mem::read_unsigned($, 2) != 0xFFFF)];
+// Bow arrow hit values (header 0x1C8, Wii U slot 0x1F0): shell24_change_atck_data
+// (bow arrow shells) reads it only when the shot's coating kind (shot work +0x0C)
+// is 5: pointer [shot type] (shot work +0x1A, the pBowChargeTexts index, below
+// 0x14 in shell24_set / getArrowSetType), then u16 [arrow index] (hit +0x0B) is
+// the hit value (hit +0x6C); for shot type 0x12 with skill 0xB4 and FUN_10A8AF10
+// it is x 1.5, & 0xFF. A list has as many values as the shot type has arrows
+// (DLL table 0x11695990); the lists follow the 20 pointers (several share one),
+// each ending at 0xFFFF (no reader) and padded to 4 bytes.
+struct BowArrowHitValueList {
+    u16 hitValue[while(std::mem::read_unsigned($, 2) != 0xFFFF)];
     u16 end;
 };
 
-fn shotPowerPointerCount() {
-    u32 p = header.ptrs.gunnerShotPower;
-    u32 first = std::mem::read_unsigned(p, 4);
-    u32 n = 0;
-    while (p + n * 4 < first) {
-        if (std::mem::read_unsigned(p + n * 4, 4) < first)
-            first = std::mem::read_unsigned(p + n * 4, 4);
-        n += 1;
-    }
-    return n;
-};
-
-ptVar<ShotPowerList> gunnerShotPowerLists[shotPowerPointerCount()] @ header.ptrs.gunnerShotPower [[name("Gunner Shot Power Lists")]];
+ptVar<BowArrowHitValueList> bowArrowHitValues[20] @ header.ptrs.bowArrowHitValues [[name("Bow Arrow Hit Values (coating kind 5)")]];
 
 // HC Kai armor (armor flag 0x100; Wii U PlGetHCkaiCriDmgValue /
-// PlGetHCkaiDefValue), in HC quests or G-rank fields, by the number of worn
-// HC Kai pieces (0-5): header 0x5B0 adds a multiplier to critical hits (all
-// 0 on ZZ), header 0x5B4 adds defense.
+// PlGetHCkaiDefValue), in HC quests or G-rank fields, or when
+// Pl_G_Class_S_act_ck passes. 0x5B0, by the worn HC Kai pieces (0-5): a
+// critical hit's multiplier becomes multiplier x (1 + v) (all 0 on ZZ).
+// 0x5B4 adds defense (player_recalc_defense_value_basic / _full, Wii U
+// Pl_def_adj_calc): v[HC Kai pieces] + v[count of id 7 in the 15 skill
+// context slots] in HC quests or G-rank fields, plus v[PlGClassSArmorNum +
+// PlGClassSZenithArmorNum] when Pl_G_Class_S_act_ck passes (no clamp).
 float hcKaiCritDamage[6] @ header.ptrs.hcKaiCritDamage [[name("HC Kai Critical Damage Bonus")]];
 s16 hcKaiDefense[6] @ header.ptrs.hcKaiDefense [[name("HC Kai Defense Bonus")]];
 
@@ -561,36 +596,47 @@ u16 hcKaiGClassSDamageReduction[6] @ header.ptrs.hcKaiGClassSDamageReduction [[n
 // weapon's element (rate 0) or status (rate 1) in qualifying quests.
 // G Armor fx pieces (armor flags 0x80, 0x4000, 0x8000; Wii U
 // Pl_G_Armor_fx_num, PlGetGousyuFxAttrValue / ...Int): header 0x598 / 0x59C
-// (rates) and 0x5A0 (element percent). HD only, pieces with armor flag
-// 0x10000: 0x968 / 0x96C (rates) and 0x970 (percent). The count of id 4 in
-// the player's 15 skill context slots (+0x50A) adds 0x968 / 0x96C too, and
-// 0x974 in the percent version (which the code indexes by the flag 0x10000
-// count). Readers: FUN_10A853A0 (rates), FUN_10A854C0 (percents),
-// player_status_attack_multiplier.
+// (rates) and 0x5A0 (element percent). HD only, Origin armor pieces
+// (armor flag 0x10000; the 200 pieces whose description carries the Origin
+// armor tag): 0x968 / 0x96C (rates) and 0x970 (percent). The count of Ele
+// Status UP Sigils (Tower armor sigil, skill id 4) in the 15 Tower armor sigil
+// slots (SkillWork +0x50A) adds 0x968 / 0x96C too, and 0x974 in the percent
+// version (which the code indexes by the Origin piece count, not the sigil
+// count). Readers: pl_get_armor_fx_attr_rate (rates),
+// pl_get_armor_fx_attr_percent (percents), player_status_attack_multiplier
+// (status rate, inline). A rate is 1 + the sum of (rate - 1) of its terms; the
+// percent is (0x970 by the Origin piece count, else 100) + 0x5A0 (no - 100)
+// + (0x974 - 100 when an Ele Status UP Sigil is slotted), so G Armor fx pieces alone give
+// 100 + 102..110. Index = sum of the three flag counts (each at most 5).
 // =======================
 
 float gArmorFxElementRate[6] @ header.ptrs.gArmorFxElementRate [[name("G Armor Fx Element Rate")]];
 float gArmorFxStatusRate[6] @ header.ptrs.gArmorFxStatusRate [[name("G Armor Fx Status Rate")]];
 s32 gArmorFxElementPercent[6] @ header.ptrs.gArmorFxElementPercent [[name("G Armor Fx Element Percent")]];
-float armorFlag10000ElementRate[6] @ header.ptrs.armorFlag10000ElementRate [[name("Armor Flag 0x10000 Element Rate")]];
-float armorFlag10000StatusRate[6] @ header.ptrs.armorFlag10000StatusRate [[name("Armor Flag 0x10000 Status Rate")]];
-s32 armorFlag10000ElementPercent[6] @ header.ptrs.armorFlag10000ElementPercent [[name("Armor Flag 0x10000 Element Percent")]];
-s32 skillSlotId4ElementPercent[6] @ header.ptrs.skillSlotId4ElementPercent [[name("Skill Slot Id 4 Element Percent")]];
+float originArmorElementRate[6] @ header.ptrs.originArmorElementRate [[name("Origin Armor Element Rate"), comment("pl_get_armor_fx_attr_rate (rate 0): [Origin pieces] and [Ele Status UP Sigils]; the sigil count is not clamped (up to 15 slots)")]];
+float originArmorStatusRate[6] @ header.ptrs.originArmorStatusRate [[name("Origin Armor Status Rate"), comment("pl_get_armor_fx_attr_rate (rate 1), player_status_attack_multiplier: same indexes")]];
+s32 originArmorElementPercent[6] @ header.ptrs.originArmorElementPercent [[name("Origin Armor Element Percent"), comment("pl_get_armor_fx_attr_percent: [Origin pieces], 100 when none")]];
+s32 eleStatusSigilElementPercent[6] @ header.ptrs.eleStatusSigilElementPercent [[name("Ele Status UP Sigil Element Percent"), comment("pl_get_armor_fx_attr_percent: v - 100 added when an Ele Status UP Sigil (id 4) is slotted, indexed by the Origin piece count (MOVSX ECX,SI at 0x10A85569)")]];
 
 // Attack added by the same armor piece counts (gou_armor_combo_attack_add,
 // player_recalc_attack_power_full / calculate_weapon_damage when the Gou combo
 // is on): header 0x5A8 by the G Armor fx piece count (armor flags 0x1, 0x80,
-// 0x4000, 0x8000) plus header 0x978 by the flag 0x10000 piece count + the
-// count of id 3 in the 15 skill context slots. Index 0 = no piece.
+// 0x4000, 0x8000) plus header 0x978 by the Origin piece count (armor flag
+// 0x10000) + the count of Attack UP Sigils (Tower armor sigil id 3) in the 15
+// sigil slots, with no clamp: [6] and [7] are 0 (Origin 5 + 1 sigil adds 0) and
+// [8] would read 0x974. Index 0 = no piece.
 u8 gArmorFxAttackAdd[8] @ header.ptrs.gArmorFxAttackAdd [[name("G Armor Fx Attack Add")]];
-u8 armorFlag10000AttackAdd[8] @ header.ptrs.armorFlag10000AttackAdd [[name("Armor Flag 0x10000 Attack Add")]];
+u8 originArmorAttackAdd[8] @ header.ptrs.originArmorAttackAdd [[name("Origin Armor Attack Add")]];
 
 // G armor skill up (Wii U isGouyuSkillUpEnable / Pl_G_Armor_act_ck, header
 // 0x3BC, count important numbers + 0x122): the row whose key matches the worn
 // pieces (Gousyu = equipableBy bit 6 + armor flag 0x1; Gousyu Fx = armor flags
 // 0x80 + 0x4000) gives the HP percent and the max stamina (PlayerWork +0xB2A)
-// the player needs; no matching row = row 0. When it holds, the Wii U
-// Pl_Skill_ck raises the active skills with Pl_G_Armor_skill_get.
+// the player needs; no matching row = row 0. HD: the skill up holds when this
+// check passes or a piece with armor flag 0x8000 or 0x10000 is worn or id 2 is
+// in the 15 skill context slots (player_hp_threshold_skill_condition_is_active,
+// FUN_1097B2E0; in town any G piece is enough), then Pl_G_Armor_skill_get raises
+// the active skills (FUN_1097B2E0, skills_sync_to_savedata; Wii U Pl_Skill_ck).
 struct GousyuSkillUpCondition {
     s32 gousyuArmorCount;
     s32 gousyuFxArmorCount;
@@ -614,7 +660,7 @@ u16 gousyuSkillUpSkillTypesEnd @ addressof(gousyuSkillUpSkillTypes) + sizeof(gou
 // 0x668: one list per reload speed tier (important numbers + 0x252 lists of
 // + 0x250 rows); 0x66C: the just shot list, the second one with sigil 0x47
 // (+ 0x254 rows each). A row has the shape of a weapon action cancel
-// (weapon_actions.hexpat), read by FUN_10A68690 the way
+// (weapon_actions.hexpat), read by weapon_just_action_check (0x10A68690) the way
 // weapon_action_cancel_check reads a cancel, but its conditions test the
 // player's motion id instead of the action step: input inputId pressed
 // inside window A, then nextActType starts inside window B.
@@ -652,8 +698,9 @@ ptVar<JustShotList> justShotLists[2] @ header.ptrs.justShotLists [[name("Just Sh
 
 // =======================
 // Gunlance shells (header 0x678; Wii U getBaseDamage, setWeaponAttributeData,
-// shell38_i): one row per gunlance attribute (hit +0xC74, important numbers
-// + 0x25C rows: 9 shell levels x 3 shell types, row = (level - 1) x 3 + type).
+// shell38_i): one row per gunlance attribute (PlayerWork +0xC74 of the hit's
+// owner, hit +0xAC; important numbers + 0x25C rows: 9 shell levels x 3 shell
+// types, row = (level - 1) x 3 + type).
 // we09_bomb spawns the shell through shell_k38_call_shell(type, level, action,
 // kind), and the hit's action (+0x42) and kind (+0x43) pick the values:
 // - actions 0-3, kind 0 or 1 (we09_bomb mode 0 / 1, one hit): shell*;
@@ -745,8 +792,9 @@ GunlanceChargeLevelRow<s16> gunlanceExShotSharpnessCost[3] @ header.ptrs.gunlanc
 
 // =======================
 // Light Bowgun rapid fire. Per ammo type (header 0xA0, up to the next
-// table): the shots of a burst and the speed level (an index in the client's
-// {1.0, 1.5, 1.6}). Per ranged weapon (header 0xC0, important numbers + 0x1A
+// table): the recoil and reload base of every bowgun shot, the shots of a
+// burst and the speed level (an index in the client's {1.0, 1.5, 1.6}).
+// Per ranged weapon (header 0xC0, important numbers + 0x1A
 // rows, sorted by weapon id): the ammo types it rapid fires; sigils add or
 // remove some. Super rapid fire (header 0x794, important numbers + 0x2C4
 // rows): the power of each ammo type is 0.5 x its multiplier at the chain
@@ -779,8 +827,8 @@ fn ammoName(u32 i) {
 };
 
 struct RapidFireAmmo {
-    u8 unk00;
-    u8 unk01;
+    u8 recoil [[comment("Get_shell_backpower (every bowgun): - ranged weapon recoil (- Recoil skills); < 9 tier 0, < 11 tier 1, else 2")]];
+    u8 reload [[comment("Get_string_pow (Wii U Get_string_pow): - ranged weapon reload (+/- Reload skills); > 7 tier 2, > 4 tier 1, else 0; HBG ammo 0x20 skips the skills")]];
     u8 burstShots;
     u8 speedLevel;
 } [[name(ammoName((addressof(this) - header.ptrs.rapidFireAmmo) / 4))]];
@@ -842,7 +890,7 @@ float heatCannonSigilPower @ header.ptrs.heatCannonSigilPower [[name("Heat Canno
 // named from reading it (tools/mhfdat_re/data/660_gen.py); gapXXX bytes have
 // no reader found, direct or indexed. Evade triplets go to
 // player_evade_extra_distance_scaled_window (Evade Distance Up / Spacing).
-// "SkillWork" = gSkillWorks[slot] (get_entity_render_slot). Rates are per
+// "SkillWork" = gSkillWorks[slot] (player_skill_work_get). Rates are per
 // mille unless noted.
 // =======================
 
@@ -855,7 +903,7 @@ struct BowChargeRow {
     float ballisticsParam8Mult [[comment("x shot table +0x10 (shell_k24_i_b, gunner_compute_shot_ballistics_params)")]];
     float spreadAdd [[comment("FUN_11264F80: random lateral spread x (it + shot table +0x14)")]];
     float wobbleMult [[comment("FUN_11264F80: random wobble over the first 20 frames, x shot table +0x18 (x2 with flag 2, x a Hunter pearl skill value)")]];
-    float rawMult [[comment("gunner_compute_shot_damage_and_status: raw damage x it before the critical hit")]];
+    float rawMult [[comment("shell24_change_atck_data: raw damage x it before the critical hit")]];
     float statusMult [[comment("status buildup (hit +0x80) x it")]];
     float elementMult [[comment("element x it (also status flag 0x1000000)")]];
     float elementMultFlag2 [[comment("element x it when the attack flags have 2")]];
@@ -900,7 +948,7 @@ struct EvadeDistanceF {
 };
 
 struct BowgunConstants {
-    u16 bowgunGaugeMax @ weaponConstantsBase + 0x000 [[comment("+0x0 bowgun gauge (SkillWork +0x1C0; get_entity_render_slot returns gSkillWorks[slot]) max: FUN_1027D6F0 caps it, FUN_10284320 stores it in SkillWork +0x1C2")]];
+    u16 bowgunGaugeMax @ weaponConstantsBase + 0x000 [[comment("+0x0 bowgun gauge (SkillWork +0x1C0; player_skill_work_get returns gSkillWorks[slot]) max: FUN_1027D6F0 caps it, FUN_10284320 stores it in SkillWork +0x1C2")]];
     u16 bowgunGaugeCost @ weaponConstantsBase + 0x002 [[comment("+0x2 gauge spent per use: bowgun_event_handler event 0x10; FUN_102806F0 / FUN_102850C0 / FUN_10287560 need gauge >= it")]];
     u32 bowgunGaugeHudColor @ weaponConstantsBase + 0x004 [[comment("+0x4 FUN_1095E220 -> FUN_1095E190(0x68, 0x34, it, bowgunGaugeMax): colour of the bowgun gauge HUD (ARGB 0xFF89DFEC)")]];
     u16 bowgunGaugeBurstFrames @ weaponConstantsBase + 0x008 [[comment("+0x8 FUN_10284320 (gauge burst, motion 0x5C6): frames of the action; the shown gauge drains with it")]];
@@ -972,7 +1020,7 @@ struct DualBladesConstants {
     u16 dsGaugeMax @ weaponConstantsBase + 0x0b4 [[comment("+0xb4 Dual Blades gauge SkillWork +0x1C6 max: FUN_102BBB90 (on_hit_effects_dispatch, player_entity_tick_hp_regen) fills it when class 6 and pw +0xC4C > 1; FUN_102BBC20 = full")]];
     u16 dsGaugeRegenPerTick @ weaponConstantsBase + 0x0b6 [[comment("+0xb6 player_entity_tick_hp_regen: Dual Blades gauge (SkillWork +0x1C6) gain per tick (FUN_102BBB90)")]];
     u16 dsGaugeGainPerHit @ weaponConstantsBase + 0x0b8 [[comment("+0xb8 on_hit_effects_dispatch: Dual Blades gauge gain per hit when the monster prmsys unk32 bit 0 is set and hit +0x2 == 0")]];
-    u8 dsLifestealCapBase @ weaponConstantsBase + 0x0ba [[comment("+0xba player_lifesteal_on_hit: heal cap = dsLifestealCapPerTier x vampirism tier + it when player_weapon6_special_mode > 1 (0 when the hit flags +0x15C have 0x4000)")]];
+    u8 dsLifestealCapBase @ weaponConstantsBase + 0x0ba [[comment("+0xba skill_absorption: heal cap = dsLifestealCapPerTier x vampirism tier + it when player_weapon6_special_mode > 1 (0 when the hit flags +0x15C have 0x4000)")]];
     u8 dsLifestealCapPerTier @ weaponConstantsBase + 0x0bb [[comment("+0xbb same")]];
     s8 dsTech4HitStamina @ weaponConstantsBase + 0x0bc [[comment("+0xbc FUN_111D6840 (melee hit shell, state 3): with weapon_tech_get_tier(6) == 4 and player_weapon6_special_mode != 0, a monster hit gives stamina +it (player_apply_stamina_delta_with_skills)")]];
     s8 dsStaminaTickNum @ weaponConstantsBase + 0x0bd [[comment("+0xbd FUN_109BEE50 (from FUN_109BEEF0, FUN_10332250): per-frame stamina change for Dual Blades = it / dsStaminaTickDiv (other weapons -1)")]];
@@ -1030,12 +1078,12 @@ struct GunnerConstants {
 GunnerConstants gunnerConstants @ header.ptrs.weaponConstants [[name("Gunner Shot Constants")]];
 
 struct BowConstants {
-    BowChargeRow bowChargeLevels[6] @ weaponConstantsBase + 0x21c [[comment("+0x21c by charge level (pw +0xB28, or the shot +0xD; level 4 counts as 5 when FUN_11263B00): gunner_compute_shot_ballistics_params, shell_k24_i_b (arrow), FUN_11264F80, gunner_compute_shot_damage_and_status")]];
+    BowChargeRow bowChargeLevels[6] @ weaponConstantsBase + 0x21c [[comment("+0x21c by charge level (pw +0xB28, or the shot +0xD; level 4 counts as 5 when FUN_11263B00): gunner_compute_shot_ballistics_params, shell_k24_i_b (arrow), FUN_11264F80, shell24_change_atck_data")]];
     u8 gap30C[80] @ weaponConstantsBase + 0x30c [[comment("+0x30c no direct reader found")]];
-    float bowStatusCoatingMult[4] @ weaponConstantsBase + 0x35c [[comment("+0x35c status of a poison / paralysis / sleep coating hit x it, index = the bow's coating level for that status (bow_coating_level_get: equip +0x28 bits, 3 when +6 bit 2): gunner_compute_shot_damage_and_status, FUN_11267B40, weapon_init_hitbox_damage_from_params")]];
-    float bowShotType1ChargeMult[4] @ weaponConstantsBase + 0x36c [[comment("+0x36c gunner_compute_shot_damage_and_status: damage, element and status x it, index = the shot charge level (+0xD), when the shot type (+0x1C) is 1 and pw +0xB28 < 4")]];
+    float bowStatusCoatingMult[4] @ weaponConstantsBase + 0x35c [[comment("+0x35c status of a poison / paralysis / sleep coating hit x it, index = the bow's coating level for that status (bow_coating_level_get: equip +0x28 bits, 3 when +6 bit 2): shell24_change_atck_data, FUN_11267B40, weapon_init_hitbox_damage_from_params")]];
+    float bowShotType1ChargeMult[4] @ weaponConstantsBase + 0x36c [[comment("+0x36c shell24_change_atck_data: damage, element and status x it, index = the shot charge level (+0xD), when the shot type (+0x1C) is 1 and pw +0xB28 < 4")]];
     float bowShotType1Level4Mult @ weaponConstantsBase + 0x37c [[comment("+0x37c same at pw +0xB28 == 4 when the shot flags (+0x18) have 0x100")]];
-    float gunnerCoatingKind1RawMult[3] @ weaponConstantsBase + 0x380 [[comment("+0x380 gunner_select_ammo_stat_table (shot coating kind +0xC == 1, without Consumption Slayer 0x1F9; with it the mhfdat 0xA8C +0xC table): raw x it; [0] base, [1] / [2] by the weapon class checks (G / Gou / Tower / exotic / Zenith, player_equip_has_gou_sharpness_bonus) in gunner_compute_shot_damage_and_status")]];
+    float gunnerCoatingKind1RawMult[3] @ weaponConstantsBase + 0x380 [[comment("+0x380 gunner_select_ammo_stat_table (shot coating kind +0xC == 1, without Consumption Slayer 0x1F9; with it the mhfdat 0xA8C +0xC table): raw x it; [0] base, [1] / [2] by the weapon class checks (G / Gou / Tower / exotic / Zenith, player_equip_has_gou_sharpness_bonus) in shell24_change_atck_data")]];
     float gunnerCoatingRawMult[3] @ weaponConstantsBase + 0x38c [[comment("+0x38c same for the other coating kinds (with Consumption Slayer: mhfdat 0xA8C +0x10)")]];
     s16 bowArcLaunchSpeedY @ weaponConstantsBase + 0x398 [[comment("+0x398 shell_atk_tbl_1162AFA8_i_b: arc shell upward speed (+0x54); bow_arc_guide_landing_point (guide) apex = (it / bowArcGravity / 2) x it")]];
     s16 bowArcGravity @ weaponConstantsBase + 0x39a [[comment("+0x39a arc shell (i_b) and sub-shots (i_c): vertical acceleration -it (+0x60)")]];
@@ -1329,7 +1377,7 @@ struct SafAiParams {
     s16 pickCloseDistance [[comment("FUN_1003E7A0: distance below it picks 7 or 3 (by pickCloseHeight)")]];
     s16 pickCloseHeight [[comment("same: AI context +0x8 at or past it picks 7")]];
     s16 pickChance4 [[comment("same: AI context +0x0 below it picks 4")]];
-    u16 pickAngle [[comment("same: angle past it and distance past pickAngleDistance pick 3")]];
+    s16 pickAngle [[comment("same: angle past it and distance past pickAngleDistance pick 3")]];
     s16 pickAngleDistance [[comment("same")]];
     s16 pickCountLimit [[comment("FUN_1003E880 actions 8 / 9: AI context +0x10 at or past it picks 2")]];
     s16 pickFarDistance [[comment("FUN_1003E880 actions 0xF / 0x17 / 0x18 / 0x39: distance at or past it picks 0xC, else 2")]];
@@ -1421,14 +1469,14 @@ LanceComboRules lanceComboRules @ header.ptrs.lanceComboRules [[name("Lance Comb
 
 struct WeaponSkillModifiers {
     u32 consumptionSlayerMeleeAttack [[comment("player_consumable_attack_bonus_total: attack added with Consumption Slayer (0x1F9) and a melee weapon (pw +0x401 == 6)")]];
-    s16 *consumptionSlayerSharpnessCost[14] : u32 [[comment("by weapon class (entity +3): with Consumption Slayer the sharpness change is lowered by it (sharpness_consumtion_handler, weapon_apply_sharpness_loss_and_hit_result; not for gunlance_action_subtype_allowed)")]];
+    s16 *consumptionSlayerSharpnessCost[14] : u32 [[comment("by weapon class (entity +3): with Consumption Slayer it is subtracted from the hit's sharpness change (<= 0), so each hit costs that much more sharpness (sharpness_consumtion_handler, weapon_apply_sharpness_loss_and_hit_result; not for gunlance_action_subtype_allowed)")]];
     u16 consumptionSlayerCoatingCost [[comment("bow_consume_loaded_ammo(_if_flagged / _with_save): loaded coatings (pouch pw +0xA18) consumed per shot with Consumption Slayer")]];
     padding[2];
     FloatTriple *consumptionSlayerGunnerKind1RawMult : u32 [[comment("gunner_select_ammo_stat_table with Consumption Slayer, coating kind 1 (instead of weaponConstants +0x380)")]];
     FloatTriple *consumptionSlayerGunnerRawMult : u32 [[comment("same, other coating kinds (instead of +0x38C)")]];
     FloatTriple *consumptionSlayerHitboxKind1RawMult : u32 [[comment("weapon_init_hitbox_damage_from_params with Consumption Slayer, shell +8 == 1 (instead of +0x480)")]];
     FloatTriple *consumptionSlayerHitboxRawMult : u32 [[comment("same, other kinds (instead of +0x48C)")]];
-    u32 *safPhialStunAdd[5] : u32 [[comment("saf_phial_stun_sigil_add (switchaxe_bin_dispatch_phial_apply) with sigil TechBoostSaf (0x61) value 1: added to the hit +0x89 (stun), by shell row (+6) - 1; the code allows rows up to skillCounts +0x12 (5)")]];
+    u32 *safPhialStunAdd[5] : u32 [[comment("saf_phial_stun_sigil_add (switchaxe_bin_dispatch_phial_apply) with sigil TechBoostSaf (0x61) value 1: added to the hit +0x89 (stun, capped at 0xFF), index = shell row (+6) - 1, checked signed against skillCounts +0x12 (5) inclusive: index 5 (row 6) reads the next table (float 1.7), row 0 reads index -1")]];
     float reachBonus [[comment("player_attack_reach_bonus_max: reach bonus candidate when weapon_slot_get_skill_value_entity(0x60)")]];
 };
 
@@ -1447,7 +1495,7 @@ WeaponSkillModifiers weaponSkillModifiers @ header.ptrs.weaponSkillModifiers [[n
 struct EvadeAction {
     u16 category [[comment("player category (+0x15)")]];
     u16 action [[comment("player action (+0x14)")]];
-    s16 stylishSharpnessRestore [[comment("weapon_consume_sharpness_on_hit (evade flag 2, Stylish 0x1E0): sharpness_consumtion_handler(+it)")]];
+    u16 stylishSharpnessRestore [[comment("weapon_consume_sharpness_on_hit (evade flag 2, Stylish 0x1E0): sharpness_consumtion_handler(+it), read MOVZX")]];
     s16 blastBlightReduce [[comment("evade_reduce_ailment_counters (Player_PendingInput_Check, after an evade): blast blight counter SkillWork +0x6CC -= it (player_blast_blight_reduce)")]];
     s16 sharpnessDrainReduce [[comment("same: sharpness-drain debuff counter SkillWork +0x712 -= it (player_sharpness_drain_reduce)")]];
     s16 fireBlightReduce [[comment("same: fire blight timer SkillWork +0x688 -= it (player_fire_blight_timer_add)")]];
@@ -1511,13 +1559,18 @@ struct BowgunClusterRow {
     s16 count [[comment("number of fragments")]];
 };
 
+struct BowgunShotHitFlags {
+    u16 flags [[comment("gunner_shot_hitbox_init: ORed into hit +0x90 (word)")]];
+    padding[2];
+};
+
 struct BowgunStageMults {
     float stages[7] [[comment("damage multiplier by distance stage")]];
 };
 
 struct BowgunShotTables {
     BowgunShotRow *shotRows[53] : u32 [[comment("by shell row (+6); 53 rows fill the block. Rows 0-19 follow the Ferias shot list (doc-gun.htm): Normal 1-3, Pierce 1-3, Pellet 1-3, Crag 1-3, Clust 1-3, Flame, Water, Thunder, Freeze, Dragon")]];
-    u32 *shotHitFlags[53] : u32 [[comment("gunner_shot_hitbox_init: ORed into hit +0x90, by shell row")]];
+    BowgunShotHitFlags *shotHitFlags[53] : u32 [[comment("by shell row")]];
     BowgunDistanceBandList *distanceBands : u32 [[comment("gunner_shot_distance_band_list_get default (Light Bowgun styles 0 / 3, other classes)")]];
     BowgunDistanceBandList *distanceBandsLbgStyles12 : u32 [[comment("Light Bowgun in styles 1 / 2")]];
     BowgunDistanceBandList *distanceBandsFlag8 : u32 [[comment("shots with flag 8 (shot work +0x3C)")]];
@@ -1547,10 +1600,12 @@ BowgunShotTables bowgunShotTables @ header.ptrs.bowgunShotTables [[name("Bowgun 
 // with PlayerWork +0x8C3 bit 4 (gou special mode / Heat Cannon sigil 0x32) or the
 // Extreme style. With bit 4 the shot adds heatGaugeGain (Focus-adjusted) to the
 // gauge +0xA12 (cap +0xD0C) and sets +0xD15 to heatDecayDelay, the frames before
-// player_entity_tick_hp_regen drains 1 point every 30 frames; in Extreme style
-// with a large monster in the stage, bowgunGaugeGain fills SkillWork +0x1C0.
+// player_entity_tick_hp_regen drains 1 point every 30 frames (a full gauge gains
+// nothing; the shot that fills it sets 150 frames instead); in Extreme style
+// with a large monster in the stage, bowgunGaugeGain (+2 with weapon slot skill
+// 0x62) fills SkillWork +0x1C0 up to bowgunGaugeMax (header 0x660 +0).
 struct HbgShotGaugeGain {
-    u16 ammoType [[format("ammoName")]];
+    s16 ammoType [[format("ammoName"), comment("Binary search key, compared signed (movsx + JG)")]];
     s16 heatGaugeGain;
     u8 heatDecayDelay [[comment("Frames")]];
     u8 unk05 [[comment("no reader")]];
@@ -1567,7 +1622,8 @@ HbgShotGaugeGain hbgShotGaugeGains[importantNums.numHbgShotGaugeGains] @ header.
 // attacker's hitstop (+0x4E6).
 struct FencingHitstopOverride {
     u16 attackId;
-    u16 hitstopFrames [[comment("Low byte used")]];
+    u8  hitstopFrames;
+    padding[1];
 };
 
 FencingHitstopOverride fencingHitstopOverrides[importantNums.numFencingHitstopOverrides] @ header.ptrs.fencingHitstopOverrides [[name("Fencing Hitstop Overrides")]];

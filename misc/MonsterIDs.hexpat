@@ -366,8 +366,7 @@ const str MonsterNames[MONSTER_NAME_COUNT] = {
 };
 
 struct Monster {
-    MonsterID monster_id;
-    u8  padding0;
+    u16 monster_id [[format("fmtMonsterIdU16"), comment("gGetRdp compares a word")]];
     u16 monster_flag;
     u16 base_points;
     u16 level1_points;
@@ -386,12 +385,13 @@ fn fmtMonsterID(MonsterID n) {
     return MonsterNames[id];
 };
 
-fn fmtMonsterEntry(Monster m) {
-    u8 id = u8(m.monster_id);
+fn fmtMonsterIdU16(u16 id) {
+    if (id >= MONSTER_NAME_COUNT)
+        return "UNKNOWN";
 
-    return std::format(
-        "{} - {}",
-        id,
-        fmtMonsterID(m.monster_id)
-    );
+    return MonsterNames[id];
+};
+
+fn fmtMonsterEntry(Monster m) {
+    return std::format("{} - {}", m.monster_id, fmtMonsterIdU16(m.monster_id));
 };

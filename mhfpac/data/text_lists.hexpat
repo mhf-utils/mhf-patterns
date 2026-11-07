@@ -1035,8 +1035,12 @@ if (valid(header.ptrs.pSkillNames))
 if (valid(header.ptrs.pSkillTreeNames))
     StrList pSkillTreeNames @ header.ptrs.pSkillTreeNames;
 // One help per skill tree, no pointer of its own: they follow the first 0x180 bytes at pUiTextGroups
+// (wrapped in a struct: a top-level conditional array cannot be placed)
+struct SkillTreeHelps<auto N> {
+    Str helps[N] [[inline]];
+};
 if (valid(header.ptrs.pUiTextGroups) && header.ptrs.pSkillNames > header.ptrs.pSkillTreeNames)
-    Str pSkillTreeHelps[(header.ptrs.pSkillNames - header.ptrs.pSkillTreeNames) / 4] @ header.ptrs.pUiTextGroups + 0x180;
+    SkillTreeHelps<(header.ptrs.pSkillNames - header.ptrs.pSkillTreeNames) / 4> pSkillTreeHelps @ header.ptrs.pUiTextGroups + 0x180;
 if (valid(header.ptrs.pHunterPearlSkillNames))
     StrList pHunterPearlSkillNames @ header.ptrs.pHunterPearlSkillNames;
 if (valid(header.ptrs.pSampleOkTexts))

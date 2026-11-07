@@ -11,10 +11,14 @@
 	Skill fields from ezemania2/mhf-file-editor; the monster point layout comes
 	from BlazeMH/Blaze-Hunting-Road-Editor (GPL-3.0), as that editor credits.
 	The Road cat shop (header 0xB10) is in shop_road_cat.hexpat.
-	Floor milestones (header 0x64C, important numbers + 0x24A rows): when a
-	Road run settles (road_settle_floor_score), every row whose threshold
-	lies between the old and the new value adds `add` to a save counter
-	(UserSaveData +146976), capped by header 0x648 +0x14.
+	Road Rank milestones (header 0x64C, important numbers + 0x24A rows):
+	road_milestone_counter_gain (from road_settle_floor_score,
+	road_commit_quest_result and road_result_update) takes the Road Rank
+	before and after the run's points (road_rank_from_points) and adds `add`
+	of every row with old rank < threshold <= new rank to UserSaveData
+	+146976 (the value road_skill_can_unlock compares with the skill cost),
+	capped by header 0x648 +0x14 (999). road_milestone_index_for stops at the
+	first threshold above the rank, so the thresholds must ascend.
 */
 
 #include <std/core.pat>
@@ -22,7 +26,12 @@
 #include <mhfdat/utils/index.pat>
 #include <mhfdat/data/equipment_counts.hexpat>
 
-// Monster: id, flag, then its base points and those of Road levels 1 to 5
+// gGetRdp: first row whose u16 id matches; base_points for small monsters.
+// Flag bit 2: index = 1 / 2 / 3 for gGetMonsterStatus 0x41 / 0x42 / 0x43, 0
+// for 0x40 and 0x4F-0x52 (other statuses: base_points), plus bit 0, plus
+// bit 1 (index >= 6: base_points). Without bit 2, flags & 3 == 3 gives
+// index 1 when the quest roster holds this monster as variant 1, 8 or 9.
+// The points are (&base_points)[index].
 Monster roadMonsterPoints[std::mem::read_unsigned(header.ptrs.dataCounters + 8, 2)]
     @ header.ptrs.Road_Monster_Point_Value_Pointer
     [[name("Road Monster Points")]];
@@ -37,8 +46,7 @@ struct RoadSkill {
     u16 level;
     u16 category;
     u16 description;
-    u16 sortKey;
-    u16 unk0A;
+    u32 sortKey             [[comment("list order, read as a dword")]];
     u32 cost;
     u16 roadRank            [[comment("Road rank needed")]];
     u16 roadPoints;
@@ -62,13 +70,13 @@ RoadSkill roadSkillsResultCosts[std::mem::read_unsigned(header.ptrs.extraCounter
     [[name("Road Skills (Result Costs)")]];
 
 struct RoadMilestone {
-    u16 threshold;
+    u16 threshold           [[comment("Road Rank")]];
     u16 add;
 };
 
 RoadMilestone roadMilestones[importantNums.numRoadMilestones]
     @ header.ptrs.roadMilestones
-    [[name("Road Floor Milestones")]];
+    [[name("Road Rank Milestones")]];
 
 // =======================
 // Monster scaling by Road floor (header 0xB0C: multiplayer Road, 0xB7C: the

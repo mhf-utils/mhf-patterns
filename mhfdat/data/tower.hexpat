@@ -2,10 +2,11 @@
 
 /**
 	Tower weapons: the jewel recipes (header 0x938) and the upgrade cost tables
-	(header 0x93C). Layouts from ezemania2/mhf-file-editor. Checked on the ZZ JP
-	and EN files: 1,371 recipes (important numbers + 0x38A), the table ends
-	where the next one starts; 65 cost tables of 100 steps, each followed by an
-	all-zero step.
+	(header 0x93C). Layouts from ezemania2/mhf-file-editor, checked against the
+	code. ZZ JP, EN and rain: 1,371 recipes (important numbers + 0x38A), the
+	table ends where the next one starts; 65 cost tables (extra counters +0xC)
+	of 200 steps, each ended by a step whose first byte is 0xFF (the loader
+	walks to it); the steps past the last level used are all zero.
 	The Tower sigil forging (header 0x944) is in crafting.hexpat.
 */
 
@@ -21,10 +22,10 @@ struct TowerJewelMaterial {
 };
 
 struct TowerJewelRecipe {
-    u16 jewel                   [[comment("Item id of the jewel (a \"PC\"); 63 distinct on ZZ, some above the item count")]];
-    u16 levelMin;
+    u16 weapon                  [[comment("Melee (equipType 6) or ranged (7) weapon id, a Tower weapon on every ZZ row (63 distinct); tower_jewel_lookup_recipe matches it with the box entry's weapon")]];
+    u16 levelMin                [[comment("tower_jewel_lookup_recipe: the weapon's level of this stat (get_tower_stat_level) is in levelMin..levelMax")]];
     u16 levelMax;
-    u8  stat;
+    u8  stat                    [[comment("Tower stat kind (get_tower_stat_level, the 0x93C step kinds)")]];
     u8  equipType               [[format("getEquipType")]];
     TowerJewelMaterial materials[3];
 };
@@ -33,32 +34,27 @@ TowerJewelRecipe towerJewelRecipes[importantNums.numTowerJewelRecipes]
     @ header.ptrs.towerJewelRecipes
     [[name("Tower Jewel Recipes")]];
 
-// One upgrade step: ten (ok, cost) pairs, in this order: raw, gunner,
-// affinity, element, seal 7, seal 5, seal 6, extra 5/6, extra C, extra B;
-// then four bytes for bows. A table ends at an all-zero step.
+// One upgrade step; the row is the stat's current level and the table is
+// the weapon's Tower/G50 Param ID. Ten (ok, cost) byte pairs, the ok byte
+// read by tower_upgrade_get_step_flag, the cost by tower_upgrade_sum_step_cost,
+// by stat kind: kind 0, kind 2, kind 1, kind 3, kind 4 with a seal of deco
+// type 7, 5, 6 (the last one owned wins), kinds 5 and 6, kind 0xC, kind 0xB;
+// then one byte each for the bow kinds 0xE / 0x12, 0xF / 0x13, 0x10 / 0x14,
+// 0x11 / 0x15 (cost; ok = byte != 0 for 0xE-0x11, always 1 for 0x12-0x15).
 struct TowerUpgradeCost {
     u8 okCost[20];
     u8 bow[4];
 };
 
-fn isZeroStep(u32 at) {
-    u32 i = 0;
-    while (i < 24) {
-        if (std::mem::read_unsigned(at + i, 1) != 0) return false;
-        i += 1;
-    }
-    return true;
-};
-
 struct TowerUpgradeCostTable {
-    TowerUpgradeCost steps[while(!isZeroStep($))];
+    TowerUpgradeCost steps[while(std::mem::read_unsigned($, 1) != 0xFF)];
 };
 
 struct ptTowerUpgradeCostTable {
     TowerUpgradeCostTable *table : u32 [[inline]];
 };
 
-ptTowerUpgradeCostTable towerUpgradeCosts[while(std::mem::read_unsigned($, 4) != 0)]
+ptTowerUpgradeCostTable towerUpgradeCosts[std::mem::read_unsigned(header.ptrs.extraCounters + 0xC, 2)]
     @ header.ptrs.towerUpgradeCosts
     [[name("Tower Weapon Upgrade Costs")]];
 
@@ -113,7 +109,8 @@ fn towerSkillName(u32 i) {
 };
 
 struct TowerSkill {
-    u32 maxLevel;
+    u8  maxLevel                [[comment("Read as a byte (tower_skill_level, GetPlayerRankLevel); the player's level is capped at it")]];
+    padding[3];
     float rateByLevel[8]        [[comment("[level - 1]")]];
     s32 valueByLevel[8]         [[comment("[level - 1]")]];
 } [[name(towerSkillName(std::core::array_index()))]];

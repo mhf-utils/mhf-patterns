@@ -7,7 +7,8 @@
 // 0x6EC for the 3rd argument 0 / 1 / 2 of item_gather_reward_grant;
 // gather_star_item_override). Row = star - 1, the star from quest_star_level_get
 // (the interception G stars of the main monster when quest variant2 bit 0x80
-// is set, else the G star or the quest star, 1 at least). Two rolls: entry 0
+// is set, 8 for a variation 0x10 monster, else the G star or the quest star;
+// 1 with no quest info; a star of 0 skips the override). Two rolls: entry 0
 // or 1 (1 in an area of type 1, g_area_desc_table), then entry 2 or 3; a roll
 // below chance (percent) replaces the gathered item. 999 rows (stars 1-999).
 // =======================

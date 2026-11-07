@@ -206,6 +206,7 @@ num ItemQuantity @ (header.ptrs.important_nums + 0x8) [[name("Number of total It
 struct Items {
   Item            data         [ItemQuantity] @ header.ptrs.itemData  [[name("Data")]];
   ItemName        names        [ItemQuantity] @ header.ptrs.itemNames [[name("Names")]];
+  ItemDescription messages     [0x18]         @ header.ptrs.itemDesc [[name("Messages"), comment("Help text group 1 is this table (gMhfLoadStayData copies the slot to mhfpac pHelpTextGroups[1]): ids below 0x18 are these messages, item id + 0x18 is the item's description (FUN_103C4BD0, FUN_109743E0)")]];
   ItemDescription descriptions [ItemQuantity] @ (header.ptrs.itemDesc + 0x60) [[name("Descriptions")]];
   ItemSource      source       [ItemQuantity] @ header.ptrs.itemSourceStrings [[name("Source")]];
 };
@@ -233,13 +234,12 @@ struct KoryoAmulet {
     KoryoAmuletKind kind;
     u16 tier [[comment("the highest tier carried wins")]];
     ItemId item;
-    u16 koryoCost [[comment("exchange cost in Koryo points (\"Cost %s(%d)\")")]];
-    u16 gap08;
-    u16 gap0A;
-    u16 value [[comment("Haste: seconds; Gathering: max gathers +; Health: max HP + (koryo_amulet_health_apply); Two Toned: hunter jewel points % (hunter_gem_quest_points_calc); Adrenaline: HP set to it (koryo_amulet_adrenaline_apply); Starvation: 25")]];
-    u16 gap0E;
-    u16 value2 [[comment("Haste: 20; Gathering: min gathers +; Stamina: max stamina + (koryo_amulet_stamina_apply)")]];
-    u8 gap12[14];
+    u16 medalCost [[comment("Exchange cost in Hunting Medals, item 0x1F60 (\"Cost %s(%d)\"; koryo_amulet_exchange_execute removes cost x quantity of 0x1F60)")]];
+    u16 returnGcpCost [[comment("Return: GCP paid per amulet (\"%dP\"; koryo_amulet_return_list_build list, koryo_amulet_return_execute GCP -= quantity x value)")]];
+    u16 returnMedals [[comment("Return: Hunting Medals (item 0x1F60, mhfpac \"Koryo Medals\") given back (koryo_amulet_return_execute), must fit in the pouch and boxes (koryo_amulet_return_is_possible)")]];
+    s32 value [[comment("Haste: seconds; Gathering: max gathers +; Health: max HP + (koryo_amulet_health_apply); Two Toned: hunter jewel points % (hunter_gem_quest_points_calc); Adrenaline: HP set to it (koryo_amulet_adrenaline_apply); Starvation: read as u16, max stamina += (value - 150) x 3 (koryo_amulet_starvation_apply)")]];
+    s32 value2 [[comment("Haste: floor in seconds (signed JGE); Gathering: min gathers +; Stamina: max stamina + (koryo_amulet_stamina_apply)")]];
+    u8 gap14[12];
 };
 
 KoryoAmulet koryoAmulets[importantNums.numKoryoAmulets] @ header.ptrs.koryoAmulets [[name("Koryo Amulets")]];

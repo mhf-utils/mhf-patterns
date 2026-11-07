@@ -20,15 +20,15 @@
 // Sizes in percent of the monster's base size: up to mini a mini crown, from
 // silver and gold those crowns; -1 for none (the Felynes)
 struct MonsterCrown {
-    u8        unk00;
+    u8        monsterListIndex [[comment("0 in the file; rd_mhfdat writes the row index at load. Monster description (header 0x134) row and gMhfDatEntryBits bit (Wii U Add_to_Monster_list)")]];
     MonsterID monster;
     s16       silver;
     s16       gold;
     s16       mini;
     s16       unk08;
-    u16       unk0A;
-    u8        unk0C;
-    MonsterID monsterAgain [[comment("The same id as +0x01 on every ZZ row")]];
+    u16       monsterBookItem [[format("getItemName"), comment("Wii U getItemIdMonsterBookFromMonsterId; owning it sets the row's gMhfDatEntryBits bit (Monster_list_init, MonsterList_Item_Add); 0: not listed")]];
+    u8        monsterType [[comment("pMonsterTypeNames index (monster_record_draw_detail_page); getNBonusItem switches on 1-12")]];
+    MonsterID iconMonster [[comment("Icon drawn by ui_draw_monster_icon_panel (header 0x51C row); 0xFF: none. The same id as +0x01 on every ZZ row")]];
 } [[name(fmtMonsterID(monster))]];
 
 MonsterCrown monsterCrowns[importantNums.numMonsterDesc]
@@ -42,8 +42,8 @@ s32p monsterDescriptions[importantNums.numMonsterDesc]
 // Carve points (header 0x138): one row per monster id. A carve point gives
 // the carve table (header 0x120 row) of each rank (HagiLv), how many carves
 // (skill 0xC0 adds one), the reach in percent of the monster's size and the
-// point's offset from the monster (from a bone when boneFlag is set). The
-// list ends at a row whose unk1E is 0x8000. HagiLv 9 quests use header 0xAC8
+// point's offset from the monster (from bone `bone` when it is not 0). The
+// list ends at a row whose flags have bit 0x8000. HagiLv 9 quests use header 0xAC8
 // instead (falling back to this table when the monster is missing).
 // The second list is not an alternative carve list but the monster's drop
 // points: monster action and damage handlers spawn row N at the monster as a
@@ -56,8 +56,8 @@ struct CarvePoint {
     u16 carveCount;
     u16 reachPercent;
     u16 unk1C;
-    u16 unk1E;
-    u8  boneFlag;
+    u16 flags [[comment("0x8000 ends the list; 0x2 and 0x40 tested (FUN_1141b1c0, FUN_1141b340), skipped when EnemyWork +0xCB6 & flags; copied into the carve reward entry")]];
+    u8  bone [[comment("Bone index the offset starts from (FUN_10aaf750 -> 0x10848420); 0: the monster's position")]];
     u8  unk21;
     s16 offsetX;
     s16 offsetY;
@@ -65,7 +65,7 @@ struct CarvePoint {
 };
 
 struct CarvePointList {
-    CarvePoint points[while(std::mem::read_unsigned($ + 0x1E, 2) != 0x8000)];
+    CarvePoint points[while((std::mem::read_unsigned($ + 0x1E, 2) & 0x8000) == 0)];
     CarvePoint terminator;
 };
 
@@ -89,8 +89,9 @@ MonsterCarvePoints monsterCarvePoints[MONSTER_NAME_COUNT]
     @ header.ptrs.monsterCarvePoints
     [[name("Monster Carve Points")]];
 
-// Zenith carve points (header 0xAC8): rows walked until monster 0 / 0xFF, no
-// terminator in the block (the rows end where header 0x128 starts). Replace the
+// Zenith carve points (header 0xAC8): rows walked until monster 0 / 0xFF
+// (carve_roll_item_zenith: 0xFF only), no terminator in the block: the rows end
+// where header 0x128 starts, whose first byte is 0x01. Replace the
 // 0x138 lists at HagiLv 9 (monster_carve_points_get, monster_carve_points_alt_get),
 // for Berserk Raviente 0x95 on the extreme Great Slaying quests
 // (great_slaying_is_berserk_extreme_quest) and variant 0xD (carve_roll_item), and
@@ -125,7 +126,7 @@ MonsterCarvePointsZenith monsterCarvePointsZenith[while(carveRowsGoOn($, header.
 // great_slaying_is_berserk_small_party_quest). One row in the 3 files.
 struct MonsterCarvePointsSmallParty {
     MonsterID monster;
-    u8 unk01 [[comment("Rows with a non-zero value are skipped")]];
+    u8 disabled [[comment("monster_carve_points_small_party_find takes a row only when 0")]];
     u16 unk02 [[comment("no reader")]];
     if (std::mem::read_unsigned($, 4) != 0)
         CarvePointList *carvePoints : u32;
@@ -135,9 +136,11 @@ struct MonsterCarvePointsSmallParty {
 
 MonsterCarvePointsSmallParty monsterCarvePointsSmallParty[while(carveRowsGoOn($, 0xFFFFFFFF))] @ header.ptrs.monsterCarvePointsSmallParty [[name("Monster Carve Points: Berserk Raviente Small Party")]];
 
-// Start actions (header 0xAD4): on quests whose variant has flag 0x2000, a
-// listed monster starts in this action (act, sub) and locomotion state
-// (EnemyWork +0x410), until a monster of -1
+// Start actions (header 0xAD4): on quests whose variant3 has bit 0x20
+// (Monster_AI_InvokePhase_QuestAd4 tests dword +0x98 & 0x2000), a listed
+// monster starts in this action (act, sub) and locomotion state (EnemyWork
+// +0x410), until a monster of -1. The loop does not stop at a match: a monster
+// listed twice (142 on ZZ) is set by both rows in order
 fn startActionMonster(s32 n) {
     MonsterID m = u8(n);
     return fmtMonsterID(m);
@@ -145,9 +148,12 @@ fn startActionMonster(s32 n) {
 
 struct MonsterStartAction {
     s32 monster [[format("startActionMonster")]];
-    s32 act;
-    s32 sub;
-    s32 locomotion;
+    u16 act;
+    padding[2];
+    u16 sub;
+    padding[2];
+    u8  locomotion;
+    padding[3];
 };
 
 MonsterStartAction monsterStartActions[while(std::mem::read_signed($, 4) >= 0)]
@@ -182,9 +188,11 @@ RescuedFelyneMedalCount rescuedFelyneMedalCounts[8] @ header.ptrs.rescuedFelyneM
 // 1; em134_init stores it in EnemyWork +0xDC0, and when any Felyne2 (0x86) has
 // +0xDC0 set, em134_any_mode_set_ck makes FUN_10DDB6E0 set +0x53B to 1, which
 // changes its action states (+0x510). The roll cannot run on HD: em134_init is
-// only entry 134 (0x86) of the init table 0x118C3350 and rolls only on the
-// branch where the monster is not 0x86 or +0xDC0 is already set. The 6 bytes
-// after it (30, 25, 15, 15, 10, 5) have no reader.
+// only entry 134 (0x86) of the init table 0x118C3350; its branch for monster
+// != 0x86 or +0xDC0 != 0 rolls only when +0xDC0 is 0, so only for a monster
+// other than 0x86. em134_mode_roll is a cumulative weight pick bounded at 1
+// entry (CMP AL,0x1), so only byte 0 is read; bytes +2..+7
+// (30, 25, 15, 15, 10, 5) have no reader either.
 struct Felyne2ModeRoll {
     u8 outcome0Chance [[comment("Percent; 0 in the 3 files")]];
     u8 unk01 [[comment("no reader")]];

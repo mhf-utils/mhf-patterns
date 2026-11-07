@@ -15,16 +15,16 @@
 #include <mhfdat/utils/index.pat>
 #include <mhfdat/data/equipment_counts.hexpat>
 
-enum ClanTargetAction : u8 {
+enum ClanTargetAction : s8 {
     Break = 0,
     Cut   = 1
 };
 
 struct ClanMissionTarget {
     u8 monster;
-    u8 partCode;
-    u8 partNameIndex;
-    ClanTargetAction action;
+    u8 partCode [[comment("Bit of the EnemyWork +0xCA8 mask the mission tests (FUN_10894620); sent in 4 bits")]];
+    s8 partNameIndex [[comment("pMonsterPartNames index, read signed (clan_mission_format_target)")]];
+    ClanTargetAction action [[comment("pBreakCutTexts index, read signed (clan_mission_format_target)")]];
 };
 
 struct ClanMissionTimeWeights {
@@ -62,11 +62,11 @@ ClanMissionRewardWeights clanMissionRewardWeights[11] @ header.ptrs.clanMissionR
 ClanMissionMultiplierWeights clanMissionMultiplierWeights[11] @ header.ptrs.clanMissionMultiplierWeights [[name("Clan Mission Multiplier Weights")]];
 
 // Guild icon monster icons (header 0x6A4): the monster icons of the guild icon
-// (emblem) editor. guild_icon_editor_statemachine (case 0) lists, from the first
+// (emblem) editor. fmcGuildMenu_Admin_EMB (case 0) lists, from the first
 // min(count, g_player_hr_cache) rows, each id until 0xFFFF as a kind 1 cell of
 // the 6 x 6 part grid (36 a page); kind 1 is drawn as monsterIconIndexTable[id]
 // (header 0x51C, guild_icon_editor_draw, guild_icon_part_draw). Pages below
-// guild_icon_monster_icon_page_count print pClanMenuItemTexts[0x6A] "Monster
+// GetRyoudanEmblemMonsterPages print pClanMenuItemTexts[0x6A] "Monster
 // Icons", the others [0x69] "Item Icons" (the item icons are built in code).
 // What g_player_hr_cache holds was not proven. On rain row 10 starts with
 // 0xBEFE, 0x01B5 instead of 21, 35.
@@ -81,7 +81,8 @@ GuildIconMonsterIconRow guildIconMonsterIcons[importantNums.numGuildIconMonsterI
 // page "猟団実績pt", pClanConquestTexts[0x3E] "%s1体 %d"); at quest end
 // quest_complete_idle_update sends the row of the quest monster when it is the
 // live target (clan_conquest_target_monster_get) and at least 2 non-mercenary
-// party members share the player's PlayerWork +0xC94 value. Header 0xA58: the
+// party members share the player's PlayerWork +0xC94 value; that search stops at
+// a zero monster, not at the terminator. Header 0xA58: the
 // 25 support conditions (支援条件); the active row is
 // clan_conquest_support_condition_index() % 25, each kill of its monster
 // counts (clan_conquest_support_condition_count_kill) and every count kills

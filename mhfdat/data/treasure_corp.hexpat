@@ -24,12 +24,14 @@ struct TreasureCorpArea {
     u32 listsD[6] [[comment("Runtime pointers to 0x8EC lists, by tier")]];
 };
 
-// treasure_corp_roll_result(area, n, m): roll % 100 < chance2 (+ the m-th chance2Add, + a
-// header 0x904 bonus) gives result 2, < chance2 + chance1 (+ adds) result 1, else 0.
-// Groups of 5 per area (n, m = 1-5).
+// treasure_corp_roll_result(area, n, m): roll % 100 < chance2 of the n-th entry (+ chance2Add
+// of the m-th, + a header 0x904 bonus) gives result 2, < that + chance1 (+ chance1Add) result
+// 1, else 0 (signed compares). n, m count from 1; 0 skips the entry. Groups of 5 per area,
+// linked by position (rd_mhfdat). treasure_corp_result_update: n = team slots in use, m =
+// members whose byte +9 equals one of the two bytes of their slot.
 struct TreasureCorpResultChance {
     u8 area;
-    u8 index;
+    u8 index [[comment("No reader: 1-5 in each group on the 3 files")]];
     u8 chance1;
     u8 chance2;
     s8 chance1Add;
@@ -55,7 +57,7 @@ struct TreasureCorpDrawRule {
 };
 
 // No HD reader: only rd_mhfdat links them. The u16 at +2 continues a list
-// while it is not 0 (its values look like item ids: Honey, Herb...).
+// while it is not 0 (its values are item ids on the 3 files: Honey, Herb...).
 struct TreasureCorpListEntry {
     u8 area;
     u8 tier;

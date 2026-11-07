@@ -16,19 +16,19 @@
 #include <mhfdat/utils/index.pat>
 
 struct ShopCatalog {
-    u32 lists[3];
-    u16 count;
+    u32 lists[3] [[comment("rd_mhfdat: [0] count pointers to u16 pages; [1] count 8-byte rows {u32, pointer}; [2] count pointers to lists of 8-byte rows ending at a u16 0")]];
+    u16 count [[comment("u16 (rd_mhfdat)")]];
     padding[2];
 };
 
 ShopCatalog shopCatalogs[0xE] @ header.ptrs.shopCatalogs [[name("Shop Catalogs")]];
 
-// Header 0x0CC: one pointer per shop catalog record (only record 7 is set) to
+// Header 0x0CC: one pointer per shop catalog record (0xE, rd_mhfdat; 8 zero bytes follow; only record 7 is set) to
 // the u16 length of each of its pages, the ending 0 included. Pages 10-15 hold
 // {item, count} groups split by 0, so a page ends at its length, not at its
 // first 0. guild_hall_reward_pick_event reads the lengths of pages 16 and 17
 // ((length - 1) / 6 rows of 6 values).
-u32 shopCatalogPageLengths[16] @ header.ptrs.shopCatalogPageLengths [[name("Shop Catalog Page Lengths")]];
+u32 shopCatalogPageLengths[0xE] @ header.ptrs.shopCatalogPageLengths [[name("Shop Catalog Page Lengths")]];
 u16 guildShopPageLengths[shopCatalogs[7].count] @ shopCatalogPageLengths[7] [[name("Guild Shop Page Lengths")]];
 
 struct GuildShopPage<auto N> {

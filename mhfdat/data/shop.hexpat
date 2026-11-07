@@ -22,8 +22,9 @@ struct SpecialShopHeader {
 	ptr ptDojoGeneral;
 	ptr ptDojoHR5;
 	ptr ptDojoDoneComps;
-	ptr unk[3] 
-	[[comment("Same contents as previous dojo shops, unknown purpose")]];
+	ptr ptDojoOnline;
+	ptr ptDojoOnlineSpecial;
+	ptr ptDojoOnlineComplete;
 };
 
 SpecialShopHeader sShopHeader @ header.ptrs.specialShops;
@@ -42,10 +43,12 @@ struct SpecialShopsNpcView {
 };
 
 struct SpecialShopsDojoView {
-    ptr ptDojoGeneral [[comment("Save byte +0x1FA4D < 2")]];
-    ptr ptDojoHR5 [[comment("Save byte +0x1FA4D >= 2")]];
-    ptr ptDojoDoneComps;
-    ptr unk[3] [[comment("Picked by FUN_1072AA70 / quest_flag_condition_special instead of the three above")]];
+    ptr ptDojoGeneral [[comment("Offline (gIsOnline 0), save byte +0x1FA4D < 2")]];
+    ptr ptDojoHR5 [[comment("Offline, save byte +0x1FA4D >= 2")]];
+    ptr ptDojoDoneComps [[comment("Offline, FUN_1072A8F0 and FUN_1072A970 both 1")]];
+    ptr ptDojoOnline [[comment("Online, quest_flag_condition_special 0")]];
+    ptr ptDojoOnlineSpecial [[comment("Online, quest_flag_condition_special not 0")]];
+    ptr ptDojoOnlineComplete [[comment("Online, FUN_1072AA70 1 (save flags of ids 0x2775-0x2779 all set)")]];
 };
 
 SpecialShopsNpcView specialShopsNpcView @ header.ptrs.specialShopsNpcView [[name("Special Shops NPC View")]];
@@ -57,7 +60,7 @@ struct RoadShopItem {
 	padding[2];
 	u32 price;
 	u8 tab;
-	u8 subTab;
+	u8 rankTier [[comment("Listed when <= the player's tier (road_shop_static_find_entry: 0-2 HR 1/31/100, 3-5 highest SR, 6-15 GR 1-900)")]];
 	u8 unk0A;
 	padding[1];
 	u8 unk0C;
@@ -79,11 +82,18 @@ struct DojoPrice {
 	u32 price;
 };
 
+enum TowerMedalUnlockKind : u16 {
+	Always = 0,
+	Hr = 1,
+	HighestSr = 2, // highest SbGetRank of the 14 secret books with flag 0x80
+	GRank = 3, // get_g_class_rank
+	HrStarTier = 4 // hr_points_to_star_tier
+};
+
 struct TowerMedalShop {
 	u16 Itemid [[format("getItemName")]];
-	u8 shoptype;
-	padding[1];
-	u16 qty [[name("Quantity")]];
+	TowerMedalUnlockKind unlockKind;
+	u16 unlockMin [[comment("FUN_103841E0 lists the row when unlockMin <= the value of unlockKind")]];
 	padding[2];
 	u32 price [[name("Price")]];
 };
@@ -121,7 +131,7 @@ SpecialPrice specialItemShopSR[while(std::mem::read_unsigned($,4))] @ sShopHeade
 DojoPrice dojoShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptDojoGeneral;
 DojoPrice dojoShopHR5[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptDojoHR5;
 DojoPrice dojoShopDone[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptDojoDoneComps;
-DojoPrice dojoShop2[while(std::mem::read_unsigned($,4))] @ sShopHeader.unk[0];
-DojoPrice dojoShopHR52[while(std::mem::read_unsigned($,4))] @ sShopHeader.unk[1];
-DojoPrice dojoShopDone2[while(std::mem::read_unsigned($,4))] @ sShopHeader.unk[2];
-TowerMedalShop towerShopMedal[while(std::mem::read_unsigned($,2))] @ header.ptrs.towerMedalShop;
+DojoPrice dojoShopOnline[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptDojoOnline;
+DojoPrice dojoShopOnlineSpecial[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptDojoOnlineSpecial;
+DojoPrice dojoShopOnlineComplete[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptDojoOnlineComplete;
+TowerMedalShop towerShopMedal[std::mem::read_unsigned(header.ptrs.extraCounters + 0x0E, 2)] @ header.ptrs.towerMedalShop;

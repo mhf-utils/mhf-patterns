@@ -4,13 +4,26 @@
 	Mytra (the player's facility with shops run by Felynes). mhfgao has the
 	Partnyaa copies of these tables (mhfgao 0x154-0x174); each getter takes
 	the mhfdat one unless a Partnyaa party member has its own.
+	Each cat shop has its own 2-bit level, Lb_mytra_GetCatShopLevel(shop)
+	(bits 0x2B / 0x2D / 0x2F / 0x31 / 0x33 of mytra +0xBA for shops 0-4):
+	shop 0 picks the shop stock, 1 the cat mix rows, 2 gates the cat
+	equipment, 4 the Adventure Dispatch rows.
 	Adventure Dispatch (header 0x1D4): 56 destinations; a row is available
 	when its cost is paid (zenny for rows below 0x2D, Gzenny after) and the
 	assigned Felyne's (intelligence + willpower) / 5 reaches requiredLevel.
-	Each row also points to two blocks whose format is not proven.
-	Shop stock (header 0x1DC-0x1E8): item lists ending at 0, by Mytra stage
-	(below 2, 2, 3, 3 at GR 600 and above). Cat mix rows (header 0x1EC-0x1F8):
-	same stage choice, ending at a key of 0.
+	lb_mytra_npc_cat_shop_create_quest_list lists the rows whose
+	requiredStage is below shop 4's level (rows 0x13-0x25 and 0x29-0x2B
+	below HR 100, 0x00-0x12 and 0x26-0x28 from HR 100, 0x2C with
+	sb_get1_chk, 0x2D-0x31 from GR 100, 0x32-0x37 from GR 600); -1 rows of
+	the first range only on a day where (Lb_mytra_GetQuestRand() + row) % 8
+	is 0 (also rows 0x2C, 0x31, 0x36, 0x37).
+	lb_mytra_npc_cat_shop_quest_result_init rolls the rewards list, after
+	the bonusRewards list when its bonus roll succeeds (60 / 30 / 10 / 5 %
+	by the dispatch result 0-3, 40 / 15 / 6 / 1 % after Mytra event 0x67).
+	Shop stock (header 0x1DC-0x1E8): item lists ending at 0, by shop 0's
+	level (below 2, 2, 3, 3 at GR 600 and above). Cat mix rows (header
+	0x1EC-0x1F8): same choice by shop 1's level and GR, ending at a
+	resultItem of 0.
 */
 
 #include <std/core.pat>
@@ -18,13 +31,28 @@
 #include <mhfdat/utils/index.pat>
 #include <misc/MonsterIDs.hexpat>
 
+fn mytraAdventureItem(u16 v) { return getItemName(u16(~v)); };
+
+struct MytraAdventureReward {
+    u16 item [[format("mytraAdventureItem"), comment("Stored as ~item id")]];
+    s8 minCount;
+    s8 maxCount;
+    u8 chance [[comment("Percent")]];
+    u8 skillKind [[comment("Cat equipment skills (pManagerNames[0x38E + id]) that change the count: 0 bugs 8-11, 1 plants 0-3, 2 mining 4-7, 3 fishing 12-15, 4 carving 16-19, 5 none")]];
+};
+
+struct MytraAdventureRewards {
+    MytraAdventureReward rewards[while(std::mem::read_unsigned($, 2) != 0xFFFF)];
+    MytraAdventureReward end [[comment("item 0xFFFF ends the list; its other bytes are not read")]];
+};
+
 struct MytraAdventure {
     u16 requiredLevel;
-    u16 unk02;
+    s16 requiredStage [[comment("Listed when below cat shop 4's level; -1: rotation day only")]];
     u16 cost;
     padding[2];
-    u32 block1;
-    u32 block2;
+    MytraAdventureRewards *rewards : u32;
+    MytraAdventureRewards *bonusRewards : u32 [[comment("Rolled first when the bonus roll succeeds")]];
 };
 
 MytraAdventure mytraAdventures[56] @ header.ptrs.mytraAdventures [[name("Mytra Adventure Dispatch")]];
@@ -39,10 +67,24 @@ MytraShopStock mytraShopStage2 @ header.ptrs.mytraShopStage2 [[name("Mytra Shop 
 MytraShopStock mytraShopStage3 @ header.ptrs.mytraShopStage3 [[name("Mytra Shop Stock (stage 3)")]];
 MytraShopStock mytraShopStage3G @ header.ptrs.mytraShopStage3G [[name("Mytra Shop Stock (stage 3, GR 600+)")]];
 
+struct MytraCatMixRecipe {
+    u16 itemCount [[comment("2 or 3")]];
+    u8 unk02;
+    padding[1];
+    u8 unk04;
+    padding[1];
+    ItemId items[3] [[comment("items[2] is read only when itemCount is 3")]];
+};
+
+struct MytraCatMixRecipePtr {
+    MytraCatMixRecipe *recipe : u32;
+};
+
 struct MytraCatMixRow {
-    u16 key;
-    u16 count;
-    u32 entries[3];
+    ItemId resultItem;
+    s16 recipeCount;
+    MytraCatMixRecipePtr recipes[recipeCount];
+    if (recipeCount < 3) padding[(3 - recipeCount) * 4];
 };
 
 struct MytraCatMixRows {
@@ -59,9 +101,10 @@ MytraCatMixRows mytraCatMixStage3G @ header.ptrs.mytraCatMixStage3G [[name("Mytr
 // Cat equipment shop (header 0x1D8, menu title mhfpac pManagerNames[0x284]
 // "Buy Cat Equipment"). Row n is named pManagerNames[0x346 + n] (row 0
 // "Nothing"); the shop lists rows 1-70 (fixed bound of the reader). A row is
-// listed when it is not the Felyne's current piece, the Mytra stage
-// (mytra +0xBA) is above requiredStage, and, for needsSaveFlag = -1, one of
-// the save bytes +0x23B58 + 0xA4..0xB1 has bit 0x80. Skill names are
+// listed when it is not the Felyne's current piece, cat shop 2's level
+// (Lb_mytra_GetCatShopLevel(2)) is above requiredStage, and, for
+// needsSaveFlag = -1, sb_get1_chk (one of the save bytes +0x23B58 +
+// 0xA4..0xB1 has bit 0x80). Skill names are
 // pManagerNames[0x38E + skill] ("装備スキル一覧").
 // =======================
 

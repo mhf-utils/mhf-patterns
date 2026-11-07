@@ -3,7 +3,9 @@
 /**
 	Transcend (the Rites): one row per effect and depth (header 0x990,
 	important numbers + 0x3A8 of them, 109 on ZZ) and the EXP a quest clear
-	gives (header 0x994, rows up to the depth table, 25 on ZZ).
+	gives (header 0x994, rows up to the depth table, 25 on ZZ; no end marker:
+	transcend_find_quest_gain_row scans at most 0x1D5 rows and falls back to
+	row 0).
 	A depth row's stats index the label / format pairs of mhfpac's Transcend
 	effect texts.
 */
@@ -32,7 +34,7 @@ enum TranscendGroup : u8 {
     Defense = 1
 };
 
-enum TranscendStat : u32 {
+enum TranscendStat : u8 {
     None                      = 0,
     ElementBlademasterPercent = 1,
     ElementGunnerPercent      = 2,
@@ -46,8 +48,9 @@ enum TranscendStat : u32 {
 };
 
 struct TranscendValue {
-    TranscendStat stat;
-    u32 value;
+    TranscendStat stat         [[comment("Read as a byte (movzx)")]];
+    padding[3];
+    s32 value                  [[comment("Read signed (cvtsi2ss)")]];
 };
 
 struct TranscendDepth {
@@ -56,10 +59,10 @@ struct TranscendDepth {
     TranscendGroup group        [[comment("Random quest upgrades pick inside a group")]];
     TranscendEffect effectAgain;
     TranscendValue values[4];
-    u32 expToReach;
+    s32 expToReach              [[comment("Signed compare (transcend_set_exp JL)")]];
     u16 minTowerRank;
     u8  riteName                [[comment("1 Attack Rite, 2 Defense Rite")]];
-    u8  unk2B;
+    u8  minItemCount            [[comment("Of the next depth row (transcend_next_min_item_count): an upgrade item is offered / used only when the player owns at least this many (pouch + box + storage); 0xFF at max depth")]];
     ItemId upgradeItems[4];
 };
 
@@ -87,9 +90,11 @@ struct TranscendQuestGain {
     padding[1];
     u16 questLevelMin;
     u16 questLevelMax;
-    u16 attackChance            [[comment("Percent")]];
+    u8  attackChance            [[comment("Percent: rand % 100 below it gives the Attack EXP (byte compare, transcend_quest_clear_upgrade)")]];
+    padding[1];
     u16 attackExp;
-    u16 defenseChance           [[comment("Percent")]];
+    u8  defenseChance           [[comment("Percent, same roll for the Defense EXP (byte compare)")]];
+    padding[1];
     u16 defenseExp;
 };
 

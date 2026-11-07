@@ -5,7 +5,7 @@
 
 // =======================
 // Diva Story gifts (header 0x7D0): the liking change of an item given to the
-// Diva (divaStory_gift_liking). The item is looked up in the pairs; an item
+// Diva (add_friendly_present). The item is looked up in the pairs; an item
 // not listed takes the delta of the item 0 row. Liking (save +0x21327 +
 // 0x1A81) stays in 0-999; the reaction text is 9 (up), 10 (no change), 11
 // (down), 12 (999 reached) or 13 (0 reached). Important numbers + 0x2DE count
@@ -47,9 +47,8 @@ DivaHallCamera divaHallCameras[49] @ header.ptrs.divaHallCameras [[name("Diva Ha
 // 0x400 a frame from the x / z of the point). No count: 28 rows fit before the
 // next table; rows 0 and 27 are zeros; the 135 local scripts use points 0-26.
 struct DivaHallActorPoint {
-    float pos[3] [[comment("Entity position and pl_destPos (divaStory_actor_set_point_pos)")]];
-    u16 yaw [[comment("pl_targetYaw (+0xE) and rotation (+0xA4)")]];
-    u16 unk0E [[comment("no reader")]];
+    float pos[3] [[comment("Entity position and pl_destPos (utahime_pos_set)")]];
+    u32 yaw [[comment("Low 16 bits read: pl_targetYaw (+0xE) and rotation (+0xA4); Wii U utahime_rot_set reads the big-endian low half at +0xE")]];
 };
 
 DivaHallActorPoint divaHallActorPoints[28] @ header.ptrs.divaHallActorPoints [[name("Diva Hall Actor Points")]];

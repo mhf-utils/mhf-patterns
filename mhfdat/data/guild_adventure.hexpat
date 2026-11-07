@@ -13,7 +13,7 @@
 // Hall version (0x1A5); cost is taken from a save counter. The grade of a
 // result is the number of thresholds reached (guild_adventure_grade_get). The
 // reward row is rewards[rank band] (guild_adventure_rank_band: low HR, high
-// HR, G rank). Items: base pool groups drawn grade + 1 times, the bonus pool
+// HR, G rank). Items: 1 + min(grade, 2) distinct non-empty base pool groups, the bonus pool
 // at grade 3+ or a 20 % roll, the rare pool at grade 4+ or a 5 % roll after
 // the bonus one (guild_adventure_reward_flags_roll).
 // =======================

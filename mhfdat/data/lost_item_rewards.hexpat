@@ -8,7 +8,7 @@
 // Lost item rewards (header 0x214): the reward for bringing a found lost item
 // (mhfpac pFarmTaskTexts [5] "Found ~C02%s~C00", [0x10] "Give ~C02 %s ~C00",
 // [10..15] Secret Metal Box ... Secret Cloth) to its owner (NPC dialogue case
-// 0xA3, menu mode 0x73). lost_item_reward_roll takes the first row whose rank
+// 0xA3, menu mode 0x73). lb_find_cat_present takes the first row whose rank
 // is at least minRank. Its drops get up to 6 weighted picks, each made with the
 // DLL chances 0x11923DD8 (100, 70, 30, 5, 5, 1 %; the first failure stops), a
 // pick queuing count x 1 of the item; each bonus gives 1 item at chance %.

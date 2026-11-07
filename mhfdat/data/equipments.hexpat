@@ -44,8 +44,8 @@ bitfield appFlags {
 };
 
 struct EquipmentItem {
-  s16 modelIdMale;
-  s16 modelIdFemale;
+  u16 modelIdMale [[comment("0 = no model, the loader keeps the default (Pl_model_id_set: movzx + TEST AX,AX)")]];
+  u16 modelIdFemale;
   equipableBy bitfld;
   u8 rarity [[comment("Get_equip_rare: & 0xF")]];
   u8 maxLevel;
@@ -97,7 +97,7 @@ struct EquipmentItem {
   u8 towerStoneSlots [[comment("get_tower_armor_stone_slot_count (armorType bit 17)")]];
   u16 decoItemID [[comment("get_armor_deco_no: decoration from armor conversion")]];
   u16 gRarity [[comment("get_equip_g_rarity: G rarity of G-class pieces, shown in place of rarity; each piece below the GR tier adds 20 defense per tier")]];
-  u8 unk3E [[comment("no reader")]];
+  u8 decoSpecialSlot [[comment("Deco_item_check: special decorations need != 0, the others != 1 (melee +0x2A, ranged +0x32); skipped for exotic (armorType bit 18) and Armor_g_class_zenith_check; always 0")]];
   u8 modelGroup [[comment("Get_equip_model_grp (was ZeroF): 9 adds -so to the parts file")]];
   u32 appPrice;
   appFlags appFlags;
@@ -113,12 +113,13 @@ struct EquipmentDescription {
   s32p description_1;
   s32p description_2;
   s32p description_3;
-  s32p mhfy;
+  s32p description_4 [[comment("4th line: FUN_10B70FF0 prints the row's pointers until a null one; null in every armor row of the 3 files")]];
 };
 
-// The counts come from the equipment counts (header 0x0E8): the legs don't end
-// at a -1 (ZZ EN: 13514 legs, a scan to -1 finds 13528). The descriptions are
-// one table, head first and leg last, each part where the previous one ends.
+// The counts come from the equipment counts (header 0x0E8); rd_mhfdat walks each
+// armor table to its 0xFFFF row (the same counts on the 3 files) and relocates the
+// names along it. The descriptions are one table, head first and leg last, each
+// part where the previous one ends (ex_goushu_exp_core adds the counts at 0xE8 +4 to +0xA).
 u32 __descHeads  = header.ptrs.equipDesc;
 u32 __descBodies = __descHeads  + 0x10 * equipmentCounts.numHeadA;
 u32 __descArms   = __descBodies + 0x10 * equipmentCounts.numBodyA;

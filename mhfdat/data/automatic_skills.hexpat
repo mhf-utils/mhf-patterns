@@ -28,7 +28,7 @@ fn getEquipNameFromID(u16 equipID, u8 equipType) {
 };
 
 struct AutoSkill {
-	u8  equipClass [[format("getEquipClass")]];
+	u8  equipClass [[format("getEquipClass"), comment("No reader: autoskills_find_entry_for_item / autoskills_lookup_equip_slots match eqType + equipID only")]];
 	u8  eqType     [[format("getEquipType")]];
 	u16 equipID    [[comment("getEquipNameFromID(equipID, eqType)")]];
 	autoSkillList skill_id;

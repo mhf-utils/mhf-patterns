@@ -7,27 +7,24 @@
 #include <misc/MonsterIDs.hexpat>
 
 struct QuestItem {
-	u16 questId;
-	u16 questNumber;
-	u8  keyQuest;
-	u8  urgentQuest;
-	u16 unknown;
+	u16 questId [[comment("0 ends the list")]];
+	u16 questNumber [[comment("HR lists: key progress bit (save ctx+0x23CD0, word n >> 4, bit n & 0xF). GR lists: build_quest_list_gr_filtered takes it as the world-type flag (mhfinf disableInNewbie; 0 counts as 1 on G quests)")]];
+	u8  keyQuest [[comment("HR lists only (mhfdat_hr_star_tier_check_key_quest_progress_bits)")]];
+	u8  urgentQuest [[comment("HR lists only: kept out of the normal list, listed when the tier's keys are done")]];
+	u16 unknown [[comment("no reader")]];
 };
 
 /**
-	A quest list has no count: it ends at its first empty entry or invalid
-	quest id (the same counts as the ranges measured by hand on the JP build).
+	A quest list has no count: it ends at its first questId 0, as in
+	mhfdat_find_hr_quest_item_by_quest_id and build_quest_list_gr_filtered
+	(quest ids go up to 0xFDE8).
 	@param addr The list's address
 	@return How many quests it has
 */
 fn questCount(u32 addr) {
 	u32 count = 0;
-	while (true) {
-		u32 at = addr + count * 8;
-		u16 id = std::mem::read_unsigned(at, 2);
-		if ((id == 0 && std::mem::read_unsigned(at + 2, 2) == 0) || id > 0x8000) break;
+	while (std::mem::read_unsigned(addr + count * 8, 2) != 0)
 		count += 1;
-	}
 	return count;
 };
 
@@ -35,7 +32,8 @@ struct QuestList {
 	QuestItem quests[questCount($)] [[inline]];
 };
 
-// HR 1* to 6*: header 0xA98 points to their 6 list pointers
+// HR 1* to 6*: header 0xA98 points to their list pointers; the lookups walk
+// important numbers + 0x3E0 of them (6), the per-tier checks take tier 1-6
 struct HRQuests {
 	QuestList *oneStar    : ptr [[name("HR1")]];
 	QuestList *twoStars   : ptr [[name("HR2")]];
@@ -47,9 +45,11 @@ struct HRQuests {
 
 HRQuests normalQuests @ header.ptrs.questList [[name("HR")]];
 
-// G1 to G10: each header pointer (0x6C8 to 0x6E0, then 0x740 to 0x748) points
-// to a u32 holding the list's address; G8 to G10 are empty on ZZ. Don't chain the lists: they follow each other on the JP
-// build only (the EN one relocated them).
+// G1 to G10: quest_menu_dispatcher cases 0x29 to 0x32 read header 0x6C8 to
+// 0x6E0, then 0x740 to 0x748; each points to a u32 holding the list's address
+// (a 0 address lists nothing). G8 to G10 are empty on the JP and axibug files,
+// not on rain. Don't chain the lists: they follow each other on the JP build only
+// (the EN one relocated them).
 struct GRQuestList {
 	QuestList *list : ptr [[inline]];
 };
@@ -72,7 +72,11 @@ GRQuests gRankQuests @ header.ptrs.GRankQuestG1 [[name("GR")]];
 // Conquest quests (header 0xB30): important numbers + 0x400 quest ids (16 on
 // ZZ). A quest's index here gives its conquest level, [1, 200, 1000,
 // 9999][index & 3]; a quest not in the list is level 1. The Fatalis AI reads
-// it (level > 999 unlocks its third phase).
+// it (level > 999 unlocks its third phase). Index / 4 = the target (quest
+// files: Shantien, Disufiroa, Fatalis, Crimson Fatalis), index & 3 = the level;
+// quest_menu_dispatcher cases 0x6F-0x72 list one level (index = case - 0x6F,
+// step 4), the Hunter Navi 05_xx checkers read fixed indexes and
+// quest_is_conquest_or_shiten looks the current quest up.
 fn conquestLevel(u32 index) {
 	match (index & 3) {
 		(0): return 1;
@@ -95,6 +99,9 @@ ConquestQuest conquestQuests[importantNums.numConquestQuests] @ header.ptrs.conq
 // periodDays from startDay; its entries (header 0x584, important numbers +
 // 0x1F2 rows) give the monster of each day index and tier: 1-4 the Souls
 // tiers (HR1-2, HR3-4, HR5, Gou), 5-7 the Ribbons tiers (G1-2, G3-4, G5-7).
+// searchDailyMonsterData (Wii U name) only looks at rotations 1-8 (the soul
+// bonus of the reward list), priorityRequest_find_for_monster_today only at
+// rotations 9 and up.
 struct PriorityRequestRotation {
 	s32 rotation;
 	s32 startDay;
@@ -113,7 +120,7 @@ struct PriorityRequestEntry {
 	s32 dayIndex;
 	s32 tier;
 	s32 monster [[format("priorityRequestMonster")]];
-	s32 unk10;
+	s32 soulAdditionalCount [[comment("Wii U getWeaponSoulAdditionalCount returns it (+ 2 when its 3rd argument is below 10); HD getWeaponSoulAdditionalCount (0x1083B920) loads it but returns it only for a kind > 2, and its 4 callers pass 0-2 (server tune rates 0x34-0x3F instead)")]];
 };
 
 PriorityRequestEntry priorityRequestEntries[importantNums.numPriorityRequestEntries] @ header.ptrs.priorityRequestEntries [[name("Guild Priority Request Monsters")]];
@@ -127,7 +134,11 @@ u16 beginnerQuests[importantNums.numBeginnerQuests] @ header.ptrs.beginnerQuests
 // +0x9C, entity +0x03) replaces the quest's G star for the priority request
 // tier (priorityRequest_quest_tier: 3-4 -> 6, 5-7 -> 7) and for the defense
 // recalculation (player_recalc_defense_value_basic / _full; variant3 bit 0x10
-// forces 8).
+// forces 8). The same lookup gives the star of the G star attack bonus
+// (FUN_10A84290, + 20 a star above 1) and defense penalty (FUN_10A86030 /
+// FUN_10A85FA0, - 150 a star above 1), of quest_star_level_get (main monster,
+// quest variant2 bit 0x80) and of the GR 500 Secret Book reward tier
+// (quest_generate_reward_item_list, by the quest monster bytes +0xB9).
 struct InterceptionMonsterStar {
 	u8 monster [[format("priorityRequestMonster")]];
 	u8 gStar;
@@ -140,10 +151,12 @@ InterceptionMonsterStar interceptionMonsterStars[interceptionMonsterCount] @ hea
 // functions (hit_detected, the reward generator, the balloon idle timer, the
 // Hunter Navi checkers, quest hall join checks...). Each field is one quest
 // id; "support first" starts a run of 5 support (【支援】) quests. The code
-// also treats some fields as range starts: firstQuest .. lastQuest - 1
-// (berserk, hit_detected) or firstQuest .. firstQuest + 5 except + 4
-// (berserkExtreme, captureBreakRewardsZenith choice). Titles from the quest
-// files.
+// also treats some fields as range starts: hit_detected takes berserk
+// firstQuest .. lastQuest - 1, and berserkExtreme / berserkSmallParty
+// firstQuest .. supportFirstQuest + 4 except firstQuest + 4; the
+// captureBreakRewardsZenith choice (FUN_10AB66C0, quest_generate_reward_item_list)
+// takes berserkExtreme firstQuest .. firstQuest + 5 except + 4,
+// supportFirstQuest .. + 4, or lastQuest. Titles from the quest files.
 struct GreatSlayingQuests {
     u16 ravienteFirstQuest [[comment("震撼！絶島主 (HagiLv 0)")]];
     u16 ravienteLastQuest [[comment("no balloon idle timer; Hunter Navi task 09_07")]];
@@ -263,7 +276,7 @@ u16 questSearchFieldsG[importantNums.numQuestSearchFieldsG] @ header.ptrs.questS
 // these quests out of the G rank HC / UL toggle id range (23000-23999).
 struct DailyRotationQuestRow {
     u16 questId [[comment("0 ends the list")]];
-    s16 questNumber;
+    u16 questNumber [[comment("only tested against 0")]];
     u8 unk04 [[comment("no reader")]];
     u8 unk05 [[comment("no reader")]];
     u16 unk06 [[comment("no reader")]];
@@ -282,10 +295,11 @@ DailyRotationQuestListPtr dailyRotationQuests0[importantNums.numDailyRotationQue
 DailyRotationQuestListPtr dailyRotationQuests1[importantNums.numDailyRotationQuestLists1] @ header.ptrs.dailyRotationQuests1 [[name("Daily Rotation Quests (day % 3 = 1)")]];
 DailyRotationQuestListPtr dailyRotationQuests2[importantNums.numDailyRotationQuestLists2] @ header.ptrs.dailyRotationQuests2 [[name("Daily Rotation Quests (day % 3 = 2)")]];
 
-// G quest party size rates (header 0x39C, rank_points.md): the reward rate in
-// percent of a G quest (quest variant1 bit 8) by the number of counted
-// players, 1 to important numbers + 0x112 (quest_g_party_size_rate_get; 100
-// when the quest is not a G quest).
+// G quest party size rates (header 0x39C, rank_points.md): the GRP / GSRP rate
+// in percent of a G quest (quest variant1 bit 8) by the number of counted
+// players - 1 (getGrpPartyMemberRate, Wii U name; 100 when the quest is not a G
+// quest or GameWork +0x23FE is not 3 or 4). Important numbers + 0x112 is the row
+// count, but HD tests it as "index >= 0 or index < count", so it bounds nothing.
 u16 gQuestPartySizeRates[importantNums.numGQuestPartySizeRates] @ header.ptrs.gQuestPartySizeRates [[name("G Quest Party Size Rates")]];
 
 // G quest difficulty (header 0x798 and 0x79C; Wii U

@@ -5,11 +5,11 @@
 #include <mhfdat/utils/index.pat>
 
 // =======================
-// Event scenes (header 0x514 / 0x518): scripts run by event_scene_vm_tick
-// (event_scene_init picks the script). 0x518 = one pointer per script (24, the
+// Event scenes (header 0x514 / 0x518): scripts run by ExEvDemoMoveSub
+// (ExEvDemoRequest picks the script; Wii U slots 0x540 / 0x544). 0x518 = one pointer per script (24, the
 // last 6 null); 0x514 starts with the size of each script in u32 words (24 u16),
 // the bytecode follows in the same block. An instruction is a u32 header
-// {u16 op, u16 size in words, header included} and its arguments.
+// {u16 op, s16 size in words, header included} and its arguments.
 // Fixed point: positions and lengths are value / 4096, angles value / 4096
 // degrees, scales and the camera zoom value * 0.00001.
 // Entity slots index the scene entity table (g_event_scene_entity_ptr, filled by
@@ -57,7 +57,7 @@ enum EventSceneOp : u16 {
     SetEntityScaleFactor = 0x24, // event_scene_cb_set_entity_scale_factor
     ActivateMonsterHitSphere = 0x25, // Monster_ActivateHitboxSphere
     SetEntityMotion = 0x26, // +0x32C motion, +0x324 blend / 2, +0x31C (FUN_106A8390 / FUN_106A82D0)
-    SetEntityAction = 0x27, // FUN_106AAFA0: actCategory / actType
+    SetEntityAction = 0x27, // Lb_act_set: actCategory / actType
     RequestEntityMotion = 0x28, // entity_request_motion
     RequestEntityOrWeaponMotion = 0x29, // entity_request_motion, else player_set_weapon_motion_id_and_duration
     SetEntityActionState = 0x2A, // set_entity_action_state
@@ -130,7 +130,7 @@ enum EventSceneCondition : s32 {
 
 struct EventSceneInstr {
     EventSceneOp op;
-    u16 size;
+    s16 size [[comment("Words, header included; read with SAR 0x10 (signed)")]];
     match (op) {
         (EventSceneOp::WaitFrame | EventSceneOp::SetEndFrame): s32 frame;
         (EventSceneOp::LoadCameraMotion): s32 cameraMotionId;

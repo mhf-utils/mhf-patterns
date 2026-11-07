@@ -20,7 +20,7 @@ struct StampCardReward {
     u16 rankMax;
     u8 rewardSlot [[comment("Packet reward pair 1 or 2")]];
     u8 unk05 [[comment("no reader, 0")]];
-    u16 unk06 [[comment("Sent to the server; the reply word it comes back in is never read. 10 everywhere")]];
+    u16 packetReward [[comment("Sent as Reward1 / Reward2 (by rewardSlot) of MSG_MHF_STAMPCARD_STAMP; the reply word it comes back in is never read. 10 everywhere")]];
     u16 item [[format("getItemName")]];
     u16 quantity;
     u16 rankKind [[comment("1 = HR rows (G rank 0), 2 = G rank rows; another value matches both")]];

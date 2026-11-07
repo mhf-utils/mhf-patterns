@@ -5,9 +5,12 @@
 	class, in class order. The only action source of the Tonfa, the Switch Axe
 	F and the Magnet Spike; the other classes use them for their Extreme style
 	(and the bowguns and the bow for their own acts).
-	An action runs its steps: kind 0 / 1 go to the actType held in blend2x,
-	2 calls the weapon with motion as argument, 3 / 4 / 5 play motion from
-	startFrame and wait waitCount loops (3), waitFrame (4), or hold (5).
+	An action runs its steps: kind 0 / 1 return the hunter to the neutral
+	state (entity_action_start_motion / FUN_10A81C20 -> initialize_entity_motion,
+	mhf-client ToNormal: actType 0, the game picks the idle motion) with
+	blend2x / 2 blend ticks from startFrame (motion unread), 2 calls the
+	weapon with motion as argument, 3 / 4 / 5 play motion from startFrame and
+	wait waitCount loops (3), waitCount loops then waitFrame (4), or hold (5).
 	A cancel opens on input inputId between its window conditions and goes to
 	nextActType. An event calls the class handler with (type, arg) when its
 	condition holds. A condition: mode 1 true, 2 false, else step / blend /

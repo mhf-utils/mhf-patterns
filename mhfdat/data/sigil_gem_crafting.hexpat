@@ -23,12 +23,12 @@
 struct CraftRecipeMaterial {
     ItemId item;
     u8 quantity [[comment("Per craft")]];
-    u8 mustOwn [[comment("When Seisan_flag_ck passes, the recipe is hidden unless inventory_query_item_owned says owned")]];
+    u8 seisanFlag [[comment("Seisan_flag_ck id (0 no check, 1 always passes, 2 HR, 3-5 event flags, 6-7 monster groups; 0 and 1 in the files): when it passes, the recipe is listed only once inventory_query_item_owned finds this material")]];
 };
 
 struct CraftRecipe {
     ItemId result;
-    u16 unk02;
+    u16 unk02 [[comment("No reader: craft_recipe_search_filter_ok tests byte +2 only for the cuff recipes (header 0x2C0 / 0x750)")]];
     CraftRecipeMaterial materials[4];
 };
 

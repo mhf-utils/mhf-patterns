@@ -18,13 +18,16 @@
 
 struct SkillTreeLevel {
     s16 points;
-    s16 skill               [[comment("Active skill id (mhfpac)")]];
+    u16 skill               [[comment("Active skill id (mhfpac)")]];
 };
 
-// The first 3 levels are the negative side (points <= their points), the last
-// 5 the positive one (points >= theirs); a tree with fewer repeats a level.
+// skill_tree_points_to_active_skill: the first 3 levels are the negative side
+// (points <= their points), the last 5 the positive one (points >= theirs); a
+// tree with fewer repeats a level. Tree 0xA1 (Strong Attack+1 .. +6, skills
+// 408-412 and 524) is only tested on the positive side, from level 7 down to
+// level 0, so its level 2 (10 points) is a positive level.
 struct SkillTree {
-    s16 tree;
+    u16 tree;
     SkillTreeLevel levels[8];
 } [[name(std::format("Tree {}", tree))]];
 
@@ -39,7 +42,8 @@ SkillTree skillTree[while(std::mem::read_signed($, 2) != -1)]
 // =======================
 
 struct SkillEffect {
-    u32 skill               [[comment("Active skill id (mhfpac)")]];
+    u16 skill               [[comment("Active skill id (mhfpac); read as a u16 (skill_effect_build_owner_index, skill_cargo_row_grants)")]];
+    padding[2];
     u32 type;
     u32 effect;
     s32 value;
@@ -67,13 +71,29 @@ VampirismRow vampirism[std::mem::read_unsigned(header.ptrs.skillCounts + 4, 2)]
     [[name("Vampirism")]];
 
 // =======================
-// Crit Conversion: the first 8 bytes of the block header 0xA1C points to (the
-// rest belongs to other systems)
+// Crit Conversion (skills 0x1F3 / 0x1F4), Stylish Assault (0x1F6) and Ice Age
+// (0x1F8), header 0xA1C. Tables "by class" have one u16 per weapon class
+// (player +0x03). Ice Age state (skill_ice_age_state_block_for_entity): +8
+// gauge, +0xA decay timer, +0xC hit timer, +0xE level.
 // =======================
 
 struct CritConversion {
-    u16 rate[2];
-    u16 affinity[2];
+    u16 rate[2] [[comment("skill_crit_conversion_apply_attack_bonus: attack + rate x 0.001 x sqrt(affinity - 100) when affinity > 100; [0] skill 0x1F3 (or FUN_10A69A80), [1] skill 0x1F4")]];
+    u16 affinity[2] [[comment("weapon_total_affinity_percent: affinity added, [0] skill 0x1F3, [1] skill 0x1F4")]];
+    u16 iceAgeHitFrames [[comment("FUN_101C2D50 (Ice Age hit, on_hit_effects_dispatch): Ice Age state +0xC = it + zenith_ice_age_frames_add")]];
+    u16 iceAgeDecayInterval [[comment("FUN_101C2D50 / FUN_101C2640: reload of the decay timer (state +0xA)")]];
+    u16 iceAgeGaugeDecay [[comment("FUN_101C2640: taken from the gauge when the decay timer is 0")]];
+    u16 iceAgeDamageInterval [[comment("FUN_101C31A0: FUN_101C30B0 deals Ice Age damage when the counter 0x1ED78564 is a multiple of it")]];
+    u16 unk10;
+    u16 iceAgeGaugeRangeCount [[comment("u16 count of iceAgeGaugeRanges; the last value is the gauge cap (FUN_101C2CC0)")]];
+    u16 iceAgeLevelCount [[comment("levels 0 .. it - 1 (FUN_101C2ED0, FUN_101C2F40)")]];
+    padding[2];
+    u16 *stylishAssaultTimerByClass[14] : u32 [[comment("skill_stylish_assault_stack_update: Stylish Assault timer (SkillWork +0x54C)")]];
+    u16 *stylishAssaultAttackByClass[14] : u32 [[comment("zenith_stylish_assault_attack_add: attack added while that timer runs (FUN_101C2180)")]];
+    u16 *iceAgeGaugeGainByClass[14] : u32 [[comment("FUN_101C2D50: gauge added by an Ice Age hit")]];
+    u16 *iceAgeGaugeRanges[iceAgeGaugeRangeCount] : u32 [[comment("{min, max} gauge of levels 1 .. iceAgeLevelCount - 1: FUN_101C2ED0 gives the level of a gauge, FUN_101C2F40 sets the gauge of a new level to the middle of its range")]];
+    u16 *iceAgeAuraValueByLevel[iceAgeLevelCount] : u32 [[comment("skill_ice_age_aura_object_update: x 0.001 into the aura object +0xEC (float)")]];
+    u16 *iceAgeDamagePermilleByLevel[iceAgeLevelCount] : u32 [[comment("FUN_101C2FA0: damage = it x 0.001 x weapon_equip_preview_calculate_damage / (weapon class row +0xC of 0x65C x 0.01), at least 1")]];
 };
 
 CritConversion critConversion @ header.ptrs.critConversion [[name("Crit Conversion")]];
@@ -102,7 +122,7 @@ RushUpStage3 rushUpStage3 @ std::mem::read_unsigned(header.ptrs.skillCells + 4, 
 // as its most stacks); the most stacks add up to 48 on ZZ, the room the list
 // has. The Obscurity block also holds the Switch Axe F guard sigil (0x61,
 // value 2): a wider guard angle, and a heal of the guarded damage x 0.001
-// with a minimum.
+// with a minimum; and the Tonfa sigil 0x5E value 2 gauge drain rate.
 // =======================
 
 struct PerClass {
@@ -113,7 +133,7 @@ struct Obscurity {
     PerClass *attackPerStack : u32;
     PerClass *maxStacks : u32;
     s16 stackDelay;
-    s16 unk0A;
+    s16 tonfaSigilGaugeDrainPermille [[comment("FUN_11326240 (Tonfa, class 11; FUN_113266D0 / FUN_11326930 / FUN_11326DF0 by style pw +0xD42, from player_entity_tick_hp_regen): gauge (+0x1F4) drain per tick x it / 1000 with weapon_sigil_has_value(0x5E, 2); 1000 = unchanged")]];
     u16 safGuardAngleBonus;
     s16 safGuardHealPermille;
     s16 safGuardHealMin;
@@ -169,34 +189,63 @@ struct Furious {
     PerClass *evadeGuardGain0 : u32;
     PerClass *evadeGuardGain1 : u32;
     PerClass *evadeGuardGain2 : u32;
-    float *unk28[8] : u32;
+    float *shellGaugeDivisors[std::mem::read_unsigned(header.ptrs.important_nums + 0x25C, 2) / 3] : u32 [[comment("skill_furious_scale_attack_gauge_by_weapon: a hit of kind 0x26 (hit +4) divides its attack gauge gain by [byte +0x41 of the block hit +0x1C points to, capped at numGunlanceShells / 3 - 1]")]];
     s16 maxStage;
-    s16 unk2E;
-    s32 unk30;
+    s16 stageDownMinDamage [[comment("Monster_ApplyDamageToPlayer: an unguarded monster hit with attack +0x6E == 1 lowers the stage (skill_furious_hit_stage_down) only when its damage (+0x6C) is above it")]];
+    s16 attackGaugeDrain [[comment("skill_furious_update_tick: taken from the attack gauge each tick while the entity at quest work +0x9C has +0xC7A set and the same +0x7F8 as the player; floor 0, cap attackGaugeThresholds[maxStage]")]];
+    s16 evadeGuardGaugeDrain [[comment("same, evade / guard gauge (cap evadeGuardGaugeThresholds[maxStage])")]];
     s32 unk34                   [[comment("A minimum attack gauge gain for weapon classes 1 and 5")]];
 };
 
 Furious furious @ std::mem::read_unsigned(header.ptrs.skillCells, 4) [[name("Furious")]];
+
+// =======================
+// Rest of the cell block header 0xB94 points to: +8 Ceaseless's Zenith
+// effect 0x1B, +0xC / +0x10 hitstop overrides of hit kind 0x78, +0x14 the
+// Sword God+3 sharpen timer
+// =======================
+
+struct CeaselessZenith {
+    s16 levelCount;
+    padding[2];
+    s16 *thresholdsByClass[levelCount * 14] : u32 [[comment("[weapon class x levelCount + level]: ceaseless_zenith_level_get gives the level (thresholds <= the SkillWork +0x578 hit counter, minus 1); weapon_slot_clear_state_on_hit raises the counter up to the last one")]];
+    u16 *affinityByLevel[levelCount] : u32 [[comment("ceaseless_zenith_affinity_get -> weapon_element_status_affinity_value: affinity added")]];
+    float *critMultiplierAddByLevel[levelCount] : u32 [[comment("player_critical_hit_damage_multiplier: added to the critical hit multiplier")]];
+};
+
+CeaselessZenith ceaselessZenith @ std::mem::read_unsigned(header.ptrs.skillCells + 8, 4) [[name("Ceaseless Zenith")]];
+
+struct HitstopOverride {
+    s16 subId [[comment("hit +6, linear search in hitstop_override_find")]];
+    u8 hitstopFrames [[comment("replaces weapon_melee_hitstop_reduction_get")]];
+    u8 fencingHitstopFrames [[comment("replaces fencing_hitstop_frames_get; used when hit +0x15C bit 0x4000 is set")]];
+};
+
+s32 hitstopOverrideCount @ header.ptrs.skillCells + 0x10 [[name("Hitstop Override Count")]];
+HitstopOverride hitstopOverrides[hitstopOverrideCount] @ std::mem::read_unsigned(header.ptrs.skillCells + 0xC, 4) [[name("Hitstop Overrides (hit kind 0x78)")]];
+float swordGod3SharpenTimer @ header.ptrs.skillCells + 0x14 [[name("Sword God+3 Sharpen Timer"), comment("weapon_sharpen_action_restore_sharpness with skill 0x20D: copied to SkillWork +0x67C")]];
 
 // Skill bonus values (header 0xAA4). "Zenith effect N" = the player has a
 // zenith skill whose mhfdat 0xAB0 rows hold effect type N
 // (skill_is_granted_by_equipped_gear). Frames are at 30 per second.
 struct SkillBonusValues {
 	u16 *vampirismAttackGain[14] : u32 [[comment("Vampirism proc: attack added per weapon class (skill_vampirism_apply_attack_buff)")]];
-	u16 vampirismAttackCap [[comment("cap of that attack stack; the proc effect turns red at it")]];
-	u16 incitementAttack [[comment("Incitement (skill 0x1D7) active: attack added (player_recalc_attack_power_full)")]];
-	u16 critConversionUp1Scale [[comment("zenith effect 7 (C. Conversion Up+1): x 0.001 x sqrt(affinity) attack")]];
-	u16 critConversionUp2Scale [[comment("zenith effect 8 (C. Conversion Up+2)")]];
+	s16 vampirismAttackCap [[comment("cap of that attack stack (signed compares in skill_vampirism_apply_attack_buff / _play_proc_fx); the proc effect turns red at it")]];
+	u16 incitementAttack [[comment("Incitement (skill 0x1D7) active, SkillWork +0x684 flag 0x1000: attack added (skill_incitement_attack_add, from player_recalc_attack_power_full)")]];
+	s16 critConversionUp1Scale [[comment("zenith effect 7 (C. Conversion Up+1): x 0.001 x sqrt(affinity) attack")]];
+	s16 critConversionUp2Scale [[comment("zenith effect 8 (C. Conversion Up+2)")]];
 	u16 stylishAssaultUp1AttackPerStack [[comment("zenith effect 9 (S. Assault Up+1): attack per stack above the first")]];
-	u16 stylishAssaultUp1StackLimit [[comment("zenith effect 9: stacks cap at this + 1")]];
+	u8  stylishAssaultUp1StackLimit [[comment("zenith effect 9: stacks cap at this + 1 (byte read, skill_stylish_assault_stack_update)")]];
+	u8  unk0F [[comment("no reader")]];
 	u16 stylishAssaultUp2AttackPerStack [[comment("zenith effect 10 (S. Assault Up+2)")]];
-	u16 stylishAssaultUp2StackLimit [[comment("zenith effect 10: stacks cap at this + 1")]];
-	u16 dissolverUpThresholdCut [[comment("zenith effect 11 (Dissolver Up): lowers the elemental exploit threshold (player unique param +0x10)")]];
+	u8  stylishAssaultUp2StackLimit [[comment("zenith effect 10: stacks cap at this + 1 (byte read)")]];
+	u8  unk13 [[comment("no reader")]];
+	s16 dissolverUpThresholdCut [[comment("zenith effect 11 (Dissolver Up): lowers the elemental exploit threshold (player unique param +0x10)")]];
 	u16 thunderCladUp1Frames [[comment("zenith effect 12 (Thunder Clad Up+1): frames added")]];
 	u16 thunderCladUp2Frames [[comment("zenith effect 13 (Thunder Clad Up+2)")]];
 	u16 iceAgeUp1Frames [[comment("zenith effect 14 (Ice Age Up): frames added")]];
 	u16 iceAgeUp2Frames [[comment("zenith effect 15 (Ice Age Up, second)")]];
-	u8  vampirismUpHealChance [[comment("zenith effect 16 (Vampirism Up+1 / +2): heal chance percent added (player_lifesteal_on_hit)")]];
+	u8  vampirismUpHealChance [[comment("zenith effect 16 (Vampirism Up+1 / +2): heal chance percent added (skill_absorption)")]];
 	u8  unk1F;
 	float safChargeMoveScale [[comment("SAF sigil 0x61 value 3: root motion scale while charging (motions 0x5D1, 0x428)")]];
 };
@@ -213,12 +262,14 @@ SkillBonusValues skillBonusValues @ header.ptrs.skillBonusValues [[name("Skill B
 //   (player_recalc_defense_value_basic / _full);
 // - autoRecoverySeconds: with render slot status bit 0x400000, the auto
 //   recovery timer is set to this x 30 frames (player_entity_tick_hp_regen);
-// - unk06: read by FUN_101C5B70 after a distance check between two players.
+// - soulShareRange: FUN_101C5B70 (from skill_red_blue_soul_broadcast_activation
+//   and network_packet_handler) gives the soul effect to another player in the
+//   same stage when the distance to the soul user x 0.01 is below it.
 struct SoulValues {
 	s16 soulAttack;
 	s16 soulDefense;
 	s16 autoRecoverySeconds;
-	s16 unk06;
+	s16 soulShareRange;
 };
 
 struct SpacingAndSoulValues {
@@ -390,7 +441,7 @@ struct MagnetSpikeTunables {
 	u16 numMsNoAimActions;
 	u16 numMsActions2C;
 	u16 numMagnetNetShellExcludedMonsters;
-	u16 numMsAimYawCaps;
+	u16 numMsAimYawCaps [[comment("u16 words, not pairs: FUN_103379D0 steps 2 per pair")]];
 	u16 numMsNoStaminaRegenActions;
 	MagnetSpikeValues *values : u32;
 	u16 *msActionsClass0[numMsActionsClass0] : u32 [[comment("ms_action_class_get: these MS actions are class 0")]];
@@ -400,7 +451,7 @@ struct MagnetSpikeTunables {
 	s16 *msNoAimActions[numMsNoAimActions] : u32 [[comment("FUN_103377C0 does not turn toward the target for these actions")]];
 	u16 *msActions2C[numMsActions2C] : u32 [[comment("FUN_1032B7B0 (from ms_act_update): actions exempt from a forced action change; only the 0xC9 end on ZZ")]];
 	u8 *magnetNetShellExcludedMonsters[numMagnetNetShellExcludedMonsters] : u32 [[comment("monster ids (entity +0x03) that do not get the net-synced kind 121 shell (FUN_1033B350); ends on 0xFF")]];
-	IdValuePair *msAimYawCaps[numMsAimYawCaps] : u32 [[comment("{action, max yaw step toward the target} (FUN_103379D0); 10920 = 60 degrees")]];
+	IdValuePair *msAimYawCaps[numMsAimYawCaps / 2] : u32 [[comment("{action, max yaw step toward the target} (FUN_103379D0); 10920 = 60 degrees")]];
 	u16 *msNoStaminaRegenActions[numMsNoStaminaRegenActions] : u32 [[comment("MS actions during which stamina does not recover (FUN_1032B8F0, from player_entity_tick_hp_regen)")]];
 };
 
@@ -436,7 +487,7 @@ PointBreakthroughTunables pointBreakthroughTunables @ header.ptrs.pointBreakthro
 struct CombatSupremacyTunables {
     float attackMult [[comment("player_recalc_attack_power_full")]];
     s32 staminaDrainDivisor [[comment("player_stamina_drain_tick_apply: drain per tick = constant / it")]];
-    s32 buffTimerDrainMult [[comment("buff timers count down this much faster: Dash Juice (player_dash_juice_timer_tick_down), horn song 5 (weapon_horn_song_timers_tick), SkillWork +0x2B6 / +0x532 (FUN_10A62A70 / FUN_10A62B00), timer [1] of SkillWork +0x530 (FUN_114B7C70)")]];
+    s32 buffTimerDrainMult [[comment("buff timers count down this much faster: Dash Juice (player_dash_juice_timer_tick_down), horn song 5 (weapon_horn_song_timers_tick), SkillWork +0x2B6 / +0x532 (skill_timer_2b6_tick_down / skill_timer_532_tick_down), timer [1] of SkillWork +0x530 (FUN_114B7C70)")]];
     float drainMultTier3 [[comment("special hall quests, player_stamina_drain_reduction_tier 3")]];
     float drainMultTier45 [[comment("special hall quests, tier 4 / 5")]];
     float drainMultHalf [[comment("special hall quests tier 1 / 2; elsewhere Marathon Runner (0xB8) or Peerless (0x121)")]];
@@ -469,9 +520,9 @@ struct ZenithTreeSkills {
 ZenithTreeSkills zenithTreeSkills[std::mem::read_unsigned(header.ptrs.skillCounts + 0x16, 2)] @ header.ptrs.zenithTreeSkills [[name("Zenith Tree Skills")]];
 
 struct ZenithSkillEffect {
-    u16 zenithSkill [[comment("rows of a skill follow each other; skill_dat_index_rebuild indexes the first row and the count per skill")]];
+    u16 zenithSkill [[comment("rows of a skill follow each other; zenith_skill_effect_index_build indexes the first row and the count per skill (ids 0-0x34)")]];
     u16 effect [[comment("effect type asked by skill_is_granted_by_equipped_gear (\"zenith effect N\" in SkillBonusValues)")]];
-    u16 minLevel [[comment("FUN_1004AE00: the row counts when this <= the level asked")]];
+    s16 minLevel [[comment("zenith_skill_has_effect_at_level: the row counts when this <= the level asked (signed compare)")]];
 };
 
 ZenithSkillEffect zenithSkillEffects[std::mem::read_unsigned(header.ptrs.skillCounts + 0x18, 2)] @ header.ptrs.zenithSkillEffects [[name("Zenith Skill Effects")]];
@@ -522,7 +573,7 @@ AssistanceTunables assistanceTunables @ header.ptrs.assistanceTunables [[name("A
 // Trap Expert (0x15F) / Trap Master (0x160) combinations (header 0x368), count
 // at +0x1A of the block header 0x988 points to: combination records whose
 // result (+2) is in this list get the trap skill bonus
-// (item_trap_skill_applies_to_item_is_active)
+// (checkSkillTrap)
 ItemId trapSkillCombineResults[std::mem::read_unsigned(header.ptrs.skillCounts + 0x1A, 2)] @ header.ptrs.trapSkillCombineResults [[name("Trap Skill Combine Results")]];
 
 // =======================

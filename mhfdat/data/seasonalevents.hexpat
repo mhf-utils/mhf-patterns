@@ -11,4 +11,4 @@ struct Event_Time {
     type::time_t end;
 } [[static]];
 
-Event_Time seaonalEvents[importantNums.numSeasonalEvents] @ header.ptrs.seasonalEventTiming;
+Event_Time seasonalEvents[importantNums.numSeasonalEvents] @ header.ptrs.seasonalEventTiming;

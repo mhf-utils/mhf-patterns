@@ -2,11 +2,13 @@
 
 /**
 	Equipment visual effects: sprites drawn on worn gear (glows, sparks,
-	auras). A weapon's visualEffects field (+0x24) picks a set in header 0x280:
-	up to 8 effect ids (0 ends them), each a 0x80-byte row of header 0x284,
+	auras). A weapon's visualEffects field (+0x24) or an armor piece's +0x26
+	picks a set in header 0x280 whose kind is that gear's kind (1 weapon, 2-6
+	head to legs): up to 8 effect ids (0 ends them; evolution weapons show
+	fewer at low levels), each a 0x80-byte row of header 0x284,
 	run by equip_effect_update. Header 0x294 lists effects by worn model: from
 	row 1 until a part of 0, a weapon of a class or an armor piece with a model
-	id, worn by a male (0), a female (1) or an NPC (2), gives up to 8 ids of
+	id, worn by a male (0), a female (1) or a Partnyaa (2), gives up to 8 ids of
 	0xB4-byte rows of header 0x298, run by model_effect_update.
 
 	An effect shows while its trigger holds. It starts after startDelay
@@ -19,7 +21,8 @@
 	texture by 1/uvStepsU and 1/uvStepsV. renderMode & 0xE picks the
 	translucency mode. A hide condition (hideMode 1 or 2, hideFlags) sets the
 	alpha to 0, for instance by day or night. Model effects can speed up some
-	channels during charge motions (accel flags, speedMul).
+	channels and the UV scroll during charge motions (accel flags, speedMul,
+	uvMode, uvSpeedMul).
 	Charge level = the charge timer (PlayerWork +0xB24) / the class's charge
 	step; "in quest" = gameState1 2 or 3.
 */
@@ -34,6 +37,8 @@ enum EffectTrigger : u8 {
     WeaponDrawn             = 0x03,
     ChargeAbove1            = 0x04,
     WeaponSheathed          = 0x05,
+    ModelQuestMotions       = 0x06,
+    ModelSheathedInQuest    = 0x07,
     MotionsA                = 0x08,
     DrawnSpecialState       = 0x09,
     MotionsB                = 0x0A,
@@ -105,8 +110,18 @@ struct AngleChannel {
 // Weapon effects
 // =======================
 
+enum EffectSetKind : u8 {
+    None   = 0,
+    Weapon = 1,
+    Head   = 2,
+    Chest  = 3,
+    Arms   = 4,
+    Waist  = 5,
+    Legs   = 6
+};
+
 struct WeaponEffectSet {
-    u8  unk00;
+    EffectSetKind kind;
     u8  unk01;
     u16 effects[8];
 };
@@ -148,7 +163,7 @@ struct WeaponEffect {
     s16    alphaLoops;
     u16    alphaPeriod;
     u8     alphaPingPong;
-    u8     unk5F;
+    u8     renderState60          [[comment("gFlSetRenderState(0x60, value) while drawn, 0 after")]];
     u16    unk60;
     s16    uvStepsU;
     s16    uvStepsV;
@@ -161,10 +176,11 @@ struct WeaponEffect {
     GunPart gunPart               [[comment("Ranged weapons: shown only while this part is there")]];
     u8     hideMode;
     u8     hideFlags;
-    u8     unk77;
+    u8     viewAlwaysShown        [[comment("hud_weapon_view_transform_update: shown whatever the trigger")]];
     u8     unk78;
     u8     skipLoops              [[comment("Spawned with every loop counter at 0")]];
-    u8     unk7A[6];
+    u8     sound                  [[comment("Played once when the effect starts (0 none)")]];
+    u8     unk7B[5];
 };
 
 WeaponEffect weaponEffects[(nextTable(header.ptrs.weaponEffects) - header.ptrs.weaponEffects) / 0x80]
@@ -188,7 +204,7 @@ enum EffectPart : u16 {
 enum EffectWearer : u16 {
     Male   = 0,
     Female = 1,
-    Npc    = 2
+    Partnyaa = 2
 };
 
 struct ModelEffectSet {
@@ -254,22 +270,21 @@ struct ModelEffect {
     s16    alphaLoops;
     u16    alphaPeriod;
     u8     alphaPingPong;
-    u8     unk91;
+    u8     renderState60;
     u16    unk92;
     s16    uvStepsU;
     s16    uvStepsV;
     u16    uvPeriod;
     s16    uvLoops;
-    u16    unk9C;
-    u16    unk9E;
+    float  uvSpeedMul;
     u8     uvMode;
     u8     unkA1[7];
     GunPart gunPart;
     u8     hideMode;
     u8     hideFlags;
-    u8     unkAB;
+    u8     viewHidden;
     u8     startActive;
-    u8     unkAD;
+    u8     skipLoops;
     u8     unkAE[6];
 };
 
@@ -280,9 +295,11 @@ ModelEffect modelEffects[(nextTable(header.ptrs.modelEffects) - header.ptrs.mode
 /**
 	Equipment model effects (headers 0xADC / 0xAD8): 10 lists of {model id,
 	effect row}, sorted by model id at load (rd_mhfdat) and searched by
-	equip_model_effect_row_find. List 4 + gender is read with the body model
-	(entity +0x398), 6 + gender with the waist model (+0x39C), 8 with the weapon
-	model; lists 0-3 and 9 have no reader found. An effect row of 0xAD8 holds 4
+	equip_model_effect_row_find. List 0 + gender is read with the hairstyle
+	(no head armor model, or the hairdresser), 2 + gender with the head model
+	(entity +0x396), 4 + gender with the body model (+0x398), 6 + gender with
+	the waist model (+0x39C), 8 with the weapon model, 9 with a Partnyaa's head
+	model (+0x396). An effect row of 0xAD8 holds 4
 	{effect, param}; effect indexes DLL table 0x118DEA08 (0x14-byte rows; above
 	0x70 ends the row) whose kind picks a handler of 0x118DF2DC. 110 rows on
 	the EN / JP files (the highest index used is 109).
@@ -299,13 +316,16 @@ struct EquipModelEffectList {
 };
 
 struct EquipModelEffectLists {
-    EquipModelEffectList unk0[4];
+    EquipModelEffectList hairMale;
+    EquipModelEffectList hairFemale;
+    EquipModelEffectList headMale;
+    EquipModelEffectList headFemale;
     EquipModelEffectList bodyMale;
     EquipModelEffectList bodyFemale;
     EquipModelEffectList waistMale;
     EquipModelEffectList waistFemale;
     EquipModelEffectList weapon;
-    EquipModelEffectList unk9;
+    EquipModelEffectList partnyaaHead;
 };
 
 struct EquipModelEffect {

@@ -14,9 +14,5 @@ struct GroupSlotEntry {
     u8 tabId;
 };
 
-struct DisplayOrderRef {
-    u8 *value : u32;
-};
-
-DisplayOrderRef displayOrder[14] @ addressof(header.pDisplayOrder) [[name("Display Order")]];
+u8 displayOrder[14] @ header.pDisplayOrder [[name("Display Order"), comment("Tab indexes in display order")]];
 GroupSlotEntry groupSlotMap[header.groupSlotCount] @ header.pGroupSlotMap [[name("Group Slot Map")]];

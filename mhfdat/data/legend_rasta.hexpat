@@ -6,7 +6,7 @@
 	+ 0xF6 of them, 20 on ZZ): an NPC id and the loadout rows its "Change
 	Weapon" list offers. Also the item sets the Partner and the player's own
 	Rasta can buy (header 0x29C, 6 rows: unusable, powder, hunting horn,
-	throwing knife, trap, urgent slaying).
+	throwing knife, trap, urgent slaying; then a row of 0xFFFF that ends the list).
 */
 
 #include <std/core.pat>
@@ -27,6 +27,11 @@ struct LegendRastaHairColor {
     u8 alpha;
 };
 
+struct LegendRastaNpcAct {
+    u16 kind [[comment("lb_new_npc_act_set (lb_new_npc_act_set): 0 / 2 Lb_act_set (Wii U Lb_act_set), 1 actionNo = act and lb_player_start_walk")]];
+    u16 act  [[comment("0: Lb_pl_to_normal (Wii U Lb_pl_to_normal) and actType 0xEB")]];
+};
+
 struct LegendRastaLoadout {
     u8  name                    [[comment("Index in mhfpac's Legend Rasta names")]];
     LegendRastaGender gender;
@@ -34,7 +39,7 @@ struct LegendRastaLoadout {
     u8  hairstyle;
     u8  voice;
     u8  inner;
-    u8  unk06;
+    u8  armorColor              [[comment("Set_Armor_Color argument (Wii U Lb_set_npcpl: Set_Armor_Color)")]];
     u8  weaponType              [[format("getEquipType")]];
     u16 weapon;
     u16 head;
@@ -56,7 +61,8 @@ struct LegendRastaLoadout {
     u16 legsDecorations[3];
     LegendRastaHairColor hairColor;
     u16 unk48[3]                [[comment("Copied to the NPC's player work")]];
-    u8  actions[0x22]           [[comment("NPC action ids, copied to a per-NPC table")]];
+    u16 npcActFlags             [[comment("Copied to the per-NPC act table 0x1ED52F8A + NPC index x 0x30; bit 0 tested by FUN_106B5140")]];
+    LegendRastaNpcAct npcActs[8] [[comment("Copied to the per-NPC act table +0x2..+0x21; [0] used by LbPlChat, [2] by the contract / partner intro menus")]];
 };
 
 LegendRastaLoadout legendRastaLoadouts[(header.ptrs.legendRastaGroups - header.ptrs.legendRastaLoadouts) / 0x70]
@@ -65,7 +71,7 @@ LegendRastaLoadout legendRastaLoadouts[(header.ptrs.legendRastaGroups - header.p
 
 struct LegendRastaGroup {
     u16 npc;
-    u16 loadouts[16]            [[comment("Loadout rows")]];
+    u16 loadouts[16]            [[comment("Loadout rows, 0 = none; [0] is the default (Get_G_RastaNo_Emid)")]];
 };
 
 LegendRastaGroup legendRastaGroups[importantNums.numLegendRastaGroups] @ header.ptrs.legendRastaGroups [[name("Legend Rasta Groups")]];
@@ -75,14 +81,16 @@ struct RastaItemSet {
     ItemId items[8];
 };
 
-RastaItemSet rastaItemSets[6] @ header.ptrs.rastaItemSets [[name("Rasta Item Sets")]];
+RastaItemSet rastaItemSets[while(std::mem::read_unsigned($ + 0x8, 2) != 0xFFFF)] @ header.ptrs.rastaItemSets [[name("Rasta Item Sets")]];
+RastaItemSet rastaItemSetsEnd @ addressof(rastaItemSets) + sizeof(rastaItemSets) [[name("Rasta Item Sets End"), comment("items[0] 0xFFFF ends the list (FUN_105BDEC0, FUN_10366400)")]];
 
 // =======================
 // Legend Rasta story episodes (header 0x884): the script file of each episode
 // (load/<name>) of the 14 Rasta stories, one 0-terminated list per story.
 // divaStory_load_rasta_story_script / lrastaStory_episode_count take list
 // id - 213 for story ids 213-223 (rows 0-10) and rows 11 / 12 / 13 for ids 35 /
-// 1 / 46 (those three also build the name load/%03d_%02d_%03d.bin).
+// 1 / 46. For those three divaStory_load_rasta_story_script builds the name
+// load/%03d_%02d_%03d.bin instead, so their lists are only counted.
 // =======================
 
 

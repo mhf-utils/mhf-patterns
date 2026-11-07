@@ -14,7 +14,7 @@
 // The texts hold 7 rows; row 7 is all zero.
 // =======================
 struct RightExchange {
-    u32 price [[comment("Gold Koban G")]];
+    s32 price [[comment("Gold Koban G; signed compare (right_exchange_check: cmp koban, price / setl)")]];
     u32 amount [[comment("Count, days or minutes in the name and period texts")]];
     u32 dailyLimit;
     u8 hrAllowed [[comment("Index into the x / o list of the HR line")]];

@@ -151,6 +151,10 @@
 #include <mhfdat/data/item_lists.hexpat>
 #endif
 
+#ifdef __DATA_KEY_CONFIG
+#include <mhfdat/data/key_config.hexpat>
+#endif
+
 #ifdef __DATA_KORYO
 #include <mhfdat/data/koryo.hexpat>
 #endif

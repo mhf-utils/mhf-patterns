@@ -5,19 +5,19 @@
 #include <mhfdat/data/equipment_counts.hexpat>
 
 // =======================
-// NPC hunters (header 0x56C to 0x574): the hunters npc_hunters_pick
+// NPC hunters (header 0x56C to 0x574): the hunters RandomMercenaryInit
 // (room setup state 0x14, 2 hunters with 1 player in the room, else 1) adds,
 // named by mhfpac pCaravanElementNames (Non, Ignir, Thales, Irena, Hiems, Zari).
 // The hunter order is shuffled; for each one the game picks at random a weapon
 // and an armor set of that hunter whose HR window holds the player's HR, the
 // armor set of the weapon's side (weaponKind 6 = blademaster, else gunner).
-// npc_hunter_card_build copies the appearance and equipment into a 0x114-byte
+// Pull_mercenary_info copies the appearance and equipment into a 0x114-byte
 // hunter record (the Partner's record uses the same fields). Identical on the
 // EN, JP and rain files.
 // =======================
 
 struct NpcHunter {
-    u8 hunter [[comment("pCaravanElementNames index")]];
+    u8 hunter [[comment("Key of the weapon / armor set rows (= the row index); the name is pCaravanElementNames[row]")]];
     u8 gender [[comment("0 = male, 1 = female")]];
     u8 face;
     u8 hairstyle;

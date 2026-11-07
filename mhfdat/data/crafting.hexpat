@@ -70,15 +70,16 @@ struct RegWUpgrade {
     padding[5];
 } [[comment("On using the materials listed, the weapon will upgrade to the listed weaponID, if it exists")]];
 
+// row = weapon id; materials = cost of upgrading into this weapon (forge_weapon_upgrade_build_options reads the target row)
 struct MWUpgradePath {
     u16 upgradeMaterial1 [[format("getItemName"), color("8888FF")]];
-    u16 numMaterial1     [[color("FF8888")]];
+    s16 numMaterial1     [[color("FF8888")]];
     padding[4];
     u16 upgradeMaterial2 [[format("getItemName"), color("8888FF")]];
-    u16 numMaterial2     [[color("FF8888")]];
+    s16 numMaterial2     [[color("FF8888")]];
     padding[4];
     u16 upgradeMaterial3 [[format("getItemName"), color("8888FF")]];
-    u16 numMaterial3     [[color("FF8888")]];
+    s16 numMaterial3     [[color("FF8888")]];
     padding[4];
     u16 upgradesTo1      [[format("meleeName")]];
     u16 upgradesTo2      [[format("meleeName")]];
@@ -87,15 +88,16 @@ struct MWUpgradePath {
     padding[4];
 } [[format("mUpgradeName"), color("88FF88")]];
 
+// row = weapon id; materials = cost of upgrading into this weapon (forge_weapon_upgrade_build_options reads the target row)
 struct RWUpgradePath {
     u16 upgradeMaterial1 [[format("getItemName"), color("8888FF")]];
-    u16 numMaterial1     [[color("FF8888")]];
+    s16 numMaterial1     [[color("FF8888")]];
     padding[4];
     u16 upgradeMaterial2 [[format("getItemName"), color("8888FF")]];
-    u16 numMaterial2     [[color("FF8888")]];
+    s16 numMaterial2     [[color("FF8888")]];
     padding[4];
     u16 upgradeMaterial3 [[format("getItemName"), color("8888FF")]];
-    u16 numMaterial3     [[color("FF8888")]];
+    s16 numMaterial3     [[color("FF8888")]];
     padding[4];
     u16 upgradesTo1      [[format("rangedName")]];
     u16 upgradesTo2      [[format("rangedName")]];
@@ -104,22 +106,27 @@ struct RWUpgradePath {
     padding[4];
 } [[format("rUpgradeName"), color("88FF88")]];
 
-// a G-50 upgrade level: the weapon, then its levels, success rate, cost and
-// materials (melee and ranged tables share the layout)
+// a G-50 upgrade level (GetGKakoTbl, Wii U twin; header 0x5F8 melee / 0x5FC
+// ranged, counts important numbers +0x22A / +0x22C): a row applies when the
+// weapon matches and minLevel - 1 <= level <= maxLevel - 1 (Get_GCls_level_eq);
+// up to 16 rows feed the GR upgrade menu
 struct g50UpgradeLevel {
-    u16 level1;
-    u16 level2;
-    u16 fullSuccRate;
+    u16 minLevel;
+    u16 maxLevel;
+    u8  successRate [[comment("Percent: the upgrade succeeds when it is above rand % 100 (forge_weapon_gr_upgrade_update), then Gcls_level_up")]];
+    u8  bonusItemChance [[comment("Percent: after a failed upgrade, bonusItem x bonusItemCount is given when rand % 100 is below it")]];
     u32 zennyCost;
     u16 upgradeMaterial1 [[format("getItemName")]];
-    u8 numMaterial1;
-    padding[5];
+    s16 numMaterial1;
+    padding[4];
     u16 upgradeMaterial2 [[format("getItemName")]];
-    u8 numMaterial2;
-    padding[5];
+    s16 numMaterial2;
+    padding[4];
     u16 upgradeMaterial3 [[format("getItemName")]];
-    u8 numMaterial3;
-    padding[9];
+    s16 numMaterial3;
+    padding[4];
+    u16 bonusItem [[format("getItemName"), comment("Given after a failed upgrade; the upgrade is refused when there is no room for it")]];
+    u16 bonusItemCount;
 };
 
 struct g50MeleeUpgrade {
@@ -132,24 +139,23 @@ struct g50RangedUpgrade {
     g50UpgradeLevel level [[inline]];
 };
 
+struct ArmorUpgradeMatLevel {
+    u8 quantity;
+    u8 unlockFlag [[comment("1 or 2: the material item flag (DAT_1ED7A4E0) must be set (FUN_10528200)")]];
+};
+
 struct RegAUpgradeRow {
-    u16 itemID [[format("getItemName")]];
-    u16 lv1Upgrade;
-    u16 lv2Upgrade;
-    u16 lv3Upgrade;
-    u16 lv4Upgrade;
-    u16 lv5Upgrade;
-    u16 lv6Upgrade;
-    u16 lv7Upgrade;
+    u16 itemID [[format("getItemName"), comment("0 ends the list")]];
+    ArmorUpgradeMatLevel level[7] [[comment("[0] armor_upgrade_mats_get_base, [L + 1] armor_upgrade_mats_get_for_next_level at upgrade level L")]];
 };
 
 struct GenericAUpgrade {
-    RegAUpgradeRow itemsForUpgrade [ while (std::mem::read_unsigned($, 0x10)) ];
+    RegAUpgradeRow itemsForUpgrade [ while (std::mem::read_unsigned($, 2) != 0) ];
 };
 
 struct SigilTowerTable {
     u16 ItemID           [[format("getItemName")]];
-    u16 ReceiptCategory;
+    u16 unk02            [[comment("No reader in the Tower sigil code (tower_seal_craft_fill_recipes); 0 on the 3 files")]];
     u16 ItemCraft1       [[format("getItemName")]];
     u8 ItemQty1;
     u8 ItemUnlockFlag1;
@@ -165,31 +171,37 @@ struct SigilTowerTable {
 };
 
 struct CraftMatReq {
-    u32 equipID                  [[color("0088FF"), format("getEquipName")]];
-    bool purchaseable @ $-0x03;
+    u8 equipKind                 [[color("0088FF"), format("getEquipType"), comment("0xFF ends the table")]];
+    bool alwaysUnlocked          [[comment("Seisan_ok_ck, seisan_row_is_available: not 0 skips the key flag and rank checks")]];
+    u16 equipID                  [[color("0088FF")]];
 	u16 materialID1              [[color("22FF22"), format("getItemName"), comment("Item ID")]];
-	u16 materialAmnt1            [[color("FFFF22")]];
+	s16 materialAmnt1            [[color("FFFF22")]];
 	padding[4];
 	u16 materialID2              [[color("22FF22"), format("getItemName"), comment("Item ID")]];
-	u16 materialAmnt2            [[color("FFFF22")]];
+	s16 materialAmnt2            [[color("FFFF22")]];
 	padding[4];
 	u16 materialID3              [[color("22FF22"), format("getItemName"), comment("Item ID")]];
-	u16 materialAmnt3            [[color("FFFF22")]];
+	s16 materialAmnt3            [[color("FFFF22")]];
 	padding[4];
     u16 materialID4              [[color("22FF22"), format("getItemName"), comment("Item ID")]];
-	u16 materialAmnt4            [[color("FFFF22")]];
+	s16 materialAmnt4            [[color("FFFF22")]];
     padding[4];
-	u16 unk24                    [[comment("Some kind of flag?")]];
+	u8 materialUnlock1           [[comment("Seisan_ok_key_check, one byte per material: 0 none, 1 the material item flag (DAT_1ED7A4E0) is set, 2-7 HR, event flag or monster checks; the key check passes when any set byte passes, or when all are 0")]];
+	u8 materialUnlock2;
+	u8 materialUnlock3;
+	u8 materialUnlock4;
+	u16 rankReq                  [[comment("0: no rank check. Else compared with HR, or GR when the forge category is not 0 / 4 (mhfSeisanCheckHunterRank), or with a Secret Book rank in rankCheckMode 4-17")]];
+	u16 rankCheckMode            [[comment("FUN_10BA8950: 0 rank or key flags, 1 key flags only, 2 rank only, 3 rank and key flags, 4-14 / 15 / 16 / 17 Secret Book unlocked and SbGetRank >= rankReq")]];
+	u16 previewAble              [[comment("not 0: listed without the unlock checks, with the Info tag (smithy_armor_list_draw_entry, pSmithyMenuTexts[0x11])")]];
 	padding[2];
-	u16 rankReq                  [[comment("HR needed to forge, GR in the G-rank tables")]];
-	u16 unk2A                    [[comment("Some kind of flag?")]];
-	bool previewAble;
+	u8 forgeFlags                [[color("8888FF"), comment("bit 0: the forge lists the row (Shop_equip_flag_set, forge_armor_build_list_page); 0x0F on the 3 files")]];
 	padding[3];
-	u8 footer                    [[color("8888FF"), comment("0F")]];
-	padding[3];
-    u8 unk34                     [[comment("W02=exotic, A01=Festi?, A02=Diva?, A03=SP?, A04=hiden, A05=exotic")]];
-    padding[3];
-} [[color("660066")]];
+    u32 forgeSubList             [[comment("Check_shop_equip_kind (armor), forge_weapon_row_category_match (weapons): which forge menu of the table lists the row")]];
+} [[color("660066"), format("craftMatReqName")]];
+
+fn craftMatReqName(ref auto e) {
+    return getEquipName(u32(e.equipKind) | (u32(e.equipID) << 16));
+};
 
 // a crafting table ends at an entry whose type byte is 0xFF
 struct CraftMatTable {
@@ -224,7 +236,8 @@ struct ArmorDefenseCoefRow {
 
 ArmorDefenseCoefRow armorDefenseCoefs[32] @ header.ptrs.armorDefenseCoefs [[name("Armor Defense Upgrade Coefficients")]];
 
-// Armor slot upgrades (header 0xBC; Get_Armor_slot_eq): slots = min(baseSlots +
+// Armor slot upgrades (header 0xBC; Get_Armor_slot_eq, Get_Armor_slot_eq_base, and
+// FUN_10baac70 = Wii U Get_Armor_slot for Partnyaa armor from mhfgao): slots = min(baseSlots +
 // slotsByLevel[min(level, 6)] of row min(slotUpgradeRow, 15), maxSlots). No count:
 // 16 rows (the code clamp; 112 of the 128 bytes before the next table).
 struct ArmorSlotUpgradeRow {
@@ -235,15 +248,16 @@ ArmorSlotUpgradeRow armorSlotUpgrades[16] @ header.ptrs.armorSlotUpgrades [[name
 
 // [mhfo-hd.dll + 0xaf47ed] an armor part's UpgradeID (+0x28) picks a list (ZZ: 4855)
 ptVar<GenericAUpgrade> armorUpgrades[while(std::mem::read_unsigned($,4))] @ header.ptrs.armorUpgradeMats;
-SigilTowerTable sigilTowerTable[while(std::mem::read_unsigned($, 4))]     @ header.ptrs.SigilTowerForging    [[name("Sigil Tower Forging Data")]];
+SigilTowerTable sigilTowerTable[while(std::mem::read_unsigned($, 2))]     @ header.ptrs.SigilTowerForging    [[name("Sigil Tower Forging Data")]];
 CraftMatTable towerArmorCraftingTable                                     @ header.ptrs.armorTowerForging    [[name("Tower Armor Forging Data")]];
 CraftMatTable towerWeaponCraftingTable                                    @ header.ptrs.weaponTowerForging   [[name("Tower Weapon Forging Data")]];
-CraftMatTable specialWeaponCraftingTable                                  @ header.ptrs.weaponSpecialForging [[name("Special Weapon Forging Data??")]]; //length = 56 
+CraftMatTable premiumWeaponCraftingTable                                  @ header.ptrs.weaponSpecialForging [[name("Premium Weapon Forging Data"), comment("GetbukiSeisanTbl category 2: menu entry pSmithyMenuTexts[0x69] Premium Weapons")]];
 CraftMatTable armorGCraftingTable                                         @ header.ptrs.armorGRForging       [[name("G-Rank Armor Forging Data")]];
 CraftMatTable weaponGCraftingTable                                        @ header.ptrs.weaponGRForging      [[name("G-Rank Weapon Forging Data")]];
-CraftMatTable transmogCraftingTable2                                      @ header.ptrs.transmogForging2     [[name("Second Armor Transmog Forging Data")]];
+CraftMatTable transmogCraftingTable2                                      @ header.ptrs.transmogForging2     [[name("Second Armor Transmog List"), comment("Read only by Make_EquipAppList (transmog appearance list, with 0xAB8); no forge menu opens it")]];
 CraftMatTable transmogCraftingTable                                       @ header.ptrs.transmogForging      [[name("Armor Transmog Forging Data")]];
 CraftMatTable zenithWeaponCraftingTable                                   @ header.ptrs.zenithWeaponForging  [[name("Zenith Weapon Forging Data")]];
+CraftMatTable eventWeaponCraftingTable                                    @ header.ptrs.eventWeaponForging   [[name("Event Weapon Forging Data"), comment("GetbukiSeisanTbl, current-category path: replaces every weapon table while save word +0xC0 bit 0x800 is set and DAT_1E73D782 == 1 (Wii U slot 0x5A8: Event_flag_ck(0x2EB) and DAT_102EB0F6 == 1)")]];
 CraftMatTable armorPremiumCraftingTable                                   @ header.ptrs.armorPremiumForging  [[name("Armor Premium Forging Data")]];
 CraftMatTable zArmorCraftingTable                                         @ header.ptrs.armorZenithForging   [[name("Zenith Armor Forging Data")]];
 CraftMatTable armorCraftingTable                                          @ header.ptrs.armorForging         [[name("Armor Forging Data")]];
@@ -251,8 +265,9 @@ CraftMatTable weaponCraftingTable                                         @ head
 
 
 struct DecoShop {
-    u16 decoItemID       [[format("getItemName")]];
-    u16 ReceiptCategory;
+    u16 decoItemID       [[format("getItemName"), comment("0 ends the list")]];
+    u8 searchFlag        [[comment("0 in both deco shops; tested only by the cuff search filter FUN_1056CD70 (called with 1 from FUN_1054F090)")]];
+    u8 category          [[comment("G-rank deco shop tab: deco_shop_build_grank_recipe_list keeps rows equal to the selected tab; 0 in the normal deco shop")]];
     u16 ItemID1          [[format("getItemName")]];
     u8 ItemQty1;
     u8 ItemUnlockFlag1;
@@ -268,7 +283,8 @@ struct DecoShop {
 } [[single_color]];
 
 // Tower / G50 weapon level stats (header 0x5C4-0x5EC, 0x888, 0xA90, 0xB98, one
-// table per weapon class in class order; g50_tower_params_pointers): each table
+// table per weapon class; get_gcls_weapon_tbl maps class 0-13 to 0x5CC, 0x5E4,
+// 0x5DC, 0x5D4, 0x5C4, 0x5E8, 0x5C8, 0x5D0, 0x5E0, 0x5D8, 0x5EC, 0x888, 0xA90, 0xB98): each table
 // has 130 list pointers, indexed by the weapon's TowerParamId (melee +0x26,
 // ranged +0x2C); the row is the weapon's level - 1 (level 0 also takes row 0),
 // and a list ends at modelId 0xFFFF (count_tower_g50_entries; 50 rows at most on
@@ -287,8 +303,8 @@ struct TowerG50WeaponParams {
     u8  statusValue [[comment("get_tower_g50_status_value: the status value, used when the weapon has a status below Blast; the type comes from the weapon")]];
     u8  gunlanceShell [[comment("get_tower_g50_gunlance_shell: read from the Gunlance table only, shell type + level x 3 (then + the shell sigil level); no reader in the other tables")]];
     u16 visualEffect [[comment("get_tower_g50_visual_effect: replaces the weapon's visualEffects for G class weapons (weapon_effect_init), a row of weaponEffectSets (header 0x280)")]];
-    u8  unk0C [[comment("0-100 in steps of 10 on the 3 files; no reader found")]];
-    u8  gPlateUseSlotMax [[comment("getGPlateUseSlotMax: usable G sigil slots (2 or 3)")]];
+    u8  unk0C [[comment("0, 3, 5, 10, 20, 30, 50, 60, 70 or 100 on the 3 files (3 only in the Tonfa and Switch Axe F tables); no reader found")]];
+    u8  gPlateUseSlotMax [[comment("getGPlateUseSlotMax: usable G sigil slots (2 or 3; 0 in some Switch Axe F rows)")]];
     u16 upgradePath;
 };
 
@@ -316,16 +332,38 @@ TowerG50LevelListPtr towerG50TonfaParams[130] @ header.ptrs.Tonfa_Params_pointer
 TowerG50LevelListPtr towerG50SwitchAxeParams[130] @ header.ptrs.SwitchAxe_Params [[name("Tower/G50 Params - Switch Axe F"), comment("Index = TowerParamId")]];
 TowerG50LevelListPtr towerG50MagnetSpikeParams[130] @ header.ptrs.Magnetspike_params_pointer [[name("Tower/G50 Params - Magnet Spike"), comment("Index = TowerParamId")]];
 
-DecoShop decoShop[while(std::mem::read_unsigned($, 4))]          @ header.ptrs.DecoShop;
-DecoShop grankDecoShop[while(std::mem::read_unsigned($, 4))]     @ header.ptrs.GrankDecoShop;
-DecoShop cuffCrafting[while(std::mem::read_unsigned($, 4))]      @ header.ptrs.CuffCrafting;
-DecoShop grankCuffCrafting[while(std::mem::read_unsigned($, 4))] @ header.ptrs.GrankCuffCrafting;
+DecoShop decoShop[while(std::mem::read_unsigned($, 2) != 0)]     @ header.ptrs.DecoShop;
+DecoShop grankDecoShop[while(std::mem::read_unsigned($, 2) != 0)] @ header.ptrs.GrankDecoShop;
+// Cuff crafting (header 0x2C0, G rank 0x750; cuff_crafting_get_recipe_by_index): one index runs
+// through both tables, important numbers +0xAE rows then +0x2A2 rows (each count includes the
+// zero end row); a list stops at cuffItemID 0.
+struct CuffRecipe {
+    u16 cuffItemID       [[format("getItemName")]];
+    u8  unk02            [[comment("0 or 1; no reader found")]];
+    u8  category         [[comment("Row shows when category = DAT_1ee26f32 + 1 (+ 7 when DAT_1ee2af64, + 9 when DAT_1ee2af66), all rows when DAT_1ee269ed = 2 (FUN_1054ec70)")]];
+    u16 ItemID1          [[format("getItemName")]];
+    u8  ItemQty1;
+    u8  ItemUnlockFlag1  [[comment("Seisan_flag_ck id: when it passes, the row shows only once this material is owned (FUN_1054ede0)")]];
+    u16 ItemID2          [[format("getItemName")]];
+    u8  ItemQty2;
+    u8  ItemUnlockFlag2;
+    u16 ItemID3          [[format("getItemName")]];
+    u8  ItemQty3;
+    u8  ItemUnlockFlag3;
+    u16 ItemID4          [[format("getItemName")]];
+    u8  ItemQty4;
+    u8  ItemUnlockFlag4;
+} [[single_color]];
+
+CuffRecipe cuffCrafting[importantNums.numCuffRecipes]      @ header.ptrs.CuffCrafting;
+CuffRecipe grankCuffCrafting[importantNums.numGCuffRecipes] @ header.ptrs.GrankCuffCrafting;
 
 // Forge separate list (header 0x048): equipment that the forge menus split
-// out. The forge menu flag (forge work +0x169, copied by
+// out. The forge menu flag (weapon forge work +0x169, copied by
 // forge_weapon_menu_init from byte +3 of the menu descriptor) picks the side:
 // 0 hides these rows from the weapon (forge_melee_build_weapon_page_a ...) and
-// armor (forge_armor_build_list_page) forge lists, 1 lists only them. Ends with
+// armor (forge_armor_build_list_page; it and forge_build_weapon_page_e test
+// their work byte +0x1BF) forge lists, 1 lists only them. Ends with
 // an id of 0. 597 rows on the EN, JP and rain files.
 struct ForgeSeparateEquipment {
     u32 kind [[format("getEquipType")]];

@@ -64,22 +64,25 @@ ptVar<MachaPotSet> machaPotRewards[while (std::mem::read_unsigned($, 4) != 0)]
 ItemId machaPotItems[while (std::mem::read_signed($, 2) != -1)]
     @ header.ptrs.machaPotItems [[name("Macha Pot Items")]];
 
+// G rank HC carve item by monster (header 0x738): carve kind 7 (carve_roll_item_by_rank),
+// and ext_item_get_ck on a G rank quest in the field (quest_g_hc_mons_chk); first matching row wins
 struct HC_GR_Carve {
-    MonsterID monId;
-    padding[1];
+    u16 monId [[format("fmtMonsterIdU16")]];
     u16 item [[format("getItemName")]];
 };
 
 HC_GR_Carve GRHCCarves[while(std::mem::read_signed($,2)!=-1)] 
     @ header.ptrs.carveGRHCItemDrops;
 
+// HC carve items by monster (header 0x32C): carve kinds 3 / 4 / 5 (carve_roll_item_by_rank) give
+// item1 / item2 / item3; ext_item_get_ck (quest_hc_mons_chk) gives item1 at gGetHagiLv 0, item2 at 1,
+// else itemSuperRajang when quest_super_man_ck (monster 0x35 in super form), else item3
 struct HC_Carve {
-    MonsterID monId;
-    padding[1];
+    u16 monId [[format("fmtMonsterIdU16")]];
     u16 item1 [[format("getItemName")]];
     u16 item2 [[format("getItemName")]];
     u16 item3 [[format("getItemName")]];
-    u16 item4 [[format("getItemName")]];
+    u16 itemSuperRajang [[format("getItemName")]];
 };
 
 HC_Carve HCCarves[while(std::mem::read_signed($,2)!=-1)] @ header.ptrs.carveHCItemDrops;
@@ -91,9 +94,9 @@ HC_Carve HCCarves[while(std::mem::read_signed($,2)!=-1)] @ header.ptrs.carveHCIt
 // entry's minRank - 1, the last range ending at the 999 entry). The rolled
 // kind goes to carve_roll_item_by_rank: 0 / 1 / 2 / 6 carve_roll_item slots
 // 0 / 1 / 3 / 7, 3-5 the HC drops (carveHCItemDrops), 7 the G HC
-// drops, 8 FUN_105DA140; for a locked Zenith (road_spawn_is_locked_zenith)
+// drops, 8 carve_roll_item_zenith; for a locked Zenith (road_spawn_is_locked_zenith)
 // kind 8 is skipped and its chance added to kind 2. All chances 0: the
-// default reward (FUN_105D9E30).
+// default reward (get_normal_item).
 struct CarveKindEntry {
     u16 minRank;
     u16 unk02;
@@ -105,8 +108,8 @@ struct CarveKindBlock {
 };
 
 struct CarveKindChances {
-    MonsterID monster;
-    padding[3];
+    u16 monster [[format("fmtMonsterIdU16")]];
+    padding[2];
     CarveKindBlock hr;
     CarveKindBlock secretBook;
     CarveKindBlock gRank;

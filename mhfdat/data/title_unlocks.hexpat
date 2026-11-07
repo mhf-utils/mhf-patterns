@@ -23,8 +23,8 @@ bitfield TitleUnlockMonsterFlags {
     gRankQuest : 1 [[comment("quest_is_g_rank")]];
     needsFlag1E76BADA : 1 [[comment("DAT_1E76BADA set")]];
     notInSecondBits : 1 [[comment("the monster's bit of quest work +0xF81 must be clear")]];
-    variant : 1 [[comment("not in an online room, em_variation_check(monster, 0xF)")]];
-    special : 1 [[comment("not in an online room, FUN_10AC33C0")]];
+    variant : 1 [[comment("em_variation_check(monster, 0xF); title_unlock_monster_row_met also needs no online room")]];
+    special : 1 [[comment("gGetHagiLv() == 9 and gGetMonsterStatus() == 0x43 (FUN_10AC33C0); title_unlock_monster_row_met also needs no online room")]];
     padding : 11;
 };
 
@@ -36,7 +36,7 @@ struct TitleUnlockMonster {
 };
 
 struct TitleUnlockEvoWeapon {
-    u16 series [[comment("evo_weapon_series_get")]];
+    u16 series [[comment("get_evo_weapon_lvuptype")]];
     u16 needed [[comment("Distinct weapons of the series at level >= 100 in the box; 0xFFFF = numEvoMeleeWeapons + numEvoRangedWeapons (important numbers +0xB4 / +0xB6)")]];
     u16 title;
 };

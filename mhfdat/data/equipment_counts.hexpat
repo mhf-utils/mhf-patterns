@@ -4,7 +4,25 @@
 
 // The block header 0x10 points to: the counts of tables that have no end marker
 struct ImportantNumbers {
-    padding[0x1A];
+    padding[0x8];
+
+    // Offset 0x8: items (header 0xFC, 0x100); FUN_104E8A20 / Deco_item_check refuse an item id >= it
+    u16 numItems
+        [[name("Number of Items")]];
+
+    // Offset 0xA: decoration id rows (header 0xF8, 0x14 bytes); FUN_104E8A20 refuses an item's deco row >= it
+    u16 numDecoIds
+        [[name("Number of Decoration Id Rows")]];
+
+    // Offset 0xC: combine pair records (header 0x104, 8 bytes), FUN_105E3030
+    u16 numCombinePairRecords
+        [[name("Number of Combine Pair Records")]];
+
+    // Offset 0xE: combine triple records (header 0x10C, 8 bytes), FUN_105E3030
+    u16 numCombineTripleRecords
+        [[name("Number of Combine Triple Records")]];
+
+    padding[0xA];
 
     // Offset 0x1A: ranged weapons with rapid fire (header 0xC0)
     u16 numRapidFireWeapons
@@ -33,7 +51,9 @@ struct ImportantNumbers {
     u16 numAncientHuntingHornScorePages
         [[name("Number of Ancient Hunting Horn Score Pages")]];
 
-    padding[0x2];
+    // Offset 0x2A: Hunting Info item table pointers (header 0x194), relocated by rd_mhfdat
+    u16 numHuntingInfoAreaTables
+        [[name("Number of Hunting Info Area Tables")]];
 
     // Offset 0x2C: Hunter Dojo rule pages (header 0x1A8 online, 0x1AC offline)
     u16 numDojoRulePagesOnline
@@ -46,7 +66,11 @@ struct ImportantNumbers {
     u16 numHunterBasicsPages
         [[name("Number of Hunter Basics Pages")]];
 
-    padding[0x6];
+    padding[0x4];
+
+    // Offset 0x36: Hunter Guide volumes (header 0x1A0)
+    u16 numHunterGuideVolumes
+        [[name("Number of Hunter Guide Volumes")]];
 
     // Offset 0x38: Instructor tutorial (header 0x1B0, 0x1B4)
     u16 numTutorialLessons
@@ -59,7 +83,21 @@ struct ImportantNumbers {
     u16 numBeginnerQuests
         [[name("Number of Beginner Quests")]];
 
-    padding[0xA];
+    padding[0x2];
+
+    // Offset 0x40: Arena item lists, courses, course quest pairs (header 0x144, 0x148, 0x14C)
+    u16 numArenaItemSets
+        [[name("Number of Arena Item Lists")]];
+
+    u16 numArenaCourses
+        [[name("Number of Arena Courses")]];
+
+    u16 numArenaCourseQuests
+        [[name("Number of Arena Course Quest Pairs")]];
+
+    // Offset 0x46: tutorial item lists (header 0x158)
+    u16 numTutorialItemSets
+        [[name("Number of Tutorial Item Lists")]];
 
     // Offset 0x48: pointers to tutorial equipment sets (header 0x15C)
     u16 numTutorialEquipSets
@@ -105,7 +143,9 @@ struct ImportantNumbers {
     u16 numHunterPearlSkillLists
         [[name("Number of Hunter Pearl Skill Lists")]];
 
-    padding[0x2];
+    // Offset 0x60: Caravan tier levels (9: levels 0-8); FUN_104996F0 lists the upgrade rows of header 0x234 while row < this - 1
+    u16 numCaravanTierLevels
+        [[name("Number of Caravan Tier Levels")]];
 
     // Offset 0x62: My House renovation themes (header 0x260)
     u16 numMyHouseThemes
@@ -146,7 +186,26 @@ struct ImportantNumbers {
     u16 numQuestSearchFieldsG
         [[name("Number of Quest Search Fields (G Rank Counter)")]];
 
-    padding[0x38];
+    padding[0x26];
+
+    // Offset 0xA2: Instructor challenge pick lists and reward lists (header 0x2A8, 0x2AC), relocated by the loader
+    u16 numInstructorChallengePicks
+        [[name("Number of Instructor Challenge Pick Lists")]];
+
+    u16 numInstructorChallengeRewards
+        [[name("Number of Instructor Challenge Reward Lists")]];
+
+    padding[0x8];
+
+    // Offset 0xAE: cuff crafting rows incl. the zero end row (header 0x2C0, cuff_crafting_get_recipe_by_index)
+    u16 numCuffRecipes
+        [[name("Number of Cuff Recipes")]];
+
+    padding[0x2];
+
+    // Offset 0xB2: Pioneer quest lists (header 0x2C8 pointers, 4 maps x 6 levels), relocated by rd_mhfdat
+    u16 numPioneerQuestLists
+        [[name("Number of Pioneer Quest Lists")]];
 
     // Offset 0xB4: evolution weapon series (header 0x2CC melee, 0x2D0 ranged)
     u16 numEvoMeleeWeapons
@@ -155,13 +214,31 @@ struct ImportantNumbers {
     u16 numEvoRangedWeapons
         [[name("Number of Evolution Ranged Weapons")]];
 
-    padding[0xC];
+    padding[0x8];
+
+    // Offset 0xC0: Pioneer base cost maps (header 0x2E4 pointers), relocated by rd_mhfdat
+    u16 numPioneerBaseCostMaps
+        [[name("Number of Pioneer Base Cost Maps")]];
+
+    padding[0x2];
 
     // Offset 0xC4: Pioneer quest bonus rewards (header 0x2F0)
     u16 numPioneerQuestBonusRewards
         [[name("Number of Pioneer Quest Bonus Rewards")]];
 
-    padding[0x14];
+    // Offset 0xC6: rows of header 0x2F4 (0x16 bytes); setupMHFIconControlContainer uses row 0 for an id >= it
+    u16 num2F4Rows
+        [[name("Number of Header 0x2F4 Rows")]];
+
+    // Offset 0xC8: rows of header 0x2F8 (0xC bytes); translateMHFIconSubFunctionManualIconIndex returns no row for an index >= it
+    u16 num2F8Rows
+        [[name("Number of Header 0x2F8 Rows")]];
+
+    padding[0xE];
+
+    // Offset 0xD8: Secret Book effect lists (header 0x318), 18 tiers x 14 weapon classes
+    u16 numSecretBookEffectLists
+        [[name("Number of Secret Book Effect Lists")]];
 
     // Offset 0xDA: inner body models (header 0x31C)
     u16 numInners
@@ -190,7 +267,9 @@ struct ImportantNumbers {
     u16 numBoxSearchZenithSkills
         [[name("Number of Box Search Zenith Skills")]];
 
-    padding[0x2];
+    // Offset 0xF4: Legend Rasta loadouts (header 0x35C, 0x70 bytes); legend_rasta_loadout_index_get / FUN_1044E8A0 loop over them
+    u16 numLegendRastaLoadouts
+        [[name("Number of Legend Rasta Loadouts")]];
 
     // Offset 0xF6: Legend Rasta groups (header 0x360)
     u16 numLegendRastaGroups
@@ -250,7 +329,40 @@ struct ImportantNumbers {
     u16 numGoocooTails
         [[name("Number of Goocoo Tail Accessories")]];
 
-    padding[0x16];
+    // Offset 0x130: Goocoo accessory names and descriptions, clothing series names (header 0x3D8 to 0x400),
+    // one count per list in header order; rd_mhfdat relocates that many string pointers per list
+    u16 numGoocooHatNames
+        [[name("Number of Goocoo Hat Names")]];
+
+    u16 numGoocooClothesNames
+        [[name("Number of Goocoo Clothes Names")]];
+
+    u16 numGoocooMaskNames
+        [[name("Number of Goocoo Mask Names")]];
+
+    u16 numGoocooBagNames
+        [[name("Number of Goocoo Bag Names")]];
+
+    u16 numGoocooTailNames
+        [[name("Number of Goocoo Tail Accessory Names")]];
+
+    u16 numGoocooHatDescs
+        [[name("Number of Goocoo Hat Descriptions")]];
+
+    u16 numGoocooClothesDescs
+        [[name("Number of Goocoo Clothes Descriptions")]];
+
+    u16 numGoocooMaskDescs
+        [[name("Number of Goocoo Mask Descriptions")]];
+
+    u16 numGoocooBagDescs
+        [[name("Number of Goocoo Bag Descriptions")]];
+
+    u16 numGoocooTailDescs
+        [[name("Number of Goocoo Tail Accessory Descriptions")]];
+
+    u16 numGoocooClothingSeriesNames
+        [[name("Number of Goocoo Clothing Series Names")]];
 
     // Offset 0x146: Goocoo tables (header 0x404 to 0x4C0), one count per table in header order
     u16 numGoocooFoods
@@ -444,7 +556,13 @@ struct ImportantNumbers {
     u16 numEvolutionGunAmmo
         [[name("Number of Evolution Gun Extra Ammo Rows")]];
 
-    padding[0xC];
+    padding[0x4];
+
+    // Offset 0x1CC: My House armor display classes (header 0x52C pointers), relocated by rd_mhfdat
+    u16 numMyHouseArmorDisplays
+        [[name("Number of My House Armor Displays")]];
+
+    padding[0x6];
 
     // Offset 0x1D4: monster hitzone effect scales (header 0x53C)
     u16 numMonsterHitzoneEffectScales
@@ -452,7 +570,7 @@ struct ImportantNumbers {
 
     padding[0x2];
 
-    // Offset 0x1D8: sound distance curves 2 (header 0x544, apply_sound_and_shake)
+    // Offset 0x1D8: sound distance curves 2 (header 0x544, se_req_3D)
     u16 numSoundCurves2
         [[name("Number of Sound Curves 2")]];
 
@@ -497,7 +615,51 @@ struct ImportantNumbers {
     u16 numMonsterAltSoundTables
         [[name("Number of Monster Alternate Sound Tables")]];
 
-    padding[0x1A];
+    // Offset 0x210: Tower / G50 level lists of header 0x5C4 (towerG50SwordAndShieldParams), relocated by rd_mhfdat
+    u16 numTowerG50SwordAndShieldParams
+        [[name("Number of towerG50SwordAndShieldParams")]];
+
+    // Offset 0x212: Tower / G50 level lists of header 0x5C8 (towerG50DualBladesParams), relocated by rd_mhfdat
+    u16 numTowerG50DualBladesParams
+        [[name("Number of towerG50DualBladesParams")]];
+
+    // Offset 0x214: Tower / G50 level lists of header 0x5CC (towerG50GreatSwordParams), relocated by rd_mhfdat
+    u16 numTowerG50GreatSwordParams
+        [[name("Number of towerG50GreatSwordParams")]];
+
+    // Offset 0x216: Tower / G50 level lists of header 0x5D0 (towerG50LongSwordParams), relocated by rd_mhfdat
+    u16 numTowerG50LongSwordParams
+        [[name("Number of towerG50LongSwordParams")]];
+
+    // Offset 0x218: Tower / G50 level lists of header 0x5D4 (towerG50LanceParams), relocated by rd_mhfdat
+    u16 numTowerG50LanceParams
+        [[name("Number of towerG50LanceParams")]];
+
+    // Offset 0x21A: Tower / G50 level lists of header 0x5D8 (towerG50GunlanceParams), relocated by rd_mhfdat
+    u16 numTowerG50GunlanceParams
+        [[name("Number of towerG50GunlanceParams")]];
+
+    // Offset 0x21C: Tower / G50 level lists of header 0x5DC (towerG50HammerParams), relocated by rd_mhfdat
+    u16 numTowerG50HammerParams
+        [[name("Number of towerG50HammerParams")]];
+
+    // Offset 0x21E: Tower / G50 level lists of header 0x5E0 (towerG50HuntingHornParams), relocated by rd_mhfdat
+    u16 numTowerG50HuntingHornParams
+        [[name("Number of towerG50HuntingHornParams")]];
+
+    // Offset 0x220: Tower / G50 level lists of header 0x5E4 (towerG50HeavyBowgunParams), relocated by rd_mhfdat
+    u16 numTowerG50HeavyBowgunParams
+        [[name("Number of towerG50HeavyBowgunParams")]];
+
+    // Offset 0x222: Tower / G50 level lists of header 0x5E8 (towerG50LightBowgunParams), relocated by rd_mhfdat
+    u16 numTowerG50LightBowgunParams
+        [[name("Number of towerG50LightBowgunParams")]];
+
+    // Offset 0x224: Tower / G50 level lists of header 0x5EC (towerG50BowParams), relocated by rd_mhfdat
+    u16 numTowerG50BowParams
+        [[name("Number of towerG50BowParams")]];
+
+    padding[0x4];
 
     u16 g50MeleeWeaponUpgradesCounter
         [[name("g50 melee weapons upgrades counter")]];
@@ -505,7 +667,19 @@ struct ImportantNumbers {
     u16 g50RangedWeaponUpgradesCounter
         [[name("g50 ranged weapon updrades counter")]];
 
-    padding[0x12];
+    padding[0xA];
+
+    // Offset 0x238: random sigil recipes (header 0x620, FUN_105625F0) and their
+    // skill blacklists (header 0x628, relocated by the loader)
+    u16 numSigilCraftingRecipes
+        [[name("Number of Sigil Crafting Recipes")]];
+
+    padding[2];
+
+    u16 numSigilSkillBlacklists
+        [[name("Number of Sigil Skill Blacklists")]];
+
+    padding[2];
 
     // Offset 0x240: sigil class / icon thresholds (header 0x630, 0x638)
     u16 numSigilClassThresholds
@@ -582,7 +756,37 @@ struct ImportantNumbers {
     u16 numMonsterPriceBoardRows
         [[name("Number of Monster Price Board Rows")]];
 
-    padding[0x1A];
+    padding[0x2];
+
+    // Offset 0x270: G1 to G7 quest list pointers (header 0x6C8 to 0x6E0, one count each), relocated by rd_mhfdat
+    u16 numG1QuestLists
+        [[name("Number of G1 Quest Lists")]];
+
+    u16 numG2QuestLists
+        [[name("Number of G2 Quest Lists")]];
+
+    u16 numG3QuestLists
+        [[name("Number of G3 Quest Lists")]];
+
+    u16 numG4QuestLists
+        [[name("Number of G4 Quest Lists")]];
+
+    u16 numG5QuestLists
+        [[name("Number of G5 Quest Lists")]];
+
+    u16 numG6QuestLists
+        [[name("Number of G6 Quest Lists")]];
+
+    u16 numG7QuestLists
+        [[name("Number of G7 Quest Lists")]];
+
+    padding[0x6];
+
+    // Offset 0x284: Veggie Elder map rows with the map 0 row (header 0x6F0), relocated by rd_mhfdat
+    u16 numVeggieElderMaps
+        [[name("Number of Veggie Elder Maps")]];
+
+    padding[0x2];
 
     // Offset 0x288: box search sigil skills (header 0x718)
     u16 numBoxSearchSigilSkills
@@ -600,7 +804,23 @@ struct ImportantNumbers {
     u16 numPlayerUniqueParams
         [[name("Number of Player Unique Parameter Rows")]];
 
-    padding[0x26];
+    padding[0x8];
+
+    // Offset 0x29C: G8 to G10 quest list pointers (header 0x740 to 0x748), relocated by rd_mhfdat
+    u16 numG8QuestLists
+        [[name("Number of G8 Quest Lists")]];
+
+    u16 numG9QuestLists
+        [[name("Number of G9 Quest Lists")]];
+
+    u16 numG10QuestLists
+        [[name("Number of G10 Quest Lists")]];
+
+    // Offset 0x2A2: G rank cuff crafting rows incl. the zero end row (header 0x750)
+    u16 numGCuffRecipes
+        [[name("Number of G Rank Cuff Recipes")]];
+
+    padding[0x16];
 
     // Offset 0x2BA: fishing baits (header 0x780)
     u16 numFishingBaits
@@ -661,7 +881,13 @@ struct ImportantNumbers {
     u16 numAutoSkills
         [[name("Number of Auto Skills")]];
 
-    padding[0x4];
+    // Offset 0x2FA: map variant rows (header 0x808, 16 s8 each); FUN_11384A20 (map_instantiate_event) reads row quest mapVariant when below it, else uses 0
+    u16 numMapVariantRows
+        [[name("Number of Map Variant Rows")]];
+
+    // Offset 0x2FC: Guild Hall reward list pointers (header 0x810), relocated by gReadMhfDat
+    u16 numGuildHallRewardLists
+        [[name("Number of Guild Hall Reward Lists")]];
 
     // Offset 0x2FE: Guild Hall reward groups (header 0x814)
     u16 numGuildHallRewardGroupRows
@@ -708,7 +934,19 @@ struct ImportantNumbers {
     u16 numLegendRastaDailyRotation
         [[name("Number of Legend Rasta Daily Rotation Days")]];
 
-    padding[0xE];
+    padding[0x2];
+
+    // Offset 0x32C: 0x10C-byte route rows of header 0x878 (RankingRoute layout), relocated by rd_mhfdat; no other reader
+    u16 num878Routes
+        [[name("Number of Header 0x878 Routes")]];
+
+    padding[0x4];
+
+    // Offset 0x332: Tower / G50 level lists of header 0x888 (towerG50TonfaParams), relocated by rd_mhfdat
+    u16 numTowerG50TonfaParams
+        [[name("Number of towerG50TonfaParams")]];
+
+    padding[0x4];
 
     // Offset 0x338: sigil crafting skill lists (header 0x894, 0x898)
     u16 numSigilCraftUniqueSkills
@@ -717,7 +955,11 @@ struct ImportantNumbers {
     u16 numSigilCraftValueNamedSkills
         [[name("Number of Sigil Craft Value-Named Skills")]];
 
-    padding[0xA];
+    // Offset 0x33C: guild cooking random skill pools (header 0x89C)
+    u16 numGuildCookingSkillPools
+        [[name("Number of Guild Cooking Skill Pools")]];
+
+    padding[0x8];
 
     // Offset 0x346: treasure hunt spots (header 0x8B0)
     u16 numTreasureHuntSpots
@@ -774,15 +1016,21 @@ struct ImportantNumbers {
     u16 numCatDecoSearchSkillCategories
         [[name("Number of Cat Decoration Search Skill Categories")]];
 
-    padding[0x4];
+    // Offset 0x36C: 12-byte rows of header 0x914 (pointer at +4), relocated by rd_mhfdat; no other reader
+    u16 num914Rows
+        [[name("Number of Header 0x914 Rows")]];
+
+    // Offset 0x36E: rows of header 0x918 (0x10 bytes, sorted by the s32 at +0xC); FUN_113AD220 binary-searches them
+    u16 num918Rows
+        [[name("Number of Header 0x918 Rows")]];
 
     // Offset 0x370: 11 on ZZ, the Caravan ranking route groups that are used (header 0x91C)
     u16 numRankingGroups
         [[name("Number of Caravan Ranking Groups")]];
 
-    u16 unk372 [[comment("7 on ZZ, use unknown")]];
+    u16 rankingGroupRouteCounts[11] [[comment("Routes in ranking group g (header 0x91C); rd_mhfdat relocates this many rows per group")]];
 
-    padding[0x16];
+    u16 unk388 [[comment("18 on ZZ, use unknown")]];
 
     // Offset 0x38A: tower jewel recipes (header 0x938)
     u16 numTowerJewelRecipes
@@ -834,13 +1082,32 @@ struct ImportantNumbers {
     u16 numClanMissionTargets
         [[name("Number of Clan Mission Targets")]];
 
-    padding[0x10];
+    padding[0xA];
+
+    // Offset 0x3DC: Tower / G50 level lists of header 0xA90 (towerG50SwitchAxeParams), relocated by rd_mhfdat
+    u16 numTowerG50SwitchAxeParams
+        [[name("Number of towerG50SwitchAxeParams")]];
+
+    padding[0x2];
+
+    // Offset 0x3E0: HR quest tiers (header 0xA98 pointers walked by the HR quest lookups)
+    u16 numHrQuestTiers
+        [[name("Number of HR Quest Tiers")]];
 
     // Offset 0x3E2: experience quests (header 0xA9C)
     u16 numExperienceQuests
         [[name("Number of Experience Quests")]];
 
-    padding[0x18];
+    padding[0x12];
+
+    // Offset 0x3F6: forge rank weapon / armor lists (header 0xAE0, 0xAE4 pointers), relocated by rd_mhfdat
+    u16 numForgeRankWeaponLists
+        [[name("Number of Forge Rank Weapon Lists")]];
+
+    u16 numForgeRankArmorLists
+        [[name("Number of Forge Rank Armor Lists")]];
+
+    padding[0x2];
 
     // Offset 0x3FC: soul combine recipes (header 0xAEC)
     u16 numCombineSoulRecipes
@@ -856,9 +1123,9 @@ struct ImportantNumbers {
     u16 numShitenQuests
         [[name("Number of Shiten Quests")]];
 
-    // Offset 0x404: last Koryo lottery prize list index (header 0xB38, lists 0 to this)
-    u16 lastKoryoLotteryList
-        [[name("Last Koryo Lottery List")]];
+    // Offset 0x404: Koryo lottery prize lists (header 0xB38)
+    u16 numKoryoLotteryLists
+        [[name("Number of Koryo Lottery Lists")]];
 
     padding[0x2];
 
@@ -866,7 +1133,11 @@ struct ImportantNumbers {
     u16 numKoryoMonsterPoints
         [[name("Number of Koryo Monster Points")]];
 
-    padding[0x4];
+    // Offset 0x40A: rows of header 0xB44 (0x20 bytes); hunting_medal_menu_open falls back to DLL row 0x11880F08 for a row >= it
+    u16 numB44Rows
+        [[name("Number of Header 0xB44 Rows")]];
+
+    padding[0x2];
 
     // Offset 0x40E: daily rotation quest lists, JST day % 3 = 0 / 1 / 2 (header 0xB50, 0xB54, 0xB58)
     u16 numDailyRotationQuestLists0
@@ -890,7 +1161,9 @@ struct ImportantNumbers {
     u16 numCombineHidenRecipes
         [[name("Number of Combine Hiden Recipes")]];
 
-    padding[0x2];
+    // Offset 0x41A: Tower / G50 level lists of header 0xB98 (towerG50MagnetSpikeParams), relocated by rd_mhfdat
+    u16 numTowerG50MagnetSpikeParams
+        [[name("Number of towerG50MagnetSpikeParams")]];
 
     // Offset 0x41C: Zenith sigil craft material catalog (header 0xB9C)
     u16 numSigilCraftMaterialsZenith
@@ -900,9 +1173,9 @@ struct ImportantNumbers {
     u16 numSigilCraftRecipeMaterialCategories
         [[name("Number of Sigil Craft Recipe Material Categories")]];
 
-    // Offset 0x420: cuff combine recipes (header 0xBAC)
-    u16 numCombineCuffRecipes
-        [[name("Number of Combine Cuff Recipes")]];
+    // Offset 0x420: Mass and Hiden Jewel combine recipes (header 0xBAC)
+    u16 numCombineMassJewelRecipes
+        [[name("Number of Combine Mass and Hiden Jewel Recipes")]];
 
 } [[name("Important Numbers")]];
 
@@ -910,7 +1183,7 @@ ImportantNumbers importantNums @ header.ptrs.important_nums;
 
 struct EquipmentCounts {
 	u16 numLegA;
-	u16 numUnk;
+	u16 numEquipType1 [[comment("Equip type 1 (armorStatArray[1] = the head table, no name table): read only through the type index (Equip_flag_ck / Equip_flag_set, type <= 7) and summed by rd_mhfdat into the owned-flag buffer")]];
 	u16 numHeadA;
 	u16 numBodyA;
 	u16 numArmA;

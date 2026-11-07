@@ -4,7 +4,11 @@
 	Garden Meowka Pot recipes (header 0x200, important numbers + 0x50 of
 	them, 76 on ZZ). The harvest takes the row whose first output is the
 	pot's input and gives count x the item of the current color (white to
-	rainbow). The Mocha Pot (quest) rewards are in part_breaks.hexpat.
+	rainbow); it checks no unlock. At white, Rainbow Dyegrass (1459) gives
+	White Dyegrass (1458). An item can be put in a pot when it is the first
+	output of a row whose unlock passes (Lb_farmcat_is_pot_select /
+	lb_farmcat_is_pot_item twins), except the BP Tickets 0x66C-0x673
+	(rows 27-34). The Mocha Pot (quest) rewards are in part_breaks.hexpat.
 */
 
 #include <std/core.pat>
@@ -18,7 +22,9 @@ struct MeowkaPotOutput {
 };
 
 struct MeowkaPotRecipe {
-    u32 unk00;
+    u8  unlockKind              [[comment("0 always, 1 HR, 2 highest SR (sr_get_highest_rank), 3 GR (get_g_class_rank), 4 highest GSR (FUN_10B395D0); other values: never")]];
+    padding[1];
+    u16 unlockRank              [[comment("Unlocked when that rank >= this (unsigned); ZZ: GR 600 on rows 51-75")]];
     MeowkaPotOutput *outputs[7] : u32 [[comment("One per color, white to rainbow")]];
     u32 unk08                   [[comment("7 on ZZ")]];
 };

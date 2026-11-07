@@ -5,8 +5,11 @@
 // =======================
 // Player motion events (header 0x618): same layout and bank choice as the
 // player motion sounds (player_sounds.hexpat): header 0xA64 + 0x12 banks,
-// picked by motion id / 1000 (0 the common bank, 1 the weapon class bank,
-// 2 a row from 15 on); a bank lists its motions sorted by id (binary search,
+// picked by motion id / 1000 (0 the common bank, 1 bank class + 1, 2 bank
+// 15 when FUN_113825C0 holds, 17 on stage 0x1D1, else 0; a hunter in a
+// monster motion uses bank 0x12 + its header 0xA60 row,
+// player_motion_event_bank_by_monster); a bank lists its motions sorted by
+// id (binary search,
 // player_motion_event_bank_run); a motion lists its events. An event runs
 // handler `type` of DLL table 0x11A42488 when the motion frame crosses
 // `frame` (player_motion_events_run; player_motion_events_run_type8 runs only
@@ -18,6 +21,11 @@
 // follow picks how the effect follows the entity (effect_follow_mode_set:
 // 3 copies the entity yaw, 4 the yaw + 90 degrees, 5 nothing, others their
 // own callbacks).
+// With a Magnet Spike (entity +3 = 13) out of town, player_motion_events_run
+// also passes every event to FUN_103362E0 (bone, entity, effectId,
+// effectVariant, offset x / y / z as s16): effectId 0xFC5 with variant 3, 4,
+// 0x46 or 0x47 on bone 0xE or 0x12 moves the offset by the bone matrix and
+// calls FUN_10B43370(0xD) and FUN_1032B340(1).
 // =======================
 
 enum PlayerMotionEventType : u16 {

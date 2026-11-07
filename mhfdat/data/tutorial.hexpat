@@ -9,10 +9,13 @@
 
 // =======================
 // Instructor (教官) tutorial. Header 0x1B0: the lessons, a title and its pages
-// (tutorial_lesson_page_count, tutorial_lesson_page_get, drawn by
-// tutorial_lesson_draw). Header 0x1B4: the lesson groups, a list of lesson ids
-// (tutorial_group_lesson_count, tutorial_group_lesson_get); a group whose first
-// id is 0xFFFF is tested against a bit set instead (FUN_10B9A890).
+// (getTutorialPageTotal, getTutorialPageMessage, drawn by tuto_put_message).
+// Header 0x1B4: the lesson groups, a list of lesson ids (getTutorialIndexTotal,
+// getTutorialMessageNumber). Entry i of a group is readable when event flag
+// eventFlagBase + i is set (bits 0x1DC6B6AC, < 0x60), or, for eventFlagBase
+// 0xFFFF, when beginner-tutorial bit i is set (0x1DC6B6A8, < 0x20, set by
+// setOpenMenuBitBeginTutorial) (checkTutorialIndexReadable); Pit_disp_advice
+// prints a locked entry as dashes (mhfpac pListGuideTexts[1]) in grey.
 // =======================
 
 struct TutorialText {
@@ -27,25 +30,25 @@ struct TutorialLesson {
 };
 
 struct TutorialLessonGroup {
-    u16 firstLesson [[comment("0xFFFF: bit-set group")]];
+    u16 eventFlagBase [[comment("Entry i readable if event flag (this + i) is set; 0xFFFF: beginner-tutorial bit i instead")]];
     u8 lessonCount;
     padding[1];
-    u16 *lessons[lessonCount] : u32;
+    s16 *lessons[lessonCount] : u32;
 };
 
 TutorialLesson tutorialLessons[importantNums.numTutorialLessons] @ header.ptrs.tutorialLessons [[name("Tutorial Lessons")]];
 TutorialLessonGroup tutorialLessonGroups[importantNums.numTutorialLessonGroups] @ header.ptrs.tutorialLessonGroups [[name("Tutorial Lesson Groups")]];
 
-// Instructor challenges (header 0x2A4 / 0x2A8 / 0x2AC). instructor_challenge_pick
+// Instructor challenges (header 0x2A4 / 0x2A8 / 0x2AC). lb_gc_set_chlg_quest
 // takes the pick list [hrBand * 3 + metBand] of 0x2A8 (hrBand: HR 1 -> 0, HR 2-4
 // -> 1, else 2; metBand: challenges met < 4 -> 0, 4-10 -> 1, else 2) and one of
-// its task indexes at random. instructor_challenge_progress counts the task's
+// its task indexes at random. chk_challenge_battle_quest counts the task's
 // actions in a quest (consume_item_handler ...); reaching count marks it met
 // (mhfpac pTutorialTexts[54] You met the challenge; [55] Challenge: [%d] Left)
-// and adds one to the met counter (max 999). instructor_challenge_reward_give
+// and adds one to the met counter (max 999). lb_gc_get_item
 // draws a reward of list [hrBand * 3 + metBand] of 0x2AC by weight (a roll % 100
 // against the running sum) into the pouch or the box ([49] / [50]) and resets
-// the challenge and the met counter. instructor_challenge_task_draw prints the
+// the challenge and the met counter. challenge_quest_start_msg prints the
 // task with mhfpac pTaskFormats[type]. Identical on the EN, JP and rain files.
 enum InstructorTaskType : u16 {
     Deliver = 0, // item
@@ -70,7 +73,7 @@ enum InstructorTaskType : u16 {
 struct InstructorTask {
     InstructorTaskType type;
     u16 target [[comment("An item (types 0, 1, 2, 12, 14), a monster (3-11, 15, 16) or unused (13)")]];
-    u16 count;
+    s16 count;
 } [[format("instructorTaskName")]];
 
 fn instructorTaskName(ref auto t) {
@@ -113,5 +116,5 @@ struct InstructorChallengeRewardListPtr {
 };
 
 InstructorTask instructorChallengeTasks[178] @ header.ptrs.instructorChallengeTasks [[name("Instructor Challenge Tasks"), comment("178 = rows the pick lists use; 3 zero rows follow")]];
-InstructorTaskIndexListPtr instructorChallengePicks[9] @ header.ptrs.instructorChallengePicks [[name("Instructor Challenge Picks"), comment("[hrBand * 3 + metBand]")]];
-InstructorChallengeRewardListPtr instructorChallengeRewards[9] @ header.ptrs.instructorChallengeRewards [[name("Instructor Challenge Rewards"), comment("[hrBand * 3 + metBand]")]];
+InstructorTaskIndexListPtr instructorChallengePicks[importantNums.numInstructorChallengePicks] @ header.ptrs.instructorChallengePicks [[name("Instructor Challenge Picks"), comment("[hrBand * 3 + metBand]")]];
+InstructorChallengeRewardListPtr instructorChallengeRewards[importantNums.numInstructorChallengeRewards] @ header.ptrs.instructorChallengeRewards [[name("Instructor Challenge Rewards"), comment("[hrBand * 3 + metBand]")]];

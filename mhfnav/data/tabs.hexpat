@@ -191,7 +191,7 @@ struct TaskEntry<auto Tab, auto Pool> {
 };
 
 struct NaviTab {
-    u32 tab = (addressof(this) - header.pTabs[0]) / 0x24;
+    u32 tab = (addressof(this) - header.pTabs) / 0x24;
     TabFlags flags;
     u32 unk04;
     u32 nTaskPool = rd32($ + 4);
@@ -210,5 +210,5 @@ struct NaviTab {
     u32 progressListCount;
 };
 
-/// The 14 tabs are stored contiguously, header.pTabs[i] points to the i-th one
-NaviTab tabs[14] @ header.pTabs[0] [[name("Navi Tabs")]];
+/// The 14 tabs are stored contiguously at header.pTabs
+NaviTab tabs[14] @ header.pTabs [[name("Navi Tabs")]];

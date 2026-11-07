@@ -1,14 +1,15 @@
 #pragma once
 
 #include <misc/types.pat>
+#include <std/mem.pat>
 #include <mhfdat/utils/index.pat>
 
 // realigned on the data: the price is the u32 at 0x04 (checked by the forge on JP and EN)
 struct DecoID {
 u8 slot_nb;
-u8 flags;
-u16 unk02;
-u32 price;
+u8 flags [[comment("Deco_item_check: 1 melee, 2 ranged, 4 / 8 armor (and-ed with armor +4 & 0xC), 0x20 SP equipment only")]];
+u16 unk02 [[comment("No reader, always 0")]];
+u32 price [[comment("No HD reader found (Wii U k03_deco_getPriceSeisan uses the item price / 2)")]];
 u8 skillID1[[
     format("SkillName"),
     name("Skill ID 1")
@@ -29,7 +30,8 @@ u8 skillID4[[
     name("Skill ID 4")
 ]];
 s8 skillPts4;
-u16 specialFlags;
+u8 special [[comment("Deco_item_check (byte): 0 is refused by equipment whose special-slot byte (melee +0x2A, ranged +0x32, armor +0x3E) is 1, non-0 by equipment whose byte is 0")]];
+u8 shopCategory [[comment("deco_shop_build_page(_by_unlock_flags): listed only when it equals the selected deco shop entry (menu work +0xBC; 0xFFFF lists all); 0-3")]];
 u16 zenithSkill[[
     format("zenithSkills"),
     name("Zenith Skill")
@@ -330,6 +332,6 @@ fn zenithSkills (u16 n){
 	return ret;
 };
 
-// no end marker: the table ends at the next table the header points to (ZZ EN: 6542 rows, JP: 6547)
-DecoID decoIDTable[(nextTable(header.ptrs.Deco_ID) - header.ptrs.Deco_ID) / sizeof(DecoID)] @ header.ptrs.Deco_ID [[name("Data")]];
+// count = important numbers +0x0A (6538 on the 3 files): Deco_item_check and the inline Get_deco_ptr copies refuse decoID 0 and >= it; 24 zero bytes follow
+DecoID decoIDTable[std::mem::read_unsigned(header.ptrs.important_nums + 0x0A, 2)] @ header.ptrs.Deco_ID [[name("Data")]];
 

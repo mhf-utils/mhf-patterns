@@ -223,7 +223,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 	};
 
 	// Array of pointers to arrays of num_item_pairs's
-	ptrToNumItemPair hd_dll_af514b[0xE] @ header.ptrs.hd_dll_af5145;
+	ptrToNumItemPair hd_dll_af514b[0xE] @ header.ptrs.weaponClassItemLists;
 
 	num hd_dll_af526a @ (header.ptrs.important_nums + 0x48);
 	ptr hd_dll_af5277[hd_dll_af526a] @ header.ptrs.tutorialEquipSets;
@@ -246,8 +246,8 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 	struct_af52db hd_dll_af52db[hd_dll_af52c6 + 1] 
 		@ header.ptrs.publicBarHrReqs;
 
-	// NOTE: Possibly incorrect, double check this
-	u16 hd_dll_af52ff[while(std::mem::read_signed($,2))] 
+	// rd_mhfdat walks 4-byte rows up to the one whose first u16 is 0
+	item_num_pair hd_dll_af52ff[while(std::mem::read_unsigned($,2) != 0)] 
 		@ header.ptrs.hd_dll_af52f3;
 
 	struct struct_af5312_1 {

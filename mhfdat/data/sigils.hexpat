@@ -3,9 +3,9 @@
 /**
 	Random sigils (G-rank sigil crafting with a budget), from
 	var-username/Monster-Hunter-Frontier-Patterns (patterns/mhfdat/sigil.hexpat, LGPL-3.0).
-	Checked on the ZZ EN client: 382 recipes (364 normal, 7 premium, 11 zenith),
-	the probabilities table is exactly 382 x 64 bytes and the 132 base infos
-	end where header 0x630 points. FW5 and S6 have no such tables.
+	Recipes: 382 on the JP / rain files (364 normal, 7 premium, 11 zenith), 388 on
+	the EN file (370 normal); the probabilities table is one 64-byte row per recipe
+	and the 132 base infos end where header 0x630 points. FW5 and S6 have no such tables.
 	Not the Tower sigil crafting (header 0x944, crafting.hexpat): fixed recipes.
 */
 
@@ -155,22 +155,24 @@ enum SigilType: u8 {
     Zenith = 2,
 };
 
-struct SigilMaterial {
-    u16 item [[format("getItemName"), color("8888FF")]];
-    u8 percentage_filled;
-    u8 unk [[comment("0x80: active, 0x00: inactive")]];
+bitfield SigilMaterialFill {
+    percentage_filled : 15 [[comment("returned for this item by sigil_craft_material_fill_get")]];
+    active : 1 [[comment("placed in the craft slots and checked in stock (sigil_craft_recipe_select_input, sigil_recipe_has_active_material_in_stock)")]];
 };
 
-// recipes end at a u32 0
+struct SigilMaterial {
+    u16 item [[format("getItemName"), color("8888FF")]];
+    SigilMaterialFill fill;
+};
+
+// count important numbers +0x238 (FUN_105625F0); the list also ends at a u32 0
 struct SigilRecipe {
     SigilType sigil_type;
-    u8 budget_low;
+    u8 budget_low [[comment("budget = low + rand % (high - low + 1) (sigil_craft_roll_skills)")]];
     u8 budget_high;
-    u8 unk;
-    u16 cost;
-    padding[0x2];
-    SigilMaterial key_materials[0x5];
-    padding[0xC];
+    u8 icon_color [[comment("index of the DLL ARGB table 0x1192043C (11 colours) of the sigil icon drawn by the recipe name")]];
+    u32 cost [[comment("Gzenny; above the player's: \"Not enough Gzenny\" (pac 0x10BC [2][25])")]];
+    SigilMaterial key_materials[8] [[comment("item 0 = empty; the code walks all 8")]];
 };
 
 // the skills a recipe never rolls, until -1
@@ -182,6 +184,8 @@ struct BlacklistPtr {
     SkillsBlacklist* ptr : u32;
 };
 
+// FUN_10564750: a row is taken when rand % 100 < the running sum of percentage_chance or
+// when always_rolled is set; skill 0 ends the rows (the rows after it hold filler)
 struct SigilSkillProbability {
     SigilSkill skill;
     u8 percentage_chance;
@@ -198,8 +202,8 @@ struct SigilSkillProbabilities {
 struct SigilSkillPointsBudget {
 	s16 points_low;
 	s16 points_high;
-	u16 budget;
-	padding[2];
+	u8 budget;
+	padding[3];
 };
 
 // per skill (SigilSkill order): the points it rolls for each budget
@@ -207,18 +211,18 @@ struct SigilSkillBaseInfo {
 	SigilSkillPointsBudget rolls_entries[8];
 	s16 max_roll;
 	padding[2];
-	u8 can_red_roll;
-	padding[1];
+	u16 can_red_roll;
 	s16 red_roll_threshold;
-	s16 specific_red_roll_points[8];
+	s16 specific_red_roll_points[7] [[comment("sigil_skill_is_red_roll reads 7")]];
+	padding[2];
 };
 
-SigilRecipe recipes[while(std::mem::read_unsigned($, 4) != 0)] @ header.ptrs.sigilCraftingRecipes
+SigilRecipe recipes[importantNums.numSigilCraftingRecipes] @ header.ptrs.sigilCraftingRecipes
     [[name("Sigil Crafting Recipes")]];
 u16 recipes_len = std::core::member_count(recipes);
 SigilSkillProbabilities probabilities[recipes_len] @ header.ptrs.sigilSkillProbabilities
     [[name("Sigil Skill Probabilities")]];
-BlacklistPtr blacklist_ptrs[recipes_len] @ header.ptrs.sigilSkillBlacklists
+BlacklistPtr blacklist_ptrs[importantNums.numSigilSkillBlacklists] @ header.ptrs.sigilSkillBlacklists
     [[name("Sigil Random Skill Blacklists")]];
 SigilSkillBaseInfo random_points_rolls[132] @ header.ptrs.sigilSkillBaseInfo [[name("Sigil Skill Base Info")]];
 
@@ -239,14 +243,15 @@ struct SigilEffectRow {
     s16 maxLevel [[comment("0 = no cap on the level")]];
 };
 
+// each cap is read movsx and compared signed (CMP AX,CX / JL) with the sum clamped to >= 0
 struct SigilEffectCaps {
-    u16 rangedAttack [[comment("RAttack sum (sigil_ranged_attack_add, player_recalc_attack_power_full); ZAttack is added on top")]];
-    u16 rangedElement [[comment("RElement (weapon_element_attack_value_with_skills)")]];
-    u16 rangedAffinity [[comment("RAffinity (weapon_total_affinity_percent)")]];
-    u16 rangedStatus [[comment("RStatus (weapon_init_hitbox_damage_from_params)")]];
-    u16 rangedStun [[comment("RStun (on_hit_effects_dispatch)")]];
-    u16 rangedHealing [[comment("RHealing (player_entity_tick_hp_regen); ZHealing is added on top")]];
-    u16 rangedAllRes [[comment("RAllRes (player_update_elemental_resistances)")]];
+    s16 rangedAttack [[comment("RAttack sum (sigil_ranged_attack_add, player_recalc_attack_power_full); ZAttack is added on top")]];
+    s16 rangedElement [[comment("RElement (weapon_element_attack_value_with_skills)")]];
+    s16 rangedAffinity [[comment("RAffinity (weapon_total_affinity_percent)")]];
+    s16 rangedStatus [[comment("RStatus (weapon_init_hitbox_damage_from_params)")]];
+    s16 rangedStun [[comment("RStun (on_hit_effects_dispatch)")]];
+    s16 rangedHealing [[comment("RHealing (player_entity_tick_hp_regen); ZHealing is added on top")]];
+    s16 rangedAllRes [[comment("RAllRes (player_update_elemental_resistances)")]];
 };
 
 struct ZenithRangedSigils {
@@ -278,9 +283,12 @@ SigilSkill sigilCraftValueNamedSkills[importantNums.numSigilCraftValueNamedSkill
 // type, work +0x6E24, is 2 / Zenith). The material screen of
 // sigil_craft_recipe_select_input lists the materials of a tab (tab 7 shows
 // all), counts the owned ones (pouch, box, storage, capped at 999, minus those
-// already placed) by category (DLL table 0x1192042C maps it to a display
-// group) and takes fillPercent as the share of a material that is not one of
-// the recipe's key materials (sigil_craft_material_fill_get).
+// already placed) by category (0x634: DLL table 0x1192042C maps it to a
+// display group; 0xB9C: the category itself, 24 counters at work +0x6E5A, only
+// the categories the recipe's 0xBA0 row allows,
+// sigil_craft_zenith_materials_count_by_category) and takes fillPercent as the
+// share of a material that is not one of the recipe's key materials
+// (sigil_craft_material_fill_get).
 struct SigilCraftMaterial {
     u16 item [[format("getItemName")]];
     u8 category;
@@ -305,17 +313,20 @@ struct SigilCraftRecipeMaterialCategories {
 
 SigilCraftRecipeMaterialCategories sigilCraftRecipeMaterialCategories[importantNums.numSigilCraftRecipeMaterialCategories] @ header.ptrs.sigilCraftRecipeMaterialCategories [[name("Sigil Craft Recipe Material Categories")]];
 
-// Sigil class and icon by total budget (headers 0x630 / 0x638): the first
-// threshold >= sigil_calc_total_budget gives the class shown as
+// Sigil class and rarity by total budget (headers 0x630 / 0x638; Wii U
+// getPlateNameID / get_comp_plate_rare, Wii U slots 0x658 / 0x660): the first
+// threshold >= calcPlateCost gives the class shown as
 // pDistortedWeaponTexts[1][index] (Hunter Sigil, Trial Sigil ... Extreme
-// Sigil; sigil_class_from_budget) and the icon drawn by the sigil screens.
+// Sigil; getPlateNameID, none: the count) and the rarity (none: 0),
+// whose colour (DLL tables 0x1188164C -> 0x118817D0) tints the sigil icon.
 u8 sigilClassThresholds[importantNums.numSigilClassThresholds] @ header.ptrs.sigilClassThresholds [[name("Sigil Class Thresholds")]];
 u8 sigilIconThresholds[importantNums.numSigilIconThresholds] @ header.ptrs.sigilIconThresholds [[name("Sigil Icon Thresholds")]];
 
-// Header 0x890: sigil skills shown by their name alone when their value is
-// below 2 (FUN_101BFDD0; the others use pSkillValueFormats[2]); the sigil skill
+// Header 0x890: sigil skills shown by their name alone when their merge counter
+// (header 0xAE8) is below 2 (FUN_101BFDD0; the others print their value with
+// pSkillValueFormats[2]); the sigil skill
 // merge (sigil_skills_merge) also treats them apart (sigil_skill_is_listed_no_value
-// returns 0 for them). 0-terminated.
+// returns 0 for them, 1 for the others). 0-terminated.
 struct SigilSkillsNoValueAtOne {
     SigilSkill skills[while(std::mem::read_unsigned($, 2) != 0)];
     u16 end;
@@ -387,7 +398,7 @@ RarityChangeAttackCaps rarityChangeAttackCaps @ header.ptrs.rarityChangeAttackCa
 // 0x724): the items offered when a sigil is taken back from a G weapon into the
 // Sigil box (pDistortedWeaponTexts[2] [0x2E] "Recovery Sigil"). plate_item_data_set
 // copies every row whose G level range holds the weapon's G level
-// (get_equip_weapon_class; 0 lists all rows) into the menu (8 slots);
+// (Get_GCls_level_eq; 0 lists all rows) into the menu (8 slots);
 // kako04_plate_get_item_sel_disp shows name and "%3d x" and greys rows the
 // player cannot afford. No row and not a Weapon_g_class_k_check weapon:
 // pSystemMessageTexts[120] "no recovery recipe". The list ends at item 0.

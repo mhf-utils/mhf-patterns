@@ -3,19 +3,21 @@
 /**
 	Rasta guild (the player's own Rasta): hunt orders (header 0x254, until a
 	monster of -1; clearing one sets its bit in the save's hunt bits), the GCP
-	cost of each Loyalty and Cred level (header 0x258 / 0x25C, read at
-	[current level + 1]), and what each level gives (level 0 to 20): attack
-	(0x600), element (0x604) and defense (0x608) in percent of the player's,
-	and the most active skills (0x60C).
+	cost of each Loyalty and Cred level (header 0x258 / 0x25C, entry L = cost
+	of level L, read at [current level + 1], compared signed with the GCP),
+	and what each level gives: attack (0x600), element (0x604) and defense
+	(0x608) in percent of the player's, and the most active skills (0x60C).
+	Entry 0 of these six tables is never read (cost reads start at index 1;
+	the level readers set level 0 to 1 first).
 	Equipment lists (header 0x238 to 0x250, menu state 0x8D,
-	rasta_equipment_list_build): the weapons (by Loyalty) and armor (by Cred)
+	Lb_mercenarybdSet): the weapons (by Loyalty) and armor (by Cred)
 	of each rank, one list per equipment type, until an id of 0xFFFF. The menu
 	lists the rows of the chosen rank (cursor 0-9; rows of rank 10 exist) and,
 	for weapons, of the chosen class. A row is locked while rank > level - 1,
 	and a weapon row also while its class is not unlocked
-	(rasta_unlock_bit_test; Sword and Shield and Tonfa skip that test).
+	(Ud_Chk_bit_Mercenary_Condition; Sword and Shield and Tonfa skip that test).
 	Otherwise it is marked owned when the equipment box holds that equipment
-	(equip_box_has_equipment).
+	(Equip_have_ck).
 */
 
 #include <std/core.pat>
@@ -42,8 +44,8 @@ struct RastaHuntOrders {
 
 RastaHuntOrders rastaHuntOrders @ header.ptrs.rastaHuntOrders [[name("Rasta Hunt Orders")]];
 
-u32 rastaLoyaltyCosts[21] @ header.ptrs.rastaLoyaltyCosts [[name("Rasta Loyalty Level Costs (GCP)")]];
-u32 rastaCredCosts[21] @ header.ptrs.rastaCredCosts [[name("Rasta Cred Level Costs (GCP)")]];
+s32 rastaLoyaltyCosts[21] @ header.ptrs.rastaLoyaltyCosts [[name("Rasta Loyalty Level Costs (GCP)")]];
+s32 rastaCredCosts[21] @ header.ptrs.rastaCredCosts [[name("Rasta Cred Level Costs (GCP)")]];
 
 u8 rastaLoyaltyAttackPercent[21] @ header.ptrs.rastaLoyaltyAttackPercent [[name("Rasta Loyalty: Attack Percent")]];
 u8 rastaLoyaltyElementPercent[21] @ header.ptrs.rastaLoyaltyElementPercent [[name("Rasta Loyalty: Element Percent")]];

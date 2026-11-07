@@ -9,8 +9,10 @@
 // Quiz Quest (quest 0xCFD8, mhfpac pQuizQuestTexts). Header 0x0AF0 gives the
 // sizes of the other three slots. 0x0AF4 / 0x0AF8: what the quest places in
 // its stages (quiz_quest_spawns_place): a monster, or with monster 0 a carve
-// point (quest_add_carve_reward_entry); the 0x0AF8 monsters also get entity
-// +0x41C |= 0x10. 0x0AFC: 5 question sets (the set is quest work +0xD10 /
+// point (quest_add_carve_reward_entry). quiz_quest_spawns_a_place places all the 0x0AF4
+// rows at once (no stage test) and sets entity +0x41C |= 0x10 on their
+// monsters; FUN_10AABA30 places the 0x0AF8 rows of the stage it sets up.
+// FUN_10AAB4A0 / FUN_10AAAB10 look up both lists' monster ids. 0x0AFC: 5 question sets (the set is quest work +0xD10 /
 // +0xD11, the question +0xD12 / +0xD13), each question with 4 answers;
 // answer flag 2 is the right one (quiz_quest_answer_check: action 0xD,
 // otherwise 0xC and pQuizQuestTexts[4]).
@@ -21,7 +23,7 @@ struct QuizQuestHeader {
     u16 spawnsBCount;
     u16 questionCounts[5];
     u16 unk0E;
-    u16 unk10;
+    u16 end [[comment("0: rd_mhfdat scans the header's u16 list up to this 0")]];
     u16 unk12;
 };
 
@@ -29,11 +31,11 @@ struct QuizQuestSpawn {
     u16 stage;
     MonsterID monster [[comment("0: carve point")]];
     u8 unk03;
-    u16 param04 [[comment("Carve item for a carve point, else passed to initialize_monster_entity")]];
+    u16 param04 [[comment("Carve item for a carve point; for a monster initialize_monster_entity stores its low byte in EnemyWork +0x1B (variantNibble)")]];
     padding[2];
     float position[3];
-    u32 unk14;
-    u16 unk18;
+    u32 rotation [[comment("Spawn record +0x1C -> EnemyWork +0xA4 (initialize_monster_entity)")]];
+    u16 sizePercent [[comment("Spawn record +0x30 -> EnemyWork +0xC86, size % (monster_size.md)")]];
     u8 entityFlags [[comment("OR-ed into entity +0x8C3")]];
     u8 unk1B;
 };

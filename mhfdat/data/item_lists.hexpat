@@ -6,10 +6,20 @@
 	monsters cannot steal them from the pouch, daily missions do not ask for
 	them, and a few other pouch scans skip them (tickets, medals, quest
 	parts...). Only the item id is read.
-	Box search filters (entry 0 = no filter): item icons (header 0x34C,
-	important numbers + 0xEC), decoration items (0x350, + 0xEE), skill trees
-	(0x354, + 0xF0; a piece matches when it has points in the tree) and Zenith
-	skills (0x358, + 0xF2; matched against the piece's zenithSkill).
+	Box search filters (header 0x34C-0x358, counts important numbers +
+	0xEC-0xF2): the item box search keeps a choice index per filter, 0 = no
+	filter. Item icons (0x34C): the item's icon must equal the entry
+	(lb_itembox_search_item); entry 0 (0xFF) is only drawn. For decorations
+	(0x350), skill trees (0x354) and Zenith skills (0x358) choice 1 = free text,
+	so entries 0 and 1 are placeholders. Decorations: one of the piece's 3
+	slotted decorations is that item. Skill trees (pSkillTreeNames ids): one of
+	an armor piece's 5 skill tree ids (whatever the points) or a skill of one of
+	its decorations equals the entry, weapons through decorations only
+	(lb_itembox_search_eq_skill_chk). Zenith skills (pZenithSkillNames ids): the
+	tree (+0) of the piece's zenithSkills row (header 0xAA8) must equal the entry
+	(equip_has_zenith_skill). Skill trees and Zenith skills: only the low byte is
+	compared. The forge search reads them too (lb_kako_search_armor; skill
+	trees also lb_kako_search_gem).
 */
 
 #include <std/core.pat>
@@ -43,14 +53,16 @@ u16 boxSearchSigilSkills[importantNums.numBoxSearchSigilSkills] @ header.ptrs.bo
 // shortcut slot (type 2) is disabled while the player is in one of them
 // (shortcut_combine_slot_is_disabled, from ShortcutMove, the item HUD and the
 // pause menu), e.g. roll, draw / sheathe, eating and drinking, sharpening,
-// BBQ, throwing knives.
+// BBQ, throwing knives. rd_mhfdat sorts the list at load (insertion sort,
+// unsigned), so the file order does not matter.
 u16 shortcutCombineBlockedActions[importantNums.numShortcutCombineBlockedActions] @ header.ptrs.shortcutCombineBlockedActions [[name("Shortcut Combine Blocked Actions"), comment("Player actType (actCategory 0)")]];
 
 // Fishing baits (header 0x780; Wii U esa_ck): which fish a bait attracts.
 // esa_ck takes the float owner's item (work +0xB32): item 0x91 attracts
 // nothing, an item with no row attracts every fish, else the first row with
-// that item decides (no list = every fish, else the fish's kind byte, fish
-// work +0x48, must be in the list). uki_serch makes a fish swim to a float
+// that item decides (no list = every fish, an empty list = none, else the
+// fish's kind byte, fish work +0x48, read signed, must be in the list).
+// uki_serch makes a fish swim to a float
 // only when esa_ck passes and the float is inside its radius and angle window.
 struct FishingBaitFishList {
     u16 fishKinds[while(std::mem::read_unsigned($, 2) != 0)];

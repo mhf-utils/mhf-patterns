@@ -8,8 +8,8 @@
 // My House renovation themes (header 0x260, docs/reverse/my_house.md §3).
 // Purchase costs `cost` GCP and sets bit theme - 1 of g_houseOwnedThemes;
 // theme 0 is always owned. Each theme gives one model id per part
-// (pFacilityRenovationTextGroups[0]), read by my_house_interior_set_part and
-// the renovation menus.
+// (pFacilityRenovationTextGroups[0]), read by lbb_remodel_set and the other
+// lbb_remodel_* menus (Wii U slot 0x290).
 // =======================
 
 struct MyHouseThemeName {
@@ -29,7 +29,7 @@ struct MyHouseTheme {
 
 MyHouseTheme myHouseThemes[importantNums.numMyHouseThemes] @ header.ptrs.myHouseThemes [[name("My House Themes")]];
 
-// Secret Book armor displays (header 0x52C, my_house_armor_displays_update):
+// Secret Book armor displays (header 0x52C, Lb_st_mymission_init, Wii U slot 0x558):
 // one list per weapon class (className order, 14), until an armor of 0; each
 // class's gem armor series (Garnet ... Seiryu GX for Sword and Shield), 18
 // pieces of each armor type. A class's display is built only when its Secret

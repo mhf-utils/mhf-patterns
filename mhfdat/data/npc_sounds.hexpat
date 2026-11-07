@@ -27,7 +27,7 @@ struct NpcMotionSoundList {
 };
 
 struct NpcMotionSounds {
-    u16 npcId;
+    s16 npcId [[comment("Compared as a short with EnemyWork +0x510; 0 ends the rows (important numbers +0x2CA has no reader)")]];
     u16 unk02;
     u32 listOffset;
     if (listOffset != 0)
@@ -51,25 +51,25 @@ struct EntityMotionSoundCue {
     u16 frame;
     u16 sound [[comment("0xFFFF: none")]];
     u8 bone;
-    u8 unk05;
+    u8 halkAreaMute [[comment("Kind 0x2F (partnyaa_motion_sound_events), default variant: 1 = silent in HalkArea while DAT_1E76B026 is set")]];
     u8 chance [[comment("Percent; 0 or > 100: always")]];
-    u8 unk07;
-    u16 group;
-    u16 unk0A [[comment("Kind 0x2B: condition on FUN_10ACE750")]];
-    u16 unk0C [[comment("Kind 0x2B: must be a byte of DAT_1E6CCD68 + 1 when not 0")]];
-    u16 unk0E;
+    u8 soundVariant [[comment("Kind 0x2F: 1 = + mhfgao pGroundSoundTypes of the ground, 2 = + body armor mhfgao pBodyRows .unk08 x 2 + random bit (skipped when >= 9), 3 = town + 2 for Great Sword / field face motion, 4 = BoomBarrelToss / VolpakkunParty only")]];
+    u16 group [[comment("Main path: cues of one non-zero group play one of them. Kind 0x2B: 1 = skipped in the field, 2 = skipped in town (entity_motion_sound_cue_condition). Kind 0x2F: alternate sound A")]];
+    u16 param0A [[comment("Kind 0x2B: 0 = any, else town == halk_element_get(), field - 1 == FUN_10ACE750() (entity element, 0x1E6CCD6A & 0xF). Kind 0x2F: s16 chance of sound A, out of 8")]];
+    u16 param0C [[comment("Kind 0x2B: 0 = any, else town == save ctx +0x21384 byte, field - 1 == byte 0x1E6CCD68 of entity +0x575. Kind 0x2F: alternate sound B")]];
+    u16 param0E [[comment("Kind 0x2F: s16 chance of sound B, out of 8 (after A); random 0-7 past both = no sound; +8 to +0xE all 0 = use sound")]];
 };
 
 struct EntityMotionSoundMotion {
     u32 cuesOffset;
-    u32 cueCount;
+    s32 cueCount [[comment("test + jle (signed); partnyaa_motion_sound_events reads only the low s16 and also stops at a frame 0 cue")]];
     if (cuesOffset != 0 && cueCount != 0)
         EntityMotionSoundCue cues[cueCount] @ cuesOffset;
 };
 
 struct EntityMotionSounds {
-    u16 entityKind;
-    u16 soundBank;
+    s16 entityKind [[comment("movsx (entity_motion_sound_row_count, entity_motion_sounds_play)")]];
+    s16 soundBank [[comment("movsx before the play call")]];
     EntityMotionSoundMotion *motions[200] : u32;
 };
 

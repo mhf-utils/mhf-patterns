@@ -3,8 +3,8 @@
 /**
 	Guild cooking: the recipes (header 0x868, important numbers + 0x324 of
 	them, 720 on ZZ), the cooking minigame profile of each ingredient (header
-	0x86C, important numbers + 0x326, 27 on ZZ) and 4 random skill pools
-	(header 0x89C).
+	0x86C, important numbers + 0x326, 27 on ZZ) and the random skill pools
+	(header 0x89C, important numbers + 0x33C, 4 on ZZ).
 	A recipe matches when its main ingredient comes first and the 3 others
 	match in any order (no match falls back to row 0). The result is 1 plus
 	the thresholds the score reaches (at least 2), or a great failure when
@@ -25,10 +25,10 @@ struct GuildCookingRecipe {
     u16 dish                    [[comment("Index in mhfpac's guild cooking dish names")]];
     u16 mainIngredient          [[format("getItemName")]];
     ItemId otherIngredients[3];
-    u16 grade;
-    u32 gaugeThreshold1;
-    u32 gaugeThreshold2;
-    u32 gaugeThreshold3;
+    s16 grade;
+    s32 gaugeThreshold1;
+    s32 gaugeThreshold2;
+    s32 gaugeThreshold3;
     u16 skillGreatFailure;
     u16 skillFailure;
     u16 skillSuccess;
@@ -64,6 +64,6 @@ struct GuildCookingSkillPool {
     u16 *skills[count] : u32;
 };
 
-GuildCookingSkillPool guildCookingSkillPools[4]
+GuildCookingSkillPool guildCookingSkillPools[importantNums.numGuildCookingSkillPools]
     @ header.ptrs.guildCookingSkillPools
     [[name("Guild Cooking Skill Pools")]];

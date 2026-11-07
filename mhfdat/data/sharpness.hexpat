@@ -8,8 +8,11 @@
 // sharpnessId (weapon row +0x08) is its row in its class table; ex G weapons
 // and G50 / Tower weapons pick another row of the same table
 // (get_ex_g_weapon_sla_type, get_tower_g50_sharpness_id). Each value is where
-// a color ends: weapon_melee_sharpness_color_tier returns the first color whose
-// value is >= the current sharpness (signed compares). 128 rows per table: the
+// a color ends: Pl_slash_lv_ck_sg (Wii U Pl_slash_lv_ck_sg)
+// returns the first color whose value is >= the current sharpness (signed
+// compares, Purple +0xC is the last compared: above it = Sky Blue); Sky Blue
+// (+0xE) is read only by the gauge, slash_level_bar
+// (Wii U slash_level_bar, 8 s16 drawn). 128 rows per table: the
 // 8 distinct tables fill the block exactly on the EN, JP and rain files.
 // =======================
 

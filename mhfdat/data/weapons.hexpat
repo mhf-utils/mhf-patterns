@@ -208,7 +208,7 @@ struct MeleeItem {
 	u8 rarity [[format("plusone"), color("22FF22")]];
 	u8 classId [[format("className"), color("0088FF")]];
 	u32 zennyCost [[comment("Forge cost and sell price are zennyCost / 2"), color("22FF22")]];
-	u8 sharpnessId [[color("FFFF00"), comment("Row of SharpnessIds[class] (weapon_melee_sharpness_color_tier)")]];
+	u8 sharpnessId [[color("FFFF00"), comment("Row of SharpnessIds[class] (Pl_slash_lv_ck_sg)")]];
 	u8 sharpnessMax [[color("FFF000"), comment("Max sharpness = (v + 3) x 50 (weapon_max_sharpness_value_compute)")]];
 	u16 rawDamage [[comment("Attack = raw x weaponDamageCoefficients[class] +0xC / 100"), color("22FF22")]];
 	s16 defense [[color("22FF22"), comment("Added to the armor defense sum (WeaponStat_GetPreviewValue); negative on some rows")]];
@@ -230,7 +230,7 @@ struct MeleeItem {
 	u8 unk1E[2] [[comment("No reader, always 0")]];
 	WeaponCategoryBits weaponCategory;
 	u16 visualEffects [[comment("weapon_effect_init: row of weaponEffectSets (header 0x280)")]];
-	u16 Tower_G50_Param_ID [[name("Tower/G50 Param ID"), comment("g50_tower_params_pointers list index")]];
+	u16 Tower_G50_Param_ID [[name("Tower/G50 Param ID"), comment("get_gcls_weapon_tbl list index")]];
 	u16 gRank [[name("G Rank"), color("FF0000"), comment("Read as a u16 (get_ex_g_weapon_rank)")]];
 	u8 decoSpecialSlot [[comment("Deco_item_check: special decorations need 1, the others 0")]];
 	u8 modelVariant [[comment("pl_weapon_model_init model variant; 9 = the -so model")]];
@@ -269,7 +269,7 @@ fn recoil (u8 n) {
 struct RangedItem {
 	u16 modelId;
 	u8 rarity [[format("plusone")]];
-	u8 levelModGroup [[comment("Bowgun level modifier group: header 0xB0 row = levelModGroup x 5 + (equipment level & 0xF) (gunner_load_coating_modifier_row, get_ranged_effective_raw_damage): a raw bonus and shot speed / gravity multipliers. 0 on bows")]];
+	u8 levelModGroup [[comment("Bowgun level modifier group: header 0xB0 row = levelModGroup x 5 + (equipment level & 0xF) (gunner_load_bowgun_level_modifier_row, get_ranged_effective_raw_damage): a raw bonus and shot speed / gravity multipliers. 0 on bows")]];
 	u8 classId [[format("className")]];
 	u8 unk05 [[comment("No reader, always 0")]];
 	u8 eq [[name("Equip Type"), format("eqType"), color("FFFF00")]];
@@ -298,8 +298,7 @@ struct RangedItem {
 	u16 Tower_G50_Param_ID [[name("Tower/G50 Param ID"), comment("get_gcls_param_id: index of the Tower / G50 level stat list")]];
 	u8 arcShotType [[comment("bow_arc_type_get (bows, 0-3)")]];
 	u8 unk2F [[comment("No reader, always 0")]];
-	u8 G_rank [[name("G Rank"), color("FF0000"), comment("Read as a u16 with the next byte (get_ex_g_weapon_rank)")]];
-	u8 unk31 [[comment("High byte of the G rank u16, always 0")]];
+	u16 G_rank [[name("G Rank"), color("FF0000"), comment("Read as a u16 (get_ex_g_weapon_rank, get_equip_tower_slots, forge_weapon_craft_to_box, forge_weapon_craft_for_partner, FUN_104E8140, hunterNavi_ck_12_11_exotic_weapon); melee +0x2E")]];
 	u8 decoSpecialSlot [[comment("Deco_item_check: special decorations need 1 here, the others 0 (melee +0x2A)")]];
 	u8 modelVariant [[comment("pl_weapon_model_init model variant (melee +0x2B), always 0x0F")]];
 	u8 ailmentId [[format("ailmentName"), comment("get_weapon_ail_damage_if_ailment, weapon_element_status_affinity_value")]];
@@ -316,7 +315,7 @@ struct WeaponDescription {
 	s32p description_1;
 	s32p description_2;
 	s32p description_3;
-	s32p mhfy;
+	s32p description_4 [[comment("4th line: FUN_10B70FF0 prints the row's pointers until a null one, so a null here ends a 3-line text (non-null only in EN melee row 58, whose text runs on into row 59)")]];
 };
 
 struct TableWeapons {
@@ -351,10 +350,13 @@ struct Weapons {
 Weapons weapons @ header.ptrs.meleeWeapons [[name("Weapons")]];
 
 // =======================
-// Compound elements (header 0x6A8): element types 6-18 (elementName), one
-// row each, row = type - 6. Each row is up to 5 {base element 1-5, percent}
-// pairs, element 0 ends it. element_compound_split (FUN_1081F980) and
-// element_compound_part_value (value x percent / 100) read them;
+// Compound elements (header 0x6A8; Wii U slot 0x6A4, types 6-12 there):
+// element types 6-18 (elementName), one row each, row = type - 6 (the readers
+// test type - 6 < 0xD). Each row is 5 {base element 1-5, percent} pairs, all
+// read: element 0 is an unused pair, not an end. Readers:
+// element_compound_split (0x1081F980), getMultiAttrNum (Wii U
+// getMultiAttrNum: value x percent / 100), chk_w_attr_effect_pri (Wii U
+// chk_w_attr_effect_pri), chk_w_attr_effect_random (Wii U chk_w_attr_effect_random);
 // transcend_add_attack_exp_by_weapon picks the matching Veins.
 // =======================
 

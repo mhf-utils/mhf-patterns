@@ -9,7 +9,7 @@
 // Armor model id limits (header 0x0E4): one row per gender (player +0x11: 0
 // male, 1 female; rows 2 and 3 are 0). The slots follow the equipment counts
 // order. When the model id resolved for a slot (modelIdMale / modelIdFemale of
-// the worn piece) is >= the limit, the model shown is 0 (armor_model_ids_resolve);
+// the worn piece) is >= the limit, the model shown is 0 (Pl_model_id_set);
 // a preset with -1 for a slot takes random % limit + 1 (player_preset_model_roll).
 // Armor colors (header 0x140): 0xAARRGGBB, index = player +0xCA2 (0xFF: none,
 // 0xB: FUN_10B86850 instead), turned into RGB floats by
@@ -23,7 +23,7 @@ struct ArmorModelIdLimits {
     u16 body;
     u16 arm;
     u16 waist;
-    u16 unk0C [[comment("Slot 6: limit of a byte value in FUN_105E05E0 / FUN_11521B60")]];
+    u16 unk0C [[comment("Slot 6: not used by the model code (Wii U Pl_model_id_set stops at slot 5). FUN_105E05E0 (player state record +9 = save byte +3, from room_packet_build_player_state) and FUN_11521B60 (record +0xB) zero a u8 >= this; 2401 in the files, so never")]];
 };
 
 ArmorModelIdLimits armorModelIdLimits[4] @ header.ptrs.armorModelIdLimits [[name("Armor Model Id Limits")]];
@@ -38,7 +38,7 @@ struct ArmorColor {
 ArmorColor armorColors[112] @ header.ptrs.armorColors [[name("Armor Colors")]];
 
 // Inner body models (header 0x31C): the body model shown under an empty leg,
-// body or arm slot. inner_body_model_get finds the row whose skin tone 0 model
+// body or arm slot. SearchInnModel finds the row whose skin tone 0 model
 // is the resolved model id and returns the model of the player's inner
 // (+0xC4F), gender (+0x11) and skin tone (+0x710, from the face row of header
 // 0x320). One block per inner (important numbers + 0xDA).
@@ -59,7 +59,7 @@ struct InnerBodyModels {
 
 InnerBodyModels innerBodyModels[importantNums.numInners] @ header.ptrs.innerBodyModels [[name("Inner Body Models")]];
 
-// Equipment without a preview (header 0x7E0): equip_has_preview returns 0 for
+// Equipment without a preview (header 0x7E0): Armor_preview_check returns 0 for
 // a listed (kind, id). The forge previews (forge_armor_preview_update ...) and
 // the equipment shop (Lb_equip_app_shop_move) then do not load the model and
 // the forge shows mhfpac pKakoTexts[65] "There is no preview" (the same as for

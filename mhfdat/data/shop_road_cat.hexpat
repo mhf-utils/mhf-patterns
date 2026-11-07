@@ -1,14 +1,10 @@
 #pragma once
 
-struct ShopRoadCat {
-    u16 itemId;
-    u32 unk1;
-    u16 pad1;
-    u16 itemId2;
-    u32 unk2;
-    u16 pad2;
-};
+#include <std/mem.pat>
+#include <mhfdat/data/shop_road_gm.hexpat>
 
-u32 ShopRoadCatPointer @ 0xB10 [[name("Road Cat Shop Pointer")]];
-
-ShopRoadCat shopRoadCat[while (std::mem::read_unsigned($ + 2, 4) != 0xFFFFFFFF)] @ ShopRoadCatPointer [[name("Data")]];
+// Header 0xB10: the third table of road_gm_shop_get_table (local player
+// action 0 / 0xF9), read like the two Gm shops by road_gm_shop_count_items /
+// road_gm_shop_get_item: 8-byte RoadGmShopItem rows, count dataCounters
+// (header 0xB04) +4 (81 EN, 80 JP / rain).
+RoadGmShopItem roadCatShop[std::mem::read_unsigned(header.ptrs.dataCounters + 4, 2)] @ header.ptrs.Road_Cat_Item_Shop_Pointer [[name("Road Cat Shop")]];

@@ -248,7 +248,7 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 
 	// rd_mhfdat walks 4-byte rows up to the one whose first u16 is 0
 	item_num_pair hd_dll_af52ff[while(std::mem::read_unsigned($,2) != 0)] 
-		@ header.ptrs.hd_dll_af52f3;
+		@ header.ptrs.welcomeBackItems;
 
 	struct struct_af5312_1 {
 		// This structure repeats 5 times. I'd make a for loop if I were able

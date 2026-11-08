@@ -73,3 +73,18 @@ struct KoryoPortaExchangeItems {
 };
 
 KoryoPortaExchangeItems koryoPortaExchangeItems @ header.ptrs.koryoPortaExchangeItems [[name("Koryo Porta Card Exchange Items")]];
+
+// Koryo lottery costs (header 0xB44, importantNums.numKoryoLotteryCosts rows,
+// one per lottery 0-5): hunting_medal_menu_open copies each row's cost to the
+// menu (0x1E76AB28 + lottery x 4; 1000 when the cost is <= 0, a zero DLL row
+// for a row past the count); FUN_105CCCF0 refuses a draw when the Koryo points
+// are below it; koryo_lottery_draw_step prints row 1 / 2 for lotteries 1 / 2
+// and row 0 for any other in its confirmation (pDialogTexts[0x24B]). 10000
+// on the 3 files.
+struct KoryoLotteryCost {
+    u32 unk00[4] [[comment("No reader (only +0x10 is read); 0 on the 3 files")]];
+    s32 cost [[comment("Koryo points per draw (signed test, <= 0 -> 1000)")]];
+    u32 unk14[3] [[comment("No reader; 0 on the 3 files")]];
+};
+
+KoryoLotteryCost koryoLotteryCosts[importantNums.numKoryoLotteryCosts] @ header.ptrs.koryoLotteryCosts [[name("Koryo Lottery Costs")]];

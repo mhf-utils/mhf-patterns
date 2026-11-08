@@ -97,8 +97,8 @@ struct ptr_table {
     
     ptr combineTripleBuckets [[name("Combine Triple Buckets Pointer")]]; // @ 0x110, hd_dll_af4de0
     ptr combineTripleIngredientA [[name("Combine Triple First Ingredients Pointer")]]; // @ 0x114, hd_dll_af4e1b
-    unk_ptr hd_dll_af4e0f;      // @ 0x118, no reader (rd_mhfdat walk only, Wii U 0x11C none): {u16 item, u16 item} pairs, end 0xFFFF
-    unk_ptr hd_dll_af4e3a;      // @ 0x11C, no reader (rd_mhfdat walk only, Wii U 0x120 none): {u16 item x 3} triples, end 0xFFFF
+    unk_ptr hd_dll_af4e0f;      // @ 0x118, no reader on HD or Wii U (Wii U slot 0x11C): {u16, u16} pairs ending 0xFFFF (rd_mhfdat walk; Wii U rd_mhfdat swaps them as u16)
+    unk_ptr hd_dll_af4e3a;      // @ 0x11C, no reader on HD or Wii U (Wii U slot 0x120): {s16 x 3} triples ending 0xFFFF (rd_mhfdat walk; Wii U rd_mhfdat swaps them as s16)
 
     
     ptr carveItemDrops          [[name("Carve Drop Data Pointer")]]; // + 0x120
@@ -126,9 +126,12 @@ struct ptr_table {
 
     ptr machaPotItems [[name("Macha Pot Items Pointer")]]; // @ 0x164, hd_dll_af52c0
     ptr publicBarHrReqs [[name("Public Bar HR Reqs Pointer")]]; // @ 0x168, hd_dll_af52ba
-    unk_ptr hd_dll_af52f3;      // @ 0x16C, no reader (rd_mhfdat walk only, Wii U 0x170 none): {u16 item, u16 count} rows, end item 0
+    ptr welcomeBackItems [[name("Welcome Back Items Pointer")]]; // @ 0x16C, hd_dll_af52f3
 
-    padding[0x10];              // @ 0x170
+    u32 unk_0x170 [[name("Header 0x170 Offset")]]; // @ 0x170, not relocated by rd_mhfdat, no reader on HD: file offset of the text "2018/12/14" (EN, rain)
+    u32 unk_0x174 [[name("Header 0x174 Offset")]]; // @ 0x174, not relocated by rd_mhfdat, no reader on HD: file offset of the text "2019/02/06" (EN, rain)
+    u32 unk_0x178 [[name("Header 0x178 Offset")]]; // @ 0x178, not relocated by rd_mhfdat, no reader on HD: file offset of the text "2019/02/06" (EN, rain)
+    u32 unk_0x17c [[name("Header 0x17C Offset")]]; // @ 0x17C, not relocated by rd_mhfdat, no reader on HD: file offset of the text "2018/12/06" (EN, rain)
 
     ptr huntingHornSongPages [[name("Hunting Horn Song Pages Pointer")]]; // @ 0x180, hd_dll_af5397
     ptr ancientHuntingHornScorePages [[name("Ancient Hunting Horn Score Pages Pointer")]]; // @ 0x184, hd_dll_af53c0
@@ -149,8 +152,8 @@ struct ptr_table {
     ptr publicBarTargets [[name("Public Bar Targets Pointer")]]; // @ 0x1C0, hd_dll_af5661
     ptr plazaHrRanges [[name("Plaza HR Ranges Pointer")]]; // @ 0x1C4, hd_dll_af567c
     ptr bowArrowHitValues [[name("Bow Arrow Hit Values Pointer")]]; // @ 0x1C8, hd_dll_af57f2
-    unk_ptr hd_dll_af583d;      // @ 0x1CC, no reader (Wii U 0x1F4 none): u32 list ending 0xFFFFFFFF
-    unk_ptr hd_dll_af5843;      // @ 0x1D0, no reader (Wii U 0x1F8 none): u32 list ending 0xFFFFFFFF
+    unk_ptr hd_dll_af583d;      // @ 0x1CC, no reader on HD or Wii U (Wii U slot 0x1F4): u32 x important numbers +0x92, the last one 0xFFFFFFFF
+    unk_ptr hd_dll_af5843;      // @ 0x1D0, no reader on HD or Wii U (Wii U slot 0x1F8): u32 x important numbers +0x94, the last one 0xFFFFFFFF
     ptr mytraAdventures [[name("Mytra Adventure Dispatch Pointer")]]; // @ 0x1D4, hd_dll_af56ea
     ptr mytraCatEquipment [[name("Mytra Cat Equipment Pointer")]]; // @ 0x1D8, hd_dll_af56cc
     ptr mytraShopStage0 [[name("Mytra Shop Stock Stage 0 Pointer")]]; // @ 0x1DC, hd_dll_af56d2
@@ -169,8 +172,8 @@ struct ptr_table {
     ptr farmCatFailItemsHr51 [[name("Farm Cat Fail Items HR 51-99 Pointer")]]; // @ 0x210, hd_dll_af5784
     ptr lostItemRewardTiers [[name("Lost Item Reward Tiers Pointer")]]; // @ 0x214, hd_dll_af578a
     ptr helpCatItems [[name("Help Cat Items Pointer")]]; // @ 0x218, hd_dll_af57b9
-    unk_ptr hd_dll_af5849;      // @ 0x21C, no reader (Wii U 0x24C none): 12 zero bytes
-    unk_ptr hd_dll_af584f;      // @ 0x220, no reader (Wii U 0x250 none): {u16 item, u16 count} rows
+    unk_ptr hd_dll_af5849;      // @ 0x21C, no reader on HD or Wii U (Wii U slot 0x24C): u16 list ending 0 (Wii U rd_mhfdat), empty on the 3 files
+    unk_ptr hd_dll_af584f;      // @ 0x220, no reader on HD or Wii U (Wii U slot 0x250): u16 list ending 0 (Wii U rd_mhfdat)
     ptr poogieCostumeSkillCuffs [[name("Poogie Costume Skill Cuffs Pointer")]]; // @ 0x224, hd_dll_af5855
     ptr mytraPoogieLevelThresholds [[name("Mytra Poogie Level Thresholds Pointer")]]; // @ 0x228, hd_dll_af584b
     ptr caravanVoyageRoutes [[name("Caravan Voyage Routes Pointer")]]; // @ 0x22C, hd_dll_af5861
@@ -202,7 +205,7 @@ struct ptr_table {
     ptr modelEffectSets [[name("Model Effect Sets Pointer")]]; // @ 0x294, hd_dll_af5a4b
     ptr modelEffects [[name("Model Effects Pointer")]]; // @ 0x298, hd_dll_af5a51
     ptr rastaItemSets [[name("Rasta Item Sets Pointer")]]; // @ 0x29C, hd_dll_af5a57
-    unk_ptr hd_dll_af5a5d;      // @ 0x2A0, no HD reader: Wii U CreateNpcPlayer (0x0253D210, slot 0x2CC) NPC player presets, 80 rows of 0x14
+    ptr hasyuNpcPlayers [[name("Great Slaying NPC Players Pointer")]]; // @ 0x2A0, hd_dll_af5a5d
     ptr instructorChallengeTasks [[name("Instructor Challenge Tasks Pointer")]]; // @ 0x2A4, hd_dll_af5ae0
     ptr instructorChallengePicks [[name("Instructor Challenge Picks Pointer")]]; // @ 0x2A8, hd_dll_af5ab1
     ptr instructorChallengeRewards [[name("Instructor Challenge Rewards Pointer")]]; // @ 0x2AC, hd_dll_af5ae6
@@ -223,15 +226,15 @@ struct ptr_table {
     ptr bowArrowKoValues [[name("Bow Arrow KO Values Pointer")]]; // @ 0x2E8, hd_dll_af5a9f
     ptr pioneerPublicRewardTiers [[name("Pioneer Public Reward Tiers Pointer")]]; // @ 0x2EC, hd_dll_af5aa5
     ptr pioneerQuestBonusRewards [[name("Pioneer Quest Bonus Rewards Pointer")]]; // @ 0x2F0, hd_dll_af5aab
-    unk_ptr hd_dll_af5be2;      // @ 0x2F4, no HD reader: Wii U setMHFIconPrimitivePackage (0x0240FBE0, slot 0x320) icon rows of 0x16, 186 rows
-    unk_ptr hd_dll_af5be8;
-    unk_ptr hd_dll_af5bee;
-    unk_ptr hd_dll_af5bf4;      // @ 0x300
-    unk_ptr hd_dll_af5bfa;
-    unk_ptr hd_dll_af5c00;
-    unk_ptr hd_dll_af5c06;
-    unk_ptr hd_dll_af5c0c;      // @ 0x310
-    unk_ptr hd_dll_af5c12;
+    ptr controlIconPrimitives [[name("Control Icon Primitives Pointer")]]; // @ 0x2F4, hd_dll_af5be2
+    ptr controlIcons [[name("Control Icons Pointer")]]; // @ 0x2F8, hd_dll_af5be8
+    ptr keyboardControlIcons [[name("Keyboard Control Icons Pointer")]]; // @ 0x2FC, hd_dll_af5bee
+    ptr padButtonBitIcons [[name("Pad Button Bit Icons Pointer")]]; // @ 0x300, hd_dll_af5bf4
+    ptr padControlIcons [[name("Pad Control Icons Pointer")]]; // @ 0x304, hd_dll_af5bfa
+    ptr padControlIconsType1 [[name("Pad Control Icons (Type 1) Pointer")]]; // @ 0x308, hd_dll_af5c00
+    ptr padControlIconsType3 [[name("Pad Control Icons (Type 3) Pointer")]]; // @ 0x30C, hd_dll_af5c06
+    unk_ptr hd_dll_af5c0c;      // @ 0x310, no reader (HD or Wii U): 35 control icon rows (control_icons.hexpat)
+    ptr padControlIconsType5 [[name("Pad Control Icons (Type 5) Pointer")]]; // @ 0x314, hd_dll_af5c12
     ptr secretBookEffects [[name("Secret Book Effects Pointer")]]; // @ 0x318
     ptr innerBodyModels [[name("Inner Body Models Pointer")]]; // @ 0x31C, hd_dll_af5c18
     ptr partnerFaces [[name("Partner Faces Pointer")]]; // @ 0x320, hd_dll_af5c1e
@@ -244,9 +247,9 @@ struct ptr_table {
     ptr chequeGateByPlayers [[name("Cheque Gate by Players Pointer")]]; // @ 0x334, hd_dll_af5c2a
     ptr chequeGateByPlayersRasta [[name("Cheque Gate by Players (Rasta) Pointer")]]; // @ 0x338, hd_dll_af5c30
     ptr protectedItems [[name("Protected Items Pointer")]]; // @ 0x33C, hd_dll_af5c36
-    unk_ptr hd_dll_af5c3c;      // @ 0x340
-    unk_ptr hd_dll_af5c42;
-    unk_ptr hd_dll_af5c48;
+    unk_ptr hd_dll_af5c3c;      // @ 0x340, no reader (Wii U 0x368 none): {u16 item 0x65E, u16 5, u32 0} (ticket_rows.hexpat)
+    unk_ptr hd_dll_af5c42;      // @ 0x344, no reader (Wii U 0x36C none): {u16 item 0x65F, u16 5, u32 0}
+    unk_ptr hd_dll_af5c48;      // @ 0x348, no reader (Wii U 0x370 none): {u16 item 0x660, u16 5, u32 0}
     ptr boxSearchIcons [[name("Box Search Icons Pointer")]]; // @ 0x34C, hd_dll_af5c4e
     ptr boxSearchDecorations [[name("Box Search Decorations Pointer")]]; // @ 0x350, hd_dll_af5c54
     ptr boxSearchSkillTrees [[name("Box Search Skill Trees Pointer")]]; // @ 0x354, hd_dll_af5c5a
@@ -355,7 +358,7 @@ struct ptr_table {
     ptr randomShellTypes [[name("Random Gunlance Shell Types Pointer")]]; // @ 0x4F0, hd_dll_af6310
     ptr handlingDrawSpeed [[name("Handling Draw Speed Pointer")]]; // @ 0x4F4, hd_dll_af632e
     ptr randomSharpnessGunlance [[name("Random Sharpness Gunlance Pointer")]]; // @ 0x4F8, hd_dll_af6316
-    unk_ptr hd_dll_af5ce4;
+    unk_ptr hd_dll_af5ce4;      // @ 0x4FC, no reader (Wii U 0x528 none): one 48-byte row (important numbers +0x1B6 = 1), unread_blocks.hexpat
     ptr exGTopTierRollPercentsGunlance [[name("Ex G Top Tier Roll Percents Gunlance Pointer")]]; // @ 0x500, hd_dll_af631c
     ptr exGMidTierRollPercentsGunlance [[name("Ex G Mid Tier Roll Percents Gunlance Pointer")]]; // @ 0x504, hd_dll_af6322
     ptr exGBaseTierRollOverridesGunlance [[name("Ex G Base Tier Roll Overrides Gunlance Pointer")]]; // @ 0x508, hd_dll_af6328
@@ -392,14 +395,14 @@ struct ptr_table {
     ptr priorityRequestEntries [[name("Guild Priority Request Entries Pointer")]]; // @ 0x584, hd_dll_af6688
     ptr priorityRequestRotations [[name("Guild Priority Request Rotations Pointer")]]; // @ 0x588, hd_dll_af668e
     ptr cookingMenuLayout [[name("Cooking Menu Layout Pointer")]]; // @ 0x58C, hd_dll_af6694
-    unk_ptr hd_dll_af669a;      // @ 0x590
+    unk_ptr hd_dll_af669a;      // @ 0x590, no reader (Wii U 0x5BC none): 16-byte rows (important numbers +0x1F8 = 123) then a zero row, unread_blocks.hexpat
     ptr skillEffects [[name("Skill Effects Pointer")]]; // @ 0x594, hd_dll_af66a0
     ptr gArmorFxElementRate [[name("G Armor Fx Element Rate Pointer")]]; // @ 0x598, hd_dll_af66a6
     ptr gArmorFxStatusRate [[name("G Armor Fx Status Rate Pointer")]]; // @ 0x59C, hd_dll_af66ac
     ptr gArmorFxElementPercent [[name("G Armor Fx Element Percent Pointer")]]; // @ 0x5A0, hd_dll_af66b2
-    unk_ptr hd_dll_af66b8;
+    ptr gArmorFxStatusPercent [[name("G Armor Fx Status Percent Pointer")]]; // @ 0x5A4, hd_dll_af66b8
     ptr gArmorFxAttackAdd [[name("G Armor Fx Attack Add Pointer")]]; // @ 0x5A8, hd_dll_af66be
-    unk_ptr hd_dll_af66c4;
+    unk_ptr hd_dll_af66c4;      // @ 0x5AC, no reader (Wii U 0x5D8 none): points 8 zero bytes before the first string of the string pool (same offset on the 3 files), not a table
     ptr hcKaiCritDamage [[name("HC Kai Critical Damage Pointer")]]; // @ 0x5B0, hd_dll_af66ca
     ptr hcKaiDefense [[name("HC Kai Defense Pointer")]]; // @ 0x5B4, hd_dll_af66d0
     ptr secretBookSrLevels [[name("Secret Book SR Levels Pointer")]]; // @ 0x5B8, hd_dll_af703a
@@ -472,7 +475,7 @@ struct ptr_table {
     ptr partnerStarterWeapons [[name("Partner Starter Weapons Pointer")]]; // @ 0x6B0, hd_dll_af7058
     ptr partnerArmorSetA [[name("Partner Armor Set A Pointer")]]; // @ 0x6B4, hd_dll_af705e
     ptr partnerArmorSetB [[name("Partner Armor Set B Pointer")]]; // @ 0x6B8, hd_dll_af7064
-    unk_ptr hd_dll_af706a;
+    unk_ptr hd_dll_af706a;      // @ 0x6BC, no reader (Wii U 0x6B8 none): 44-byte rows (important numbers +0x26A = 9), unread_blocks.hexpat
     ptr monsterPriceBoard [[name("Monster Price Board Pointer")]]; // @ 0x6C0, hd_dll_af7070
     ptr carveNormalItems [[name("Carve Normal Items Pointer")]]; // @ 0x6C4, hd_dll_af704c
     // G1 to G7 quest lists, each to a u32 holding the list's address (quests.hexpat)
@@ -487,7 +490,7 @@ struct ptr_table {
     ptr gatherStarItems0 [[name("Gather Star Items 0 Pointer")]]; // @ 0x6E8, hd_dll_af7390
     ptr gatherStarItems2 [[name("Gather Star Items 2 Pointer")]]; // @ 0x6EC, hd_dll_af7396
     ptr veggieElderTradeMaps [[name("Veggie Elder Trade Maps Pointer")]]; // @ 0x6F0, hd_dll_af739c
-    unk_ptr hd_dll_af73d7;
+    unk_ptr hd_dll_af73d7;      // @ 0x6F4, no reader (Wii U 0x6F0 none): one 8-byte row (important numbers +0x286 = 1), unread_blocks.hexpat
     ptr keyConfigGroupCount [[name("Key Config Group Count Pointer"), comment("u8: the input-context group count (21; key_config.hexpat)")]]; // @ 0x6F8, hd_dll_af73dd
     ptr keyConfigActionCounts [[name("Key Config Action Counts Pointer")]]; // @ 0x6FC, hd_dll_af73e3
     ptr keyConfigPadSlots [[name("Key Config Pad Slots Pointer")]]; // @ 0x700, hd_dll_af73e9
@@ -497,8 +500,8 @@ struct ptr_table {
     ptr keyConfigMouseAssign [[name("Key Config Mouse Assign Pointer")]]; // @ 0x710
     ptr keyConfigCharKeys [[name("Key Config Character Keys Pointer")]]; // @ 0x714, hd_dll_af771d
     ptr boxSearchSigilSkills [[name("Box Search Sigil Skills Pointer")]]; // @ 0x718, hd_dll_af5c66
-    unk_ptr hd_dll_af7723;
-    unk_ptr hd_dll_af7729;      // @ 0x720
+    unk_ptr hd_dll_af7723;      // @ 0x71C, no reader (Wii U 0x718 none): u16[2] (important numbers +0x28A = 2), unread_blocks.hexpat
+    unk_ptr hd_dll_af7729;      // @ 0x720, no reader (Wii U 0x71C none): one 12-byte row (important numbers +0x28C = 1), unread_blocks.hexpat
     ptr weaponModelSoundIds [[name("Weapon Model Sound Ids Pointer")]]; // @ 0x724, hd_dll_af772f
     ptr sigilRecoveryItems [[name("Sigil Recovery Items Pointer")]]; // @ 0x728, hd_dll_af7735
     ptr playerUniqueParams [[name("Player Unique Parameters Pointer")]]; // @ 0x72C, hd_dll_af773b
@@ -525,8 +528,8 @@ struct ptr_table {
     ptr gsrDragonResBonus [[name("GSR Dragon Res Bonus Pointer")]]; // @ 0x778, hd_dll_af779b
     ptr gsrAllResBonus [[name("GSR All Res Bonus Pointer")]]; // @ 0x77C, hd_dll_af77a1
     ptr fishingBaits [[name("Fishing Baits Pointer")]]; // @ 0x780, hd_dll_af77a7
-    ptr gDragonBonusRanges [[name("G Dragon Bonus Ranges Pointer"), comment("No HD reader; Wii U twin chkGDragonBonusChg (slot 0x780): 0x1E4-byte rows {u16 key, pad, 5 x 24 hourly u16 {min, max}}")]]; // @ 0x784, hd_dll_af77ef
-    ptr gDragonBonusWeights [[name("G Dragon Bonus Weights Pointer"), comment("No HD reader; Wii U twin chkGDragonBonusChg (slot 0x784): 0xC4-byte rows {u16 looks map, pad, 24 hourly {u8 weights[5], pad[3]}}")]]; // @ 0x788, hd_dll_af77f5
+    ptr conquestSupportRanges [[name("Conquest Support Ranges Pointer"), comment("Extreme Conquest (極征) support bonus, Wii U G Dragon. No HD reader; Wii U chkGDragonBonusChg (slot 0x780): 0x1E4-byte rows {u16 key, u16, 5 bonus types x 24 hours x s16 {min, max}} (conquest_support.hexpat)")]]; // @ 0x784, hd_dll_af77ef
+    ptr conquestSupportWeights [[name("Conquest Support Weights Pointer"), comment("Extreme Conquest (極征) support bonus, Wii U G Dragon. No HD reader; Wii U chkGDragonBonusChg (slot 0x784): 0xC4-byte rows {u16 map, u16, 24 hours x {u8 typeWeights[5], u8[3]}} (conquest_support.hexpat)")]]; // @ 0x788, hd_dll_af77f5
     ptr pouchItemRewards [[name("Pouch Item Rewards Pointer")]]; // @ 0x78C, hd_dll_af77fb
     ptr heatCannonSigilPower [[name("Heat Cannon Sigil Power Pointer")]]; // @ 0x790, hd_dll_af7801
     ptr superRapidFirePower [[name("Super Rapid Fire Power Pointer")]]; // @ 0x794, hd_dll_af7807
@@ -560,7 +563,7 @@ struct ptr_table {
     ptr serverBoxSlotChancesByMode [[name("Server Reward Box Slot Chances by Mode Pointer")]]; // @ 0x7FC, hd_dll_af7a00
     ptr partnerLooks [[name("Partner Looks Pointer")]]; // @ 0x800, hd_dll_af7a8e
     ptr AutomaticSkillsTable    [[name("Automatic Skills Table Pointer")]];
-    ptr mapVariantLayouts [[name("Map Variant Layouts Pointer"), comment("important numbers +0x2FA rows of 16 s8, row = quest mapVariant (FUN_11384A20, map_instantiate_event)")]]; // @ 0x808, hd_dll_af7a9a
+    ptr mapVariantLayouts [[name("Map Variant Layouts Pointer"), comment("important numbers +0x2FA rows of 16 s8 (one per event spot), row = quest mapVariant (map 0x40 / 0x41 event: CEventMap40_Init, CEventMap40_SpotTimerMain, CEventMap40_GetLayoutValue, FUN_11385970)")]]; // @ 0x808, hd_dll_af7a9a
     ptr incitementTunables [[name("Incitement Tunables Pointer")]]; // @ 0x80C, hd_dll_af7aa0
     ptr guildHallRewardLists [[name("Guild Hall Reward Lists Pointer")]]; // @ 0x810, hd_dll_af7aa6
     ptr guildHallRewardGroups [[name("Guild Hall Reward Groups Pointer")]]; // @ 0x814, hd_dll_af7ae3
@@ -569,7 +572,7 @@ struct ptr_table {
     ptr guildHallRewardExtraItemsHrLow [[name("Guild Hall Reward Extra Items HR 1-30 Pointer")]]; // @ 0x820, hd_dll_af7af5
     ptr guildHallRewardExtraItemsHrMid [[name("Guild Hall Reward Extra Items HR 31-100 Pointer")]]; // @ 0x824, hd_dll_af7afb
     ptr guildHallRewardExtraItemsHrHigh [[name("Guild Hall Reward Extra Items HR 101+ Pointer")]]; // @ 0x828, hd_dll_af7b01
-    padding[0x4];
+    ptr header82C [[name("Header 0x82C Pointer (not relocated)")]]; // @ 0x82C
     ptr incitementEnmityCut [[name("Incitement Enmity Cut Pointer")]]; // @ 0x830, hd_dll_af7b07
     ptr incitementUnreachableRelease [[name("Incitement Unreachable Release Pointer")]]; // @ 0x834, hd_dll_af7b0d
     ptr partnerSkills [[name("Partner Skills Pointer")]]; // @ 0x838, hd_dll_af7b13
@@ -628,7 +631,7 @@ struct ptr_table {
     ptr felyneGmShop [[name("Felyne Gm Shop Pointer")]]; // @ 0x90C, hd_dll_af8177
     ptr extraCounters [[name("Extra Counters Pointer"), comment("u16 counts ending at 0: +0 the Felyne Gm shop (0x90C), +4 the Blue NPC Gm shop (0x924), +8 / +0xA the Hunting Road skills (0x930 / 0x934), +0xC the Tower upgrade cost tables (0x93C), +0xE the Tower medal shop (0x948)")]]; // @ 0x910, hd_dll_af469d
     unk_ptr hd_dll_af818f;
-    unk_ptr hd_dll_af81cc;
+    ptr nsoEventSounds [[name("NSO Event Sounds Pointer")]]; // @ 0x918, hd_dll_af81cc
     ptr caravanRankingRoutes [[name("Caravan Ranking Routes Pointer")]]; // @ 0x91C, hd_dll_af821c
     ptr felyneGmShopStockRolls [[name("Felyne Gm Shop Stock Rolls Pointer")]]; // @ 0x920, hd_dll_af8183
     ptr blueNpcGmShop [[name("Blue NPC Gm Shop Pointer")]]; // @ 0x924, hd_dll_af817d

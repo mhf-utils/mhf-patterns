@@ -71,6 +71,21 @@ VampirismRow vampirism[std::mem::read_unsigned(header.ptrs.skillCounts + 4, 2)]
     [[name("Vampirism")]];
 
 // =======================
+// Adaptation (header 0x7A4): one row per weapon class (PlayerWork +0x03, 14
+// classes; zero bytes after them). change_attribute (Wii U twin, slot 0x7A0)
+// returns byte [class x 3 + tier] x 0.01, or 1.0 when no tier applies; the
+// first test that passes gives the tier.
+// =======================
+
+struct AdaptationRates {
+    u8 adaptation1 [[comment("Percent, Adaptation+1 (skill 0x1CE)")]];
+    u8 adaptation2 [[comment("Percent, Adaptation+2 (skill 0x1CF)")]];
+    u8 zenith [[comment("Percent, Zenith effect 0x15 (skill_is_granted_by_equipped_gear), tested first")]];
+};
+
+AdaptationRates adaptationRates[14] @ header.ptrs.adaptationRates [[name("Adaptation Rates")]];
+
+// =======================
 // Crit Conversion (skills 0x1F3 / 0x1F4), Stylish Assault (0x1F6) and Ice Age
 // (0x1F8), header 0xA1C. Tables "by class" have one u16 per weapon class
 // (player +0x03). Ice Age state (skill_ice_age_state_block_for_entity): +8

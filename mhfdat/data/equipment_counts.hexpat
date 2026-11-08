@@ -186,7 +186,23 @@ struct ImportantNumbers {
     u16 numQuestSearchFieldsG
         [[name("Number of Quest Search Fields (G Rank Counter)")]];
 
-    padding[0x26];
+    padding[0x16];
+
+    // Offset 0x92: header 0x1CC u32 values incl. the 0xFFFFFFFF end (no reader; Wii U rd_mhfdat swaps +0x9A x 4 bytes of its slot 0x1F4)
+    u16 num1CCValues
+        [[name("Number of Header 0x1CC Values")]];
+
+    // Offset 0x94: header 0x1D0 u32 values incl. the 0xFFFFFFFF end (no reader; Wii U rd_mhfdat swaps +0x9C x 4 bytes of its slot 0x1F8)
+    u16 num1D0Values
+        [[name("Number of Header 0x1D0 Values")]];
+
+    padding[0x8];
+
+    // Offset 0x9E: Great Slaying NPC player presets (header 0x2A0; Wii U rd_mhfdat swaps +0xA6 x 0x14 bytes of its slot 0x2CC)
+    u16 numHasyuNpcPlayers
+        [[name("Number of Great Slaying NPC Players")]];
+
+    padding[0x2];
 
     // Offset 0xA2: Instructor challenge pick lists and reward lists (header 0x2A8, 0x2AC), relocated by the loader
     u16 numInstructorChallengePicks
@@ -226,15 +242,41 @@ struct ImportantNumbers {
     u16 numPioneerQuestBonusRewards
         [[name("Number of Pioneer Quest Bonus Rewards")]];
 
-    // Offset 0xC6: rows of header 0x2F4 (0x16 bytes); setupMHFIconControlContainer uses row 0 for an id >= it
-    u16 num2F4Rows
-        [[name("Number of Header 0x2F4 Rows")]];
+    // Offset 0xC6: control icon primitives (header 0x2F4); setupMHFIconControlContainer uses row 0 for an index >= it
+    u16 numControlIconPrimitives
+        [[name("Number of Control Icon Primitives")]];
 
-    // Offset 0xC8: rows of header 0x2F8 (0xC bytes); translateMHFIconSubFunctionManualIconIndex returns no row for an index >= it
-    u16 num2F8Rows
-        [[name("Number of Header 0x2F8 Rows")]];
+    // Offset 0xC8: control icons (header 0x2F8); translateMHFIconSubFunctionManualIconIndex returns no row for an index >= it
+    u16 numControlIcons
+        [[name("Number of Control Icons")]];
 
-    padding[0xE];
+    // Offset 0xCA: keyboard control icons (header 0x2FC), one per DirectInput key code
+    u16 numKeyboardControlIcons
+        [[name("Number of Keyboard Control Icons")]];
+
+    // Offset 0xCC: pad button bit icons (header 0x300); readers stop at bit 31
+    u16 numPadButtonBitIcons
+        [[name("Number of Pad Button Bit Icons")]];
+
+    // Offset 0xCE: pad control icons, icon type default (header 0x304)
+    u16 numPadControlIcons
+        [[name("Number of Pad Control Icons")]];
+
+    // Offset 0xD0: pad control icons, icon type 1 (header 0x308)
+    u16 numPadControlIconsType1
+        [[name("Number of Pad Control Icons (Type 1)")]];
+
+    // Offset 0xD2: pad control icons, icon type 3 (header 0x30C)
+    u16 numPadControlIconsType3
+        [[name("Number of Pad Control Icons (Type 3)")]];
+
+    // Offset 0xD4: rows of header 0x310 (no reader)
+    u16 num310Rows
+        [[name("Number of Header 0x310 Rows")]];
+
+    // Offset 0xD6: pad control icons, icon type 5 (header 0x314)
+    u16 numPadControlIconsType5
+        [[name("Number of Pad Control Icons (Type 5)")]];
 
     // Offset 0xD8: Secret Book effect lists (header 0x318), 18 tiers x 14 weapon classes
     u16 numSecretBookEffectLists
@@ -536,7 +578,13 @@ struct ImportantNumbers {
     u16 numExtraStages
         [[name("Number of Extra Stages")]];
 
-    padding[0x10];
+    padding[0xA];
+
+    // Offset 0x1B6: header 0x4FC rows (no reader), 1 on the 3 files
+    u16 num4FCRows
+        [[name("Number of Header 0x4FC Rows")]];
+
+    padding[0x4];
 
     // Offset 0x1BC: ex G base tier roll overrides, Gunlance (header 0x508)
     u16 numExGBaseTierRollOverridesGunlance
@@ -609,7 +657,13 @@ struct ImportantNumbers {
     u16 numPriorityRequestRotations
         [[name("Number of Guild Priority Request Rotations")]];
 
-    padding[0x18];
+    padding[0x2];
+
+    // Offset 0x1F8: header 0x590 rows without the zero end row (no reader)
+    u16 num590Rows
+        [[name("Number of Header 0x590 Rows")]];
+
+    padding[0x14];
 
     // Offset 0x20E: monster alternate sound tables (header 0x5C0)
     u16 numMonsterAltSoundTables
@@ -674,12 +728,12 @@ struct ImportantNumbers {
     u16 numSigilCraftingRecipes
         [[name("Number of Sigil Crafting Recipes")]];
 
-    padding[2];
+    padding[0x2];
 
     u16 numSigilSkillBlacklists
         [[name("Number of Sigil Skill Blacklists")]];
 
-    padding[2];
+    padding[0x2];
 
     // Offset 0x240: sigil class / icon thresholds (header 0x630, 0x638)
     u16 numSigilClassThresholds
@@ -750,7 +804,11 @@ struct ImportantNumbers {
     u16 numPartnerStarterWeapons
         [[name("Number of Partner Starter Weapons")]];
 
-    padding[0x6];
+    padding[0x4];
+
+    // Offset 0x26A: header 0x6BC rows (no reader)
+    u16 num6BCRows
+        [[name("Number of Header 0x6BC Rows")]];
 
     // Offset 0x26C: monster price board rows (header 0x6C0)
     u16 numMonsterPriceBoardRows
@@ -786,13 +844,21 @@ struct ImportantNumbers {
     u16 numVeggieElderMaps
         [[name("Number of Veggie Elder Maps")]];
 
-    padding[0x2];
+    // Offset 0x286: header 0x6F4 rows (no reader)
+    u16 num6F4Rows
+        [[name("Number of Header 0x6F4 Rows")]];
 
     // Offset 0x288: box search sigil skills (header 0x718)
     u16 numBoxSearchSigilSkills
         [[name("Number of Box Search Sigil Skills")]];
 
-    padding[0x4];
+    // Offset 0x28A: header 0x71C u16 values (no reader)
+    u16 num71CValues
+        [[name("Number of Header 0x71C Values")]];
+
+    // Offset 0x28C: header 0x720 rows (no reader)
+    u16 num720Rows
+        [[name("Number of Header 0x720 Rows")]];
 
     // Offset 0x28E: weapon sound bank by weapon model (header 0x724)
     u16 numWeaponModelSoundIds
@@ -826,7 +892,15 @@ struct ImportantNumbers {
     u16 numFishingBaits
         [[name("Number of Fishing Baits")]];
 
-    padding[0x8];
+    // Offset 0x2BC: Extreme Conquest support bonus ranges (header 0x784; Wii U chkGDragonBonusChg reads its +0x2B4)
+    u16 numConquestSupportRangeRows
+        [[name("Number of Conquest Support Range Rows")]];
+
+    // Offset 0x2BE: Extreme Conquest support bonus weights by map (header 0x788; Wii U chkGDragonBonusChg reads its +0x2B6)
+    u16 numConquestSupportWeightRows
+        [[name("Number of Conquest Support Weight Rows")]];
+
+    padding[0x4];
 
     // Offset 0x2C4: super rapid fire power rows (header 0x794)
     u16 numSuperRapidFirePowers
@@ -881,7 +955,7 @@ struct ImportantNumbers {
     u16 numAutoSkills
         [[name("Number of Auto Skills")]];
 
-    // Offset 0x2FA: map variant rows (header 0x808, 16 s8 each); FUN_11384A20 (map_instantiate_event) reads row quest mapVariant when below it, else uses 0
+    // Offset 0x2FA: map variant layouts (header 0x808, 16 s8 each); the map 0x40 / 0x41 event (CEventMap40_Init, CEventMap40_GetLayoutValue ...) reads row quest mapVariant when below it, else uses 0
     u16 numMapVariantRows
         [[name("Number of Map Variant Rows")]];
 
@@ -911,7 +985,9 @@ struct ImportantNumbers {
     u16 numGuildHallRewardExtraItemsHrHigh
         [[name("Number of Guild Hall Reward Extra Items HR 101+")]];
 
-    padding[0x2];
+    // Offset 0x30A: u16 values at header 0x82C (not relocated by rd_mhfdat, no reader)
+    u16 num82CValues
+        [[name("Number of Header 0x82C Values")]];
 
     // Offset 0x30C: Partner skills (header 0x838)
     u16 numPartnerSkills
@@ -965,7 +1041,11 @@ struct ImportantNumbers {
     u16 numTreasureHuntSpots
         [[name("Number of Treasure Hunt Spots")]];
 
-    padding[0x6];
+    padding[0x4];
+
+    // Offset 0x34C: 8-byte rows of header 0x8BC (string pointer at +0, relocated when non-zero by rd_mhfdat; no reader)
+    u16 num8BCRows
+        [[name("Number of Header 0x8BC Rows")]];
 
     // Offset 0x34E: companion stage points (header 0x8C8)
     u16 numCompanionStagePoints
@@ -1020,9 +1100,9 @@ struct ImportantNumbers {
     u16 num914Rows
         [[name("Number of Header 0x914 Rows")]];
 
-    // Offset 0x36E: rows of header 0x918 (0x10 bytes, sorted by the s32 at +0xC); FUN_113AD220 binary-searches them
-    u16 num918Rows
-        [[name("Number of Header 0x918 Rows")]];
+    // Offset 0x36E: NSO event sound objects (header 0x918, 0x10 bytes, sorted by objectKind); nso_event_sound_find binary-searches them
+    u16 numNsoEventSoundObjects
+        [[name("Number of NSO Event Sound Objects")]];
 
     // Offset 0x370: 11 on ZZ, the Caravan ranking route groups that are used (header 0x91C)
     u16 numRankingGroups
@@ -1133,9 +1213,9 @@ struct ImportantNumbers {
     u16 numKoryoMonsterPoints
         [[name("Number of Koryo Monster Points")]];
 
-    // Offset 0x40A: rows of header 0xB44 (0x20 bytes); hunting_medal_menu_open falls back to DLL row 0x11880F08 for a row >= it
-    u16 numB44Rows
-        [[name("Number of Header 0xB44 Rows")]];
+    // Offset 0x40A: Koryo lottery costs (header 0xB44, 0x20 bytes); hunting_medal_menu_open falls back to a zero DLL row (0x11880F08) for a row >= it
+    u16 numKoryoLotteryCosts
+        [[name("Number of Koryo Lottery Costs")]];
 
     padding[0x2];
 

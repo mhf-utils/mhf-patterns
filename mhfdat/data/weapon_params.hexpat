@@ -613,6 +613,7 @@ u16 hcKaiGClassSDamageReduction[6] @ header.ptrs.hcKaiGClassSDamageReduction [[n
 float gArmorFxElementRate[6] @ header.ptrs.gArmorFxElementRate [[name("G Armor Fx Element Rate")]];
 float gArmorFxStatusRate[6] @ header.ptrs.gArmorFxStatusRate [[name("G Armor Fx Status Rate")]];
 s32 gArmorFxElementPercent[6] @ header.ptrs.gArmorFxElementPercent [[name("G Armor Fx Element Percent")]];
+s32 gArmorFxStatusPercent[6] @ header.ptrs.gArmorFxStatusPercent [[name("G Armor Fx Status Percent"), comment("Wii U PlGetGousyuFxAttrValueInt kind 1 (lwz); its 3 callers pass kind 0, no HD reader")]];
 float originArmorElementRate[6] @ header.ptrs.originArmorElementRate [[name("Origin Armor Element Rate"), comment("pl_get_armor_fx_attr_rate (rate 0): [Origin pieces] and [Ele Status UP Sigils]; the sigil count is not clamped (up to 15 slots)")]];
 float originArmorStatusRate[6] @ header.ptrs.originArmorStatusRate [[name("Origin Armor Status Rate"), comment("pl_get_armor_fx_attr_rate (rate 1), player_status_attack_multiplier: same indexes")]];
 s32 originArmorElementPercent[6] @ header.ptrs.originArmorElementPercent [[name("Origin Armor Element Percent"), comment("pl_get_armor_fx_attr_percent: [Origin pieces], 100 when none")]];

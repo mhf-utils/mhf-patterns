@@ -126,6 +126,14 @@ RankingGroup caravanRankingGroups[16]
     @ header.ptrs.caravanRankingRoutes
     [[name("Caravan Ranking Routes")]];
 
+// Header 0x878: importantNums.num878Routes rows in the same layout (rd_mhfdat
+// relocates the same 39 pointers of each row), routes 10001-20010 of groups
+// 1-11, then 24 zero bytes. No reader on HD: every 0x10C-row reader goes
+// through header 0x91C.
+RankingRoute header878Routes[importantNums.num878Routes]
+    @ header.ptrs.hd_dll_af7b91
+    [[name("Header 0x878 Routes")]];
+
 // =======================
 // Gem skills (header 0xF0): 0x30 bytes each until a skill id of -1; one list
 // of skill ids per tier (header 0xF4, important numbers + 0x5E lists, each

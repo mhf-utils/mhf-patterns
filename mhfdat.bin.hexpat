@@ -5,9 +5,12 @@
 //#define __DATA_AUTOMATIC_SKILLS 1
 //#define __DATA_BOND_BONUS 1
 //#define __DATA_CARAVAN 1
+//#define __DATA_CHARGE_ATTACK_UP 1
 //#define __DATA_CLAN 1
 //#define __DATA_COMBINE 1
 //#define __DATA_COMBINE_SHOP 1
+//#define __DATA_CONQUEST_SUPPORT 1
+//#define __DATA_CONTROL_ICONS 1
 //#define __DATA_COOKING 1
 //#define __DATA_CRAFTING 1
 //#define __DATA_DATA_COUNTERS 1
@@ -36,6 +39,7 @@
 //#define __DATA_KORYO 1
 //#define __DATA_LEGEND_RASTA 1
 //#define __DATA_LOST_ITEM_REWARDS 1
+//#define __DATA_MAP_EVENTS 1
 //#define __DATA_MEOWKA_POT 1
 //#define __DATA_MISSIONS 1
 //#define __DATA_MONSTERS 1
@@ -44,7 +48,9 @@
 //#define __DATA_MY_HOUSE 1
 //#define __DATA_NAME_DISPLAY_SIZES 1
 //#define __DATA_NPC_HUNTERS 1
+//#define __DATA_NPC_PLAYERS 1
 //#define __DATA_NPC_SOUNDS 1
+//#define __DATA_NSO_EVENT_SOUNDS 1
 //#define __DATA_PARTNER 1
 //#define __DATA_PART_BREAKS 1
 //#define __DATA_PIONEER 1
@@ -73,15 +79,19 @@
 //#define __DATA_STAGE_OBJECTS 1
 //#define __DATA_STAMP_CARD 1
 //#define __DATA_TALK_CAMERAS 1
+//#define __DATA_TICKET_ROWS 1
 //#define __DATA_TITLE_UNLOCKS 1
 //#define __DATA_TOWER 1
 //#define __DATA_TRANSCEND 1
 //#define __DATA_TREASURE_CORP 1
 //#define __DATA_TREASURE_HUNT 1
 //#define __DATA_TUTORIAL 1
+//#define __DATA_UNREAD_BLOCKS 1
+//#define __DATA_UNREAD_TABLES 1
 //#define __DATA_VEGGIE_ELDER 1
 //#define __DATA_WEAPONS 1
 //#define __DATA_WEAPON_ACTIONS 1
 //#define __DATA_WEAPON_PARAMS 1
+//#define __DATA_WELCOME_BACK 1
 
 #include <mhfdat/index.hexpat>

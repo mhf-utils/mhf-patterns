@@ -31,6 +31,10 @@
 #include <mhfdat/data/caravan.hexpat>
 #endif
 
+#ifdef __DATA_CHARGE_ATTACK_UP
+#include <mhfdat/data/charge_attack_up.hexpat>
+#endif
+
 #ifdef __DATA_CLAN
 #include <mhfdat/data/clan.hexpat>
 #endif
@@ -41,6 +45,14 @@
 
 #ifdef __DATA_COMBINE_SHOP
 #include <mhfdat/data/combine_shop.hexpat>
+#endif
+
+#ifdef __DATA_CONQUEST_SUPPORT
+#include <mhfdat/data/conquest_support.hexpat>
+#endif
+
+#ifdef __DATA_CONTROL_ICONS
+#include <mhfdat/data/control_icons.hexpat>
 #endif
 
 #ifdef __DATA_COOKING
@@ -167,6 +179,10 @@
 #include <mhfdat/data/lost_item_rewards.hexpat>
 #endif
 
+#ifdef __DATA_MAP_EVENTS
+#include <mhfdat/data/map_events.hexpat>
+#endif
+
 #ifdef __DATA_MEOWKA_POT
 #include <mhfdat/data/meowka_pot.hexpat>
 #endif
@@ -199,8 +215,16 @@
 #include <mhfdat/data/npc_hunters.hexpat>
 #endif
 
+#ifdef __DATA_NPC_PLAYERS
+#include <mhfdat/data/npc_players.hexpat>
+#endif
+
 #ifdef __DATA_NPC_SOUNDS
 #include <mhfdat/data/npc_sounds.hexpat>
+#endif
+
+#ifdef __DATA_NSO_EVENT_SOUNDS
+#include <mhfdat/data/nso_event_sounds.hexpat>
 #endif
 
 #ifdef __DATA_PARTNER
@@ -319,6 +343,10 @@
 #include <mhfdat/data/talk_cameras.hexpat>
 #endif
 
+#ifdef __DATA_TICKET_ROWS
+#include <mhfdat/data/ticket_rows.hexpat>
+#endif
+
 #ifdef __DATA_TITLE_UNLOCKS
 #include <mhfdat/data/title_unlocks.hexpat>
 #endif
@@ -343,6 +371,14 @@
 #include <mhfdat/data/tutorial.hexpat>
 #endif
 
+#ifdef __DATA_UNREAD_BLOCKS
+#include <mhfdat/data/unread_blocks.hexpat>
+#endif
+
+#ifdef __DATA_UNREAD_TABLES
+#include <mhfdat/data/unread_tables.hexpat>
+#endif
+
 #ifdef __DATA_VEGGIE_ELDER
 #include <mhfdat/data/veggie_elder.hexpat>
 #endif
@@ -357,4 +393,8 @@
 
 #ifdef __DATA_WEAPON_PARAMS
 #include <mhfdat/data/weapon_params.hexpat>
+#endif
+
+#ifdef __DATA_WELCOME_BACK
+#include <mhfdat/data/welcome_back.hexpat>
 #endif

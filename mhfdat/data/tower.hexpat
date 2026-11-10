@@ -18,7 +18,7 @@
 struct TowerJewelMaterial {
     u16 item                    [[format("getItemName")]];
     u16 quantity;
-    u32 unk04;
+    u32 unk04 [[comment("No reader of the value: copied with the recipe (FUN_105A8A70); 0 on the 3 files")]];
 };
 
 struct TowerJewelRecipe {

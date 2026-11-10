@@ -47,23 +47,23 @@ struct PlayerMotionEvent {
         (PlayerMotionEventType::WeaponSfx): {
             u16 sfxKind;
             u16 sfxId [[comment("The game passes sfxId + 2")]];
-            u8 unk08;
-            u8 unk09;
-            s16 unk0A[3];
+            padding[1];
+            padding[1];
+            padding[6];
         }
         (PlayerMotionEventType::ObjectSpawn): {
             u16 objectKind;
             u16 value [[comment("Passed as value / 100 (float)")]];
             u8 objectParam;
-            u8 unk09;
-            s16 unk0A[3];
+            padding[1];
+            padding[6];
         }
         (PlayerMotionEventType::StateSet): {
             u16 stateSlot [[comment("0-2")]];
             s16 stateValue;
-            u8 unk08;
-            u8 unk09;
-            s16 unk0A[3];
+            padding[1];
+            padding[1];
+            padding[6];
         }
         (_): {
             u16 effectId;

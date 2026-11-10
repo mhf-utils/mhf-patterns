@@ -1,16 +1,21 @@
 #pragma once
 
-struct ShopTowerMedal {
-  u16 item;
-  u16 randomValue;
-  u8 quantity;
-  u8 pad1;
-  u8 pad2;
-  u8 pad3;
-  u16 price;
-  u16 pad4;
+#include <mhfdat/utils/index.pat>
+
+enum TowerMedalUnlockKind : u16 {
+	Always = 0,
+	Hr = 1,
+	HighestSr = 2, // highest SbGetRank of the 14 secret books with flag 0x80
+	GRank = 3, // get_g_class_rank
+	HrStarTier = 4 // hr_points_to_star_tier
 };
 
-u32 ShopTowerMedalPointer @ 0x948;
+struct TowerMedalShop {
+	ItemId item;
+	TowerMedalUnlockKind unlockKind;
+	u16 unlockMin [[comment("FUN_103841E0 lists the row when unlockMin <= the value of unlockKind")]];
+	padding[2];
+	u32 price [[name("Price")]];
+};
 
-ShopTowerMedal shopTowerMedal[while (std::mem::read_unsigned($, 2) != 0)] @ ShopTowerMedalPointer [[name("Data")]];
+TowerMedalShop towerShopMedal[std::mem::read_unsigned(header.ptrs.extraCounters + 0x0E, 2)] @ header.ptrs.towerMedalShop [[name("Tower Medal Shop")]];

@@ -12,4 +12,4 @@
 // (item 0x1273) gets a random listed candidate when there is one, else any
 // other candidate, else the current stage.
 // =======================
-u16 extraStages[importantNums.numExtraStages] @ header.ptrs.extraStages [[name("Extra Stages")]];
+StageId extraStages[importantNums.numExtraStages] @ header.ptrs.extraStages [[name("Extra Stages")]];

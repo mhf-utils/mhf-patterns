@@ -4,20 +4,22 @@
 #include <misc/MonsterIDs.hexpat>
 #include <mhfdat/utils/index.pat>
 
-struct Objective {
-  u8 unk00;
-  u8 id;          // mission number - 1 (my_mission_draw_detail prints it + 1 with pMyMissionTexts[2][0x23])
-  u16 monster_id; // monster ID
-  u16 unk04;
-  u16 unk06;
-  u16 unk08;
-  u16 unk0A;
-  u16 minRank;    // my_mission_validate_objective_conditions: <= quest +0x4E; HR band text, or GSR text when is_GR
-  u8 amount_monster;
-  u8 is_HC;       // bit 0: HC only (pMyMissionTexts[2][0x30], quest_hc_is_active)
-  u16 payItem [[format("getItemName")]]; // item to hand in: LbSecretbookMove, my_mission_draw_detail
-  u8 payItemCount; // count of payItem; the pMyMissionTexts[2][0x33] option asks ceil(count / 2)
-  u8 is_GR;       // the quest must be G rank (quest_is_g_rank)
+bitfield MyMissionObjectiveFlags {
+  hcOnly : 1 [[comment("pMyMissionTexts[2][0x30]; the quest must run in HC (quest_hc_is_active)")]];
+  padding : 7;
+};
+
+struct MyMissionObjective {
+  u8 unk00 [[comment("No reader")]];
+  u8 missionIndex [[comment("Mission number - 1: my_mission_draw_detail prints it + 1 with pMyMissionTexts[2][0x23]")]];
+  u16 monster [[format("fmtMonsterIdU16")]];
+  u16 unk04[4] [[comment("35, 36, 37, 42 on every row; no reader")]];
+  u16 minRank [[comment("my_mission_validate_objective_conditions: <= quest +0x4E; HR band text, or GSR text when gRankOnly")]];
+  u8 huntCount [[comment("Number of monster to hunt")]];
+  MyMissionObjectiveFlags flags;
+  ItemId payItem [[comment("Item to hand in: LbSecretbookMove, my_mission_draw_detail")]];
+  u8 payItemCount [[comment("The pMyMissionTexts[2][0x33] option asks ceil(count / 2)")]];
+  u8 gRankOnly [[comment("The quest must be G rank (quest_is_g_rank)")]];
 };
 
 struct Sr500Ability {
@@ -28,7 +30,7 @@ struct Sr500Ability {
   u8 abilityType     [[comment("sb_sr500_abi_get adds 1 (types 1, 4, 5), 5 (type 2) or 40 (type 3) per row")]];
 };
 
-Objective  objective[250] @ header.ptrs.my_mission_objective [[name("Objectives")]];
+MyMissionObjective myMissionObjectives[250] @ header.ptrs.my_mission_objective [[name("My Mission Objectives")]];
 Sr500Ability sr500Abilities[251] @ header.ptrs.my_mission_data [[name("SR500 Abilities")]];
 
 // =======================
@@ -48,11 +50,6 @@ Sr500Ability sr500Abilities[251] @ header.ptrs.my_mission_data [[name("SR500 Abi
 // there. Identical on the EN, JP and rain files.
 // =======================
 
-fn myMissionMonster(u16 n) {
-    MonsterID m = u8(n);
-    return fmtMonsterID(m);
-};
-
 bitfield MyMissionSetFlags {
     srQuestOnly : 1;
     padding : 7;
@@ -60,18 +57,18 @@ bitfield MyMissionSetFlags {
 
 struct MyMissionSetObjective {
     u8 unk00 [[comment("The block number; no reader")]];
-    u8 unk01 [[comment("The row number in the block; FUN_1035EC60 pushes it + 1 to FUN_10B387B0, which ignores it")]];
-    u16 monster [[format("myMissionMonster")]];
+    u8 unk01 [[comment("No reader: the row number in the block; FUN_1035EC60 pushes it + 1 to FUN_10B387B0, which ignores it")]];
+    u16 monster [[format("fmtMonsterIdU16")]];
     u16 talkId [[comment("NPC talk line (DAT_1EE24530) when the mission is taken: FUN_1035EC60")]];
-    u16 unk06;
-    u16 unk08;
+    u16 unk06 [[comment("No reader; 36 on every row of the 3 files")]];
+    u16 unk08 [[comment("No reader; 37 on every row of the 3 files")]];
     u16 talkIdActive [[comment("NPC talk line (DAT_1EE24530) from my_mission_load_active_data")]];
     u16 minJoinRank [[comment("Board: <= quest joinRankMin, not checked on G rank quests; menu: SbGetRank() must reach it (FUN_1035EC60)")]];
-    u8 unk0E;
+    u8 unk0E [[comment("No reader; values 2 x45, 3 x37, 1 x18")]];
     MyMissionSetFlags flags;
     u16 payItem [[format("getItemName"), comment("0 = nothing to hand in (FUN_1035EC60)")]];
     u8 payItemCount;
-    u8 unk13;
+    padding[1];
 };
 
 struct MyMissionSet {

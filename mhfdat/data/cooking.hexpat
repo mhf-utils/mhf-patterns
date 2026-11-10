@@ -67,7 +67,7 @@ struct CookedDish {
     u8  name                    [[comment("pCaravanTextGroups[12] index")]];
     u8  taste                   [[comment("pDishTasteTexts / pDishTasteResultTexts index")]];
     u16 ingredients[2]          [[comment("Category 0 item id XOR 0xA55A, any order")]];
-    u16 unk06;
+    padding[2];
     s8  healthEncoded;
     u8  staminaEncoded;
     s8  attackMinus3;

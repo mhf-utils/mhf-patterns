@@ -60,7 +60,7 @@ struct LegendRastaLoadout {
     u16 waistDecorations[3];
     u16 legsDecorations[3];
     LegendRastaHairColor hairColor;
-    u16 unk48[3]                [[comment("Copied to the NPC's player work")]];
+    u16 unk48[3] [[comment("No reader of the value: copied with the loadout to the NPC's player work; 0 on the 3 files")]];
     u16 npcActFlags             [[comment("Copied to the per-NPC act table 0x1ED52F8A + NPC index x 0x30; bit 0 tested by FUN_106B5140")]];
     LegendRastaNpcAct npcActs[8] [[comment("Copied to the per-NPC act table +0x2..+0x21; [0] used by LbPlChat, [2] by the contract / partner intro menus")]];
 };

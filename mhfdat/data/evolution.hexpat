@@ -35,13 +35,13 @@ struct EvoClassStats {
     u8 poison [[comment("(class, 1)")]];
     u8 paralysis [[comment("(class, 2)")]];
     u8 sleep [[comment("(class, 3)")]];
-    u16 gap06;
+    padding[2];
 };
 
 struct EvoBowStats {
     u16 attack;
     u8 element;
-    u8 gap03;
+    padding[1];
 };
 
 // gunner_load_bowgun_level_modifier_row puts these 5 floats where a
@@ -78,15 +78,15 @@ struct EvoGClassStats {
     u8 paralysis;
     u8 sleep;
     u8 affinity [[comment("evo_weapon_affinity_get (weapon_base_affinity_value); series 12-15 only")]];
-    u16 gap0A;
+    padding[2];
 };
 
 struct EvoGBowStats {
     u16 attack;
     u16 element;
     u8 affinity;
-    u8 gap05;
-    u16 gap06;
+    padding[1];
+    padding[2];
 };
 
 struct EvoGBowgunStats {
@@ -95,7 +95,7 @@ struct EvoGBowgunStats {
     u16 hbgAttack;
     u8 lbgAffinity;
     u8 hbgAffinity;
-    u16 gap1A;
+    padding[2];
 };
 
 struct EvoGLevel {

@@ -28,7 +28,7 @@
 
 struct ProtectedItem {
     u16 item                    [[format("getItemName")]];
-    u16 unk02[4];
+    u16 unk02[4] [[comment("No reader; values 0 x26906, 1 x8, 2 x8, 3 x8 ... (EN)")]];
 };
 
 ProtectedItem protectedItems[importantNums.numProtectedItems]

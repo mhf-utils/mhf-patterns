@@ -31,7 +31,7 @@ struct DrawMotion {
 };
 
 struct WeaponParams {
-    u8    unk00;
+    u8    unk00 [[comment("No reader; values 6 x11, 7 x3")]];
     u8    classFlags;
     u8    chargeHudSeed;
     u8    adaptationGaugeSeed;
@@ -46,9 +46,9 @@ struct WeaponParams {
     float hudViewRotation[3];
     float hudViewRotationAdd[3];
     u8    meleeHoldInputGate;
-    u8    unkA5;
+    padding[1];
     s16   recoveryMotionAction;
-    u8    unkA8[4];
+    u8    unkA8[4] [[comment("No reader; values 85 x27, 65 x14, 213 x6, 0 x4 ...")]];
     DrawMotion draw;
     DrawMotion drawAlt;
     DrawMotion sheathe;
@@ -69,7 +69,7 @@ struct WeaponParams {
     u8    rushTier3OrSlayer[2]  [[comment("Rush tier 3 (s16) or Consumption Slayer (2 u8)")]];
     u16   ceaselessTimer;
     u16   ceaselessThresholds[3];
-    u8    unkE2[2];
+    padding[2];
 };
 
 WeaponParams weaponParams[14] @ header.ptrs.weaponParams [[name("Weapon Parameters")]];
@@ -117,7 +117,7 @@ struct BulletSet {
     u8 paint;
     u8 demon;
     u8 armor;
-    u8 unk20[68];
+    u8 unk20[68] [[comment("No reader: FUN_10981D00 reads only the ammo bytes +0x00 to +0x1F (offset table 0x11881D80); 1 on 2948 bytes, 0 on 44, on the 3 files")]];
 };
 
 BulletSet bulletSets[44] @ header.ptrs.BulletSets [[name("Bullet Sets")]];
@@ -197,9 +197,9 @@ BowgunLevelModifier bowgunLevelModifiers[(nextTable(header.ptrs.bowgunLevelModif
 
 struct HitCapsule {
     s16   kind;
-    s16   unk02;
+    s16   unk02 [[comment("No reader; values 1 x304, 0 x136")]];
     u16   index;
-    u8    unk06[6];
+    padding[6];
     float radius;
     float start[3];
     float end[3];
@@ -723,11 +723,11 @@ struct GunlanceShellRow {
     u8  attributeBombFire;
     u8  attributeHitNoElementRaw;
     u8  attributeHitNoElementValue;
-    u8  unk06[2];
+    padding[2];
     s32 attributeHitElementPercent;
     u8  dragonCannonRaw;
     u8  dragonCannonFire;
-    u8  unk0E[2];
+    padding[2];
 };
 
 GunlanceShellRow gunlanceShells[importantNums.numGunlanceShells] @ header.ptrs.gunlanceShells [[name("Gunlance Shells")]];

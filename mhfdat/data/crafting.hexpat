@@ -56,20 +56,6 @@ fn rUpgradeName (auto n) {
     );
 };
 
-struct RegWUpgrade {
-    u16 weaponID         [[format("meleeName")]];
-    padding[10];
-    u16 upgradeMaterial1 [[format("getItemName")]];
-    u8 numMaterial1;
-    padding[5];
-    u16 upgradeMaterial2 [[format("getItemName")]];
-    u8 numMaterial2;
-    padding[5];
-    u16 upgradeMaterial3 [[format("getItemName")]];
-    u8 numMaterial3;
-    padding[5];
-} [[comment("On using the materials listed, the weapon will upgrade to the listed weaponID, if it exists")]];
-
 // row = weapon id; materials = cost of upgrading into this weapon (forge_weapon_upgrade_build_options reads the target row)
 struct MWUpgradePath {
     u16 upgradeMaterial1 [[format("getItemName"), color("8888FF")]];
@@ -395,7 +381,7 @@ ForgeSeparateEquipment forgeSeparateList[while(std::mem::read_unsigned($ + 4, 4)
 struct ForgeRankEquip {
     u16 id;
     s8 kind [[format("getEquipType")]];
-    u8 unk03;
+    u8 unk03 [[comment("No reader; values 1 x177, 0 x16")]];
 } [[format("forgeRankEquipName")]];
 
 fn forgeRankEquipName(ref auto e) {

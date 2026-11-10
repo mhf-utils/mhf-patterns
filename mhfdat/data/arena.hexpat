@@ -38,12 +38,12 @@ ptVar<ArenaEquips> ArenaEquipment[importantNums.numArenaCourses]
 
 using ItemBlock;
 fn itemBlockFmt(ItemBlock n) {
-    return std::format("{:02}x {}", n.quantity, getItemName(n.id));
+    return std::format("{:02}x {}", n.quantity, getItemName(n.item));
 };
 
 struct ItemBlock {
     s16 quantity;
-    u16 id;
+    u16 item;
 } [[sealed, format("itemBlockFmt")]];
 
 struct ItemTable {
@@ -69,7 +69,7 @@ ptVar<ItemTable> WeaponClassItems[14]
 
 
 // =======================
-// Stage IDs
+// Help and course quest IDs
 // =======================
 
 // Quest ids of the help texts (header 0x154), ending at 0
@@ -112,7 +112,7 @@ ptVar<ArenaStageInfo> ArenaStageInfoTexts[while(std::mem::read_unsigned($, 4) !=
 
 struct TutorialSet {
     u8  weaponType          [[format("getEquipType")]];
-    u8  unk01;
+    padding[1];
     u16 weapon              [[comment("0xFFFF keeps the current weapon (0x2DF7 in a sleep quest)")]];
     u16 weaponLevel;
     u16 head;
@@ -120,7 +120,7 @@ struct TutorialSet {
     u16 arms;
     u16 waist;
     u16 legs;
-    u8  unk10[4];
+    padding[4];
 };
 
 ptVar<TutorialSet> TutorialEquipSets[importantNums.numTutorialEquipSets]

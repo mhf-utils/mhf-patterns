@@ -33,8 +33,8 @@ struct GuildCookingRecipe {
     u16 skillFailure;
     u16 skillSuccess;
     u16 skillGreatSuccess;
-    u16 unk20;
-    u16 unk22;
+    u16 unk20 [[comment("No reader; 1 on every row of the 3 files")]];
+    padding[2];
 };
 
 GuildCookingRecipe guildCookingRecipes[importantNums.numGuildCookingRecipes]

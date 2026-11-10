@@ -1,16 +1,7 @@
 #pragma once
 #include <mhfdat/utils/index.pat>
 #include <mhfdat/data/combine_shop.hexpat>
-
-u32 shopInventory; 
-shopInventory = std::mem::find_sequence(0, 0x0F, 01, 01, 00, 00, 00, 00, 00, 03, 01, 01, 00, 00, 00, 00, 00);
-u128 shopHeader @ shopInventory;
-
-
-struct ItemOut {
-	u16 id [[format("getItemName")]];
-	padding[6];
-};
+#include <mhfdat/data/shop_tower_medal.hexpat>
 
 struct SpecialShopHeader {
 	ptr ptRoadShop;
@@ -54,84 +45,48 @@ struct SpecialShopsDojoView {
 SpecialShopsNpcView specialShopsNpcView @ header.ptrs.specialShopsNpcView [[name("Special Shops NPC View")]];
 SpecialShopsDojoView specialShopsDojoView @ header.ptrs.specialShopsDojoView [[name("Special Shops Dojo View")]];
 
-// the road shop
+// the road shop (shop kind 0xC, special_shop_menu_init: shop work +0x20)
 struct RoadShopItem {
-	u16 id [[format("getItemName")]];
+	ItemId item;
 	padding[2];
 	u32 price;
-	u8 tab;
+	u8 tab [[comment("Listed on the tab shop work +0x3B; bit 0x80: GR terms from the server row (shop_entry_gr_tier_check)")]];
 	u8 rankTier [[comment("Listed when <= the player's tier (road_shop_static_find_entry: 0-2 HR 1/31/100, 3-5 highest SR, 6-15 GR 1-900)")]];
-	u8 unk0A;
-	padding[1];
-	u8 unk0C;
+	u16 quantity [[comment("Items per purchase, 0 = 1 (shop_can_buy_check)")]];
+	u8 roadFloors [[comment("Copied to the terms RoadFloors (shop work row +0x6E): RoadMaxStagesMultiplayer must reach it (road_shop_terms_check)")]];
 	padding[3];
 };
 
-// the special item shops
-struct SpecialPrice {
-	u16 id [[format("getItemName")]];
+// Stock rows of the NPC shops (special_shop_menu_init kinds 1-4: Hunter
+// Festival, N Cafe, special items or their SR version, GCP exchange): the shop
+// list build copies the rows of the current tab until item 0, at price x shop
+// work +0x7868 / 100 (at least 1)
+struct NpcShopItem {
+	ItemId item;
 	padding[2];
 	u32 price;
-	u32 unk08;
+	u8 tab [[comment("Listed on the tab shop work +0x3B; bit 0x80: GR terms from the server row (shop_entry_gr_tier_check)")]];
+	u8 rankTier [[comment("Below 6: no GR needed; 6-15: GR shop_rank_tier_to_gr (1, 100 ... 900) (shop_entry_gr_tier_check)")]];
+	u16 quantity [[comment("Items per purchase, 0 = 1 (shop_can_buy_check)")]];
 };
 
 // the dojo shops
 struct DojoPrice {
-	u16 id [[format("getItemName")]];
+	ItemId item;
 	padding[2];
 	u32 price;
 };
 
-enum TowerMedalUnlockKind : u16 {
-	Always = 0,
-	Hr = 1,
-	HighestSr = 2, // highest SbGetRank of the 14 secret books with flag 0x80
-	GRank = 3, // get_g_class_rank
-	HrStarTier = 4 // hr_points_to_star_tier
-};
-
-struct TowerMedalShop {
-	u16 Itemid [[format("getItemName")]];
-	TowerMedalUnlockKind unlockKind;
-	u16 unlockMin [[comment("FUN_103841E0 lists the row when unlockMin <= the value of unlockKind")]];
-	padding[2];
-	u32 price [[name("Price")]];
-};
-
-struct CategorizedPrice {
-	u16 id [[format("getItemName")]];
-	padding[2];
-	u16 price;
-	padding[2];
-
-	// 01 00 01 = NCafe(Gatherables)
-	// 03 02 01 = NCafe(HR5+)(Mats (HR5~7))
-	// 06 06 01 = NCafe(GR1+)(GItems (GR1+))
-	// 04 02 01 = NCafe(HR5+)(Decorations)
-	// 04 01 01 = NCafe(HR3+)(Decorations)
-	// 02 00 01 = NCafe(HR3+)(Mats (HR 1~4))
-	// 02 01 01 = NCafe(Mats (HR 1~4))
-	// 03 03 01 = NCafe(SR Equip)(Mats (HR 5~7))
-	// 05 03 01 = NCafe(SR Equip)(Other Items)
-	// 05 01 01 = NCafe(HR3+)(Other Items)
-	// 05 02 01 = NCafe(HR5+)(Other Items)
-	u8; u8; u8; 
-	
-	padding[1];
-};
-
-
 
 RoadShopItem roadShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptRoadShop;
-CategorizedPrice festiShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptFestiShop;
-CategorizedPrice nCafeShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptNCafe;
-CategorizedPrice gcpShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptGCPExchange;
-SpecialPrice specialItemShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptSpecialItemShop;
-SpecialPrice specialItemShopSR[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptSpecialItemShopSR1;
+NpcShopItem festiShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptFestiShop;
+NpcShopItem nCafeShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptNCafe;
+NpcShopItem gcpShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptGCPExchange;
+NpcShopItem specialItemShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptSpecialItemShop;
+NpcShopItem specialItemShopSR[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptSpecialItemShopSR1;
 DojoPrice dojoShop[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptDojoGeneral;
 DojoPrice dojoShopHR5[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptDojoHR5;
 DojoPrice dojoShopDone[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptDojoDoneComps;
 DojoPrice dojoShopOnline[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptDojoOnline;
 DojoPrice dojoShopOnlineSpecial[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptDojoOnlineSpecial;
 DojoPrice dojoShopOnlineComplete[while(std::mem::read_unsigned($,4))] @ sShopHeader.ptDojoOnlineComplete;
-TowerMedalShop towerShopMedal[std::mem::read_unsigned(header.ptrs.extraCounters + 0x0E, 2)] @ header.ptrs.towerMedalShop;

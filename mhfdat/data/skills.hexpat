@@ -99,7 +99,7 @@ struct CritConversion {
     u16 iceAgeDecayInterval [[comment("FUN_101C2D50 / FUN_101C2640: reload of the decay timer (state +0xA)")]];
     u16 iceAgeGaugeDecay [[comment("FUN_101C2640: taken from the gauge when the decay timer is 0")]];
     u16 iceAgeDamageInterval [[comment("FUN_101C31A0: FUN_101C30B0 deals Ice Age damage when the counter 0x1ED78564 is a multiple of it")]];
-    u16 unk10;
+    u16 unk10 [[comment("No reader; 90 on the 3 files")]];
     u16 iceAgeGaugeRangeCount [[comment("u16 count of iceAgeGaugeRanges; the last value is the gauge cap (FUN_101C2CC0)")]];
     u16 iceAgeLevelCount [[comment("levels 0 .. it - 1 (FUN_101C2ED0, FUN_101C2F40)")]];
     padding[2];
@@ -152,7 +152,7 @@ struct Obscurity {
     u16 safGuardAngleBonus;
     s16 safGuardHealPermille;
     s16 safGuardHealMin;
-    s16 unk12;
+    padding[2];
 };
 
 Obscurity obscurity @ header.ptrs.obscurity [[name("Obscurity")]];
@@ -209,7 +209,7 @@ struct Furious {
     s16 stageDownMinDamage [[comment("Monster_ApplyDamageToPlayer: an unguarded monster hit with attack +0x6E == 1 lowers the stage (skill_furious_hit_stage_down) only when its damage (+0x6C) is above it")]];
     s16 attackGaugeDrain [[comment("skill_furious_update_tick: taken from the attack gauge each tick while the entity at quest work +0x9C has +0xC7A set and the same +0x7F8 as the player; floor 0, cap attackGaugeThresholds[maxStage]")]];
     s16 evadeGuardGaugeDrain [[comment("same, evade / guard gauge (cap evadeGuardGaugeThresholds[maxStage])")]];
-    s32 unk34                   [[comment("A minimum attack gauge gain for weapon classes 1 and 5")]];
+    s32 bowgunAttackGaugeMinGain [[comment("skill_furious_add_attack_gauge: a hit by a Heavy or Light Bowgun (weapon class 1 / 5) adds at least this to the attack gauge")]];
 };
 
 Furious furious @ std::mem::read_unsigned(header.ptrs.skillCells, 4) [[name("Furious")]];
@@ -261,7 +261,7 @@ struct SkillBonusValues {
 	u16 iceAgeUp1Frames [[comment("zenith effect 14 (Ice Age Up): frames added")]];
 	u16 iceAgeUp2Frames [[comment("zenith effect 15 (Ice Age Up, second)")]];
 	u8  vampirismUpHealChance [[comment("zenith effect 16 (Vampirism Up+1 / +2): heal chance percent added (skill_absorption)")]];
-	u8  unk1F;
+	padding[1];
 	float safChargeMoveScale [[comment("SAF sigil 0x61 value 3: root motion scale while charging (motions 0x5D1, 0x428)")]];
 };
 
@@ -442,9 +442,9 @@ struct MagnetSpikeValues {
 	s16 msSharpnessCost [[comment("[82] FUN_1032BAA0 (player_update_weapon_stamina_and_sharpness): MS sharpness cost")]];
 };
 
-struct IdValuePair {
-	u16 id;
-	u16 value;
+struct MsActionValue {
+	u16 action [[comment("Magnet Spike action")]];
+	u16 value [[comment("Gauge units (msActionGaugeCost) or max yaw step (msAimYawCaps)")]];
 };
 
 struct MagnetSpikeTunables {
@@ -462,11 +462,11 @@ struct MagnetSpikeTunables {
 	u16 *msActionsClass0[numMsActionsClass0] : u32 [[comment("ms_action_class_get: these MS actions are class 0")]];
 	u16 *msActionsClass1[numMsActionsClass1] : u32 [[comment("class 1")]];
 	u16 *msActionsClass2[numMsActionsClass2] : u32 [[comment("class 2: the caller then reads the MS mode")]];
-	IdValuePair *msActionGaugeCost[numMsActionGaugeCost] : u32 [[comment("{action, gauge units}: starting the action spends units x msGaugeUnitCost (FUN_1032CF60 -> magnetspike_gauge_spend_units)")]];
+	MsActionValue *msActionGaugeCost[numMsActionGaugeCost] : u32 [[comment("{action, gauge units}: starting the action spends units x msGaugeUnitCost (FUN_1032CF60 -> magnetspike_gauge_spend_units)")]];
 	s16 *msNoAimActions[numMsNoAimActions] : u32 [[comment("FUN_103377C0 does not turn toward the target for these actions")]];
 	u16 *msActions2C[numMsActions2C] : u32 [[comment("FUN_1032B7B0 (from ms_act_update): actions exempt from a forced action change; only the 0xC9 end on ZZ")]];
 	u8 *magnetNetShellExcludedMonsters[numMagnetNetShellExcludedMonsters] : u32 [[comment("monster ids (entity +0x03) that do not get the net-synced kind 121 shell (FUN_1033B350); ends on 0xFF")]];
-	IdValuePair *msAimYawCaps[numMsAimYawCaps / 2] : u32 [[comment("{action, max yaw step toward the target} (FUN_103379D0); 10920 = 60 degrees")]];
+	MsActionValue *msAimYawCaps[numMsAimYawCaps / 2] : u32 [[comment("{action, max yaw step toward the target} (FUN_103379D0); 10920 = 60 degrees")]];
 	u16 *msNoStaminaRegenActions[numMsNoStaminaRegenActions] : u32 [[comment("MS actions during which stamina does not recover (FUN_1032B8F0, from player_entity_tick_hp_regen)")]];
 };
 
@@ -523,7 +523,7 @@ struct ZenithSkill {
     u16 points [[comment("tree points the skill gives (zenith_values_to_tree_points)")]];
     u16 requiredSkillTree [[comment("normal skill tree that must be active (zenith_skill_raise_normal_skill -> zenith_required_tree_active_check, zenith_skills_apply: 0 = none)")]];
     u16 levels [[comment("levels added to that tree (zenith_skill_raise_normal_skill -> skill_tree_raise_levels)")]];
-    u16 gap08;
+    padding[2];
 } [[name(std::format("Zenith skill {}", std::core::array_index()))]];
 
 ZenithSkill zenithSkills[std::mem::read_unsigned(header.ptrs.skillCounts + 0x14, 2)] @ header.ptrs.zenithSkills [[name("Zenith Skills")]];
@@ -548,7 +548,7 @@ ZenithSkillEffect zenithSkillEffects[std::mem::read_unsigned(header.ptrs.skillCo
 
 struct IncitementTunables {
     u16 damageTakenPercent [[comment("player_apply_damage_reduction_skills: damage x this / 100 with Incitement (0x1D7) while the monster targets the player")]];
-    u16 gap02;
+    u16 gap02 [[comment("No reader; 100 on the 3 files")]];
     u16 enmityCutPercentSneak [[comment("monster_aggro_apply_taunt_and_incitement: % of incitementEnmityCut taken from the other players with Sneak (0x13); 100 without Sneak or Taunt")]];
     u16 enmityCutPercentTaunt [[comment("same with Taunt (0x14)")]];
     u16 targetLockSeconds [[comment("monster_func: Incitement target lock timer = this x 60 frames")]];
@@ -580,7 +580,7 @@ struct AssistanceTunables {
     s16 radius [[comment("skill_assistance_nearby_provider_found: distance (compared squared) to a player in the same stage")]];
     u16 attackAdd [[comment("player_recalc_attack_power_full")]];
     u16 defenseAdd [[comment("player_recalc_defense_value_full")]];
-    u16 gap06;
+    padding[2];
 };
 
 AssistanceTunables assistanceTunables @ header.ptrs.assistanceTunables [[name("Assistance Tunables")]];

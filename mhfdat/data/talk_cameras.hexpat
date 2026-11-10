@@ -19,7 +19,7 @@ struct TalkCameraCounts {
     u16 fixedCount;
     u16 orbitCount;
     u16 sideCount;
-    u16 unk08[12];
+    padding[24];
 };
 
 enum TalkCameraKind : u16 {
@@ -29,7 +29,7 @@ enum TalkCameraKind : u16 {
 };
 
 struct TalkCameraIndexEntry {
-    u32 stage;
+    u32 stage [[format("stageIdName")]];
     u16 npc;
     TalkCameraKind kind;
 };
@@ -38,7 +38,7 @@ struct TalkCameraIndexEntry {
 // (eye -> 0x1EDBA024, target -> 0x1EDBA030, fov -> 0x1EDBA03C);
 // talk_camera_update then moves the eye along the target-eye line.
 struct TalkCameraFixed {
-    u16 stage;
+    StageId stage;
     u16 npc;
     float eye[3];
     float eyeAlt[3] [[comment("Used instead of eye when talk_camera_use_alt_check holds: stage 204, NPC 152, HR < 14")]];
@@ -50,7 +50,7 @@ struct TalkCameraFixed {
 // talk_camera_orbit_apply: the eye circles the target at distance and height,
 // its angle taken from the target (FUN_10855830), computed once per talk.
 struct TalkCameraOrbit {
-    u16 stage;
+    StageId stage;
     u16 npc;
     float distance;
     float height;
@@ -63,14 +63,14 @@ struct TalkCameraOrbit {
 // + 90 degrees, in 0-359; 91-269 uses eyeB, others eyeA. An all-zero eye
 // falls back to the other one.
 struct TalkCameraSide {
-    u16 stage;
+    StageId stage;
     u16 npc;
     float eyeA[3];
     float eyeB[3];
     float target[3];
     float fov;
     s16 npcYawOffset [[comment("Degrees added to the NPC's yaw when it turns to the player (FUN_106AE4C0)")]];
-    u16 unk2E;
+    padding[2];
 };
 
 TalkCameraCounts talkCameraCounts @ header.ptrs.talkCameraCounts [[name("Talk Camera Counts")]];

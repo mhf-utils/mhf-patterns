@@ -26,7 +26,7 @@ struct MeowkaPotRecipe {
     padding[1];
     u16 unlockRank              [[comment("Unlocked when that rank >= this (unsigned); ZZ: GR 600 on rows 51-75")]];
     MeowkaPotOutput *outputs[7] : u32 [[comment("One per color, white to rainbow")]];
-    u32 unk08                   [[comment("7 on ZZ")]];
+    u32 unk08                   [[comment("No reader; 7 on every row of the 3 files")]];
 };
 
 MeowkaPotRecipe meowkaPotRecipes[importantNums.numMeowkaPotRecipes]

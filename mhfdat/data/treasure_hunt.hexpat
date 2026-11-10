@@ -26,7 +26,7 @@ enum TreasureHuntReveal : u8 {
 
 struct TreasureHuntSpot {
     u16 quest;
-    u16 stage;
+    StageId stage;
     float position[3];
     ItemId item [[comment("What gathering the spot gives")]];
     TreasureHuntReveal reveal [[comment("Byte read (treasure_hunt_spot_reveal: movzx byte quest work +0xB36)")]];

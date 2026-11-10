@@ -22,7 +22,7 @@
 struct KoryoLotteryPrize {
     ItemId item;
     u16 quantity;
-    u32 unk04;
+    padding[4];
 };
 
 struct KoryoLotteryPrizes {
@@ -45,13 +45,8 @@ KoryoLotteryPrizesPtr koryoLotteryPrizes[importantNums.numKoryoLotteryLists + 1]
 // its points; the quest result lists them by monster. The first row of a
 // monster wins (monster 145 has two rows, 500 and 800). The points are doubled
 // in UL mode (g_quest_ul_mode).
-fn koryoMonster(u16 n) {
-    MonsterID m = u8(n);
-    return fmtMonsterID(m);
-};
-
 struct KoryoMonsterPoints {
-    u16 monster [[format("koryoMonster")]];
+    u16 monster [[format("fmtMonsterIdU16")]];
     u16 points [[comment("In town, or on a G rank field quest")]];
     u16 pointsLowRank [[comment("On a field quest that is not G rank")]];
     u16 pointsZenith[4] [[comment("HagiLv 9 (Zenith), by quest_get_zenith_star_tier 0-3")]];

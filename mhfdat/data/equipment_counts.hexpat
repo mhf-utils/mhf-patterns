@@ -1110,7 +1110,7 @@ struct ImportantNumbers {
 
     u16 rankingGroupRouteCounts[11] [[comment("Routes in ranking group g (header 0x91C); rd_mhfdat relocates this many rows per group")]];
 
-    u16 unk388 [[comment("18 on ZZ, use unknown")]];
+    u16 unk388 [[comment("No reader; 18 on the 3 files")]];
 
     // Offset 0x38A: tower jewel recipes (header 0x938)
     u16 numTowerJewelRecipes

@@ -21,7 +21,7 @@ enum ClanTargetAction : s8 {
 };
 
 struct ClanMissionTarget {
-    u8 monster;
+    MonsterID monster [[comment("g_clanMissionMonster, printed with pMonsterNames (clan_mission_format_target)")]];
     u8 partCode [[comment("Bit of the EnemyWork +0xCA8 mask the mission tests (FUN_10894620); sent in 4 bits")]];
     s8 partNameIndex [[comment("pMonsterPartNames index, read signed (clan_mission_format_target)")]];
     ClanTargetAction action [[comment("pBreakCutTexts index, read signed (clan_mission_format_target)")]];
@@ -71,7 +71,7 @@ ClanMissionMultiplierWeights clanMissionMultiplierWeights[11] @ header.ptrs.clan
 // What g_player_hr_cache holds was not proven. On rain row 10 starts with
 // 0xBEFE, 0x01B5 instead of 21, 35.
 struct GuildIconMonsterIconRow {
-    u16 monsterIds[12] [[comment("Until the first 0xFFFF; the rest is 0")]];
+    u16 monsterIds[12] [[format("fmtMonsterIdU16"), comment("Index of monsterIconIndices (header 0x51C, u16 x 0xB1 by monster id); until the first 0xFFFF, the rest is 0")]];
 };
 
 GuildIconMonsterIconRow guildIconMonsterIcons[importantNums.numGuildIconMonsterIconRows] @ header.ptrs.guildIconMonsterIcons [[name("Guild Icon Monster Icons"), comment("Row r is listed when r < g_player_hr_cache")]];
@@ -89,13 +89,8 @@ GuildIconMonsterIconRow guildIconMonsterIcons[importantNums.numGuildIconMonsterI
 // give points personal points (個人実績pt) at quest end
 // (clan_conquest_support_condition_points_settle). Shown as "支援条件:%s %d%s"
 // (monster name, count, suffix). The loader relocates suffix until points < 0.
-fn conquestMonster(u16 n) {
-    MonsterID m = u8(n);
-    return fmtMonsterID(m);
-};
-
 struct ClanConquestTargetSlayPoints {
-    u16 monster [[format("conquestMonster")]];
+    u16 monster [[format("fmtMonsterIdU16")]];
     s16 points;
 };
 
@@ -105,7 +100,7 @@ struct ClanConquestTargetSlayPointList {
 };
 
 struct ClanConquestSupportCondition {
-    u16 monster [[format("conquestMonster")]];
+    u16 monster [[format("fmtMonsterIdU16")]];
     u16 count [[comment("Kills per completion")]];
     s16 points [[comment("Personal points per completion")]];
     u16 unk06 [[comment("Only read as the dropped high half of the points dword; 0 everywhere")]];
@@ -113,10 +108,10 @@ struct ClanConquestSupportCondition {
 };
 
 struct ClanConquestSupportConditionEnd {
-    s16 monster;
+    s16 monster [[format("fmtMonsterIdU16")]];
     s16 count;
     s16 points;
-    u16 unk06;
+    padding[2];
     u32 suffix [[comment("Not relocated")]];
 };
 

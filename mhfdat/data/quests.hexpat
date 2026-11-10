@@ -110,16 +110,11 @@ struct PriorityRequestRotation {
 
 PriorityRequestRotation priorityRequestRotations[importantNums.numPriorityRequestRotations] @ header.ptrs.priorityRequestRotations [[name("Guild Priority Request Rotations")]];
 
-fn priorityRequestMonster(s32 n) {
-	MonsterID m = u8(n);
-	return fmtMonsterID(m);
-};
-
 struct PriorityRequestEntry {
 	s32 rotation;
 	s32 dayIndex;
 	s32 tier;
-	s32 monster [[format("priorityRequestMonster")]];
+	s32 monster [[format("fmtMonsterIdU16")]];
 	s32 soulAdditionalCount [[comment("Wii U getWeaponSoulAdditionalCount returns it (+ 2 when its 3rd argument is below 10); HD getWeaponSoulAdditionalCount (0x1083B920) loads it but returns it only for a kind > 2, and its 4 callers pass 0-2 (server tune rates 0x34-0x3F instead)")]];
 };
 
@@ -140,7 +135,7 @@ u16 beginnerQuests[importantNums.numBeginnerQuests] @ header.ptrs.beginnerQuests
 // quest variant2 bit 0x80) and of the GR 500 Secret Book reward tier
 // (quest_generate_reward_item_list, by the quest monster bytes +0xB9).
 struct InterceptionMonsterStar {
-	u8 monster [[format("priorityRequestMonster")]];
+	u8 monster [[format("fmtMonsterIdU16")]];
 	u8 gStar;
 };
 
@@ -190,12 +185,11 @@ AiNoCarveQuests aiNoCarveQuests @ header.ptrs.aiNoCarveQuests [[name("AI No Carv
 // row named pMonsterNames[id] for each monster that has Zenith quests (event
 // type 43 or the mhfinf special hunt list 12).
 fn zenithQuestMonster(auto e) {
-	MonsterID m = u8(e.id);
-	return fmtMonsterID(m);
+	return fmtMonsterIdU16(e.monster);
 };
 
 struct ZenithQuestMonster {
-    u16 id;
+    u16 monster;
 } [[format("zenithQuestMonster")]];
 
 struct ZenithQuestMonsters {
@@ -215,12 +209,11 @@ ZenithQuestMonsters zenithQuestMonsters @ header.ptrs.zenithQuestMonsters [[name
 // monsters to build_quest_list_with_monster_filter, which keeps the HR1 / HR31 /
 // HR100 mhfinf quests whose target is one of them. At most 3 ids are used.
 fn largeMonsterQuestTabMonster(auto e) {
-    MonsterID m = u8(e.id);
-    return fmtMonsterID(m);
+    return fmtMonsterIdU16(e.monster);
 };
 
 struct LargeMonsterQuestTabMonster {
-    u16 id;
+    u16 monster;
 } [[format("largeMonsterQuestTabMonster")]];
 
 struct LargeMonsterQuestTab {
@@ -239,11 +232,6 @@ LargeMonsterQuestTab largeMonsterQuestTabs[importantNums.numLargeMonsterQuestTab
 // are kept (Gore Magala 0xA2 counts as type 0). Work +0x7A9F is the G rank
 // counter flag (counter mode 0xE, NPC 0xF3, or a G My Mission).
 // Rows = important numbers + 0x76 / 2 (that u16 counts u16 values).
-fn questSearchMonster(u16 n) {
-    MonsterID m = u8(n);
-    return fmtMonsterID(m);
-};
-
 bitfield QuestSearchMonsterFlags {
     gRankOnly : 1 [[comment("Listed only at the G rank counter")]];
     needsHuntRecord : 1 [[comment("Listed only when the monster's save counters 2 + 3 are not both 0 (Bogabadorumu also adds Musou Bogabadorumu 0xAC); tested when the 3rd argument is set")]];
@@ -252,7 +240,7 @@ bitfield QuestSearchMonsterFlags {
 };
 
 struct QuestSearchMonster {
-    u16 monster [[format("questSearchMonster")]];
+    u16 monster [[format("fmtMonsterIdU16")]];
     QuestSearchMonsterFlags flags;
 };
 

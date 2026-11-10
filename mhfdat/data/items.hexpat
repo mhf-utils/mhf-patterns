@@ -158,12 +158,6 @@ enum ItemEquipType : u16 {
 	Unknown12 = 12
 };
 
-u32 __sizeof_Item = 0x24;
-
-fn getStructItemName(auto i) {
-	return getItemName(($-header.ptrs.itemData)/__sizeof_Item);
-};
-
 struct Item {
 	ItemInteraction interactionType;
 	ItemUseFlags useFlags;
@@ -239,7 +233,7 @@ struct KoryoAmulet {
     u16 returnMedals [[comment("Return: Hunting Medals (item 0x1F60, mhfpac \"Koryo Medals\") given back (koryo_amulet_return_execute), must fit in the pouch and boxes (koryo_amulet_return_is_possible)")]];
     s32 value [[comment("Haste: seconds; Gathering: max gathers +; Health: max HP + (koryo_amulet_health_apply); Two Toned: hunter jewel points % (hunter_gem_quest_points_calc); Adrenaline: HP set to it (koryo_amulet_adrenaline_apply); Starvation: read as u16, max stamina += (value - 150) x 3 (koryo_amulet_starvation_apply)")]];
     s32 value2 [[comment("Haste: floor in seconds (signed JGE); Gathering: min gathers +; Stamina: max stamina + (koryo_amulet_stamina_apply)")]];
-    u8 gap14[12];
+    padding[12];
 };
 
 KoryoAmulet koryoAmulets[importantNums.numKoryoAmulets] @ header.ptrs.koryoAmulets [[name("Koryo Amulets")]];

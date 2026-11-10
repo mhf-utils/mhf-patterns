@@ -53,7 +53,7 @@ struct TreasureCorpDrawRule {
     TreasureCorpDrawRuleKind kind;
     u8 chance [[comment("Chance: percent, scaled by get_tune_rate")]];
     u8 param [[comment("Chance: index (< 5) of the caller's 5 values, (value + 19) / 20 is added; MinHr: g_player_hr_cache >= param")]];
-    u8 unk05;
+    padding[1];
 };
 
 // No HD reader: only rd_mhfdat links them. The u16 at +2 continues a list
@@ -61,9 +61,9 @@ struct TreasureCorpDrawRule {
 struct TreasureCorpListEntry {
     u8 area;
     u8 tier;
-    u16 unk02;
-    u16 unk04;
-    u16 unk06;
+    u16 unk02 [[comment("No reader; values 0 x192, 249 x144, 180 x96, 193 x96 ...")]];
+    u16 unk04 [[comment("No reader; values 1 x624, 0 x192")]];
+    u16 unk06 [[comment("No reader; values 1 x480, 0 x192, 6 x48, 11 x48 ...")]];
 };
 
 TreasureCorpArea treasureCorpAreas[importantNums.numTreasureCorpAreas] @ header.ptrs.treasureCorpAreas [[name("Treasure Corp Areas")]];

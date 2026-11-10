@@ -28,7 +28,7 @@ struct PlayerSoundCue {
     u16 frame;
     u16 action;
     u8  condition;
-    u8  unk05;
+    padding[1];
     PlayerSoundChoice choices[4];
 };
 

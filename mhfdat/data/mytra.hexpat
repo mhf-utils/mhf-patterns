@@ -69,9 +69,9 @@ MytraShopStock mytraShopStage3G @ header.ptrs.mytraShopStage3G [[name("Mytra Sho
 
 struct MytraCatMixRecipe {
     u16 itemCount [[comment("2 or 3")]];
-    u8 unk02;
+    u8 unk02 [[comment("No reader; values 1 x214, 10 x61, 5 x36, 15 x16 ...")]];
     padding[1];
-    u8 unk04;
+    u8 unk04 [[comment("No reader; values 1 x157, 10 x65, 5 x43, 15 x24 ...")]];
     padding[1];
     ItemId items[3] [[comment("items[2] is read only when itemCount is 3")]];
 };

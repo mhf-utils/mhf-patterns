@@ -111,12 +111,7 @@ u8 gsrAllResBonus[8] @ header.ptrs.gsrAllResBonus [[name("GSR All Res Bonus"), c
 // HR from hcMonsters plus 11 DLL ids (0x118E8074) passing is_em_special_check,
 // goal 3-6; Tonfa (class 0x0B) from the G list, goal 1-3, rerolled up to 101
 // times while the target is in nsQuestExcludedMonstersG.
-fn hcMonster(u16 n) {
-    MonsterID m = u8(n);
-    return fmtMonsterID(m);
-};
-
-using HcMonsterId = u16 [[format("hcMonster")]];
+using HcMonsterId = u16 [[format("fmtMonsterIdU16")]];
 
 struct HcMonstersHR {
     HcMonsterId hcMonsters[while(std::mem::read_unsigned($, 2) != 0xFFFE)] [[comment("HC monsters (Teostra is listed twice)")]];

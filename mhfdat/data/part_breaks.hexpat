@@ -99,7 +99,7 @@ HC_Carve HCCarves[while(std::mem::read_signed($,2)!=-1)] @ header.ptrs.carveHCIt
 // default reward (get_normal_item).
 struct CarveKindEntry {
     u16 minRank;
-    u16 unk02;
+    padding[2];
     u8 chances[16] [[comment("Percent by carve kind")]];
 };
 

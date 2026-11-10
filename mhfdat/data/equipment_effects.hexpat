@@ -122,7 +122,7 @@ enum EffectSetKind : u8 {
 
 struct WeaponEffectSet {
     EffectSetKind kind;
-    u8  unk01;
+    padding[1];
     u16 effects[8];
 };
 
@@ -135,7 +135,7 @@ struct WeaponEffect {
     EffectTrigger trigger;
     u8     bone;
     EffectAttach attach;
-    u8     unk0F;
+    padding[1];
     u16    texture                [[comment("Shown when the texture channel does not loop")]];
     u16    startDelay;
     u16    firstTexture;
@@ -150,7 +150,7 @@ struct WeaponEffect {
     s16    scalePingPong;
     s16    scaleLoops;
     u16    scalePeriod;
-    u8     unk42[4];
+    padding[4];
     u8     renderMode;
     u8     billboard[3]           [[comment("All three set: faces the camera fully")]];
     u8     colorStart[3];
@@ -164,12 +164,12 @@ struct WeaponEffect {
     u16    alphaPeriod;
     u8     alphaPingPong;
     u8     renderState60          [[comment("gFlSetRenderState(0x60, value) while drawn, 0 after")]];
-    u16    unk60;
+    padding[2];
     s16    uvStepsU;
     s16    uvStepsV;
     u16    uvPeriod;
     s16    uvLoops;
-    u16    unk6A;
+    padding[2];
     float  cameraPull             [[comment("Moves the sprite toward the camera")]];
     u8     extraDraw              [[comment("1 or 2: a second draw pass, in extraColor")]];
     u8     extraColor[3];
@@ -177,10 +177,10 @@ struct WeaponEffect {
     u8     hideMode;
     u8     hideFlags;
     u8     viewAlwaysShown        [[comment("hud_weapon_view_transform_update: shown whatever the trigger")]];
-    u8     unk78;
+    u8     unk78 [[comment("No reader; values 0 x2165, 1 x29")]];
     u8     skipLoops              [[comment("Spawned with every loop counter at 0")]];
     u8     sound                  [[comment("Played once when the effect starts (0 none)")]];
-    u8     unk7B[5];
+    padding[5];
 };
 
 WeaponEffect weaponEffects[(nextTable(header.ptrs.weaponEffects) - header.ptrs.weaponEffects) / 0x80]
@@ -209,7 +209,7 @@ enum EffectWearer : u16 {
 
 struct ModelEffectSet {
     EffectPart   part;
-    u16          weaponClass;
+    u16          weaponClass [[format("className"), comment("Weapon part: compared with PlayerWork +3 (equip_model_effect_init)")]];
     EffectWearer wearer;
     u16          modelId;
     u16          effects[8];
@@ -237,7 +237,7 @@ struct ModelScaleChannel {
     u16   period;
     u8    accel;
     u8    pingPong;
-    u16   unk12;
+    padding[2];
 };
 
 struct ModelEffect {
@@ -247,11 +247,11 @@ struct ModelEffect {
     u8     meshPart;
     u8     bone;
     u16    startDelay;
-    u16    unk12;
+    padding[2];
     u8     accelRotationX;
     u8     accelRotationY;
     u8     accelRotationZ;
-    u8     unk17;
+    padding[1];
     ModelAngleChannel rotationX;
     ModelAngleChannel rotationY;
     ModelAngleChannel rotationZ;
@@ -259,7 +259,7 @@ struct ModelEffect {
     ModelScaleChannel scaleY;
     ModelScaleChannel scaleZ;
     u8     renderMode;
-    u8     unk79[3];
+    u8     unk79[3] [[comment("No reader; values 0 x2784, 1 x6")]];
     u8     colorStart[3];
     u8     colorEnd[3];
     s16    colorPingPong;
@@ -271,21 +271,21 @@ struct ModelEffect {
     u16    alphaPeriod;
     u8     alphaPingPong;
     u8     renderState60;
-    u16    unk92;
+    padding[2];
     s16    uvStepsU;
     s16    uvStepsV;
     u16    uvPeriod;
     s16    uvLoops;
     float  uvSpeedMul;
     u8     uvMode;
-    u8     unkA1[7];
+    u8     unkA1[7] [[comment("No reader; values 0 x6506, 1 x4")]];
     GunPart gunPart;
     u8     hideMode;
     u8     hideFlags;
     u8     viewHidden;
     u8     startActive;
     u8     skipLoops;
-    u8     unkAE[6];
+    padding[6];
 };
 
 ModelEffect modelEffects[(nextTable(header.ptrs.modelEffects) - header.ptrs.modelEffects) / 0xB4]

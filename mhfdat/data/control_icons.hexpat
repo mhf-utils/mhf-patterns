@@ -60,9 +60,9 @@ struct ControlIconPrimitive {
         }
         (_): {
             s16 unk0E [[comment("No reader: Default has no handler that reads +0x0E-+0x14")]];
-            s16 unk10;
-            s16 unk12;
-            s16 unk14;
+            padding[2];
+            padding[2];
+            padding[2];
         }
     }
 };
@@ -81,11 +81,11 @@ struct ControlIcon {
 };
 
 struct UnreadControlIcon {
-    u8 unk00[4];
-    s16 unk04;
-    s16 unk06;
-    s16 unk08;
-    u16 unk0A;
+    u8 unk00[4] [[comment("No reader; values 0 x102, 111 x5, 113 x5, 112 x4 ...")]];
+    padding[2];
+    padding[2];
+    padding[2];
+    padding[2];
 };
 
 ControlIconPrimitive controlIconPrimitives[importantNums.numControlIconPrimitives] @ header.ptrs.controlIconPrimitives [[name("Control Icon Primitives")]];

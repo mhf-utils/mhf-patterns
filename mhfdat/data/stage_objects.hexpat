@@ -25,7 +25,7 @@
 // =======================
 
 struct StageObjectIndexEntry {
-    s16 stage;
+    s16 stage [[format("stageIdName")]];
     s16 budget [[comment("Category 1 takes 2, category 2 takes 1, category 0 a random share of the rest")]];
     u16 firstPoint;
     u16 pointCount;
@@ -117,7 +117,7 @@ StageObjectPicks stageObjectPicks @ header.ptrs.stageObjectPicks [[name("Stage O
 struct CompanionStagePoint {
     float position[3];
     float lookAt[3];
-    s16 stage;
+    s16 stage [[format("stageIdName")]];
     padding[2];
 };
 
@@ -133,7 +133,7 @@ CompanionStagePoint companionStagePoints[importantNums.numCompanionStagePoints] 
 // kind. It is unloaded on the first area change (FUN_10AC6480). Every listed
 // stage is a base camp. Which NPC it is in game is not traced. Ends at stage -1.
 struct BaseCampNpcPoint {
-    s16 stage [[comment("Compared with GameWork +0x14 (current stage)")]];
+    s16 stage [[format("stageIdName"), comment("Compared with GameWork +0x14 (current stage)")]];
     u16 rotation [[comment("Copied to entity +0xA4")]];
     float position[3] [[comment("Copied to entity +0xAC / +0xB0 / +0xB4")]];
 };

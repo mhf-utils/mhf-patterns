@@ -1,7 +1,10 @@
 #pragma once
 
 #include <std/mem.pat>
+#include <std/string.pat>
 #include <misc/s32p.pat>
+#include <misc/MapIDs.hexpat>
+#include <misc/StageIDs.hexpat>
 #include <mhfdat/header.hexpat>
 
 /**
@@ -19,6 +22,36 @@ return std::format("{:04X}", n);
 	An item ID shown with its name, for arrays of item IDs
 */
 using ItemId = u16 [[format("getItemName")]];
+
+/**
+	@param n A map id (GameWork +0x34, the quest file's qMapID)
+	@return The id and its name in misc/MapIDs.hexpat
+*/
+fn mapIdName(s32 n) {
+	if (n == -1 || n == 0xFFFF) return "-1 | None";
+	qMapID m = n;
+	str s = std::format("{}", m);
+	if (!std::string::starts_with(s, "qMapID::")) return std::format("{} | Unknown", n);
+	return std::format("{} | {}", n, std::string::substr(s, 8, std::string::length(s) - 8));
+};
+
+/**
+	@param n A stage id (GameWork +0x14 currentStgId)
+	@return The id and its name in misc/StageIDs.hexpat
+*/
+fn stageIdName(s32 n) {
+	if (n == -1 || n == 0xFFFF) return "-1 | None";
+	StageID m = n;
+	str s = std::format("{}", m);
+	if (!std::string::starts_with(s, "StageID::")) return std::format("{} | Unknown", n);
+	return std::format("{} | {}", n, std::string::substr(s, 9, std::string::length(s) - 9));
+};
+
+/**
+	Map and stage ids shown with their names
+*/
+using MapId = u16 [[format("mapIdName")]];
+using StageId = u16 [[format("stageIdName")]];
 
 /**
 	Add 1 to n (used for pattern formatting: rarities are stored from 0)

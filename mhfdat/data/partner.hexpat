@@ -19,7 +19,7 @@
 
 struct PartnerEquip {
     u8  type                    [[format("getEquipType")]];
-    u8  unk01;
+    padding[1];
     u16 id;
 };
 
@@ -87,7 +87,7 @@ struct PartnerSkill {
     u16 pointCost;
     u16 minPartnerLevel;
     u16 minGRank;
-    u16 unk0A;
+    padding[2];
     u16 requiredSkills[6];
 };
 
@@ -99,7 +99,7 @@ struct PartnerExtraSkill {
     u16 pointCost               [[comment("Shop draws '-' in this column, the value is never shown")]];
     u16 minMasteredClassLevel;
     u16 minGRank;
-    u16 unk0A;
+    padding[2];
     u16 requiredExtraSkills[6];
 };
 

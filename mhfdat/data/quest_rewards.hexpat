@@ -121,7 +121,7 @@ struct SpeciesBonusItem {
 
 struct SpeciesBonusRow {
     u8 speciesClass [[comment("mhfemd pSpecies[target].speciesClass")]];
-    u8 gap01;
+    padding[1];
     SpeciesBonusItem items[5];
 };
 
@@ -135,12 +135,12 @@ SpeciesBonusRow hcSecretBookBonusHagi0[while (std::mem::read_unsigned($, 1) != 0
 
 struct RookieQuestReward {
     u16 questId [[comment("QuestWork +0x8")]];
-    u8 gap02 [[comment("no HD reader: Wii U rolls it as a percent for an HC Ticket (0xAA7) x1; HD only advances the RNG")]];
+    u8 hcTicketChance [[comment("no HD reader: Wii U rolls it as a percent for an HC Ticket (0xAA7) x1; HD only advances the RNG")]];
     u8 rookieProof [[comment("non-zero: Rookie Proof (0xA62) when the player has no Secret Book")]];
     u8 redClothChance [[comment("percent, no Secret Book either: Unapell Red Cloth (0x69E) x10 (a Rookie Proof with quest variant4 & 0x20)")]];
     u8 ashClothChance [[comment("percent: Unapell Ash Cloth (0x69F) x10 (same)")]];
     u8 ticketChance [[comment("percent: Unapell Ticket (0x661) x10")]];
-    u8 gap07;
+    padding[1];
 };
 
 RookieQuestReward rookieQuestRewards[while (std::mem::read_unsigned($, 2) != 0xFFFF)] @ header.ptrs.rookieQuestRewards [[name("Rookie Quest Rewards")]];
@@ -181,13 +181,13 @@ ItemId nBonusItems[importantNums.numNBonusItems] @ header.ptrs.nBonusItems [[nam
 struct PouchItemRewardItem {
     ItemId item;
     u16 count;
-    u32 gap04;
+    padding[4];
 };
 
 struct PouchItemReward {
     ItemId pouchItem [[comment("Pl_item_num_ck; 0 ends the list, every row is checked")]];
     s16 minCount [[comment("needed in the pouch (signed compare); that many are taken out after the 3 rolls (item_recycling_skill_consume_roll, consume_item_handler)")]];
-    u32 gap04;
+    padding[4];
     PouchItemRewardItem items[8];
     u8 chance[8] [[comment("percent, cumulative (random % 100); 3 rolls")]];
 };
@@ -195,9 +195,9 @@ struct PouchItemReward {
 PouchItemReward pouchItemRewards[while (std::mem::read_signed($, 2) != 0)] @ header.ptrs.pouchItemRewards [[name("Pouch Item Rewards"), comment("large target hunted, not in a quest series")]];
 
 struct ShitenReward {
-    u16 monster [[comment("word compare with QuestWork +0x170 (first target)")]];
+    u16 monster [[format("fmtMonsterIdU16"), comment("word compare with QuestWork +0x170 (first target)")]];
     s8 upper [[comment("1 when the quest id is at an odd index of shitenQuests")]];
-    u8 gap03;
+    padding[1];
     ItemId noFaintItem [[comment("given when pl_seriesFaintCount == 0")]];
     u16 noFaintCount;
     ItemId timeItem [[comment("given when QuestWork +0x914 <= timeLimitMinutes x 1800")]];
@@ -225,7 +225,7 @@ ItemId rewardRateExemptItems[importantNums.numRewardRateExemptItems] @ header.pt
 struct MapBonusItem {
     ItemId item [[comment("0 = skipped; its chance still adds up, so a roll that lands on it goes to the next row with a chance")]];
     u8 chance [[comment("percent, cumulative (random % 100)")]];
-    u8 gap03;
+    padding[1];
 };
 
 struct MapBonusPool {
@@ -249,7 +249,7 @@ struct LuckRollChances8 {
 
 struct MapBonusChances {
     LuckRollChances8 *chances : ptr;
-    u32 gap04[4];
+    padding[16];
 };
 
 MapBonusChances mapBonusChances @ header.ptrs.mapBonusChances [[name("Map Bonus Chances")]];
@@ -265,19 +265,14 @@ MapBonusChances mapBonusChances @ header.ptrs.mapBonusChances [[name("Map Bonus 
 // then gives one of the 3 items by weight.
 u16 questRareRewardChance @ header.ptrs.questRareRewardChance [[name("Quest Rare Reward Chance"), comment("Per 10000; the other 30 bytes of the slot are not read")]];
 
-fn exoticBonusMonster(u16 n) {
-    MonsterID m = u8(n);
-    return fmtMonsterID(m);
-};
-
 struct QuestRareRewardItem {
     u16 item [[format("getItemName")]];
     u16 count;
-    u32 gap04;
+    padding[4];
 };
 
 struct QuestRareReward {
-    u16 monster [[format("exoticBonusMonster"), comment("u16, compared with the target's u16 monster id")]];
+    u16 monster [[format("fmtMonsterIdU16"), comment("u16, compared with the target's u16 monster id")]];
     u8 rankBand;
     u8 resultKind;
     QuestRareRewardItem items[3];
@@ -312,7 +307,7 @@ ConquestCrystalReward conquestCrystalRewardsEnd @ addressof(conquestCrystalRewar
 // 0x20-0x2F). The last row is 0.
 
 struct ExoticBonusMaterial {
-    u16 monster [[format("exoticBonusMonster")]];
+    u16 monster [[format("fmtMonsterIdU16")]];
     ItemId item;
 };
 

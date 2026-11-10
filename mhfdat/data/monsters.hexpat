@@ -25,7 +25,7 @@ struct MonsterCrown {
     s16       silver;
     s16       gold;
     s16       mini;
-    s16       unk08;
+    padding[2];
     u16       monsterBookItem [[format("getItemName"), comment("Wii U getItemIdMonsterBookFromMonsterId; owning it sets the row's gMhfDatEntryBits bit (Monster_list_init, MonsterList_Item_Add); 0: not listed")]];
     u8        monsterType [[comment("pMonsterTypeNames index (monster_record_draw_detail_page); getNBonusItem switches on 1-12")]];
     MonsterID iconMonster [[comment("Icon drawn by ui_draw_monster_icon_panel (header 0x51C row); 0xFF: none. The same id as +0x01 on every ZZ row")]];
@@ -55,10 +55,10 @@ struct CarvePoint {
     s16 carveTableByRank[12];
     u16 carveCount;
     u16 reachPercent;
-    u16 unk1C;
+    padding[2];
     u16 flags [[comment("0x8000 ends the list; 0x2 and 0x40 tested (FUN_1141b1c0, FUN_1141b340), skipped when EnemyWork +0xCB6 & flags; copied into the carve reward entry")]];
     u8  bone [[comment("Bone index the offset starts from (FUN_10aaf750 -> 0x10848420); 0: the monster's position")]];
-    u8  unk21;
+    padding[1];
     s16 offsetX;
     s16 offsetY;
     s16 offsetZ;
@@ -141,13 +141,8 @@ MonsterCarvePointsSmallParty monsterCarvePointsSmallParty[while(carveRowsGoOn($,
 // monster starts in this action (act, sub) and locomotion state (EnemyWork
 // +0x410), until a monster of -1. The loop does not stop at a match: a monster
 // listed twice (142 on ZZ) is set by both rows in order
-fn startActionMonster(s32 n) {
-    MonsterID m = u8(n);
-    return fmtMonsterID(m);
-};
-
 struct MonsterStartAction {
-    s32 monster [[format("startActionMonster")]];
+    s32 monster [[format("fmtMonsterIdU16")]];
     u16 act;
     padding[2];
     u16 sub;
@@ -206,15 +201,10 @@ Felyne2ModeRoll felyne2ModeRoll @ header.ptrs.felyne2ModeRoll [[name("Felyne2 Mo
 // the request's index x 0.01 x the scale of the first row whose monster is the
 // entity's (no row: radius x 0.01); without the flag the scale is 1.0.
 struct MonsterHitzoneEffectScale {
-    u16 monster [[format("fmtMonsterHitzoneMonster"), comment("Compared as a u16 with the entity's monster id")]];
+    u16 monster [[format("fmtMonsterIdU16"), comment("Compared as a u16 with the entity's monster id")]];
     u16 unk02 [[comment("no reader, 0")]];
     u32 unk04 [[comment("no reader, 0")]];
     float scale;
-};
-
-fn fmtMonsterHitzoneMonster(u16 n) {
-    MonsterID m = u8(n);
-    return fmtMonsterID(m);
 };
 
 MonsterHitzoneEffectScale monsterHitzoneEffectScales[importantNums.numMonsterHitzoneEffectScales] @ header.ptrs.monsterHitzoneEffectScales [[name("Monster Hitzone Effect Scales")]];

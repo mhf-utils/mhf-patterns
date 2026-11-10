@@ -95,14 +95,14 @@ struct RankingRoute {
     s32   rewardMoney;
     s32   rewardPoints;
     u16   rewardItem            [[format("getItemName")]];
-    u16   unk1E;
-    u16   unk20;
+    padding[2];
+    padding[2];
     u16   rewardQuantity;
-    u32   unk24;
+    padding[4];
     u16   rankType;
     u16   hrToPost;
     u16   hrToJoin;
-    u16   unk2E;
+    padding[2];
     float carveBonus;
     float gatherBonus;
     s32   hunterTitle;
@@ -146,7 +146,7 @@ struct GemSkill {
     u8  cost                    [[comment("Up to 10 for all the equipped skills; cost 0 skills are always on in town")]];
     u8  group                   [[comment("One equipped skill per group, 0 for none")]];
     s16 supersededBy            [[comment("Hidden once this skill is offered and unlocked")]];
-    u8  unk06[2];
+    padding[2];
     u16 points[8]               [[comment("Points needed per color: pink, brown, yellow, green, white, purple, cyan; the 8th is 0")]];
     float effectFloats[2]       [[comment("Float parameters read by the skill's own code (e.g. skills 0x4C, 0x4F and 0x53 read both)")]];
     u8  unk20[8]                [[comment("0 on the 3 files; no reader")]];
@@ -190,12 +190,12 @@ CaravanTier caravanTiers[importantNums.numHunterPearlSkillLists + 1]
 
 struct CaravanCpRates {
     u16 festivalScoreRate [[comment("Index 0, percent: quest result totals +0x1AC4 + +0x1B14 + +0x1B24 x this / 100 = the Pallone Festival score (mhfpac pQuestResultTexts[303])")]];
-    u16 unk02[4];
-    u16 unk0A [[comment("Index 5")]];
+    u16 unk02[4] [[comment("Indexes 1-4: no reader (no caravan_cp_rate_get call asks for them); 25 on the 3 files")]];
+    u16 gMonsterHuntCpRate [[comment("Index 5, percent: in G rank each hunt of a monster of the caravan price list gives price x list rate / 100 x this / 100 x gMonsterHuntCpPercent / 100 CP (FUN_10B11B30 adds it to quest result +0x1ABC, FUN_10B2D8B0 prints it); the price board shows price x this / 100 (lobby mode 0xC9), then x gMonsterHuntCpPercent / 100 (mode 0xFE)")]];
     u16 finessExtCpRate [[comment("Index 6, percent")]];
-    u16 unk0E [[comment("Index 7")]];
-    u16 unk10 [[comment("Index 8")]];
-    u16 unk12;
+    u16 monsterHuntCpPercent [[comment("Index 7, percent: below G rank a hunt gives price x 9 / 100 x this / 100 CP (FUN_10B11B30, FUN_10B2D8B0); the price board shows it in lobby mode 0xFD (FUN_10773E10)")]];
+    u16 gMonsterHuntCpPercent [[comment("Index 8, percent: last factor of the G rank hunt CP (gMonsterHuntCpRate)")]];
+    u16 unk12 [[comment("Index 9: no reader; 100 on the 3 files")]];
 };
 
 CaravanCpRates caravanCpRates @ header.ptrs.caravanCpRates [[name("Caravan CP Rates")]];
@@ -232,17 +232,12 @@ CaravanPartBreakCpMonster caravanPartBreakCp[importantNums.numCaravanPartBreakCp
 // uses on a quest with variant1 bit 8 (else the table at 0x1ED6B8A0). The quest
 // result shows hunts x price x caravan_cp_rate_get / 100. Identical on the EN,
 // JP and rain files.
-fn caravanMonster(u16 n) {
-    MonsterID m = u8(n);
-    return fmtMonsterID(m);
-};
-
 struct CaravanMonsterPrice {
-    u16 monster [[format("caravanMonster")]];
-    u16 unk02;
+    u16 monster [[format("fmtMonsterIdU16")]];
+    padding[2];
     u32 price [[comment("CP per hunt (slain or captured)")]];
     u16 rate [[comment("100 on ZZ; > 100 makes the list row kind 3")]];
-    u16 unk0A;
+    padding[2];
 };
 
 CaravanMonsterPrice caravanMonsterPrices[importantNums.numCaravanMonsterPrices] @ header.ptrs.caravanMonsterPrices [[name("Caravan Monster Prices")]];
@@ -258,7 +253,7 @@ CaravanMonsterPrice caravanMonsterPrices[importantNums.numCaravanMonsterPrices] 
 // Fatalis, Crimson Fatalis, Disufiroa and Shantien are priced but not listed.
 struct MonsterPriceBoardRow {
     s32 requiredLevel [[comment("Listed when <= quest-list tune value 1030 (default 10), signed compare (JLE); 1-8, ascending")]];
-    u16 monster [[format("caravanMonster"), comment("Looked up in the caravan price list")]];
+    u16 monster [[format("fmtMonsterIdU16"), comment("Looked up in the caravan price list")]];
     u16 unk06 [[comment("0; no reader")]];
 };
 

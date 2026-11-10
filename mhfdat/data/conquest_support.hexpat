@@ -46,7 +46,7 @@ struct ConquestSupportHourWeights {
 };
 
 struct ConquestSupportWeightRow {
-    u16 map [[comment("Get_looks_map_no(map); the first row whose looks map is 0 (map 0) fills all 69 looks maps first")]];
+    MapId map [[comment("Get_looks_map_no(map); the first row whose looks map is 0 (map 0) fills all 69 looks maps first")]];
     u16 unk02 [[comment("No reader (Wii U chkGDragonBonusChg skips it)")]];
     ConquestSupportHourWeights hours[24] [[comment("By tm_hour of gmtime(server hour + 9 h)")]];
 };

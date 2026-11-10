@@ -23,10 +23,10 @@ struct PublicBarHrReq {
     s32p shortText;
     s32p longText;
     PublicBarRankKind rankKind;
-    u8 unk09;
+    padding[1];
     u16 minRank;
-    u16 unk0C;
-    u16 id;
+    padding[2];
+    u16 hrReqId [[comment("Lookup key of the chosen HR Req; an unknown id gets the row after the counted ones")]];
     u8 listMask [[comment("FUN_1155C8E0 / FUN_1155C980 list the row when (listMask & mask) != 0: mask 1 from FUN_103F9610, FUN_103F9770, FUN_103FC950; mask 2 from FUN_103FA120, rank_list_draw_premium_room_detail")]];
     padding[3];
 };
@@ -56,7 +56,7 @@ struct PublicBarTarget {
     u16 minHrOrMonster [[comment("Requirement 1: minimum HR; 2 and 6: monster id passed to FUN_10BADFE0")]];
     u16 minHr2 [[comment("Requirement 2 only")]];
     u8 flags [[comment("Bit 0: enabled")]];
-    u8 unk0B;
+    padding[1];
 };
 
 PublicBarHrReq publicBarHrReqs[importantNums.numPublicBarHrReqs + 1] @ header.ptrs.publicBarHrReqs [[name("Public Bar HR Reqs")]];

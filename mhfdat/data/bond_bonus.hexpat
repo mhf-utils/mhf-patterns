@@ -13,7 +13,7 @@
 // =======================
 struct BondBonusCost {
     s16 bondPointCost [[comment("Read signed: bond_bonus_get_max_uses movsx + idiv, bond_bonus_info_draw / FUN_10392D80 cwde + jge")]];
-    u8 unk02[0x12];
+    padding[18];
 };
 
 BondBonusCost bondBonusCosts[1] @ header.ptrs.bondBonusCosts [[name("Bond Bonus Costs")]];

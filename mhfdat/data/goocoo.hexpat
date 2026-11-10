@@ -87,8 +87,8 @@ GoocooFood goocooFoods[importantNums.numGoocooFoods] @ header.ptrs.goocooFoods [
 s32p goocooFoodTexts[importantNums.numGoocooFoodTexts] @ header.ptrs.goocooFoodTexts [[name("Goocoo Food Texts")]];
 
 struct GoocooStatRange {
-    s16 a;
-    s16 b;
+    s16 boundA [[comment("Unordered: updateDuckPersonalityParameter takes the smaller of boundA / boundB as the min")]];
+    s16 boundB;
 };
 
 // updateDuckPersonalityParameter walks 7 rows (hard-coded: the count is not read)
@@ -401,7 +401,7 @@ struct GoocooFarmHarvestRow {
     ItemId item;
     u16 quantity;
     u8 weight;
-    u8 unk05;
+    padding[1];
 };
 
 struct GoocooFarmHarvestBand {

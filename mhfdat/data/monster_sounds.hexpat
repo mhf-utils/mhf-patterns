@@ -30,7 +30,7 @@ MonsterSoundTable monsterSoundTables[MONSTER_NAME_COUNT]
 struct MonsterAltSoundTable {
     MonsterID monster;
     padding[1];
-    u16 unk02;
+    u16 unk02 [[comment("No reader; 1 on every row of the 3 files")]];
     EmSndMotTable *table : u32;
 };
 

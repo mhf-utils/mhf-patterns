@@ -9,11 +9,6 @@ struct s32px4 {s32p unk0[4];};
 struct u32x10 {u32 unk[0x10] [[inline]];};
 struct ptu32x10 {u32x10 *pointer : u32 [[inline]];};
 
-struct ptrToStringArray {
-	ptr ptr; 
-	s32p dest[while(std::mem::read_signed($,4))] @ ptr;
-};
-
 // Variables are named after their file and offset as reported by Ghidra's 
 // "Byte Source Offset"
 
@@ -143,13 +138,13 @@ u16 hd_dll_af477c @ (header.ptrs.important_nums + 0x402);
 		[[name("Monster Descriptions")]];
 
 	struct struct_af5001 {
-		ptr unk0; 
-		ptr unk1; 
+		ptr carvePoints; 
+		ptr dropPoints; 
 		padding[4];
 
-		if (unk0!=0) {
+		if (carvePoints!=0) {
 			varPaddT<u16, 0x26> unk[while(std::mem::read_unsigned($,2)!=0x8000)] 
-				@ (unk0 + 0x1E);
+				@ (carvePoints + 0x1E);
 		}
 	};
 

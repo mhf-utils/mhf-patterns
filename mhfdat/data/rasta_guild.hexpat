@@ -27,14 +27,9 @@
 #include <misc/s32p.pat>
 
 struct RastaHuntOrder {
-    u16 monster                 [[format("rastaHuntMonster")]];
+    u16 monster                 [[format("fmtMonsterIdU16")]];
     u8  orderType               [[comment("2 = hunt the monster (its count in the quest work); the order in progress must match")]];
     u8  huntBit;
-};
-
-fn rastaHuntMonster(u16 n) {
-    MonsterID m = u8(n);
-    return fmtMonsterID(m);
 };
 
 struct RastaHuntOrders {
@@ -59,7 +54,7 @@ struct RastaWeaponEntry<auto Kind> {
 
 struct RastaArmorEntry<auto Kind> {
     u16 armor [[comment("Row of the armor table of this type")]];
-    u16 unk02;
+    u16 unk02 [[comment("No reader; values 7 x2617, 15 x1896, 11 x1567, 14 x156 ...")]];
     u16 rank  [[comment("Listed on this rank page; locked while rank > Cred level - 1")]];
 } [[format("rastaEquipEntryName")]];
 

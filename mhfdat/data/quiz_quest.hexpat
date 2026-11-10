@@ -22,22 +22,22 @@ struct QuizQuestHeader {
     u16 spawnsACount;
     u16 spawnsBCount;
     u16 questionCounts[5];
-    u16 unk0E;
+    u16 unk0E [[comment("No reader; 1 on the 3 files")]];
     u16 end [[comment("0: rd_mhfdat scans the header's u16 list up to this 0")]];
-    u16 unk12;
+    padding[2];
 };
 
 struct QuizQuestSpawn {
-    u16 stage;
+    StageId stage;
     MonsterID monster [[comment("0: carve point")]];
-    u8 unk03;
+    padding[1];
     u16 param04 [[comment("Carve item for a carve point; for a monster initialize_monster_entity stores its low byte in EnemyWork +0x1B (variantNibble)")]];
     padding[2];
     float position[3];
     u32 rotation [[comment("Spawn record +0x1C -> EnemyWork +0xA4 (initialize_monster_entity)")]];
     u16 sizePercent [[comment("Spawn record +0x30 -> EnemyWork +0xC86, size % (monster_size.md)")]];
     u8 entityFlags [[comment("OR-ed into entity +0x8C3")]];
-    u8 unk1B;
+    padding[1];
 };
 
 struct QuizText {

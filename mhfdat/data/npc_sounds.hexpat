@@ -28,7 +28,7 @@ struct NpcMotionSoundList {
 
 struct NpcMotionSounds {
     s16 npcId [[comment("Compared as a short with EnemyWork +0x510; 0 ends the rows (important numbers +0x2CA has no reader)")]];
-    u16 unk02;
+    u16 unk02 [[comment("No reader; values 46 x3, 230 x2, 229 x1, 228 x1 ...")]];
     u32 listOffset;
     if (listOffset != 0)
         NpcMotionSoundList list @ listOffset;

@@ -31,7 +31,7 @@ struct NsoEventSound {
 };
 
 struct NsoEventSoundEvent {
-    s32 mapId [[comment("GameWork map id")]];
+    s32 mapId [[format("mapIdName"), comment("GameWork map id (+0x34)")]];
     s16 eventId [[comment("Event the object requests (MOVSX)")]];
     padding[2];
     u32 n = std::mem::read_unsigned($ + 4, 4);

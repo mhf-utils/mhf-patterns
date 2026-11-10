@@ -20,14 +20,9 @@
 // Identical on the EN, JP and rain files.
 // =======================
 
-fn pioneerMonster(u16 n) {
-    MonsterID m = u8(n);
-    return fmtMonsterID(m);
-};
-
 struct PioneerQuestRow {
-    u16 monster [[format("pioneerMonster")]];
-    u16 unk02;
+    u16 monster [[format("fmtMonsterIdU16")]];
+    padding[2];
     u16 quests[6] [[comment("Quest ids; 0 = none")]];
 };
 

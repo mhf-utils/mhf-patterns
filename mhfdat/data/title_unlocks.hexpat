@@ -14,11 +14,6 @@
 // Identical on the EN, JP and rain files.
 // =======================
 
-fn titleUnlockMonster(u16 n) {
-    MonsterID m = u8(n);
-    return fmtMonsterID(m);
-};
-
 bitfield TitleUnlockMonsterFlags {
     gRankQuest : 1 [[comment("quest_is_g_rank")]];
     needsFlag1E76BADA : 1 [[comment("DAT_1E76BADA set")]];
@@ -31,7 +26,7 @@ bitfield TitleUnlockMonsterFlags {
 struct TitleUnlockMonster {
     u16 maxValue [[comment("0, or the quest work +0x6EF0 value (set at quest end from [0x1E8001EC] + 0x914) must be <= this")]];
     TitleUnlockMonsterFlags flags;
-    u16 monster [[format("titleUnlockMonster"), comment("Its bit in quest work +0xF6A or +0xF81 must be set")]];
+    u16 monster [[format("fmtMonsterIdU16"), comment("Its bit in quest work +0xF6A or +0xF81 must be set")]];
     u16 title;
 };
 
@@ -57,7 +52,7 @@ struct TitleUnlocks {
     TitleUnlockMonster *monsters[monsterCount] : u32;
     TitleUnlockEvoWeapon *evoWeapons[evoWeaponCount] : u32;
     TitleUnlockUdPoints *udPoints[udPointsCount] : u32;
-    u32 unk14;
+    padding[4];
 };
 
 TitleUnlocks titleUnlocks @ header.ptrs.titleUnlocks [[name("Title Unlocks")]];

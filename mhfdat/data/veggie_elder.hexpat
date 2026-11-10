@@ -27,8 +27,8 @@ struct VeggieElderTrades {
 };
 
 struct VeggieElderMap {
-    u16 map [[comment("Field map id (day version)")]];
-    u16 unk02;
+    MapId map [[comment("Field map id (day version)")]];
+    padding[2];
     VeggieElderTrades *trades0 : u32 [[comment("Elder +0x1B == 0")]];
     VeggieElderTrades *trades1 : u32 [[comment("Elder +0x1B == 1")]];
 };

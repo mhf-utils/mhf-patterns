@@ -52,7 +52,7 @@ struct RoadSkill {
     u16 roadPoints;
     u16 icon;
     RoadSkillPrerequisite prerequisites[4];
-    u16 unk26;
+    padding[2];
 } [[name(std::format("{} Lv{}", skill, level))]];
 
 RoadSkill roadSkills[std::mem::read_unsigned(header.ptrs.extraCounters + 8, 2)]
@@ -90,7 +90,7 @@ RoadMilestone roadMilestones[importantNums.numRoadMilestones]
 
 struct RoadMonsterScale {
     u8 maxFloor;
-    u8 gap01[3];
+    padding[3];
     float attack [[comment("em_calc_attack_mult")]];
     float defense [[comment("em_calc_defense_mult")]];
     float flinch [[comment("em_calc_flinch_value")]];
@@ -100,7 +100,7 @@ struct RoadMonsterScale {
 
 struct SoloRoadMonsterScale {
     u8 maxFloor;
-    u8 gap01[3];
+    padding[3];
     float hp [[comment("em_hp_vital_set")]];
     float attack [[comment("em_calc_attack_mult")]];
     float defense [[comment("em_calc_defense_mult")]];

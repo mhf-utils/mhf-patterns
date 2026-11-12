@@ -17,6 +17,7 @@ The patterns primarily target Frontier binary files such as:
 * `mhfsqd.bin`
 * quest-related binaries
 * character saves: `savedata`, `platebox`, `platemyset`, `partner` (decompressed)
+* Diva Story and Legend Rasta story scenario files: `um00.bin`, `us00_*.bin`, `uc00_*.bin`, `NNN_EE_NNN.bin` and the server side story files (decompressed)
 
 Each file may be documented either:
 
@@ -93,6 +94,7 @@ savedata.bin.hexpat       # Decompressed character save (0x24D24 bytes)
 platebox.bin.hexpat       # Decompressed sigil box, up to 300 slots
 platemyset.bin.hexpat     # Sigil sets, 40 x 3 slots
 partner.bin.hexpat        # Partner blob and its equipment box
+scenario.bin.hexpat       # Diva Story / Legend Rasta story menu, episode lists, scripts, server scenario files
 ```
 
 ### 🔹 Modular loading

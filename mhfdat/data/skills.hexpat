@@ -304,7 +304,7 @@ SpacingAndSoulValues spacingAndSoulValues @ header.ptrs.spacingAndSoulValues [[n
 //   (moveGain, skill_thunder_clad_move_gain); at gaugeMax it activates (flag 4) for
 //   durationSeconds x 30 frames plus the zenith frames
 //   (zenith_thunder_clad_frames_add). While active: the attack reach bonus is
-//   at least activeReachBonus (player_attack_reach_bonus_max), the listed
+//   at least activeReachBonus (player_drawn_move_speed_bonus_max), the listed
 //   skills count as active (player_buff_id_is_active), and each hit adds
 //   statusGaugeAdd to the three status gauges (skill 0x1EE branch of
 //   player_trigger_status_pursuit_effect).
@@ -426,7 +426,7 @@ struct MagnetSpikeValues {
 	s16 msTech4AttackPercent [[comment("[49] attack x it / 100 with weapon tech 0xD tier 4 and MS work +0x86 > 0 (player_recalc_attack_power_full)")]];
 	s16 msStylishAssaultSeconds [[comment("[50] Stylish Assault buff duration with a Magnet Spike (class 13 gate), x 30 frames (skill_stylish_assault_buff_timer_update)")]];
 	s16 msTech4ReachPercent0 [[comment("[51] weapon tech 0xD tier 4: reach bonus it / 100 - 1 when player +0x12 is 0 (FUN_109BCD50)")]];
-	s16 msTech4ReachPercent1 [[comment("[52] same when player +0x12 is not 0 (FUN_109BCD50, player_attack_reach_bonus_max)")]];
+	s16 msTech4ReachPercent1 [[comment("[52] same when player +0x12 is not 0 (FUN_109BCD50, player_drawn_move_speed_bonus_max)")]];
 	s16 msGaugeGainFocusPlus2Percent [[comment("[53] Focus+2 (0x12E): percent applied to msGaugeHitGain (magnetspike_gauge_gain_focus_percent, only caller magnetspike_gauge_hit_gain)")]];
 	s16 msGaugeGainFocusPlus1Percent [[comment("[54] Focus+1 (0x12F): same")]];
 	s16 msGaugeGainDistractionPercent [[comment("[55] Distraction (0x130): same")]];

@@ -1478,7 +1478,7 @@ struct WeaponSkillModifiers {
     FloatTriple *consumptionSlayerHitboxKind1RawMult : u32 [[comment("weapon_init_hitbox_damage_from_params with Consumption Slayer, shell +8 == 1 (instead of +0x480)")]];
     FloatTriple *consumptionSlayerHitboxRawMult : u32 [[comment("same, other kinds (instead of +0x48C)")]];
     u32 *safPhialStunAdd[5] : u32 [[comment("saf_phial_stun_sigil_add (switchaxe_bin_dispatch_phial_apply) with sigil TechBoostSaf (0x61) value 1: added to the hit +0x89 (stun, capped at 0xFF), index = shell row (+6) - 1, checked signed against skillCounts +0x12 (5) inclusive: index 5 (row 6) reads the next table (float 1.7), row 0 reads index -1")]];
-    float reachBonus [[comment("player_attack_reach_bonus_max: reach bonus candidate when weapon_slot_get_skill_value_entity(0x60)")]];
+    float unsheathedWalkSpeedBonus [[comment("Sigil Unsheathd Walk (0x60): drawn-weapon move speed bonus (0.2 on the 3 files); player_drawn_move_speed_bonus_max keeps the highest of it, SkillWork +0x548 (mhfdat +0x9B0), skill 0x20B, the Zenith Move Speed sigil and Magnet Spike tech tier 4")]];
 };
 
 WeaponSkillModifiers weaponSkillModifiers @ header.ptrs.weaponSkillModifiers [[name("Weapon Skill Modifiers")]];

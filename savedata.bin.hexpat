@@ -4,6 +4,7 @@
 
 #include <misc/ItemIDs.hexpat>
 #include <save/equip.hexpat>
+#include <save/navi.hexpat>
 
 struct ItemStack {
     ItemID item;
@@ -260,15 +261,10 @@ struct LegendRastaContract {
     LegendRastaPersonalItems normalItems;
 };
 
-struct NaviTabProgress {
-    u8  flags;
-    padding[1];
-    u16 taskBits[16];
-};
-
 struct HunterNavi {
-    u8 header[8];
-    NaviTabProgress tabs[8];
+    NaviHeaderFlags flags;
+    padding[7];
+    NaviTab tabs[8];
 };
 
 struct PlayerLevel {

@@ -17,6 +17,7 @@ The patterns primarily target Frontier binary files such as:
 * `mhfsqd.bin`
 * quest-related binaries
 * character saves: `savedata`, `platebox`, `platemyset`, `partner` (decompressed)
+* Hunter Navi progress: `hunternavi` (the raw server blob, 0x226 or 0x228 bytes)
 * Diva Story and Legend Rasta story scenario files: `um00.bin`, `us00_*.bin`, `uc00_*.bin`, `NNN_EE_NNN.bin` and the server side story files (decompressed)
 
 Each file may be documented either:
@@ -89,11 +90,13 @@ quest/
 └── objective.hexpat
 save/
 ├── equip.hexpat          # Equipment slots and classes shared by the saves
+├── navi.hexpat           # Hunter Navi header, tab and task flags shared by hunternavi and savedata
 └── plate.hexpat          # Sigil skills and slots shared by platebox and platemyset
 savedata.bin.hexpat       # Decompressed character save (0x24D24 bytes)
 platebox.bin.hexpat       # Decompressed sigil box, up to 300 slots
 platemyset.bin.hexpat     # Sigil sets, 40 x 3 slots
 partner.bin.hexpat        # Partner blob and its equipment box
+hunternavi.bin.hexpat     # Hunter Navi progress: 14 tabs x 16 tasks (done, reward claimed, detail viewed, tracked)
 scenario.bin.hexpat       # Diva Story / Legend Rasta story menu, episode lists, scripts, server scenario files
 ```
 
@@ -174,7 +177,7 @@ Patterns favor **correctness and readability** over assumptions.
 * The quest block fields follow [Paxlord/PaxMHFZQuestEditor](https://github.com/Paxlord/PaxMHFZQuestEditor) where noted.
 * The layouts of the skill, Caravan, Hunting Road skill, crown, weapon parameter, Guild Shop and Tower tables come from [ezemania2/mhf-file-editor](https://github.com/ezemania2/mhf-file-editor), re-checked on the ZZ files; the Hunting Road monster points from [BlazeMH/Blaze-Hunting-Road-Editor](https://github.com/BlazeMH/Blaze-Hunting-Road-Editor), as that editor credits.
 * The clan mission, cooking, guild cooking, Goocoo, Halk, Meowka Pot, Legend Rasta, Partner, Secret Book, Transcend, Conquest quest, rapid fire, Furious, combine, Guild Priority Request, monster sound, weapon action, motion value, random sharpness, equipment effect, Mytra, player sound and monster start action tables, and the Hunter Jewel fields of the gem skills, come from ezemania2's reverse engineering of the mhfo-hd.dll code that reads them, checked on the ZZ files.
-* The save patterns (`savedata`, `platebox`, `platemyset`, `partner`) come from ezemania2's reverse engineering of mhfo-hd.dll and Otya063/mhf-client's `UserSaveData`, checked on ZZ saves; the sigil skill ids follow [Relial/mhfz_sigil_editor](https://github.com/Relial/mhfz_sigil_editor). A compressed save (`cmp 20110113` header) must be expanded first.
+* The save patterns (`savedata`, `platebox`, `platemyset`, `partner`, `hunternavi`) come from ezemania2's reverse engineering of mhfo-hd.dll and Otya063/mhf-client's `UserSaveData`, checked on ZZ saves; the sigil skill ids follow [Relial/mhfz_sigil_editor](https://github.com/Relial/mhfz_sigil_editor). A compressed save (`cmp 20110113` header) must be expanded first.
 
 ## 📜 License
 [LGPL-3.0](LICENSE.md), as the original repository.

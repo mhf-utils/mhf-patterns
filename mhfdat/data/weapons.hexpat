@@ -258,15 +258,15 @@ struct RangedItem {
 	u8 rarity [[format("plusone")]];
 	u8 levelModGroup [[comment("Bowgun level modifier group: header 0xB0 row = levelModGroup x 5 + (equipment level & 0xF) (gunner_load_bowgun_level_modifier_row, get_ranged_effective_raw_damage): a raw bonus and shot speed / gravity multipliers. 0 on bows")]];
 	u8 classId [[format("className")]];
-	u8 unk05 [[comment("No reader, always 0")]];
+	padding[1];
 	u8 eq [[name("Equip Type"), format("eqType"), color("FFFF00")]];
-	u8 unk07 [[comment("No reader, always 0")]];
-	u16 unk08 [[comment("No reader; always the modelId of some ranged row (like melee otherModelId)")]];
+	padding[1];
+	u16 unk08 [[comment("No reader (HD; the Wii U row has it at +6, not read either). EN: 0 on 1762 rows, the row's own modelId on 906, another row's modelId on 1551 (same class on 1523, an earlier row on 1534), 363 (no ranged model) on 4; like melee otherModelId")]];
 	u8 postFestiShift [[comment("equipbox_apply_post_festi_id_shift: 1 = box id + 1, 2 = box id - 1; always 0")]];
-	u8 unk0B [[comment("No reader, always 0")]];
+	padding[1];
 	u32 Weapon_type [[name("Weapon Category"), format("weaponType"), comment("Category bits (zenith 0x1000, prayer 0x800, exotic 0x200, tower 0x80, ...), the bits of melee +0x20")]];
 	u16 visualEffects [[comment("weapon_effect_init: row of weaponEffectSets (header 0x280)")]];
-	u16 unk12 [[comment("No reader, always 0")]];
+	padding[2];
 	u32 zennyCost [[comment("Create / sell price is zennyCost / 2")]];
 	u16 rawDamage;
 	s16 defense [[comment("Added to the armor defense sum (WeaponStat_GetPreviewValue); 7 rows are negative")]];
@@ -279,19 +279,19 @@ struct RangedItem {
 	u8 eleDamage [[format("timesten")]];
 	u8 reload [[format("reload")]];
 	u8 seisanFlag [[comment("Seisan_flag_ck argument (melee +0x15)")]];
-	u8 unk25 [[comment("No reader, always 0")]];
+	padding[1];
 	u16 towerMaxCost [[comment("get_tower_weapon_max_cost (melee +0x2C)")]];
 	u32 ammoMask [[comment("gunner_usable_ammo_and_coating_mask: usable ammo bits (bowguns) / coating bits (bows)")]];
 	u16 Tower_G50_Param_ID [[name("Tower/G50 Param ID"), comment("get_gcls_param_id: index of the Tower / G50 level stat list")]];
 	u8 arcShotType [[comment("bow_arc_type_get (bows, 0-3)")]];
-	u8 unk2F [[comment("No reader, always 0")]];
+	padding[1];
 	u16 G_rank [[name("G Rank"), color("FF0000"), comment("Read as a u16 (get_ex_g_weapon_rank, get_equip_tower_slots, forge_weapon_craft_to_box, forge_weapon_craft_for_partner, FUN_104E8140, hunterNavi_ck_12_11_exotic_weapon); melee +0x2E")]];
 	u8 decoSpecialSlot [[comment("Deco_item_check: special decorations need 1 here, the others 0 (melee +0x2A)")]];
 	u8 modelVariant [[comment("pl_weapon_model_init model variant (melee +0x2B), always 0x0F")]];
 	u8 ailmentId [[format("ailmentName"), comment("get_weapon_ail_damage_if_ailment, weapon_element_status_affinity_value")]];
 	u8 ailDamage [[format("timesten")]];
 	u16 zenithSkill [[name("Zenith Skills"), format("zenithSkill")]];
-	u32 unk38 [[hidden, comment("No reader, always 0")]];
+	padding[4];
 };
 
 struct WeaponName {

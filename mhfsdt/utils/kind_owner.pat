@@ -3,27 +3,27 @@
 /// Owner of a shell kind (descriptor id), as reverse engineered
 fn kind_owner(s16 k) {
     match (k) {
-        (0): return "Player: generic hit shell";
-        (6): return "Player: bowgun ammo (sub_id = WeaponType: 1 HBG / 5 LBG)";
-        (24): return "Unknown";
-        (85): return "Player: weapon attack hitbox";
+        (0): return "Player: generic melee weapon hits (rows 4 / 5 / 0x60 / 0x61 = kicks)";
+        (6): return "Player: bowgun ammo (only kind looked up by sub_id, offset_get: WeaponType 1 HBG / 5 LBG)";
+        (24): return "Player: Bow arrow shell (row = arrow / shot type)";
+        (85): return "Player: Long Sword Spirit Release / sword crystal blast";
         (99): return "Rukodiora (em99)";
-        (100): return "Player: melee weapon shell";
-        (106): return "Player: weapon shell";
-        (107): return "Player: weapon shell";
-        (108): return "Player: bow shell";
+        (100): return "Player: Tonfa shells";
+        (106): return "Player: Switch Axe F attack shells";
+        (107): return "Player: Switch Axe F secondary shells";
+        (108): return "Player: shared effect shells (Bow Rising Dragon, wide-area items, LS / GS extra shells)";
         (110): return "Hyujikiki (em110)";
         (111): return "Midogaron family (em91 Kamu/Nono Orugaron, em111)";
         (112): return "Abiorugu family (em104 Abiorugu / Giaorugu)";
         (113): return "Mi-Ru (em113)";
-        (120): return "Player: weapon shell";
-        (121): return "Shared monster shell (Garuba Daora, Akura Vashimu, Rathian, Yian Garuga...)";
+        (120): return "Player: Magnet Spike attack shells";
+        (121): return "Player: Magnet Spike magnet shells (also ended / reacted on the magnetized monster)";
         (125): return "Forokururu (em125)";
         (127): return "Diorex (em127)";
         (128): return "Garuba Daora (em128)";
         (130): return "Varusaburosu (em130)";
         (139): return "Gureadomosu (em139)";
-        (140): return "Harudomerugu (em140), table D only";
+        (140): return "Global table D parameters (monster hit frame windows, stagger, part break, transcend...), also Harudomerugu (em140)";
         (141): return "Toridcless (em141)";
         (142): return "Gasurabazura (em142)";
         (145): return "Duremudira Block 2 (em145)";
@@ -45,7 +45,7 @@ fn kind_owner(s16 k) {
         (167): return "Musou Duremudira (em167)";
         (169): return "Seregios (em169)";
         (170): return "Bogabadorumu / Musou Bogabadorumu (em170, em172)";
-        (171): return "Probably Bogabadorumu family (to confirm)";
+        (171): return "Blue Barrel (em171, act set shared with em157)";
         (172): return "Musou Bogabadorumu (em172)";
         (174): return "Musou Zerureusu (em174)";
         (175): return "Rappy (id 175, get_hzv_info only)";
@@ -69,7 +69,7 @@ fn kind_owner(s16 k) {
         (441): return "Toridcless (em141), Zenith/D7C code";
         (442): return "Gasurabazura (em142), Zenith";
         (500 | 502 | 503 | 504 | 505 | 506 | 507 | 508 | 509 | 510 | 511 | 512 | 513 | 514 | 515 | 516 | 518 | 519 | 520 | 522 | 524 | 528 | 529 | 531 | 532 | 533 | 534 | 535 | 536 | 537 | 539 | 541 | 542 | 546 | 547 | 549 | 553): return std::format("Object entity: 500 + objEmSubType {} of the monster-133 object slot (spawned from code 0x111A-0x111D)", k - 500);
-        (999): return "Shared player-attached effect shells (blind fog visuals, Gore Magala, Chameleos...)";
+        (999): return "Player status table D (blights, frenzy, seals, sharpness drain...) and player-attached effect shells (blind fog...)";
         (_): return "?";
     }
 };

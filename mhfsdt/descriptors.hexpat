@@ -6,6 +6,12 @@
     The file starts directly with the descriptor table (no header), 0x1C bytes
     per entry, ended by an entry whose id is 0xFFFF. Pointers are only followed
     when the matching __DATA_* module is enabled.
+
+    id is the shell kind written at slot +4 (same numbering as the shell
+    spawners); the shell id at slot +6 is the row in Tables A and B. The loader
+    (mhfsdt_bin_load) sorts by (id, sub_id) and mhfsdt_find_descriptor_by_id
+    binary-searches id only: sub_id is ignored, except for kind 6 (bowgun ammo,
+    offset_get / gunner_shot_hitbox_init: sub_id = WeaponType 1 HBG / 5 LBG).
 */
 struct Descriptor {
     s16 sub_id;

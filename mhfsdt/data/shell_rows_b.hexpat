@@ -15,6 +15,9 @@ fn b_key(u32 addr) {
     return 0xFFFFFFFF;
 };
 
+// Table B: 0x10 per shell id, parallel to Table A (count_a rows), bound at
+// slot +0x178 by shell_bind_mhfsdt_descriptor; most monster spawners copy it
+// to work +0x3C..+0x48. Lanes are per kind; the views below are the proven ones.
 struct ShellRowB {
     u32 key = b_key($);
     u32 kind = key >> 16;
@@ -84,10 +87,15 @@ struct ShellRowB {
             s32 param_04; s32 param_08; s32 param_0C;
         }
         (100, _): {
-            s32 mode;
-            s32 part_gauge_add;
-            s32 param_08;
-            s32 hit_flags;
+            s32 mode [[comment("3 = not a weapon hit: no sharpness / sword crystal / thunder effects (shell_k100_subtype_weapon_hit_check)")]];
+            s32 part_gauge_add [[comment("monster +0xCF2[gauge group] (hit_monster_part_gauge_add), x3 when work +0x92 == 1; scaled like the motion value (tonfa_style_hit_value_rate)")]];
+            s32 param_08 [[comment("Dead load")]];
+            s32 hit_flags [[comment("4 = end the shell on a monster victim, 8 = on a player victim (shell_k100_shell_ctrl)")]];
+        }
+        (106 | 107 | 120 | 121, _): {
+            s32 param_00 [[comment("No reader")]];
+            s32 part_gauge_add [[comment("monster +0xCF2[gauge group] (hit_monster_part_gauge_add); the row is also copied to the shell work (SAF +0x30, MS +0x70)")]];
+            s32 param_08; s32 param_0C;
         }
         (_, _): {
             s32 param_00;

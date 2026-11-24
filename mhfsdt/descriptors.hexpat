@@ -13,9 +13,13 @@
     binary-searches id only: sub_id is ignored, except for kind 6 (bowgun ammo,
     offset_get / gunner_shot_hitbox_init: sub_id = WeaponType 1 HBG / 5 LBG).
 */
+fn descriptor_fmt(ref auto d) {
+    return std::format("{} | {} hit params, {} groups, {} Table D rows", kind_fmt(d.id), d.count_a, d.count_groups, d.count_d);
+};
+
 struct Descriptor {
     s16 sub_id;
-    s16 id [[color("FF7043")]];
+    s16 id [[color("FF7043"), comment("Shell kind, see kind_owner")]];
     u16 count_a;
     u16 count_groups;
 #ifdef __DATA_SHELL_ROWS_A
@@ -43,7 +47,7 @@ struct Descriptor {
     FileOffset table_d;
 #endif
     u32 count_d;
-} [[format("desc_fmt")]];
+} [[format("descriptor_fmt")]];
 
 Descriptor descriptors[while(!isTerminator($))] @ 0x00 [[name("Descriptors")]];
 s16 terminator_sub_id @ sizeof(descriptors);

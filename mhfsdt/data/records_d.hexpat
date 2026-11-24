@@ -15,6 +15,12 @@ fn d_key(u32 addr) {
     return 0xFFFFFFFF;
 };
 
+// Table D: 0x20 parameter rows (4 f32 + 4 s32) read by kind code with a
+// constant row number (mhfsdt_desc_get_d_row, fallback row 0x11880F08).
+// Kind 100: row 136 = Tonfa level multiplier (% by weapon level / 3); a kick
+// row's i_10 / i_14 / i_18 override the MV of kind 0 rows 4 / 5 / 0x60-0x61
+// under skills 0xDB / 0x167 (melee_kick_attack_power_override).
+// Kind 999: player status rows (0x21 / 0x22 frenzy, 0x15 / 0x30 ice blight...).
 struct RecordD {
     u32 key = d_key($);
     u32 kind = key >> 16;
@@ -50,6 +56,21 @@ struct RecordD {
             float f_08; float f_0C;
             s32 damage;
             s32 i_14; s32 i_18; s32 i_1C;
+        }
+        (140, 100 ... 499): {
+            float hit_frame [[comment("Frame tested by Monster_IsCurrentFrameInHitboxWindow (em_sdt8c_action_frame_window_ck)")]];
+            float f_04; float f_08; float f_0C;
+            s32 monster_id;
+            s32 row_type [[comment("2 = hit frame window row")]];
+            s32 act_category;
+            s32 act_type;
+        }
+        (532, 1 ... 0xFFFF): {
+            float f_00; float f_04; float f_08; float f_0C;
+            s32 monster_id [[comment("0 skips the row (em_maze_tower_height_clamp)")]];
+            s32 height [[comment("Height above ground the monster is clamped to")]];
+            s32 act_category;
+            s32 act_type;
         }
         (_, _): {
             float f_00;
